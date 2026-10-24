@@ -156,6 +156,20 @@ it in that section's `meta.json`; register the live component in `app/components
 4. New external dependencies go into the `catalog` in `pnpm-workspace.yaml` first (`catalogMode: strict`).
 5. `vp install && vp check && vp run boundaries && vp test && vp run -r build`.
 
+## Git
+
+- Code, comments, docs and commit messages are written in English.
+- Commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
+  `type(scope): subject`, imperative, starting lowercase, no trailing period, header within
+  72 characters, body separated by a blank line. Types: `feat`, `fix`, `docs`, `test`,
+  `refactor`, `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`,
+  `icons`, `core`, `headless`, `kit`, `audio`) or `docs`, `storybook`, `playground`, `config`,
+  `repo`; no scope when a change spans several packages.
+- Hooks live in `.vite-hooks/` (installed by `vp config` on `vp install`): `pre-commit` runs
+  `vp staged` (`vp check --fix` on staged files), `commit-msg` runs
+  [`scripts/check-commit-msg.ts`](scripts/check-commit-msg.ts).
+- A change to a published package carries its changeset (`vp run changeset`) in the same commit.
+
 ## Versions
 
 Node 24 LTS (`.nvmrc`), pnpm 12 (`packageManager`; older pnpm fails on `engines.pnpm`),
