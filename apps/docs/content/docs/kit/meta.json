@@ -1,0 +1,6 @@
+{
+  "title": "Kit",
+  "description": "Styled general-purpose components",
+  "root": true,
+  "pages": ["index", "---Components---", "placeholder"]
+}

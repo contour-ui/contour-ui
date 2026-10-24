@@ -1,0 +1,68 @@
+---
+title: Themes
+description: Dark by default; switch the page or any part of it to light with one attribute.
+---
+
+`tokens.css` defines every token for the dark theme on `:root` and redefines the ones that differ
+for the light theme under `[data-theme="light"]`. Kit and Audio only read tokens, so they follow
+the theme with no extra setup.
+
+## Choose a theme
+
+```html
+<!-- The whole page in the light theme -->
+<html data-theme="light">
+  …
+</html>
+
+<!-- One region in light, and a dark island inside it -->
+<section data-theme="light">
+  …
+  <aside data-theme="dark">…</aside>
+</section>
+```
+
+Each theme also sets `color-scheme`, so native form controls and scrollbars match.
+
+Set the theme on `<html>` rather than on an app wrapper: components that render overlays into
+`document.body`, such as menus and tooltips, take the theme from there.
+
+## Switch at runtime
+
+`@contour-ui/tokens` exports the theme names and the attribute, so a switcher stays in sync with
+the stylesheet:
+
+```tsx title="theme-switch.tsx"
+import { defaultTheme, themeAttribute, themes } from '@contour-ui/tokens';
+import type { Theme } from '@contour-ui/tokens';
+import { useEffect, useState } from 'react';
+
+export function ThemeSwitch() {
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute(themeAttribute, theme);
+  }, [theme]);
+
+  return (
+    <fieldset>
+      <legend>Theme</legend>
+      {themes.map((name) => (
+        <button
+          key={name}
+          type="button"
+          aria-pressed={theme === name}
+          onClick={() => setTheme(name)}
+        >
+          {name}
+        </button>
+      ))}
+    </fieldset>
+  );
+}
+```
+
+## Headless
+
+Headless ships no styles, so it has no themes: theme your own CSS however you like, or use the
+token variables and the same `data-theme` attribute.

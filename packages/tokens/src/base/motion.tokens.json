@@ -1,0 +1,19 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "base": {
+    "duration": {
+      "$type": "duration",
+      "$description": "Short durations: plugin UI is a tool, value feedback must feel instant.",
+      "0":   { "$value": { "value": 0,   "unit": "ms" } },
+      "80":  { "$value": { "value": 80,  "unit": "ms" } },
+      "150": { "$value": { "value": 150, "unit": "ms" } },
+      "250": { "$value": { "value": 250, "unit": "ms" } }
+    },
+    "easing": {
+      "$type": "cubicBezier",
+      "standard": { "$value": [0.2, 0, 0, 1] },
+      "out":      { "$value": [0, 0, 0.2, 1] },
+      "in":       { "$value": [0.4, 0, 1, 1] }
+    }
+  }
+}

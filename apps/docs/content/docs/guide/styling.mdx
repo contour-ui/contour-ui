@@ -1,0 +1,62 @@
+---
+title: Styling with tokens
+description: Use the same CSS variables as the components, so your own UI matches and follows the theme.
+---
+
+Kit and Audio styles read **semantic tokens**: CSS custom properties named after their role, not
+their value. Use them for your own layout, and it will match the components in every theme:
+
+```css
+.panel {
+  display: grid;
+  gap: var(--ct-space-group-gap);
+  padding: var(--ct-space-panel-inset);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-surface);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+```
+
+## Token groups
+
+| Variables               | For                                                                                             |
+| ----------------------- | ----------------------------------------------------------------------------------------------- |
+| `--ct-color-bg-*`       | backgrounds by layer: `canvas`, `surface`, `raised`, `inset`, `hover`                           |
+| `--ct-color-fg-*`       | text and icons: `default`, `muted`, `subtle`, `disabled`                                        |
+| `--ct-color-border-*`   | `subtle` dividers, `default` outlines, `strong` control edges, `focus` rings                    |
+| `--ct-color-<status>-*` | `accent`, `success`, `warning`, `danger`: `fill`, `fill-hover`, `on-fill`, `fg`, `bg`, `border` |
+| `--ct-space-*`          | padding and gaps: `control-inset`, `control-gap`, `group-gap`, `panel-inset`, `section-gap`     |
+| `--ct-size-*`           | control heights: `control-sm`, `control-md`, `control-lg`                                       |
+| `--ct-radius-*`         | `control`, `panel`, `round`                                                                     |
+| `--ct-border-width-*`   | `default`, `focus`                                                                              |
+| `--ct-text-*`           | text styles: `heading`, `body`, `label`, `value`, `caption`                                     |
+| `--ct-motion-*`         | transitions: `feedback`, `enter`                                                                |
+
+## Rules
+
+- **Typography.** `--ct-text-<style>` is a `font` shorthand. `letter-spacing` is not part of the
+  shorthand: pair it with `--ct-text-<style>-letter-spacing`. Single values are available too:
+  `-font-family`, `-font-size`, `-font-weight`, `-line-height`.
+- **Motion.** `--ct-motion-<name>` is a duration, easing and delay:
+  `transition: background-color var(--ct-motion-feedback)`.
+- **Contrast.** Text roles meet WCAG targets on the backgrounds they are meant for, in both themes:
+  `fg-default` on `canvas`, `surface` and `raised` (7:1), `fg-muted` on `surface` and `raised`
+  (4.5:1). `fg-subtle` (3:1) is for units and tick labels, not body text; `fg-disabled` is for
+  disabled labels and has no target.
+- **Never use `--ct-base-*`.** Those are the raw palette and scales behind the roles. They exist so
+  roles can refer to them, are not part of the API, and change without notice.
+
+## In TypeScript
+
+`vars` from `@contour-ui/tokens` holds a typed `var(…)` reference for every semantic token, for
+inline styles and CSS-in-JS:
+
+```tsx
+import { vars } from '@contour-ui/tokens';
+
+<div style={{ padding: vars.space['panel-inset'], background: vars.color.bg.surface }} />;
+// vars.color.bg.surface === 'var(--ct-color-bg-surface)'
+```

@@ -1,0 +1,80 @@
+{
+  "name": "@contour-ui/tokens",
+  "version": "0.0.0",
+  "description": "contour-ui design tokens: DTCG sources built with Style Dictionary into CSS custom properties and typed TS references.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contour-ui/contour-ui.git",
+    "directory": "packages/tokens"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/tokens.css",
+    "./dist/fonts.css",
+    "./src/generated/tokens.css",
+    "./src/fonts.css"
+  ],
+  "exports": {
+    ".": {
+      "@contour-ui/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": {
+      "@contour-ui/source": "./src/generated/tokens.css",
+      "default": "./dist/tokens.css"
+    },
+    "./fonts.css": {
+      "@contour-ui/source": "./src/fonts.css",
+      "default": "./dist/fonts.css"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./tokens.css": "./dist/tokens.css",
+      "./fonts.css": "./dist/fonts.css",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "node --watch-path=src/base --watch-path=src/semantic --watch-path=contour.resolver.json scripts/build.ts",
+    "tokens": "node scripts/build.ts",
+    "generate": "node scripts/generate.ts && node scripts/build.ts",
+    "design-system": "node scripts/to-design-system.ts",
+    "storybook": "storybook dev --port 6101 --no-open",
+    "build-storybook": "storybook build --output-dir storybook-static"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-sans": "catalog:",
+    "@fontsource/jetbrains-mono": "catalog:"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@contour-ui/vite-config": "workspace:*",
+    "@storybook/addon-a11y": "catalog:",
+    "@storybook/addon-docs": "catalog:",
+    "@storybook/addon-vitest": "catalog:",
+    "@storybook/react-vite": "catalog:",
+    "@types/culori": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "culori": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "storybook": "catalog:",
+    "style-dictionary": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

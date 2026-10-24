@@ -1,0 +1,42 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+storybook-static
+build
+.react-router
+.source
+*.tsbuildinfo
+
+# Test output
+coverage
+__screenshots__
+.vitest-attachments
+test-results
+playwright-report
+blob-report
+
+# Logs
+*.log
+
+# Env
+.env
+.env.*
+!.env.example
+
+# Editors / OS
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea
+.DS_Store
+
+# Vite+ generated hook dispatcher (project hooks in .vite-hooks/ are committed)
+.vite-hooks/_
+
+# AI agent worktrees
+.claude/worktrees/
+
+# Obsidian vault with the implementation plan (local notes)
+obsidian/

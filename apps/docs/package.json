@@ -1,0 +1,38 @@
+{
+  "name": "@contour-ui/app-docs",
+  "version": "0.0.0",
+  "private": true,
+  "description": "contour-ui documentation site (Fumadocs on React Router + Vite).",
+  "type": "module",
+  "scripts": {
+    "dev": "react-router dev",
+    "build": "react-router build"
+  },
+  "dependencies": {
+    "@contour-ui/audio": "workspace:*",
+    "@contour-ui/headless": "workspace:*",
+    "@contour-ui/kit": "workspace:*",
+    "@contour-ui/tokens": "workspace:*",
+    "@react-router/node": "catalog:",
+    "fumadocs-core": "catalog:",
+    "fumadocs-mdx": "catalog:",
+    "fumadocs-ui": "catalog:",
+    "isbot": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "react-router": "catalog:"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@contour-ui/vite-config": "workspace:*",
+    "@react-router/dev": "catalog:",
+    "@tailwindcss/vite": "catalog:",
+    "@types/mdx": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "tailwindcss": "catalog:",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

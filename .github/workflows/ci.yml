@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Expected pnpm, pinned in package.json#packageManager.
+  PNPM_VERSION: 12.15.0
+
+jobs:
+  check:
+    name: Check (fmt, lint, types, boundaries)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          node-version-file: .nvmrc
+          cache: true
+      - name: Verify pinned pnpm
+        run: test "$(pnpm --version)" = "$PNPM_VERSION"
+      - run: vp check --deny-warnings
+      - run: vp run boundaries
+
+  test:
+    name: Test (node + Chromium browser mode + stories)
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          node-version-file: .nvmrc
+          cache: true
+      - run: vp exec playwright install --with-deps chromium
+      - run: vp test
+
+  visual:
+    name: Visual (Playwright screenshots of the styled Storybooks)
+    needs: check
+    runs-on: ubuntu-latest
+    # The image `vp run visual` uses locally (apps/storybook/scripts/visual.ts), so the
+    # committed screenshots compare pixel for pixel. Keep the tag equal to
+    # `@playwright/test` in pnpm-workspace.yaml.
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      options: --ipc=host --init
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          node-version-file: .nvmrc
+          cache: true
+      - run: vp run @contour-ui/app-storybook#visual:ci
+      - name: Upload the report with diffs
+        if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: visual-report
+          path: |
+            apps/storybook/playwright-report
+            apps/storybook/test-results
+
+  build:
+    name: Build (vp pack + publint + attw)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          node-version-file: .nvmrc
+          cache: true
+      - run: vp run -r build
+
+  sites:
+    name: Build Storybook and docs
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: voidzero-dev/setup-vp@cab1ab9eaff52d4857875f4f2c016e36af8f2c76 # v1.22.0
+        with:
+          node-version-file: .nvmrc
+          cache: true
+      - run: vp run build-storybook
+      - run: vp run --filter @contour-ui/app-docs build
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: storybook
+          path: apps/storybook/storybook-static
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: docs
+          path: apps/docs/build/client

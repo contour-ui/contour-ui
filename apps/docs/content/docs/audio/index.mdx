@@ -1,0 +1,47 @@
+---
+title: Audio
+description: Styled controls for audio-plugin UIs, built on Kit.
+---
+
+Audio holds the controls of a plugin interface: knobs, faders, meters and value readouts. They are
+built from [Kit](/docs/kit) parts and follow the same [themes](/docs/guide/themes) and
+[tokens](/docs/guide/styling); use Kit for the rest of the plugin window.
+
+## Setup
+
+```bash
+pnpm add @contour-ui/audio @contour-ui/kit @contour-ui/tokens
+```
+
+```tsx title="main.tsx"
+import '@contour-ui/tokens/tokens.css';
+import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/kit/styles.css'; // Audio controls reuse Kit parts and their styles
+import '@contour-ui/audio/styles.css';
+```
+
+## Usage
+
+```tsx
+import { AudioPlaceholder } from '@contour-ui/audio';
+
+export function GainReadout() {
+  return <AudioPlaceholder.Root>-6.0 dB</AudioPlaceholder.Root>;
+}
+```
+
+## Conventions
+
+- **Readouts** use the `value` text style: monospace with tabular digits, so numbers do not shift
+  while the value changes.
+- **Customizing** works as in Kit: each control has a class, `contour-<component>` (for example
+  `contour-audio-placeholder`), next to the classes of the Kit parts it is made of; your
+  `className` is merged in.
+
+## Components
+
+<Cards>
+  <Card title="AudioPlaceholder" href="/docs/audio/placeholder">
+    Stand-in that shows the shape of every Audio control.
+  </Card>
+</Cards>

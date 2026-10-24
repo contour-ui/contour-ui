@@ -1,0 +1,79 @@
+---
+title: Installation
+description: Add a package, its peer dependencies, and its stylesheets.
+---
+
+## Requirements
+
+- React 19 and React DOM 19: peer dependencies of every package.
+- A bundler that imports CSS from packages: Vite, Next.js, Rsbuild, webpack with a CSS loader.
+  The packages are ESM only.
+
+## Install
+
+Your app imports the token stylesheet (and, for Audio, the Kit stylesheet) directly, so list those
+packages as your own dependencies too: strict package managers such as pnpm do not expose
+dependencies of dependencies to your code.
+
+```bash
+# Kit
+pnpm add @contour-ui/kit @contour-ui/tokens
+
+# Audio (with Kit for the rest of the UI)
+pnpm add @contour-ui/audio @contour-ui/kit @contour-ui/tokens
+
+# Headless: no styles, no tokens
+pnpm add @contour-ui/headless
+```
+
+## Load the stylesheets
+
+Kit and Audio style their components with plain CSS that reads token variables. Import the
+stylesheets once, in your app entry, in this order:
+
+```tsx title="main.tsx"
+import '@contour-ui/tokens/tokens.css'; // tokens: --ct-* custom properties for every theme
+import '@contour-ui/tokens/fonts.css'; // IBM Plex Sans and JetBrains Mono
+import '@contour-ui/kit/styles.css';
+import '@contour-ui/audio/styles.css'; // Audio only, after Kit
+```
+
+The stylesheets do not import each other, so your app decides what loads and when, and tokens
+load once even when you use Kit and Audio together.
+
+`fonts.css` declares the font faces the type tokens refer to (SIL Open Font License). Skip it if
+your app already provides these fonts; the token font stacks fall back to system fonts.
+
+Headless needs no stylesheet.
+
+## Page background
+
+Tokens do not style the page itself. Give the document the canvas colors so the space around
+components follows the theme:
+
+```css title="app.css"
+body {
+  margin: 0;
+  background: var(--ct-color-bg-canvas);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+```
+
+## A minimal app
+
+```tsx title="main.tsx"
+import { Placeholder } from '@contour-ui/kit';
+import { createRoot } from 'react-dom/client';
+
+import '@contour-ui/tokens/tokens.css';
+import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/kit/styles.css';
+import './app.css';
+
+const root = document.querySelector('#root');
+if (root !== null) {
+  createRoot(root).render(<Placeholder.Root>Hello, contour-ui</Placeholder.Root>);
+}
+```

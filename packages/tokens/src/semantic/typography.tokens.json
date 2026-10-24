@@ -1,0 +1,54 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "text": {
+    "$type": "typography",
+    "heading": {
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.14}",
+        "fontWeight": "{base.font-weight.semibold}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
+    "body": {
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.13}",
+        "fontWeight": "{base.font-weight.regular}",
+        "lineHeight": "{base.line-height.normal}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
+    "label": {
+      "$description": "Control labels: Gain, Freq, Q.",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.11}",
+        "fontWeight": "{base.font-weight.medium}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.wide}"
+      }
+    },
+    "value": {
+      "$description": "Numeric readouts: -6.0 dB, 1.2 kHz. Monospace so digits do not shift while the value changes.",
+      "$value": {
+        "fontFamily": "{base.font-family.mono}",
+        "fontSize": "{base.font-size.12}",
+        "fontWeight": "{base.font-weight.regular}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
+    "caption": {
+      "$description": "Units, tick marks, scale labels.",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.10}",
+        "fontWeight": "{base.font-weight.regular}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    }
+  }
+}

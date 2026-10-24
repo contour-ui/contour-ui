@@ -1,0 +1,28 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "space": {
+    "$type": "dimension",
+    "control-inset": { "$value": "{base.space.6}", "$description": "Horizontal padding inside buttons, inputs, selects." },
+    "control-gap":   { "$value": "{base.space.4}", "$description": "Gap between icon and label, or between a control and its value readout." },
+    "group-gap":     { "$value": "{base.space.8}", "$description": "Gap between controls inside one group." },
+    "section-gap":   { "$value": "{base.space.16}", "$description": "Gap between panels or sections." },
+    "panel-inset":   { "$value": "{base.space.12}", "$description": "Padding inside a panel." }
+  },
+  "size": {
+    "$type": "dimension",
+    "control-sm": { "$value": "{base.space.20}" },
+    "control-md": { "$value": "{base.space.24}" },
+    "control-lg": { "$value": "{base.space.32}" }
+  },
+  "radius": {
+    "$type": "dimension",
+    "control": { "$value": "{base.radius.4}" },
+    "panel":   { "$value": "{base.radius.8}" },
+    "round":   { "$value": "{base.radius.full}" }
+  },
+  "border-width": {
+    "$type": "dimension",
+    "default": { "$value": "{base.border-width.1}" },
+    "focus":   { "$value": "{base.border-width.2}" }
+  }
+}

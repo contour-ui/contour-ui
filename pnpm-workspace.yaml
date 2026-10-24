@@ -1,0 +1,109 @@
+packages:
+  - packages/*
+  - apps/*
+  - configs/*
+
+# Every external dependency version comes from the catalog below.
+catalogMode: strict
+
+# Fail installs whose engines (node/pnpm) do not match, including the root
+# package.json `engines.pnpm: ">=12"`.
+engineStrict: true
+
+# Vite+ manages the pnpm and Node.js versions (`packageManager` / `.nvmrc`).
+# `ignore` stops pnpm from silently downloading the pinned pnpm itself, so an
+# older pnpm reaches the `engines.pnpm` check and fails fast instead.
+# https://viteplus.dev/guide/env (Using pnpm with Vite+ runtime management)
+pmOnFail: ignore
+runtimeOnFail: ignore
+
+catalog:
+  # Toolchain. `vite` is aliased to the Vite core that Vite+ ships, so tools
+  # that import `vite` directly (Storybook, React Router, plugins) get the same
+  # build as `vp`. Keep both entries on the same Vite+ version.
+  vite-plus: 1.4.0
+  vite: npm:@voidzero-dev/vite-plus-core@1.4.0
+  # Same version Vite+ bundles; needed directly by third-party Vitest plugins
+  # (Storybook addon-vitest, vitest-browser-react) that import `vitest`.
+  vitest: 5.0.5
+  '@vitest/browser-playwright': 5.0.5
+  playwright: 1.64.1
+  # Visual tests (apps/storybook). They run in mcr.microsoft.com/playwright:v<this version>-noble:
+  # keep it equal to `playwright` and to the image tag in .github/workflows/ci.yml.
+  '@playwright/test': 1.64.1
+  typescript: 7.0.2
+  '@types/node': 24.19.2
+
+  # React
+  react: 19.3.1
+  react-dom: 19.3.1
+  '@types/react': 19.3.0
+  '@types/react-dom': 19.3.0
+  '@vitejs/plugin-react': 6.1.2
+  vitest-browser-react: 2.3.0
+
+  # Storybook
+  storybook: 10.6.3
+  '@storybook/react-vite': 10.6.3
+  '@storybook/addon-a11y': 10.6.3
+  '@storybook/addon-docs': 10.6.3
+  '@storybook/addon-vitest': 10.6.3
+
+  # Design tokens (packages/tokens build-time tooling)
+  style-dictionary: 5.7.0
+  culori: 4.0.2
+  '@types/culori': 4.0.1
+  # Fonts referenced by --ct-base-font-family-* (OFL-1.1), shipped via tokens/fonts.css.
+  # Ranges, not pins: these are published runtime dependencies of @contour-ui/tokens.
+  '@fontsource/ibm-plex-sans': ^5.3.0
+  '@fontsource/jetbrains-mono': ^5.3.0
+
+  # Docs
+  fumadocs-core: 16.17.8
+  fumadocs-mdx: 15.4.10
+  fumadocs-ui: 16.17.8
+  '@types/mdx': 2.0.14
+  react-router: 8.5.0
+  '@react-router/dev': 8.5.0
+  '@react-router/node': 8.5.0
+  # Required by React Router's built-in entry.server (used for prerendering).
+  isbot: 5.2.2
+  tailwindcss: 4.3.3
+  '@tailwindcss/vite': 4.3.3
+
+  # Release / package validation
+  '@changesets/cli': 3.0.3
+  publint: 0.3.25
+  '@arethetypeswrong/core': 0.18.5
+
+overrides:
+  vite@*: 'catalog:'
+
+peerDependencyRules:
+  allowAny:
+    - vite
+  allowedVersions:
+    vite: '*'
+    # storybook@10.6 declares an optional peer `vite-plus@^0.1.15 || ^0.2.0`
+    # and predates Vite+ 1.x. Verified working with the pinned Vite+; drop
+    # this once Storybook widens the range.
+    storybook>vite-plus: 1.4.0
+minimumReleaseAgeExclude:
+  - '@voidzero-dev/vite-plus-core@1.4.0'
+  - '@voidzero-dev/vite-plus-darwin-arm64@1.4.0'
+  - '@voidzero-dev/vite-plus-darwin-x64@1.4.0'
+  - '@voidzero-dev/vite-plus-linux-arm64-gnu@1.4.0'
+  - '@voidzero-dev/vite-plus-linux-arm64-musl@1.4.0'
+  - '@voidzero-dev/vite-plus-linux-x64-gnu@1.4.0'
+  - '@voidzero-dev/vite-plus-linux-x64-musl@1.4.0'
+  - '@voidzero-dev/vite-plus-win32-arm64-msvc@1.4.0'
+  - '@voidzero-dev/vite-plus-win32-x64-msvc@1.4.0'
+  - vite-plus@1.4.0
+  - fumadocs-core@16.17.8
+  - fumadocs-mdx@15.4.10
+  - fumadocs-ui@16.17.8
+
+# Dependency build scripts. esbuild's postinstall only verifies its binary; the
+# platform binary arrives via optionalDependencies, so the script is not needed.
+allowBuilds:
+  esbuild: false

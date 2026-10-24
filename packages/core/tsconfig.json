@@ -1,0 +1,9 @@
+{
+  "extends": "@contour-ui/typescript-config/library.json",
+  "compilerOptions": {
+    // core is renderer-agnostic: no DOM lib. React types only reach src/react/.
+    "lib": ["ES2023"],
+    "jsx": "react-jsx"
+  },
+  "include": ["src"]
+}

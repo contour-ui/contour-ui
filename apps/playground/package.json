@@ -1,0 +1,29 @@
+{
+  "name": "@contour-ui/app-playground",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Vite + React sandbox that renders contour-ui packages from source.",
+  "type": "module",
+  "scripts": {
+    "dev": "vp dev",
+    "build": "vp build",
+    "preview": "vp preview"
+  },
+  "dependencies": {
+    "@contour-ui/audio": "workspace:*",
+    "@contour-ui/headless": "workspace:*",
+    "@contour-ui/kit": "workspace:*",
+    "@contour-ui/tokens": "workspace:*",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@contour-ui/vite-config": "workspace:*",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

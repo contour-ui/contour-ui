@@ -1,0 +1,50 @@
+---
+title: Headless
+description: Unstyled React components with the structure and behavior of contour-ui, for your own look.
+---
+
+Headless components render the DOM structure and behavior of each component, and nothing else: no
+CSS, no tokens, no themes. [Kit](/docs/kit) is built on them, so switching a component between
+Kit and Headless keeps its parts and props.
+
+## Setup
+
+```bash
+pnpm add @contour-ui/headless
+```
+
+There is no stylesheet to load. React 19 and React DOM 19 are peer dependencies.
+
+## Usage
+
+```tsx
+import { Placeholder } from '@contour-ui/headless';
+
+export function Note() {
+  return <Placeholder.Root className="note">Unstyled</Placeholder.Root>;
+}
+```
+
+## Styling
+
+Style parts with your own classes, or target them by their data attributes. Every part carries
+`data-scope` (the component) and `data-part` (the part):
+
+```css
+[data-scope='placeholder'][data-part='root'] {
+  padding: 8px 12px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+}
+```
+
+Want the contour-ui look for some of your own pieces? The token variables work with Headless too:
+load `@contour-ui/tokens/tokens.css` and see [Styling with tokens](/docs/guide/styling).
+
+## Components
+
+<Cards>
+  <Card title="Placeholder" href="/docs/headless/placeholder">
+    Stand-in that shows the shape of every Headless component.
+  </Card>
+</Cards>

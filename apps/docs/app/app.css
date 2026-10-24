@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+@import 'fumadocs-ui/css/neutral.css';
+@import 'fumadocs-ui/css/preset.css';
+
+/*
+ * Fumadocs theme -> contour-ui tokens. The token roles switch with `data-theme`
+ * (set together with `.dark` by next-themes, see root.tsx), so one mapping covers
+ * both themes. The selectors only out-rank the stock neutral theme, which sets
+ * these variables on `.dark` and `.dark #nd-sidebar`.
+ */
+:root,
+.dark,
+.dark #nd-sidebar {
+  --color-fd-background: var(--ct-color-bg-canvas);
+  --color-fd-foreground: var(--ct-color-fg-default);
+  --color-fd-muted: var(--ct-color-bg-surface);
+  --color-fd-muted-foreground: var(--ct-color-fg-muted);
+  --color-fd-popover: var(--ct-color-bg-raised);
+  --color-fd-popover-foreground: var(--ct-color-fg-default);
+  --color-fd-card: var(--ct-color-bg-surface);
+  --color-fd-card-foreground: var(--ct-color-fg-default);
+  --color-fd-border: var(--ct-color-border-default);
+  --color-fd-primary: var(--ct-color-accent-fill);
+  --color-fd-primary-foreground: var(--ct-color-accent-on-fill);
+  --color-fd-secondary: var(--ct-color-bg-raised);
+  --color-fd-secondary-foreground: var(--ct-color-fg-default);
+  --color-fd-accent: var(--ct-color-bg-hover);
+  --color-fd-accent-foreground: var(--ct-color-fg-default);
+  --color-fd-ring: var(--ct-color-border-focus);
+  --color-fd-info: var(--ct-color-accent-fg);
+  --color-fd-warning: var(--ct-color-warning-fg);
+  --color-fd-error: var(--ct-color-danger-fg);
+  --color-fd-success: var(--ct-color-success-fg);
+}
+
+/* Text and code use the design system's families (from @contour-ui/tokens/fonts.css). */
+@theme inline {
+  --font-sans: var(--ct-text-body-font-family);
+  --font-mono: var(--ct-text-value-font-family);
+}
+
+html {
+  scrollbar-gutter: stable;
+}

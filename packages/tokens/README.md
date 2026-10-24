@@ -1,0 +1,70 @@
+# @contour-ui/tokens
+
+**Layer 0 — foundation.** Design tokens in [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/)
+format, built with [Style Dictionary](https://styledictionary.com) into CSS custom
+properties and typed TS references.
+
+- **May depend on (internal):** nothing.
+- **Storybook:** token reference (port 6101) — tables of every custom property with its value and
+  alias per theme (color roles, palette, text styles, space, size, radius, border width, motion),
+  built from `src/generated/docs.json`.
+
+## Usage
+
+```ts
+import '@contour-ui/tokens/tokens.css'; // once, before kit/audio styles
+import '@contour-ui/tokens/fonts.css'; // IBM Plex Sans + JetBrains Mono, 400/500/600
+import { vars } from '@contour-ui/tokens';
+
+vars.color.bg.surface; // 'var(--ct-color-bg-surface)'
+```
+
+```css
+.panel {
+  padding: var(--ct-space-panel-inset);
+  background: var(--ct-color-bg-surface);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body); /* font shorthand; letter-spacing is separate */
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+```
+
+- **Themes:** dark is the default (`:root`, `[data-theme="dark"]`); `[data-theme="light"]` on
+  any element switches its subtree. `themes`, `defaultTheme` and `themeAttribute` are exported.
+- **Base vs semantic:** `--ct-base-*` (raw palette and scales) is emitted because semantic
+  roles reference it, but it is internal: components and kits use semantic roles only, and
+  `vars` exposes only those.
+- **Fonts:** `fonts.css` declares the faces for `--ct-base-font-family-*` and every
+  `--ct-base-font-weight-*` (Fontsource packages, SIL OFL 1.1; scripts load via `unicode-range`).
+  A story test checks that every family × weight from the tokens actually loads.
+- **Typography:** each text style is `--ct-text-<style>` (`font` shorthand) plus
+  `--ct-text-<style>-font-family | -font-size | -font-weight | -line-height | -letter-spacing`.
+
+## Sources
+
+```
+contour.resolver.json          DTCG resolver: sets (base, semantic) + theme modifier (dark default)
+src/base/*.tokens.json         raw values — color.tokens.json is generated
+src/semantic/*.tokens.json     roles — color.{dark,light}.tokens.json are generated
+src/generated/                 Style Dictionary output (committed): tokens.css, vars.ts, docs.json
+src/stories/                   Storybook token tables (read docs.json)
+scripts/                       build and generators
+```
+
+| Command (`vp run --filter @contour-ui/tokens …`) | What it does                                                                                           |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `tokens`                                         | Style Dictionary build → `src/generated/tokens.css`, `vars.ts`, `docs.json`                            |
+| `dev`                                            | the same, re-run on every source change                                                                |
+| `generate`                                       | regenerate the palette and color roles from `scripts/palette.ts` / `semantic-colors.ts`, then `tokens` |
+| `design-system <out-dir>`                        | export `tokens.json` for the Design System page                                                        |
+
+Style Dictionary does not read DTCG resolvers yet, so `scripts/resolver.ts` expands
+`contour.resolver.json` into one Style Dictionary run per theme: sets become `include`
+files, the theme context becomes `source` files. Style Dictionary merges, resolves and
+validates aliases and transforms primitive values; `scripts/build-tokens.ts` prints the
+CSS (aliases stay `var()` references), `vars.ts`, and `docs.json`: one line per custom property
+with its resolved value and alias in each theme, for docs (not part of the published package).
+
+Generated files are committed so apps, Storybook and tests use tokens without a build
+step. `vp test` checks that they match their sources (`src/generated.test.ts`) and that
+the color roles meet their WCAG contrast targets in both themes (`src/contrast.test.ts`).

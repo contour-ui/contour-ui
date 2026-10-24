@@ -1,0 +1,59 @@
+---
+title: How contour-ui works
+description: What ships, which package to pick, and how the packages fit together.
+---
+
+<Callout title="Pre-release">
+  The packages are not on npm yet. The components documented here are placeholders that prove the
+  setup; real components arrive section by section and follow the same shape.
+</Callout>
+
+## Pick a package
+
+contour-ui ships three React packages. Pick by how much of the look you want to own:
+
+| Package                | What you get                                       | Use it when                                     |
+| ---------------------- | -------------------------------------------------- | ----------------------------------------------- |
+| `@contour-ui/kit`      | Styled general-purpose components                  | you build an app in the contour-ui look         |
+| `@contour-ui/audio`    | Styled controls for audio-plugin UIs, built on Kit | you build an audio-plugin UI                    |
+| `@contour-ui/headless` | Unstyled components: structure and behavior        | you want contour-ui behavior with your own look |
+
+You can use more than one: an audio plugin uses Audio for its controls and Kit for everything
+else.
+
+## How the packages fit together
+
+- **Headless** renders the structure and behavior of each component, with no styles.
+- **Kit** components are Headless components plus a stylesheet. The props are the same; Kit adds a
+  class name and the CSS behind it.
+- **Audio** builds on Kit: its controls reuse Kit parts and add audio-specific styles, such as
+  monospace numeric readouts whose digits do not shift while the value changes.
+- **Tokens** (`@contour-ui/tokens`) are the design decisions as CSS custom properties: colors,
+  spacing, sizes, radii, type and motion, for every theme. Kit and Audio styles read them. You load
+  `tokens.css` once and can use the same variables in your own CSS, see
+  [Styling with tokens](/docs/guide/styling).
+
+All packages are released together under one version: keep their versions equal.
+
+## Anatomy of a component
+
+A component is a namespace of parts. Each part renders one DOM element:
+
+```tsx
+import { Placeholder } from '@contour-ui/kit';
+
+<Placeholder.Root className="my-panel">Hello</Placeholder.Root>;
+```
+
+- Parts accept the props of their element (`className`, `style`, `aria-*`, event handlers, …) and
+  pass them through.
+- Every part is marked with `data-scope` (the component) and `data-part` (the part), for example
+  `data-scope="placeholder" data-part="root"`. Headless users style with these attributes; in Kit
+  and Audio they are stable hooks for tests and overrides.
+- Kit and Audio add a class per component: `contour-<component>`. Your `className` is merged with it.
+
+## Next steps
+
+1. [Install](/docs/guide/installation) a package and load its stylesheets.
+2. Choose a [theme](/docs/guide/themes): dark is the default, light is one attribute away.
+3. Use [tokens](/docs/guide/styling) for your own layout so it matches the components.

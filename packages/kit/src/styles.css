@@ -1,0 +1,14 @@
+/*
+ * Kit styles consume semantic token custom properties only (never --ct-base-*).
+ * Load `@contour-ui/tokens/tokens.css` first; it is a separate entry point so apps
+ * control when and how often it loads.
+ */
+.contour-placeholder {
+  padding: var(--ct-space-control-inset);
+  border: var(--ct-border-width-default) solid var(--ct-color-accent-border);
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-accent-bg);
+  color: var(--ct-color-accent-fg);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}

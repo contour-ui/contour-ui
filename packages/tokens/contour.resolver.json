@@ -1,0 +1,40 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
+  "name": "Contour",
+  "version": "2025.10",
+  "description": "Contour design tokens. Base palette and scales, semantic roles, and a theme modifier.",
+  "sets": {
+    "base": {
+      "description": "Raw values. Not consumed by components directly.",
+      "sources": [
+        { "$ref": "src/base/color.tokens.json" },
+        { "$ref": "src/base/dimension.tokens.json" },
+        { "$ref": "src/base/typography.tokens.json" },
+        { "$ref": "src/base/motion.tokens.json" }
+      ]
+    },
+    "semantic": {
+      "description": "Theme-independent roles.",
+      "sources": [
+        { "$ref": "src/semantic/dimension.tokens.json" },
+        { "$ref": "src/semantic/typography.tokens.json" },
+        { "$ref": "src/semantic/motion.tokens.json" }
+      ]
+    }
+  },
+  "modifiers": {
+    "theme": {
+      "description": "Color theme. Dark is the default for plugin UIs.",
+      "contexts": {
+        "dark":  [{ "$ref": "src/semantic/color.dark.tokens.json" }],
+        "light": [{ "$ref": "src/semantic/color.light.tokens.json" }]
+      },
+      "default": "dark"
+    }
+  },
+  "resolutionOrder": [
+    { "$ref": "#/sets/base" },
+    { "$ref": "#/sets/semantic" },
+    { "$ref": "#/modifiers/theme" }
+  ]
+}

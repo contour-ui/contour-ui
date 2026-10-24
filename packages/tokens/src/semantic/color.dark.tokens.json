@@ -1,0 +1,137 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "color": {
+    "$type": "color",
+    "bg": {
+      "canvas": {
+        "$value": "{base.color.neutral.975}",
+        "$description": "Plugin window background, the lowest layer."
+      },
+      "surface": {
+        "$value": "{base.color.neutral.950}",
+        "$description": "Panels and sections placed on the canvas."
+      },
+      "raised": {
+        "$value": "{base.color.neutral.900}",
+        "$description": "Menus, popovers, tooltips."
+      },
+      "inset": {
+        "$value": "{base.color.neutral.975}",
+        "$description": "Recessed wells: knob and slider tracks, meter backgrounds, displays."
+      },
+      "hover": {
+        "$value": "{base.color.neutral.800}"
+      }
+    },
+    "fg": {
+      "default": {
+        "$value": "{base.color.neutral.50}"
+      },
+      "muted": {
+        "$value": "{base.color.neutral.300}"
+      },
+      "subtle": {
+        "$value": "{base.color.neutral.400}",
+        "$description": "Units, tick labels, secondary metadata."
+      },
+      "disabled": {
+        "$value": "{base.color.neutral.600}"
+      }
+    },
+    "border": {
+      "subtle": {
+        "$value": "{base.color.neutral.900}"
+      },
+      "default": {
+        "$value": "{base.color.neutral.800}"
+      },
+      "strong": {
+        "$value": "{base.color.neutral.600}"
+      },
+      "focus": {
+        "$value": "{base.color.blue.400}"
+      }
+    },
+    "accent": {
+      "fill": {
+        "$value": "{base.color.blue.400}"
+      },
+      "fill-hover": {
+        "$value": "{base.color.blue.300}"
+      },
+      "on-fill": {
+        "$value": "{base.color.neutral.975}",
+        "$description": "Text and icons placed on accent.fill."
+      },
+      "fg": {
+        "$value": "{base.color.blue.300}"
+      },
+      "bg": {
+        "$value": "{base.color.blue.900}"
+      },
+      "border": {
+        "$value": "{base.color.blue.600}"
+      }
+    },
+    "danger": {
+      "fill": {
+        "$value": "{base.color.red.400}"
+      },
+      "fill-hover": {
+        "$value": "{base.color.red.300}"
+      },
+      "on-fill": {
+        "$value": "{base.color.neutral.975}"
+      },
+      "fg": {
+        "$value": "{base.color.red.300}"
+      },
+      "bg": {
+        "$value": "{base.color.red.900}"
+      },
+      "border": {
+        "$value": "{base.color.red.600}"
+      }
+    },
+    "success": {
+      "fill": {
+        "$value": "{base.color.green.400}"
+      },
+      "fill-hover": {
+        "$value": "{base.color.green.300}"
+      },
+      "on-fill": {
+        "$value": "{base.color.neutral.975}"
+      },
+      "fg": {
+        "$value": "{base.color.green.300}"
+      },
+      "bg": {
+        "$value": "{base.color.green.900}"
+      },
+      "border": {
+        "$value": "{base.color.green.600}"
+      }
+    },
+    "warning": {
+      "fill": {
+        "$value": "{base.color.yellow.400}"
+      },
+      "fill-hover": {
+        "$value": "{base.color.yellow.300}"
+      },
+      "on-fill": {
+        "$value": "{base.color.neutral.975}"
+      },
+      "fg": {
+        "$value": "{base.color.yellow.300}"
+      },
+      "bg": {
+        "$value": "{base.color.yellow.900}"
+      },
+      "border": {
+        "$value": "{base.color.yellow.600}"
+      }
+    }
+  }
+}

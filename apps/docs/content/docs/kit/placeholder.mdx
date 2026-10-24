@@ -1,0 +1,28 @@
+---
+title: Placeholder
+description: Stand-in component that proves the Kit setup. Real components follow its shape.
+---
+
+<Preview>
+  <KitPlaceholder>Kit placeholder</KitPlaceholder>
+</Preview>
+
+```tsx
+import { Placeholder } from '@contour-ui/kit';
+
+<Placeholder.Root>Kit placeholder</Placeholder.Root>;
+```
+
+## Anatomy
+
+| Part               | Element | Class                 | Attributes                                  |
+| ------------------ | ------- | --------------------- | ------------------------------------------- |
+| `Placeholder.Root` | `div`   | `contour-placeholder` | `data-scope="placeholder" data-part="root"` |
+
+`Placeholder.Root` accepts every `div` prop; `className` is merged with `contour-placeholder`.
+
+## Tokens
+
+The accent tint behind the content: `--ct-color-accent-bg`, `--ct-color-accent-fg` and
+`--ct-color-accent-border`, `--ct-space-control-inset` padding, `--ct-radius-control` corners and
+the `body` text style.

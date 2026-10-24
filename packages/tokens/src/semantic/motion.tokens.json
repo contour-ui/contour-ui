@@ -1,0 +1,15 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "motion": {
+    "feedback": {
+      "$type": "transition",
+      "$description": "Hover, press, toggle state. Never used for value changes driven by drag or automation — those render immediately.",
+      "$value": { "duration": "{base.duration.80}", "delay": "{base.duration.0}", "timingFunction": "{base.easing.out}" }
+    },
+    "enter": {
+      "$type": "transition",
+      "$description": "Menus and popovers appearing.",
+      "$value": { "duration": "{base.duration.150}", "delay": "{base.duration.0}", "timingFunction": "{base.easing.standard}" }
+    }
+  }
+}

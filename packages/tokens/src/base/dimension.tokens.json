@@ -1,0 +1,35 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "base": {
+    "space": {
+      "$type": "dimension",
+      "$description": "4px grid with 2 and 6 half-steps for dense control internals.",
+      "0":  { "$value": { "value": 0,  "unit": "px" } },
+      "2":  { "$value": { "value": 2,  "unit": "px" } },
+      "4":  { "$value": { "value": 4,  "unit": "px" } },
+      "6":  { "$value": { "value": 6,  "unit": "px" } },
+      "8":  { "$value": { "value": 8,  "unit": "px" } },
+      "12": { "$value": { "value": 12, "unit": "px" } },
+      "16": { "$value": { "value": 16, "unit": "px" } },
+      "20": { "$value": { "value": 20, "unit": "px" } },
+      "24": { "$value": { "value": 24, "unit": "px" } },
+      "32": { "$value": { "value": 32, "unit": "px" } },
+      "40": { "$value": { "value": 40, "unit": "px" } },
+      "48": { "$value": { "value": 48, "unit": "px" } }
+    },
+    "radius": {
+      "$type": "dimension",
+      "0":    { "$value": { "value": 0,    "unit": "px" } },
+      "2":    { "$value": { "value": 2,    "unit": "px" } },
+      "4":    { "$value": { "value": 4,    "unit": "px" } },
+      "6":    { "$value": { "value": 6,    "unit": "px" } },
+      "8":    { "$value": { "value": 8,    "unit": "px" } },
+      "full": { "$value": { "value": 9999, "unit": "px" } }
+    },
+    "border-width": {
+      "$type": "dimension",
+      "1": { "$value": { "value": 1, "unit": "px" } },
+      "2": { "$value": { "value": 2, "unit": "px" } }
+    }
+  }
+}

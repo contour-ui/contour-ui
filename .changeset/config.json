@@ -1,0 +1,22 @@
+{
+  "$schema": "https://unpkg.com/@changesets/config@4.0.1/schema.json",
+  "changelog": "@changesets/cli/changelog",
+  "commit": false,
+  "fixed": [
+    [
+      "@contour-ui/tokens",
+      "@contour-ui/icons",
+      "@contour-ui/core",
+      "@contour-ui/headless",
+      "@contour-ui/kit",
+      "@contour-ui/audio"
+    ]
+  ],
+  "linked": [],
+  "access": "public",
+  "baseBranch": "main",
+  "updateInternalDependencies": "patch",
+  "ignore": [],
+  "privatePackages": { "version": false, "tag": false },
+  "format": false
+}

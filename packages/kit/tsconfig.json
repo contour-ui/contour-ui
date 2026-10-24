@@ -1,0 +1,7 @@
+{
+  "extends": "@contour-ui/typescript-config/library-dom.json",
+  "compilerOptions": {
+    "types": ["node", "vite-plus/client"]
+  },
+  "include": ["src", ".storybook/**/*", "vite.config.ts"]
+}

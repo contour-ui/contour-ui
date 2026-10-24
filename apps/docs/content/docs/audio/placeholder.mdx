@@ -1,0 +1,24 @@
+---
+title: AudioPlaceholder
+description: Stand-in control that proves the Audio setup. Real controls follow its shape.
+---
+
+<Preview>
+  <AudioPlaceholder>-12.0 dB</AudioPlaceholder>
+</Preview>
+
+```tsx
+import { AudioPlaceholder } from '@contour-ui/audio';
+
+<AudioPlaceholder.Root>-12.0 dB</AudioPlaceholder.Root>;
+```
+
+## Anatomy
+
+| Part                    | Element | Classes                                         | Attributes                                  |
+| ----------------------- | ------- | ----------------------------------------------- | ------------------------------------------- |
+| `AudioPlaceholder.Root` | `div`   | `contour-placeholder contour-audio-placeholder` | `data-scope="placeholder" data-part="root"` |
+
+It is the Kit [Placeholder](/docs/kit/placeholder) with an audio class on top: everything Kit
+styles stays, and `contour-audio-placeholder` switches the text to the `value` style. It accepts
+every `div` prop; `className` is merged in.

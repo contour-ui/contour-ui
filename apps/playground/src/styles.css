@@ -1,0 +1,67 @@
+/* Sandbox page chrome, styled with semantic tokens only. */
+body {
+  margin: 0;
+  background: var(--ct-color-bg-canvas);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.playground {
+  display: grid;
+  gap: var(--ct-space-group-gap);
+  padding: var(--ct-space-panel-inset);
+}
+
+.playground-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ct-space-group-gap);
+}
+
+.playground-header h1 {
+  margin: 0;
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.playground-header fieldset {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.playground-header legend {
+  float: inline-start;
+  margin-inline-end: var(--ct-space-control-gap);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+.playground-header button {
+  block-size: var(--ct-size-control-md);
+  padding: 0 var(--ct-space-control-inset);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-strong);
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-bg-raised);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  cursor: pointer;
+}
+
+.playground-header button[aria-pressed='true'] {
+  border-color: var(--ct-color-accent-fill);
+  background: var(--ct-color-accent-fill);
+  color: var(--ct-color-accent-on-fill);
+}
+
+.playground-header button:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: 2px;
+}

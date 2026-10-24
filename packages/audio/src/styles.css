@@ -1,0 +1,9 @@
+/*
+ * Audio styles consume semantic token custom properties only.
+ * Load after `@contour-ui/tokens/tokens.css` and `@contour-ui/kit/styles.css`.
+ */
+.contour-audio-placeholder {
+  font: var(--ct-text-value);
+  letter-spacing: var(--ct-text-value-letter-spacing);
+  font-variant-numeric: tabular-nums;
+}

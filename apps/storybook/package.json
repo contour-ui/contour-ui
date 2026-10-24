@@ -1,0 +1,22 @@
+{
+  "name": "@contour-ui/app-storybook",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Storybook composition host: one site that references every package Storybook.",
+  "type": "module",
+  "scripts": {
+    "storybook": "node scripts/wait-for-refs.ts && storybook dev --port 6100 --no-open"
+  },
+  "devDependencies": {
+    "@contour-ui/tokens": "workspace:*",
+    "@contour-ui/typescript-config": "workspace:*",
+    "@playwright/test": "catalog:",
+    "@storybook/addon-docs": "catalog:",
+    "@storybook/react-vite": "catalog:",
+    "@types/node": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "storybook": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

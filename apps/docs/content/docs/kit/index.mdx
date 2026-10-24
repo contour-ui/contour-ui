@@ -1,0 +1,57 @@
+---
+title: Kit
+description: Styled general-purpose components in the contour-ui look.
+---
+
+Kit is the styled layer for everyday UI: each component is a [Headless](/docs/headless) component
+plus a stylesheet built on [tokens](/docs/guide/styling), so it follows the
+[theme](/docs/guide/themes) with no extra code.
+
+## Setup
+
+```bash
+pnpm add @contour-ui/kit @contour-ui/tokens
+```
+
+```tsx title="main.tsx"
+import '@contour-ui/tokens/tokens.css';
+import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/kit/styles.css';
+```
+
+Details and the reasons for the order: [Installation](/docs/guide/installation).
+
+## Usage
+
+Components are namespaces of parts; each part renders one element and passes its props through:
+
+```tsx
+import { Placeholder } from '@contour-ui/kit';
+
+export function Panel() {
+  return <Placeholder.Root aria-label="Status">Ready</Placeholder.Root>;
+}
+```
+
+## Customizing
+
+- **Classes.** Each component has a class, `contour-<component>`. Your `className` is added next to
+  it, so you can extend the styles with your own CSS.
+- **Tokens.** Write overrides with token variables, and they keep following the theme:
+
+  ```css
+  .status {
+    padding: var(--ct-space-panel-inset);
+  }
+  ```
+
+- **Another look.** If the Kit styles are in the way, use the same component from
+  [Headless](/docs/headless): same parts, same props, no CSS.
+
+## Components
+
+<Cards>
+  <Card title="Placeholder" href="/docs/kit/placeholder">
+    Stand-in that shows the shape of every Kit component.
+  </Card>
+</Cards>

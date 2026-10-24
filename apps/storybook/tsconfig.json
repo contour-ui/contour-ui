@@ -1,0 +1,14 @@
+{
+  "extends": "@contour-ui/typescript-config/app.json",
+  "compilerOptions": {
+    "types": ["node", "vite-plus/client"]
+  },
+  "include": [
+    ".storybook/**/*",
+    "scripts",
+    "visual",
+    "refs.ts",
+    "playwright.config.ts",
+    "vite.config.ts"
+  ]
+}

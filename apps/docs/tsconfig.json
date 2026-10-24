@@ -1,0 +1,7 @@
+{
+  "extends": "@contour-ui/typescript-config/app.json",
+  "compilerOptions": {
+    "types": ["node", "vite-plus/client"]
+  },
+  "include": ["app", "react-router.config.ts", "vite.config.ts"]
+}

@@ -1,0 +1,22 @@
+---
+title: Placeholder
+description: Stand-in component that proves the Headless setup. Real components follow its shape.
+---
+
+<Preview>
+  <HeadlessPlaceholder>Headless placeholder: no styles of its own</HeadlessPlaceholder>
+</Preview>
+
+```tsx
+import { Placeholder } from '@contour-ui/headless';
+
+<Placeholder.Root>Headless placeholder</Placeholder.Root>;
+```
+
+## Anatomy
+
+| Part               | Element | Attributes                                  |
+| ------------------ | ------- | ------------------------------------------- |
+| `Placeholder.Root` | `div`   | `data-scope="placeholder" data-part="root"` |
+
+`Placeholder.Root` accepts every `div` prop and renders no class or styles.
