@@ -1,8 +1,14 @@
-import type { ComponentProps, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 
-export type PlaceholderRootProps = ComponentProps<'div'>;
+import { Primitive } from '../primitive/index.ts';
+import type { PrimitiveProps } from '../primitive/index.ts';
 
-/** Placeholder unstyled part. Real headless components follow the `scope`/`part` data-attribute convention. */
+export type PlaceholderRootProps = PrimitiveProps<'div'>;
+
+/**
+ * Placeholder unstyled part: a `div` (or, with `asChild`, its child) with the
+ * `scope`/`part` data attributes every headless part carries.
+ */
 export function PlaceholderRoot(props: PlaceholderRootProps): ReactElement {
-  return <div data-scope="placeholder" data-part="root" {...props} />;
+  return <Primitive.div data-scope="placeholder" data-part="root" {...props} />;
 }
