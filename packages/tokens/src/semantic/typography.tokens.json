@@ -49,6 +49,56 @@
         "lineHeight": "{base.line-height.tight}",
         "letterSpacing": "{base.letter-spacing.normal}"
       }
+    },
+    "display": {
+      "$description": "Page title of long-form pages such as docs (h1).",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.30}",
+        "fontWeight": "{base.font-weight.semibold}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
+    "title": {
+      "$description": "Section heading of long-form pages (h2).",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.24}",
+        "fontWeight": "{base.font-weight.semibold}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
+    "subtitle": {
+      "$description": "Subsection heading of long-form pages (h3).",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.18}",
+        "fontWeight": "{base.font-weight.semibold}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
+    "prose": {
+      "$description": "Long-form reading: docs paragraphs and lists.",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.15}",
+        "fontWeight": "{base.font-weight.regular}",
+        "lineHeight": "{base.line-height.loose}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
+    "code": {
+      "$description": "Code in running text and in code blocks. Same line height as body, so inline code never spreads its lines.",
+      "$value": {
+        "fontFamily": "{base.font-family.mono}",
+        "fontSize": "{base.font-size.13}",
+        "fontWeight": "{base.font-weight.regular}",
+        "lineHeight": "{base.line-height.normal}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
     }
   }
 }

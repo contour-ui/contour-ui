@@ -45,6 +45,10 @@ const HUES: ReadonlyArray<readonly [string, Hue]> = [
   ['red', { hue: 25, chroma: 0.19, flat: false }],
   ['green', { hue: 150, chroma: 0.16, flat: false }],
   ['yellow', { hue: 85, chroma: 0.16, flat: false }],
+  // Code highlighting needs more distinct hues than the status roles.
+  ['violet', { hue: 300, chroma: 0.17, flat: false }],
+  ['cyan', { hue: 205, chroma: 0.12, flat: false }],
+  ['orange', { hue: 55, chroma: 0.17, flat: false }],
 ];
 
 /**

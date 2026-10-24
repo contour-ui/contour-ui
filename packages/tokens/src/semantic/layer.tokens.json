@@ -1,0 +1,9 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "layer": {
+    "$type": "number",
+    "$description": "Stacking order (z-index). Steps leave room for nested overlays to stack above their layer.",
+    "sticky":  { "$value": 100,  "$description": "Sticky headers and toolbars, above page content." },
+    "overlay": { "$value": 1000, "$description": "Popovers, dialogs and drawers, above sticky elements." }
+  }
+}

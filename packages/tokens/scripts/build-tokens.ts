@@ -56,6 +56,20 @@ const TRANSITION: ReadonlyArray<readonly [string, Formatter]> = [
   ['delay', cssUnitValue],
 ];
 
+/**
+ * Shadow layer sub-values in CSS `box-shadow` order, after the optional `inset`.
+ * Printed here like the other composites rather than with Style Dictionary's
+ * `shadow/css/shorthand`, which works on resolved values: aliases stay `var()`
+ * references and colors keep the oklch format.
+ */
+const SHADOW: ReadonlyArray<readonly [string, Formatter]> = [
+  ['offsetX', cssUnitValue],
+  ['offsetY', cssUnitValue],
+  ['blur', cssUnitValue],
+  ['spread', cssUnitValue],
+  ['color', cssColor],
+];
+
 const what = (token: TransformedToken): string => `${token.path.join('.')} (${token.filePath})`;
 
 const valueOf = (token: TransformedToken): unknown => {
@@ -68,12 +82,18 @@ const ofType =
   (token: TransformedToken): boolean =>
     types.includes(token.$type ?? '');
 
-/** Primitive value transforms for DTCG 2025.10 values (composites are printed below). */
-const TRANSFORMS: Record<string, Omit<Transform, 'name'>> = {
+type Transforms = Record<string, Omit<Transform, 'name'>>;
+
+const NAME_TRANSFORMS: Transforms = {
   'contour/name': {
     type: transformTypes.name,
     transform: (token) => cssVarName(token.path).slice(2),
   },
+};
+
+/** Primitive value transforms for DTCG 2025.10 values (composites are printed below). */
+const TRANSFORMS: Transforms = {
+  ...NAME_TRANSFORMS,
   'contour/color': {
     type: transformTypes.value,
     filter: ofType('color'),
@@ -99,6 +119,7 @@ const TRANSFORMS: Record<string, Omit<Transform, 'name'>> = {
 async function contextTokens(
   resolver: ThemeResolver,
   context: string,
+  transforms: Transforms = TRANSFORMS,
 ): Promise<TransformedToken[]> {
   const { include, source } = resolver.files(context);
   const sd = new StyleDictionary({
@@ -106,13 +127,26 @@ async function contextTokens(
     source,
     // Collisions and other warnings fail the build; success logs stay quiet.
     log: { warnings: 'error', verbosity: 'silent' },
-    hooks: { transforms: TRANSFORMS },
+    hooks: { transforms },
     platforms: {
-      css: { transforms: Object.keys(TRANSFORMS) },
+      css: { transforms: Object.keys(transforms) },
     },
   });
   const { allTokens } = await sd.getPlatformTokens('css');
   return allTokens;
+}
+
+/**
+ * Every token of one theme context with aliases resolved and values left as
+ * DTCG data (color objects, `{ value, unit }` dimensions…), for checks of the
+ * values themselves rather than of their CSS.
+ */
+export async function resolvedTokens(
+  context: string,
+  resolverFile: string = RESOLVER_FILE,
+): Promise<TransformedToken[]> {
+  const tokens = await contextTokens(loadResolver(resolverFile), context, NAME_TRANSFORMS);
+  return tokens;
 }
 
 interface Declaration {
@@ -160,6 +194,21 @@ function fontShorthand(
   return [{ name, value, key: ['font'] }];
 }
 
+/** One `box-shadow` layer: a shadow object, or an alias of a whole shadow token. */
+function shadowLayer(layer: unknown, where: string): string {
+  const alias = aliasPath(layer);
+  if (alias !== undefined) {
+    return cssVar(alias);
+  }
+  const parts = expectRecord(layer, where);
+  const inset = parts['inset'] ?? false;
+  if (typeof inset !== 'boolean') {
+    throw new TypeError(`${where}.inset: expected a boolean.`);
+  }
+  const values = SHADOW.map(([key, format]) => printValue(parts[key], format, `${where}.${key}`));
+  return (inset ? ['inset', ...values] : values).join(' ');
+}
+
 function declarationsOf(token: TransformedToken): Declaration[] {
   const original: unknown = token.original.$value;
   const alias = aliasPath(original);
@@ -187,6 +236,15 @@ function declarationsOf(token: TransformedToken): Declaration[] {
       const value = TRANSITION.map(([key, format]) =>
         printValue(parts[key], format, `${what(token)}.${key}`),
       ).join(' ');
+      return [{ name: cssVarName(token.path), value, key: [] }];
+    }
+    case 'shadow': {
+      // One layer or a list of layers; `box-shadow` takes a comma-separated list.
+      const layers: unknown[] = Array.isArray(original) ? original : [original];
+      const value =
+        alias === undefined
+          ? layers.map((layer, index) => shadowLayer(layer, `${what(token)}[${index}]`)).join(', ')
+          : cssVar(alias);
       return [{ name: cssVarName(token.path), value, key: [] }];
     }
     case 'color':

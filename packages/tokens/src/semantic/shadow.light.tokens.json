@@ -1,0 +1,45 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "shadow": {
+    "$type": "shadow",
+    "$description": "Decoration only: surfaces that cast a shadow also have a border. Same geometry as the dark theme, lower opacity.",
+    "raised": {
+      "$description": "Popovers, menus, listboxes.",
+      "$value": [
+        {
+          "color":   { "colorSpace": "oklch", "components": [0, 0, 0], "alpha": 0.06, "hex": "#000000" },
+          "offsetX": { "value": 0, "unit": "px" },
+          "offsetY": { "value": 1, "unit": "px" },
+          "blur":    { "value": 2, "unit": "px" },
+          "spread":  { "value": 0, "unit": "px" }
+        },
+        {
+          "color":   { "colorSpace": "oklch", "components": [0, 0, 0], "alpha": 0.12, "hex": "#000000" },
+          "offsetX": { "value": 0,  "unit": "px" },
+          "offsetY": { "value": 4,  "unit": "px" },
+          "blur":    { "value": 12, "unit": "px" },
+          "spread":  { "value": -2, "unit": "px" }
+        }
+      ]
+    },
+    "overlay": {
+      "$description": "Dialogs and drawers.",
+      "$value": [
+        {
+          "color":   { "colorSpace": "oklch", "components": [0, 0, 0], "alpha": 0.06, "hex": "#000000" },
+          "offsetX": { "value": 0, "unit": "px" },
+          "offsetY": { "value": 2, "unit": "px" },
+          "blur":    { "value": 4, "unit": "px" },
+          "spread":  { "value": 0, "unit": "px" }
+        },
+        {
+          "color":   { "colorSpace": "oklch", "components": [0, 0, 0], "alpha": 0.18, "hex": "#000000" },
+          "offsetX": { "value": 0,  "unit": "px" },
+          "offsetY": { "value": 16, "unit": "px" },
+          "blur":    { "value": 40, "unit": "px" },
+          "spread":  { "value": -8, "unit": "px" }
+        }
+      ]
+    }
+  }
+}

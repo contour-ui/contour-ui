@@ -132,6 +132,59 @@
       "border": {
         "$value": "{base.color.yellow.300}"
       }
+    },
+    "overlay": {
+      "scrim": {
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.165,
+            0.008,
+            255
+          ],
+          "alpha": 0.4,
+          "hex": "#0c0f12"
+        },
+        "$description": "Translucent backdrop behind dialogs and drawers."
+      }
+    },
+    "syntax": {
+      "constant": {
+        "$value": "{base.color.orange.700}",
+        "$description": "Numbers, language constants, constant and object names, CSS properties."
+      },
+      "string": {
+        "$value": "{base.color.yellow.700}",
+        "$description": "Unquoted strings: shell arguments, Markdown code."
+      },
+      "comment": {
+        "$value": "{base.color.neutral.700}",
+        "$description": "Comments."
+      },
+      "keyword": {
+        "$value": "{base.color.violet.700}",
+        "$description": "Keywords and storage modifiers, JSON keys."
+      },
+      "parameter": {
+        "$value": "{base.color.red.700}",
+        "$description": "Function parameters."
+      },
+      "function": {
+        "$value": "{base.color.blue.700}",
+        "$description": "Functions, types and classes, JSX and HTML attributes."
+      },
+      "string-expression": {
+        "$value": "{base.color.green.700}",
+        "$description": "Quoted and template strings, regular expressions, tag names."
+      },
+      "punctuation": {
+        "$value": "{base.color.neutral.800}",
+        "$description": "Separators and argument punctuation."
+      },
+      "link": {
+        "$value": "{base.color.cyan.700}",
+        "$description": "Links in Markdown."
+      }
     }
   }
 }

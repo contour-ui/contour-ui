@@ -154,3 +154,33 @@
   stroke: var(--ct-color-accent-fg);
   stroke-width: 0.06;
 }
+
+/* A theme island like a code block: syntax colors are meant for bg-inset. */
+.token-code {
+  flex: none;
+  padding: var(--ct-space-control-gap) var(--ct-space-group-gap);
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-bg-inset);
+  font: var(--ct-text-code);
+  letter-spacing: var(--ct-text-code-letter-spacing);
+  white-space: nowrap;
+}
+
+/* A theme island with room below a raised surface for its shadow. */
+.token-stage {
+  display: inline-flex;
+  flex: none;
+  padding: var(--ct-space-section-gap) var(--ct-space-section-gap)
+    calc(2 * var(--ct-space-section-gap));
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-surface);
+}
+
+.token-raised {
+  display: block;
+  inline-size: calc(2 * var(--ct-size-control-lg));
+  block-size: var(--ct-size-control-lg);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-raised);
+}

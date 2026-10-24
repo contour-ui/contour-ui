@@ -18,16 +18,17 @@
       "sources": [
         { "$ref": "src/semantic/dimension.tokens.json" },
         { "$ref": "src/semantic/typography.tokens.json" },
-        { "$ref": "src/semantic/motion.tokens.json" }
+        { "$ref": "src/semantic/motion.tokens.json" },
+        { "$ref": "src/semantic/layer.tokens.json" }
       ]
     }
   },
   "modifiers": {
     "theme": {
-      "description": "Color theme. Dark is the default for plugin UIs.",
+      "description": "Color theme: color roles and shadows. Dark is the default for plugin UIs.",
       "contexts": {
-        "dark":  [{ "$ref": "src/semantic/color.dark.tokens.json" }],
-        "light": [{ "$ref": "src/semantic/color.light.tokens.json" }]
+        "dark":  [{ "$ref": "src/semantic/color.dark.tokens.json" },  { "$ref": "src/semantic/shadow.dark.tokens.json" }],
+        "light": [{ "$ref": "src/semantic/color.light.tokens.json" }, { "$ref": "src/semantic/shadow.light.tokens.json" }]
       },
       "default": "dark"
     }

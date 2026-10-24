@@ -139,7 +139,13 @@ Storybook token tables read it, it is not published). The generated files are co
 - After editing token JSON: `vp run --filter @contour-ui/tokens tokens` (or `dev` to watch).
 - The palette and the color roles are generated: edit `scripts/palette.ts` /
   `scripts/semantic-colors.ts`, then `vp run --filter @contour-ui/tokens generate`.
-- Contrast targets for the color roles are tests (`packages/tokens/src/contrast.test.ts`).
+- Color roles and shadows are per theme (`src/semantic/{color,shadow}.<theme>.tokens.json`); a
+  translucent role (`overlay.scrim`) copies its palette color with an alpha in
+  `scripts/semantic-colors.ts`.
+- Contrast targets for the color roles are tests (`packages/tokens/src/contrast.test.ts`); every
+  `syntax.*` role is at least 4.5:1 on `bg.inset`, the code block background.
+- Every token stays expressible in Soundor (`packages/tokens/src/soundor.test.ts`): colors inside
+  sRGB, lengths in px, a named easing for every `cubicBezier`, no `calc()` / `color-mix()` in values.
 
 See [`packages/tokens/README.md`](packages/tokens/README.md).
 

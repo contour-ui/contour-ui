@@ -5,12 +5,25 @@
 import { wcagContrast } from 'culori';
 import { describe, expect, it } from 'vite-plus/test';
 
-import { aliasPath, getPath, parseColor, readJson, tokenValue } from '../scripts/dtcg.ts';
+import {
+  aliasPath,
+  getPath,
+  groupEntries,
+  parseColor,
+  readJson,
+  tokenValue,
+} from '../scripts/dtcg.ts';
 import { PALETTE_FILE, semanticColorFile } from '../scripts/paths.ts';
-import { themes } from './index.ts';
+import { defaultTheme, themes } from './index.ts';
 import type { Theme } from './index.ts';
 
 const STATUS_ROLES = ['accent', 'danger', 'success', 'warning'] as const;
+
+/** Every `color.syntax.*` role: highlighted code is text on the code block background, `bg.inset`. */
+const SYNTAX_ROLES = groupEntries(
+  getPath(readJson(semanticColorFile(defaultTheme)), ['color', 'syntax'], 'color.syntax'),
+  'color.syntax',
+).map(([name]) => `syntax.${name}`);
 
 /** [foreground role, background role, minimum ratio]. */
 const PAIRS: ReadonlyArray<readonly [string, string, number]> = [
@@ -31,6 +44,7 @@ const PAIRS: ReadonlyArray<readonly [string, string, number]> = [
     [`${role}.fill`, 'bg.inset', 3],
   ]),
   ['accent.fill', 'bg.surface', 3],
+  ...SYNTAX_ROLES.map((role): readonly [string, string, number] => [role, 'bg.inset', 4.5]),
 ];
 
 const palette = getPath(readJson(PALETTE_FILE), ['base', 'color'], 'base.color');

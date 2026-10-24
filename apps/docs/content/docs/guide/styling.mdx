@@ -22,18 +22,22 @@ their value. Use them for your own layout, and it will match the components in e
 
 ## Token groups
 
-| Variables               | For                                                                                             |
-| ----------------------- | ----------------------------------------------------------------------------------------------- |
-| `--ct-color-bg-*`       | backgrounds by layer: `canvas`, `surface`, `raised`, `inset`, `hover`                           |
-| `--ct-color-fg-*`       | text and icons: `default`, `muted`, `subtle`, `disabled`                                        |
-| `--ct-color-border-*`   | `subtle` dividers, `default` outlines, `strong` control edges, `focus` rings                    |
-| `--ct-color-<status>-*` | `accent`, `success`, `warning`, `danger`: `fill`, `fill-hover`, `on-fill`, `fg`, `bg`, `border` |
-| `--ct-space-*`          | padding and gaps: `control-inset`, `control-gap`, `group-gap`, `panel-inset`, `section-gap`     |
-| `--ct-size-*`           | control heights: `control-sm`, `control-md`, `control-lg`                                       |
-| `--ct-radius-*`         | `control`, `panel`, `round`                                                                     |
-| `--ct-border-width-*`   | `default`, `focus`                                                                              |
-| `--ct-text-*`           | text styles: `heading`, `body`, `label`, `value`, `caption`                                     |
-| `--ct-motion-*`         | transitions: `feedback`, `enter`                                                                |
+| Variables               | For                                                                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `--ct-color-bg-*`       | backgrounds by layer: `canvas`, `surface`, `raised`, `inset`, `hover`                                                              |
+| `--ct-color-fg-*`       | text and icons: `default`, `muted`, `subtle`, `disabled`                                                                           |
+| `--ct-color-border-*`   | `subtle` dividers, `default` outlines, `strong` control edges, `focus` rings                                                       |
+| `--ct-color-<status>-*` | `accent`, `success`, `warning`, `danger`: `fill`, `fill-hover`, `on-fill`, `fg`, `bg`, `border`                                    |
+| `--ct-color-overlay-*`  | `scrim`: the translucent backdrop behind dialogs and drawers                                                                       |
+| `--ct-color-syntax-*`   | code highlighting: `constant`, `string`, `comment`, `keyword`, `parameter`, `function`, `string-expression`, `punctuation`, `link` |
+| `--ct-space-*`          | padding and gaps: `control-inset`, `control-gap`, `group-gap`, `panel-inset`, `section-gap`                                        |
+| `--ct-size-*`           | control heights: `control-sm`, `control-md`, `control-lg`                                                                          |
+| `--ct-radius-*`         | `control`, `panel`, `round`                                                                                                        |
+| `--ct-border-width-*`   | `default`, `focus`                                                                                                                 |
+| `--ct-shadow-*`         | `raised` for popovers and menus, `overlay` for dialogs and drawers                                                                 |
+| `--ct-layer-*`          | stacking order (`z-index`): `sticky` headers, `overlay` popovers and dialogs                                                       |
+| `--ct-text-*`           | text styles: `heading`, `body`, `label`, `value`, `caption`; long-form pages: `display`, `title`, `subtitle`, `prose`, `code`      |
+| `--ct-motion-*`         | transitions: `feedback`, `enter`, `exit`                                                                                           |
 
 ## Rules
 
@@ -41,11 +45,17 @@ their value. Use them for your own layout, and it will match the components in e
   shorthand: pair it with `--ct-text-<style>-letter-spacing`. Single values are available too:
   `-font-family`, `-font-size`, `-font-weight`, `-line-height`.
 - **Motion.** `--ct-motion-<name>` is a duration, easing and delay:
-  `transition: background-color var(--ct-motion-feedback)`.
+  `transition: background-color var(--ct-motion-feedback)`. `exit` is shorter than `enter`, for
+  things that close.
+- **Shadows and layers.** `--ct-shadow-<name>` is a `box-shadow` value, stronger in the dark theme.
+  It is decoration: whatever casts it also has a border and a `raised` background.
+  `--ct-layer-<name>` is a plain number for `z-index`.
+- **Code.** The syntax colors follow the variables of Shiki's `css-variables` theme:
+  `--shiki-token-<name>` takes `--ct-color-syntax-<name>`. Code blocks sit on `bg-inset`.
 - **Contrast.** Text roles meet WCAG targets on the backgrounds they are meant for, in both themes:
   `fg-default` on `canvas`, `surface` and `raised` (7:1), `fg-muted` on `surface` and `raised`
-  (4.5:1). `fg-subtle` (3:1) is for units and tick labels, not body text; `fg-disabled` is for
-  disabled labels and has no target.
+  (4.5:1), every syntax color on `inset` (4.5:1). `fg-subtle` (3:1) is for units and tick labels,
+  not body text; `fg-disabled` is for disabled labels and has no target.
 - **Never use `--ct-base-*`.** Those are the raw palette and scales behind the roles. They exist so
   roles can refer to them, are not part of the API, and change without notice.
 

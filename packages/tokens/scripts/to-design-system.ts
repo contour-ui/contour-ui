@@ -62,6 +62,10 @@ const refName = (ref: unknown): string => {
   return cssVarName(target).slice(2);
 };
 
+/** A role in one theme: `{ct-…}` for an alias, the CSS color for a translucent literal. */
+const roleRef = (value: unknown, what: string): string =>
+  aliasPath(value) === undefined ? cssColor(value, what) : `{${refName(value)}}`;
+
 /** Resolve `{base.…}` aliases against the merged base groups; literals pass through. */
 const resolveBase = (value: unknown): unknown => {
   const target = aliasPath(value);
@@ -84,6 +88,7 @@ const usage: Readonly<Record<string, string>> = {
   'border-default': 'Panel and card outlines.',
   'border-strong': 'Control boundaries (inputs, selects). 3:1 on surface.',
   'border-focus': 'Focus ring. 3:1 on surface and inset.',
+  'overlay-scrim': 'Translucent backdrop behind dialogs and drawers.',
 };
 
 const capitalize = (value: string): string => `${value.charAt(0).toUpperCase()}${value.slice(1)}`;
@@ -98,13 +103,18 @@ const statusUsage: Readonly<Record<string, (role: string) => string>> = {
   border: (role) => `Outline paired with ${role}-bg.`,
 };
 
+/** Code highlighting roles: what Shiki colors with them, and the variable they feed. */
+const syntaxUsage = (role: string, description: unknown): string =>
+  `${typeof description === 'string' ? `${description} ` : ''}Shiki css-variables theme: --shiki-token-${role}. 4.5:1 on inset.`;
+
 interface ListedToken {
   readonly name: string;
   readonly value: unknown;
   readonly usage: string | undefined;
 }
 
-// Colors: base palette as plain values, roles as per-theme aliases (dark first, the default).
+// Colors: base palette as plain values, roles as per-theme aliases or translucent colors
+// (dark first, the default).
 const colorTokens: ListedToken[] = [];
 for (const [hue, stops] of groupEntries(getPath(base, ['color'], 'base.color'), 'base.color')) {
   for (const [stop, token] of groupEntries(stops, `base.color.${hue}`)) {
@@ -116,14 +126,21 @@ for (const [hue, stops] of groupEntries(getPath(base, ['color'], 'base.color'), 
   }
 }
 for (const [group, roles] of groupEntries(themeColors.dark, 'color.dark')) {
-  for (const [role] of groupEntries(roles, `color.dark.${group}`)) {
+  for (const [role, token] of groupEntries(roles, `color.dark.${group}`)) {
     const key = `${group}-${role}`;
-    const roleValue = (theme: 'dark' | 'light'): unknown =>
-      tokenValue(getPath(themeColors[theme], [group, role], key), key);
+    const roleValue = (theme: 'dark' | 'light'): string =>
+      roleRef(
+        tokenValue(getPath(themeColors[theme], [group, role], key), key),
+        `${key} (${theme})`,
+      );
+    const description = expectRecord(token, key)['$description'];
     colorTokens.push({
       name: `ct-color-${key}`,
-      value: { dark: `{${refName(roleValue('dark'))}}`, light: `{${refName(roleValue('light'))}}` },
-      usage: usage[key] ?? statusUsage[role]?.(group) ?? '',
+      value: { dark: roleValue('dark'), light: roleValue('light') },
+      usage:
+        group === 'syntax'
+          ? syntaxUsage(role, description)
+          : (usage[key] ?? statusUsage[role]?.(group) ?? ''),
     });
   }
 }
@@ -202,6 +219,18 @@ const tokens = {
         family: 'mono',
         styles: [textStyle('value', '-6.0 dB  1.20 kHz  Q 0.71')],
       },
+      {
+        name: 'Long-form',
+        family: 'ui',
+        styles: ['display', 'title', 'subtitle', 'prose'].map((style) =>
+          textStyle(style, 'Styling with tokens'),
+        ),
+      },
+      {
+        name: 'Code',
+        family: 'mono',
+        styles: [textStyle('code', "import { vars } from '@contour-ui/tokens';")],
+      },
     ],
   },
   spacing: {
@@ -259,6 +288,7 @@ const tokens = {
       lookupNote({
         0: 'No transition.',
         80: 'Hover, press, toggle feedback (motion.feedback).',
+        100: 'Menus, popovers and dialogs closing (motion.exit).',
         150: 'Menus and popovers appearing (motion.enter).',
         250: 'Larger panel transitions.',
       }),

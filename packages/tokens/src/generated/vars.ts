@@ -75,12 +75,65 @@ export const vars = {
       lineHeight: 'var(--ct-text-caption-line-height)',
       letterSpacing: 'var(--ct-text-caption-letter-spacing)',
     },
+    /** Page title of long-form pages such as docs (h1). */
+    display: {
+      font: 'var(--ct-text-display)',
+      fontFamily: 'var(--ct-text-display-font-family)',
+      fontSize: 'var(--ct-text-display-font-size)',
+      fontWeight: 'var(--ct-text-display-font-weight)',
+      lineHeight: 'var(--ct-text-display-line-height)',
+      letterSpacing: 'var(--ct-text-display-letter-spacing)',
+    },
+    /** Section heading of long-form pages (h2). */
+    title: {
+      font: 'var(--ct-text-title)',
+      fontFamily: 'var(--ct-text-title-font-family)',
+      fontSize: 'var(--ct-text-title-font-size)',
+      fontWeight: 'var(--ct-text-title-font-weight)',
+      lineHeight: 'var(--ct-text-title-line-height)',
+      letterSpacing: 'var(--ct-text-title-letter-spacing)',
+    },
+    /** Subsection heading of long-form pages (h3). */
+    subtitle: {
+      font: 'var(--ct-text-subtitle)',
+      fontFamily: 'var(--ct-text-subtitle-font-family)',
+      fontSize: 'var(--ct-text-subtitle-font-size)',
+      fontWeight: 'var(--ct-text-subtitle-font-weight)',
+      lineHeight: 'var(--ct-text-subtitle-line-height)',
+      letterSpacing: 'var(--ct-text-subtitle-letter-spacing)',
+    },
+    /** Long-form reading: docs paragraphs and lists. */
+    prose: {
+      font: 'var(--ct-text-prose)',
+      fontFamily: 'var(--ct-text-prose-font-family)',
+      fontSize: 'var(--ct-text-prose-font-size)',
+      fontWeight: 'var(--ct-text-prose-font-weight)',
+      lineHeight: 'var(--ct-text-prose-line-height)',
+      letterSpacing: 'var(--ct-text-prose-letter-spacing)',
+    },
+    /** Code in running text and in code blocks. Same line height as body, so inline code never spreads its lines. */
+    code: {
+      font: 'var(--ct-text-code)',
+      fontFamily: 'var(--ct-text-code-font-family)',
+      fontSize: 'var(--ct-text-code-font-size)',
+      fontWeight: 'var(--ct-text-code-font-weight)',
+      lineHeight: 'var(--ct-text-code-line-height)',
+      letterSpacing: 'var(--ct-text-code-letter-spacing)',
+    },
   },
   motion: {
     /** Hover, press, toggle state. Never used for value changes driven by drag or automation — those render immediately. */
     feedback: 'var(--ct-motion-feedback)',
     /** Menus and popovers appearing. */
     enter: 'var(--ct-motion-enter)',
+    /** Menus, popovers and dialogs closing: shorter than enter, accelerating away. */
+    exit: 'var(--ct-motion-exit)',
+  },
+  layer: {
+    /** Sticky headers and toolbars, above page content. */
+    sticky: 'var(--ct-layer-sticky)',
+    /** Popovers, dialogs and drawers, above sticky elements. */
+    overlay: 'var(--ct-layer-overlay)',
   },
   color: {
     bg: {
@@ -140,6 +193,36 @@ export const vars = {
       bg: 'var(--ct-color-warning-bg)',
       border: 'var(--ct-color-warning-border)',
     },
+    overlay: {
+      /** Translucent backdrop behind dialogs and drawers. */
+      scrim: 'var(--ct-color-overlay-scrim)',
+    },
+    syntax: {
+      /** Numbers, language constants, constant and object names, CSS properties. */
+      constant: 'var(--ct-color-syntax-constant)',
+      /** Unquoted strings: shell arguments, Markdown code. */
+      string: 'var(--ct-color-syntax-string)',
+      /** Comments. */
+      comment: 'var(--ct-color-syntax-comment)',
+      /** Keywords and storage modifiers, JSON keys. */
+      keyword: 'var(--ct-color-syntax-keyword)',
+      /** Function parameters. */
+      parameter: 'var(--ct-color-syntax-parameter)',
+      /** Functions, types and classes, JSX and HTML attributes. */
+      function: 'var(--ct-color-syntax-function)',
+      /** Quoted and template strings, regular expressions, tag names. */
+      'string-expression': 'var(--ct-color-syntax-string-expression)',
+      /** Separators and argument punctuation. */
+      punctuation: 'var(--ct-color-syntax-punctuation)',
+      /** Links in Markdown. */
+      link: 'var(--ct-color-syntax-link)',
+    },
+  },
+  shadow: {
+    /** Popovers, menus, listboxes. */
+    raised: 'var(--ct-shadow-raised)',
+    /** Dialogs and drawers. */
+    overlay: 'var(--ct-shadow-overlay)',
   },
 } as const;
 

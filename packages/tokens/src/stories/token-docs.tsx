@@ -7,7 +7,7 @@ import { Fragment, useEffect, useState } from 'react';
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
 
 import docs from '../generated/docs.json' with { type: 'json' };
-import { themes } from '../index.ts';
+import { themes, vars } from '../index.ts';
 import type { Theme } from '../index.ts';
 
 import './token-docs.css';
@@ -135,6 +135,12 @@ export function Parts({
   );
 }
 
+/**
+ * Two-tone backdrop under each swatch: an opaque color hides it, a translucent
+ * one (the scrim) shows how much it dims light and dark content.
+ */
+const SWATCH_BACKDROP = `linear-gradient(135deg, ${vars.color.fg.default} 50%, ${vars.color.bg.canvas} 50%)`;
+
 /** Color swatch drawn in `theme`, on that theme's canvas. */
 export function ColorChip({
   name,
@@ -145,7 +151,63 @@ export function ColorChip({
 }): ReactElement {
   return (
     <span className="token-chip" data-theme={theme} aria-hidden="true">
-      <span className="token-swatch" style={{ background: `var(${name})` }} />
+      <span
+        className="token-swatch"
+        style={{ background: `linear-gradient(var(${name}), var(${name})), ${SWATCH_BACKDROP}` }}
+      />
+    </span>
+  );
+}
+
+/** Code text colored with the token, on the code block background (`bg.inset`) of `theme`. */
+export function CodeSample({
+  name,
+  theme,
+  children,
+}: {
+  readonly name: string;
+  readonly theme: Theme;
+  readonly children: ReactNode;
+}): ReactElement {
+  return (
+    <span className="token-code" data-theme={theme} style={{ color: `var(${name})` }}>
+      {children}
+    </span>
+  );
+}
+
+/** A raised surface casting the shadow, on the surface of `theme` it would float over. */
+export function ShadowSample({
+  name,
+  theme,
+}: {
+  readonly name: string;
+  readonly theme: Theme;
+}): ReactElement {
+  return (
+    <span className="token-stage" data-theme={theme} aria-hidden="true">
+      <span className="token-raised" style={{ boxShadow: `var(${name})` }} />
+    </span>
+  );
+}
+
+/** A `box-shadow` value in `theme`, one layer per line, with the custom property it aliases. */
+export function ShadowValue({
+  doc,
+  theme,
+}: {
+  readonly doc: TokenDoc;
+  readonly theme: Theme;
+}): ReactElement {
+  const { value, alias } = doc.themes[theme];
+  // Layers are separated by commas outside parentheses.
+  const layers = value.split(/,\s*(?![^()]*\))/u);
+  return (
+    <span className="token-value">
+      {layers.map((layer) => (
+        <code key={layer}>{layer}</code>
+      ))}
+      {alias !== null && <code className="token-muted">{alias}</code>}
     </span>
   );
 }

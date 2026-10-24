@@ -4,11 +4,14 @@ import { expect } from 'storybook/test';
 
 import { defaultTheme, themes } from '../index.ts';
 import {
+  CodeSample,
   ColorChip,
   EasingCurve,
   PaletteTable,
   Parts,
   Sample,
+  ShadowSample,
+  ShadowValue,
   ThemeValue,
   TokenTable,
   Value,
@@ -55,21 +58,64 @@ const COLOR_GROUPS: Readonly<Record<string, string>> = { bg: 'Background', fg: '
 const colorGroup = (group: string): string =>
   COLOR_GROUPS[group] ?? `${group.charAt(0).toUpperCase()}${group.slice(1)}`;
 
-/** Semantic color roles, the only colors components use, in every theme. */
+const SYNTAX = 'color.syntax.';
+
+/** Semantic color roles, the only colors components use, in every theme (syntax colors below). */
 export const ColorRoles: Story = {
   render: () => (
     <div className="token-stack">
-      {[...groupTokens(tokensIn('color.'), (doc) => doc.token.split('.')[1] ?? '')].map(
-        ([group, rows]) => (
-          <TokenTable
-            key={group}
-            caption={`Color: ${colorGroup(group)}`}
-            rows={rows}
-            columns={colorColumns}
-          />
+      {[
+        ...groupTokens(
+          tokensIn('color.').filter((doc) => !doc.token.startsWith(SYNTAX)),
+          (doc) => doc.token.split('.')[1] ?? '',
         ),
-      )}
+      ].map(([group, rows]) => (
+        <TokenTable
+          key={group}
+          caption={`Color: ${colorGroup(group)}`}
+          rows={rows}
+          columns={colorColumns}
+        />
+      ))}
     </div>
+  ),
+};
+
+/** What each `color.syntax.<role>` colors, as code text. */
+const SYNTAX_SAMPLES: Readonly<Record<string, string>> = {
+  constant: 'MAX_GAIN 0.71 true',
+  string: 'add @contour-ui/kit',
+  comment: '// Follow the system theme',
+  keyword: 'export const return',
+  parameter: 'theme event',
+  function: 'useTheme() Button',
+  'string-expression': "'dark' /px$/",
+  punctuation: '{ } ( ) , ;',
+  link: 'https://example.com',
+};
+
+/**
+ * Code highlighting roles, named after the variables of Shiki's `css-variables`
+ * theme: `--shiki-token-<role>: var(--ct-color-syntax-<role>)`. Each is at least
+ * 4.5:1 on `bg.inset`, the code block background.
+ */
+export const SyntaxColors: Story = {
+  render: () => (
+    <TokenTable
+      caption="Color: Syntax"
+      rows={tokensIn(SYNTAX)}
+      columns={themes.map((theme) => ({
+        title: theme,
+        render: (doc) => (
+          <span className="token-row">
+            <CodeSample name={doc.name} theme={theme}>
+              {SYNTAX_SAMPLES[doc.token.slice(SYNTAX.length)] ?? doc.token}
+            </CodeSample>
+            <ThemeValue doc={doc} theme={theme} />
+          </span>
+        ),
+      }))}
+    />
   ),
 };
 
@@ -172,6 +218,30 @@ export const BorderWidth: Story = {
       columns={[sample('token-box', (ref) => ({ borderWidth: ref })), value]}
     />
   ),
+};
+
+/** `box-shadow: var(--ct-shadow-<name>)`. Decoration only: surfaces with a shadow also have a border. */
+export const Shadow: Story = {
+  render: () => (
+    <TokenTable
+      caption="Shadow"
+      rows={tokensIn('shadow.')}
+      columns={themes.map((theme) => ({
+        title: theme,
+        render: (doc) => (
+          <span className="token-row">
+            <ShadowSample name={doc.name} theme={theme} />
+            <ShadowValue doc={doc} theme={theme} />
+          </span>
+        ),
+      }))}
+    />
+  ),
+};
+
+/** Stacking order: `z-index: var(--ct-layer-<name>)`. */
+export const Layer: Story = {
+  render: () => <TokenTable caption="Layer" rows={tokensIn('layer.')} columns={[value]} />,
 };
 
 /** Transitions: `transition: <property> var(--ct-motion-<name>)`. */

@@ -10,6 +10,11 @@
       "$type": "transition",
       "$description": "Menus and popovers appearing.",
       "$value": { "duration": "{base.duration.150}", "delay": "{base.duration.0}", "timingFunction": "{base.easing.standard}" }
+    },
+    "exit": {
+      "$type": "transition",
+      "$description": "Menus, popovers and dialogs closing: shorter than enter, accelerating away.",
+      "$value": { "duration": "{base.duration.100}", "delay": "{base.duration.0}", "timingFunction": "{base.easing.in}" }
     }
   }
 }
