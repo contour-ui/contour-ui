@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Manual runs (Actions → CI → Run workflow); the only trigger of the paused visual job.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -48,6 +50,10 @@ jobs:
     name: Visual (Playwright screenshots of the styled Storybooks)
     needs: check
     runs-on: ubuntu-latest
+    # Paused while the first kit components land and their look changes on almost
+    # every commit: runs only when the workflow is started by hand. It goes back
+    # to every push once the baselines are refreshed (see AGENTS.md, "Visual tests").
+    if: github.event_name == 'workflow_dispatch'
     # The image `vp run visual` uses locally (apps/storybook/scripts/visual.ts), so the
     # committed screenshots compare pixel for pixel. Keep the tag equal to
     # `@playwright/test` in pnpm-workspace.yaml.
