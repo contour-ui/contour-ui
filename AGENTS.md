@@ -29,6 +29,10 @@ Rules:
 - `headless` must not depend on `tokens`, `icons`, `kit`, `audio`. Peers: `react`, `react-dom`.
 - Kits (`kit`, `audio`) are styled with plain CSS + token CSS variables. **No Tailwind in packages.**
   Use semantic roles only (`--ct-color-*`, `--ct-space-*`, `--ct-text-*`…), never `--ct-base-*`.
+- Kit CSS is one file per component (`src/<component>/<component>.css`) with plain rules, added to
+  `src/styles.css` as `@import './<component>/<component>.css' layer(contour.kit);` (audio:
+  `layer(contour.audio)`; its entry declares `@layer contour.kit, contour.audio;` so audio always
+  ranks above kit). Unlayered app CSS overrides both.
 - `react` / `react-dom` are never regular `dependencies`; in `headless` and kits they are required peers.
 
 **Enforcement.** The table lives as data in [`scripts/layers.ts`](scripts/layers.ts) — edit it there only.
@@ -114,6 +118,9 @@ Every published package maps its entry points to sources under the custom
   resolver ignores custom conditions, so package CSS does not `@import` other workspace packages: apps
   load `@contour-ui/tokens/tokens.css` and `@contour-ui/tokens/fonts.css`, then
   `@contour-ui/kit/styles.css`, then `@contour-ui/audio/styles.css`.
+- A `.css` file in `libraryPack()`'s `entry` is bundled by `vp pack` into `dist/<name>.css`
+  (Lightning CSS inlines its relative `@import`s and turns `layer()` into `@layer` blocks); files
+  passed as `css` (tokens) are copied verbatim, so their `@import`s stay external.
 
 ## Tokens
 

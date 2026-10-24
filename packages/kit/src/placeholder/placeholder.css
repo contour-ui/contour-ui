@@ -1,0 +1,9 @@
+.contour-placeholder {
+  padding: var(--ct-space-control-inset);
+  border: var(--ct-border-width-default) solid var(--ct-color-accent-border);
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-accent-bg);
+  color: var(--ct-color-accent-fg);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}

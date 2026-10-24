@@ -6,7 +6,10 @@ Private, never published. Shared Vite / Vitest / pack helpers for the workspace.
   condition, so apps, Storybook and tests consume package **sources** with HMR
   instead of `dist/`.
 - `libraryPack({ entry, css })` — `vp pack` settings shared by every published
-  package (ESM only, `.d.ts`, publint + attw, CSS copied unbundled).
+  package (ESM only, `.d.ts`, publint + attw). A `.css` file in `entry` is bundled
+  into `dist/<name>.css`: Lightning CSS inlines its `@import`s, `layer()` included
+  (kit and audio `styles.css`). Files in `css` are copied verbatim, so their
+  `@import`s stay external (tokens `fonts.css` keeps importing Fontsource).
 - `chromium()` — Vitest browser-mode settings (Playwright, headless Chromium).
 - `storybookConfig()` (`@contour-ui/vite-config/storybook`) — shared package
   `.storybook/main.ts`: React + Vite, docs, a11y, Vitest addon.

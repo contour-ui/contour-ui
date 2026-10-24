@@ -1,3 +1,9 @@
+/*
+ * Cascade layer order, as the installation guide recommends with Tailwind: contour-ui's
+ * layers rank above Preflight (`base`) and below the utilities.
+ */
+@layer theme, base, contour, components, utilities;
+
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';

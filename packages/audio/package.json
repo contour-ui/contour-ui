@@ -14,7 +14,7 @@
   "type": "module",
   "sideEffects": [
     "./dist/styles.css",
-    "./src/styles.css"
+    "./src/**/*.css"
   ],
   "exports": {
     ".": {

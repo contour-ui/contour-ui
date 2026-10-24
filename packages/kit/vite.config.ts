@@ -7,7 +7,7 @@ import { defineConfig } from 'vite-plus';
 
 export default defineConfig({
   plugins: [contourSource(), react()],
-  pack: libraryPack({ entry: { index: 'src/index.ts' }, css: ['src/styles.css'] }),
+  pack: libraryPack({ entry: { index: 'src/index.ts', styles: 'src/styles.css' } }),
   test: {
     projects: [
       {

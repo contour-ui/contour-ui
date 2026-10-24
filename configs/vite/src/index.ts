@@ -30,7 +30,10 @@ export function contourSource(): Plugin {
 type PackConfig = NonNullable<UserConfig['pack']>;
 
 export interface LibraryPackOptions {
-  /** tsdown entries, e.g. `{ index: 'src/index.ts' }`. */
+  /**
+   * tsdown entries, e.g. `{ index: 'src/index.ts', styles: 'src/styles.css' }`. A CSS entry is
+   * bundled into `dist/<name>.css`: Lightning CSS inlines its `@import`s (`layer()` included).
+   */
   readonly entry: Record<string, string>;
   /** CSS entry points copied verbatim to `dist/` (kept unbundled so `@import`s stay external). */
   readonly css?: readonly string[];
@@ -44,6 +47,9 @@ export function libraryPack({ entry, css = [] }: LibraryPackOptions): PackConfig
     platform: 'neutral',
     dts: true,
     sourcemap: true,
+    // One stylesheet per CSS entry instead of a single merged `style.css`; the empty JS
+    // chunk of a CSS-only entry is dropped.
+    css: { splitting: true },
     copy: css.map((from) => ({ from, to: 'dist' })),
     publint: { level: 'suggestion' },
     // CSS entry points have no types by design; attw only checks the JS entries.

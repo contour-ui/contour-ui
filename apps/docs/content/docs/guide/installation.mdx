@@ -46,6 +46,51 @@ your app already provides these fonts; the token font stacks fall back to system
 
 Headless needs no stylesheet.
 
+### Cascade layers
+
+Every Kit and Audio rule sits in a
+[cascade layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer): `contour.kit` and
+`contour.audio`, both inside the `contour` layer. CSS outside any layer wins over layered CSS
+whatever its selectors, so your own stylesheet overrides a component without heavier selectors or
+`!important`:
+
+```css title="app.css"
+/* Wins over Kit's rule for the same class: same selector, but not in a layer. */
+.contour-placeholder {
+  border-radius: 0;
+}
+```
+
+- **Audio over Kit.** Where both style the same element, Audio wins. The Audio stylesheet declares
+  `contour.kit` before `contour.audio`, so this holds whichever of the two loads first.
+- **Tokens.** `tokens.css` only defines custom properties on `:root`, outside any layer, so the
+  layers do not affect it.
+
+Resets count as your CSS too: a reset loaded outside a layer overrides the components as well.
+Give it a layer declared before `contour`:
+
+```css title="app.css"
+@layer reset, contour;
+@import './reset.css' layer(reset);
+```
+
+### With Tailwind CSS
+
+Tailwind CSS v4 puts its CSS in four layers: `theme`, `base` (Preflight, its reset), `components`
+and `utilities`. Layers rank in the order they are first declared, the last one strongest, so
+declare the whole order once, at the top of the stylesheet that imports Tailwind:
+
+```css title="app.css"
+@layer theme, base, contour, components, utilities;
+@import 'tailwindcss';
+```
+
+`contour` comes after `base`, so Preflight does not strip the components' padding, borders and
+backgrounds, and before `utilities`, so a utility class overrides a component, as in
+`<Placeholder.Root className="rounded-none">`. Without this line the order follows whichever
+stylesheet loads first: if Kit's comes first, Preflight resets the components; if Tailwind's
+does, utilities cannot override them.
+
 ## Page background
 
 Tokens do not style the page itself. Give the document the canvas colors so the space around
