@@ -21,7 +21,10 @@ point **down** the table only — never up, never sideways — with one exceptio
 Rules:
 
 - `core` has no React and no DOM (`lib` excludes `DOM`). The only exception is the
-  `@contour-ui/core/react` subpath (`src/react/`), with `react` as an **optional** peer.
+  `@contour-ui/core/react` subpath (`src/react/`), with `react` as an **optional** peer. Its
+  tests run in Chromium and are the only core files type-checked with DOM types:
+  `packages/core/tsconfig.json` is solution-style and references `tsconfig.lib.json` (sources,
+  Node tests), `tsconfig.react-test.json` (browser tests) and `tsconfig.config.json` (`vite.config.ts`).
 - `core` also runs on Hermes (the Soundor runtime, built without `Intl`): no `Intl`, no
   locale-dependent methods (`toLocale*`, `localeCompare`), no `eval` / `new Function`, no
   `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`.
@@ -62,7 +65,7 @@ built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` tas
 | `vp install`                             | install (pnpm 12, pinned via `packageManager`)                                                                                  |
 | `vp check` / `vp check --fix`            | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                  |
 | `vp run boundaries`                      | layer boundary check for `package.json` / CSS                                                                                   |
-| `vp test`                                | all Vitest projects: node (core, tokens, icons), Chromium browser mode + stories-as-tests (UI packages)                         |
+| `vp test`                                | all Vitest projects: node (core, tokens, icons), Chromium (core's React hooks, UI packages), stories-as-tests (UI packages)     |
 | `vp -C packages/kit test`                | one package's tests                                                                                                             |
 | `vp run -r build`                        | build everything (`vp pack` + publint + attw for packages, apps)                                                                |
 | `vp run storybook`                       | every package Storybook + the composition host on http://localhost:6100                                                         |

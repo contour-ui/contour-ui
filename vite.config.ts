@@ -139,6 +139,7 @@ export default defineConfig({
       },
       {
         files: [
+          'packages/core/src/react/**',
           'packages/headless/**',
           'packages/kit/**',
           'packages/audio/**',

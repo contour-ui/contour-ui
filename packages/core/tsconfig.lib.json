@@ -1,0 +1,7 @@
+{
+  // Sources and Node tests: no DOM types.
+  "extends": "./tsconfig.json",
+  "include": ["src"],
+  // Browser tests of the React subpath: tsconfig.react-test.json.
+  "exclude": ["src/react/**/*.test.ts", "src/react/**/*.test.tsx"]
+}

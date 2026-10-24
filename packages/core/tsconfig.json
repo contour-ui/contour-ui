@@ -1,9 +1,17 @@
 {
+  // Solution-style: no files of its own. Editors and type-aware lint give each file to the
+  // first referenced project that includes it. The options below are shared through `extends`
+  // and are what tools reading only this file get (`vp pack`, Vite transforms).
   "extends": "@contour-ui/typescript-config/library.json",
   "compilerOptions": {
     // core is renderer-agnostic: no DOM lib. React types only reach src/react/.
     "lib": ["ES2023"],
     "jsx": "react-jsx"
   },
-  "include": ["src"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.lib.json" },
+    { "path": "./tsconfig.react-test.json" },
+    { "path": "./tsconfig.config.json" }
+  ]
 }

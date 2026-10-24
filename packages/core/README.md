@@ -1,7 +1,7 @@
 # @contour-ui/core
 
 **Layer 1 — logic.** Framework- and renderer-agnostic UI logic. No React, no DOM
-(`lib` excludes `DOM`).
+(`lib` excludes `DOM`), except the `@contour-ui/core/react` subpath.
 
 | Directory       | Purpose                                                    |
 | --------------- | ---------------------------------------------------------- |
@@ -10,7 +10,32 @@
 | `interactions/` | pointer / keyboard logic; **never imports `states/`**      |
 | `scales/`       | value scales (linear, log, dB…)                            |
 | `format/`       | value formatting / parsing                                 |
-| `react/`        | `@contour-ui/core/react` subpath (future `useMachine`)     |
+| `react/`        | `@contour-ui/core/react` subpath: React hooks (see below)  |
 
 - **May depend on (internal):** nothing.
 - **Peers:** `react` — optional, used only by `@contour-ui/core/react`.
+
+## `@contour-ui/core/react`
+
+Hooks shared by every renderer adapter: React only, no `react-dom`.
+
+- `useControllableState({ value, defaultValue, onValueChange, isEqual })` — state that the owner
+  of a component may control (`value`) or leave to the component (`defaultValue`). Returns
+  `[value, setValue]` like `useState`: the setter is stable, takes a value or an updater, and
+  reports every change as `onValueChange({ value })`. A value equal to the current one
+  (`isEqual`, `Object.is` by default) is dropped.
+
+```ts
+const [open, setOpen] = useControllableState({
+  value: props.open,
+  defaultValue: props.defaultOpen ?? false,
+  onValueChange: ({ value }) => props.onOpenChange?.({ open: value }),
+});
+```
+
+## Tests and types
+
+Tests in `src/react/` run in Chromium (Vitest browser mode, project `core:react`); the rest run in
+Node (project `core`). `tsconfig.json` holds the shared options and references the projects that
+own the files: `tsconfig.lib.json` (sources and Node tests, no DOM), `tsconfig.react-test.json`
+(the browser tests, with DOM) and `tsconfig.config.json` (`vite.config.ts`).

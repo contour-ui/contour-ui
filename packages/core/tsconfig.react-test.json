@@ -1,0 +1,8 @@
+{
+  // Browser tests (Chromium) of @contour-ui/core/react: the only core files with DOM types.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src/react/**/*.test.ts", "src/react/**/*.test.tsx"]
+}
