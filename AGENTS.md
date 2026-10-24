@@ -143,6 +143,40 @@ Storybook token tables read it, it is not published). The generated files are co
 
 See [`packages/tokens/README.md`](packages/tokens/README.md).
 
+## Icons
+
+`packages/icons` compiles [Lucide](https://lucide.dev) icons (`lucide-static`) and brand logos from
+Simple Icons into `src/generated/icons.ts` (committed): paths with only absolute `M`, `L`, `C`,
+`Q`, `Z`, as `d` strings for SVG and numeric `commands` for Canvas 2D, one `<camelName>Icon` export
+each, plus `drawIcon` (a structural canvas context, no `Path2D`). No React here: the kits render
+the data as `<svg>`.
+
+- To add an icon, list it in `scripts/icon-list.ts`, then run
+  `vp run --filter @contour-ui/icons icons`. `vp test` fails when the generated file is stale.
+- `packages/icons/THIRD-PARTY-NOTICES.md` carries the Lucide license (ISC, plus MIT for the icons
+  derived from Feather) and ships with the package; a test keeps it equal to `lucide-static/LICENSE`.
+
+## Components
+
+The guide's "Anatomy of a component" (`apps/docs/content/docs/guide/index.mdx`) is the public
+version of these rules.
+
+- **Where a component lives.** Behavior lives in `core` (state machines) and `headless` (DOM
+  parts with ARIA and keyboard handling); styles live in the kits. A component without behavior
+  (button, card, alert, kbd…) exists only in `kit` / `audio`.
+- **Exports.** A single-element component is a plain component (`Button`, `Kbd`). A multi-part
+  component is a namespace of parts: `export * as Card from './card/index.ts'` gives `Card.Root`,
+  `Card.Title`.
+- **Parts.** Each part renders one element through `Primitive.<element>` from `headless`, so it
+  supports `asChild`, and passes its element's props through. A part combines its own props with
+  the user's as `mergeProps(ownProps, props)` and refs with `useComposedRefs`. Headless parts carry
+  `data-scope` (component) and `data-part` (part), and their state as `data-state` and the like.
+- **Kit styles.** Classes `contour-<component>` on the root or the single element and
+  `contour-<component>__<part>` on the other parts, joined with the user's `className` by `cx`
+  (`packages/kit/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
+  `data-size`, so selectors read `.contour-button[data-variant='solid']`. CSS: one file per
+  component (see "Layers").
+
 ## Docs
 
 `apps/docs` (Fumadocs) documents what ships: a **Guide** (how the packages fit together,

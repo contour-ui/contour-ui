@@ -3,9 +3,10 @@ title: Headless
 description: Unstyled React components with the structure and behavior of contour-ui, for your own look.
 ---
 
-Headless components render the DOM structure and behavior of each component, and nothing else: no
-CSS, no tokens, no themes. [Kit](/docs/kit) is built on them, so switching a component between
-Kit and Headless keeps its parts and props.
+Headless components render the DOM structure and behavior of interactive components, and nothing
+else: no CSS, no tokens, no themes. [Kit](/docs/kit) styles them, so switching such a component
+between Kit and Headless keeps its parts and props. Components without behavior, such as buttons
+and cards, exist only in Kit.
 
 ## Setup
 
@@ -40,6 +41,28 @@ Style parts with your own classes, or target them by their data attributes. Ever
 
 Want the contour-ui look for some of your own pieces? The token variables work with Headless too:
 load `@contour-ui/tokens/tokens.css` and see [Styling with tokens](/docs/guide/styling).
+
+## Build your own parts
+
+Every part renders through `Primitive`: `Primitive.div`, `Primitive.button`, `Primitive.a` and the
+other elements parts are made of. A primitive takes its element's props and `ref`, plus `asChild`,
+which renders the only child instead and merges the props into it:
+
+```tsx
+import { Primitive } from '@contour-ui/headless';
+import { Link } from 'react-router';
+
+<Primitive.a asChild className="nav-link">
+  <Link to="/docs">Docs</Link>
+</Primitive.a>;
+```
+
+When a part combines its own props with the ones it receives, use the same helpers:
+
+- `mergeProps(...sources)` runs every event handler (the last source's first), joins class names,
+  merges styles, and lets the last value win for anything else.
+- `composeRefs(...refs)` feeds one element to several refs; inside a component,
+  `useComposedRefs(first, second)` keeps the combined ref stable between renders.
 
 ## Components
 

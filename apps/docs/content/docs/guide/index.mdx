@@ -23,9 +23,12 @@ else.
 
 ## How the packages fit together
 
-- **Headless** renders the structure and behavior of each component, with no styles.
-- **Kit** components are Headless components plus a stylesheet. The props are the same; Kit adds a
-  class name and the CSS behind it.
+- **Headless** renders the structure and behavior of interactive components (popovers, dialogs,
+  listboxes…), with no styles. It also exports `Primitive`, the elements every part renders
+  through, so you can build parts of your own.
+- **Kit** styles them: an interactive Kit component is its Headless component plus class names
+  and the CSS behind them, with the same props. Components without behavior, such as buttons,
+  cards and alerts, exist only in Kit.
 - **Audio** builds on Kit: its controls reuse Kit parts and add audio-specific styles, such as
   monospace numeric readouts whose digits do not shift while the value changes.
 - **Tokens** (`@contour-ui/tokens`) are the design decisions as CSS custom properties: colors,
@@ -37,7 +40,9 @@ All packages are released together under one version: keep their versions equal.
 
 ## Anatomy of a component
 
-A component is a namespace of parts. Each part renders one DOM element:
+Each part of a component renders one DOM element. A component made of a single element is a plain
+component, such as `<Button>` or `<Kbd>`. A component with several parts is a namespace of parts,
+such as `<Card.Root>` with `<Card.Title>` inside:
 
 ```tsx
 import { Placeholder } from '@contour-ui/kit';
@@ -47,10 +52,16 @@ import { Placeholder } from '@contour-ui/kit';
 
 - Parts accept the props of their element (`className`, `style`, `aria-*`, event handlers, …) and
   pass them through.
+- With `asChild`, a part renders its only child instead of its own element and merges its props,
+  event handlers and ref into it. Use it to render your router's link in place of an `<a>`, for
+  example.
 - Every part is marked with `data-scope` (the component) and `data-part` (the part), for example
   `data-scope="placeholder" data-part="root"`. Headless users style with these attributes; in Kit
   and Audio they are stable hooks for tests and overrides.
-- Kit and Audio add a class per component: `contour-<component>`. Your `className` is merged with it.
+- Kit and Audio add class names: `contour-<component>` on the root or the single element, and
+  `contour-<component>__<part>` on the other parts. Your `className` is merged with them.
+- Variants and sizes are attributes next to the state ones: `data-variant`, `data-size`,
+  `data-state`. A selector such as `.contour-button[data-variant='solid']` targets one variant.
 
 ## Next steps
 
