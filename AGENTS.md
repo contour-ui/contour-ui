@@ -22,6 +22,9 @@ Rules:
 
 - `core` has no React and no DOM (`lib` excludes `DOM`). The only exception is the
   `@contour-ui/core/react` subpath (`src/react/`), with `react` as an **optional** peer.
+- `core` also runs on Hermes (the Soundor runtime, built without `Intl`): no `Intl`, no
+  locale-dependent methods (`toLocale*`, `localeCompare`), no `eval` / `new Function`, no
+  `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`.
 - Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`.
 - `headless` must not depend on `tokens`, `icons`, `kit`, `audio`. Peers: `react`, `react-dom`.
 - Kits (`kit`, `audio`) are styled with plain CSS + token CSS variables. **No Tailwind in packages.**

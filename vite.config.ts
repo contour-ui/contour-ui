@@ -2,6 +2,19 @@ import { defineConfig } from 'vite-plus';
 
 import { boundaryLintOverrides } from './scripts/layers.ts';
 
+/** Globals core must not touch: Hermes (Soundor) does not provide them. */
+const HERMES_MISSING_GLOBALS = ['Intl', 'SharedArrayBuffer', 'Atomics', 'Float16Array'];
+
+/** Locale-dependent methods: their results depend on Intl, which Hermes lacks. */
+const LOCALE_METHODS = [
+  'toLocaleString',
+  'toLocaleDateString',
+  'toLocaleTimeString',
+  'toLocaleUpperCase',
+  'toLocaleLowerCase',
+  'localeCompare',
+];
+
 /**
  * Root Vite+ config: the only place for `lint`, `fmt`, `staged` and
  * workspace-level tasks. Package-level `vite.config.ts` files hold Vite, Vitest
@@ -99,6 +112,29 @@ export default defineConfig({
     overrides: [
       // Layer boundaries, generated from scripts/layers.ts (shared with check-boundaries).
       ...boundaryLintOverrides(),
+      {
+        // core also runs on Hermes (the Soundor plugin UI runtime), built without Intl.
+        files: ['packages/core/src/**'],
+        rules: {
+          'no-restricted-globals': [
+            'error',
+            ...HERMES_MISSING_GLOBALS.map((name) => ({
+              name,
+              message: `${name} is not available on Hermes (Soundor), where core also runs.`,
+            })),
+          ],
+          'no-restricted-properties': [
+            'error',
+            ...LOCALE_METHODS.map((property) => ({
+              property,
+              message:
+                'Locale-dependent and missing on Hermes without Intl: format in core/format.',
+            })),
+          ],
+          'no-eval': 'error',
+          'no-new-func': 'error',
+        },
+      },
       {
         files: [
           'packages/headless/**',
