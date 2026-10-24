@@ -2,8 +2,9 @@
  * Base palette in DTCG 2025.10 format (`src/base/color.tokens.json`).
  * Every chromatic hue shares one lightness curve, so `blue.500` and `red.500`
  * have the same perceived lightness and contrast pairs transfer between hues.
+ * Every color is inside sRGB, so it converts to hex without clipping.
  */
-import { formatHex, oklch, toGamut } from 'culori';
+import { displayable, formatHex, oklch, toGamut } from 'culori';
 
 import { round3 } from './dtcg.ts';
 import type { JsonRecord } from './dtcg.ts';
@@ -58,16 +59,32 @@ function chromaAt(lightness: number, { chroma, flat }: Hue): number {
   return Math.max(chroma * (1 - t * t), chroma * 0.15);
 }
 
+/** CSS Color 4 gamut mapping into sRGB: may shift lightness and hue a little to keep chroma. */
 const toGamutSrgb = toGamut('rgb', 'oklch');
 
+/**
+ * The gamut-mapped color, written with its own coordinates rather than the
+ * requested hue, so the oklch value and the hex fallback are the same sRGB
+ * color. Rounding to 3 decimals can push a color on the gamut edge slightly
+ * outside; chroma then steps down until it is displayable.
+ */
 function colorToken(lightness: number, chroma: number, hue: number): JsonRecord {
   const mapped = oklch(toGamutSrgb({ mode: 'oklch', l: lightness, c: chroma, h: hue }));
+  const color = {
+    mode: 'oklch' as const,
+    l: round3(mapped.l),
+    c: round3(mapped.c),
+    h: chroma === 0 ? 0 : round3(mapped.h ?? hue),
+  };
+  while (color.c > 0 && !displayable(color)) {
+    color.c = round3(color.c - 0.001);
+  }
   return {
     $value: {
       colorSpace: 'oklch',
-      components: [round3(mapped.l), round3(mapped.c), chroma === 0 ? 0 : hue],
+      components: [color.l, color.c, color.h],
       alpha: 1,
-      hex: formatHex(mapped),
+      hex: formatHex(color),
     },
   };
 }
