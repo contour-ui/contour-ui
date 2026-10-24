@@ -12,7 +12,7 @@ point **down** the table only — never up, never sideways — with one exceptio
 | Layer        | Package    | Purpose                                                                                         | May depend on (internal)             |
 | ------------ | ---------- | ----------------------------------------------------------------------------------------------- | ------------------------------------ |
 | 0 foundation | `tokens`   | DTCG design tokens → CSS vars / TS (Style Dictionary)                                           | —                                    |
-| 0 foundation | `icons`    | SVG icons → React components / canvas commands (later)                                          | —                                    |
+| 0 foundation | `icons`    | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                         | —                                    |
 | 1 logic      | `core`     | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `scales/`, `format/` | —                                    |
 | 2 headless   | `headless` | unstyled React DOM components + hooks (Ark UI–like)                                             | `core`                               |
 | 3 kit        | `kit`      | styled general-purpose components                                                               | `headless`, `tokens`, `icons`        |

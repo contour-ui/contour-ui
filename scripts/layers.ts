@@ -46,7 +46,7 @@ export const LAYERS: readonly LayerPackage[] = [
   {
     name: 'icons',
     layer: 0,
-    purpose: 'SVG icons -> React components / canvas commands',
+    purpose: 'SVG icons -> path data + canvas drawing',
     allowed: [],
     react: 'none',
   },

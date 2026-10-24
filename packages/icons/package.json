@@ -1,7 +1,7 @@
 {
   "name": "@contour-ui/icons",
   "version": "0.0.0",
-  "description": "contour-ui icons: SVG sources for React components and canvas commands.",
+  "description": "contour-ui icons: Lucide icons and brand logos as normalized path data for SVG and Canvas 2D, plus drawIcon.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -9,7 +9,8 @@
     "directory": "packages/icons"
   },
   "files": [
-    "dist"
+    "dist",
+    "THIRD-PARTY-NOTICES.md"
   ],
   "type": "module",
   "sideEffects": false,
@@ -33,11 +34,15 @@
   },
   "scripts": {
     "build": "vp pack",
-    "dev": "vp pack --watch"
+    "dev": "vp pack --watch",
+    "icons": "node scripts/build.ts"
   },
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",
+    "lucide-static": "catalog:",
+    "simple-icons": "catalog:",
+    "svgpath": "catalog:",
     "vite-plus": "catalog:"
   }
 }

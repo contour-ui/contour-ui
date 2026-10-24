@@ -37,6 +37,8 @@ export default defineConfig({
       'packages/tokens/src/**/*.tokens.json',
       // Style Dictionary output, compared byte-for-byte by src/generated.test.ts.
       'packages/tokens/src/generated/**',
+      // Icon data written by scripts/build-icons.ts, compared byte-for-byte by a freshness test.
+      'packages/icons/src/generated/**',
     ],
   },
 

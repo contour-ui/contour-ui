@@ -58,6 +58,12 @@ catalog:
   '@fontsource/ibm-plex-sans': ^5.3.0
   '@fontsource/jetbrains-mono': ^5.3.0
 
+  # Icons (packages/icons build-time tooling). Lucide paths (ISC) and the Simple
+  # Icons logos (CC0) are compiled into committed data by scripts/build-icons.ts.
+  lucide-static: 1.61.0
+  simple-icons: 16.35.0
+  svgpath: 2.6.0
+
   # Docs
   fumadocs-core: 16.17.8
   fumadocs-mdx: 15.4.10
