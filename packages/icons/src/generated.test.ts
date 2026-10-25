@@ -1,7 +1,7 @@
 /**
  * `src/generated/icons.ts` is committed (so consumers need no build step). These
  * tests fail when it no longer matches the icon list and the installed sources, or
- * when the Lucide license in THIRD-PARTY-NOTICES.md no longer matches lucide-static.
+ * when the Lucide license in README.md no longer matches lucide-static.
  */
 import { readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
@@ -17,13 +17,13 @@ describe('generated icon data (if stale: vp run --filter @contour-ui/icons icons
   });
 });
 
-describe('third-party notices', () => {
-  it('THIRD-PARTY-NOTICES.md carries the Lucide license of the installed lucide-static', () => {
+describe('Lucide license', () => {
+  it('README.md carries the Lucide license of the installed lucide-static', () => {
     const license = readFileSync(
       createRequire(import.meta.url).resolve('lucide-static/LICENSE'),
       'utf8',
     );
-    const notices = readFileSync(path.join(PACKAGE_DIR, 'THIRD-PARTY-NOTICES.md'), 'utf8');
-    expect(notices).toContain(license.trim());
+    const readme = readFileSync(path.join(PACKAGE_DIR, 'README.md'), 'utf8');
+    expect(readme).toContain(license.trim());
   });
 });

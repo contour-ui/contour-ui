@@ -160,8 +160,8 @@ the data as `<svg>`.
 
 - To add an icon, list it in `scripts/icon-list.ts`, then run
   `vp run --filter @contour-ui/icons icons`. `vp test` fails when the generated file is stale.
-- `packages/icons/THIRD-PARTY-NOTICES.md` carries the Lucide license (ISC, plus MIT for the icons
-  derived from Feather) and ships with the package; a test keeps it equal to `lucide-static/LICENSE`.
+- The package README carries the Lucide license (ISC, plus MIT for the icons derived from
+  Feather) and ships with the package; a test keeps it equal to `lucide-static/LICENSE`.
 
 ## Components
 

@@ -9,8 +9,7 @@
     "directory": "packages/icons"
   },
   "files": [
-    "dist",
-    "THIRD-PARTY-NOTICES.md"
+    "dist"
   ],
   "type": "module",
   "sideEffects": false,
