@@ -44,7 +44,8 @@ Rules:
   (package imports, relative imports into sibling packages, React in core, `states/` ↔ `interactions/`, Tailwind).
 - `vp run boundaries` ([`scripts/check-boundaries.ts`](scripts/check-boundaries.ts)) checks what lint
   cannot: declared dependencies in every `package.json` (even unused ones), React dependency kinds,
-  CSS `@import`s, `exports` ↔ `publishConfig.exports` sync, and the Changesets `fixed` group.
+  CSS `@import`s, `exports` ↔ `publishConfig.exports` sync, the Changesets `fixed` group, and a
+  copy of the root `LICENSE` (MIT) in every package, since npm packs each package's own file.
 
 ### Naming
 
@@ -198,7 +199,8 @@ it in that section's `meta.json`; register the live component in `app/components
 2. Create `packages/<name>/` by copying the closest sibling: `package.json` (ESM only,
    `sideEffects`, `files: ["dist"]`, dev + publish `exports`, `publishConfig.access: public`,
    deps via `catalog:` / `workspace:*`), `tsconfig.json` (extends a `@contour-ui/typescript-config`
-   preset), `vite.config.ts` (`libraryPack()`, tests), `README.md` (layer, purpose, allowed deps).
+   preset), `vite.config.ts` (`libraryPack()`, tests), `README.md` (layer, purpose, allowed deps),
+   `LICENSE` (a copy of the root one).
 3. UI packages: add `.storybook/` (`storybookConfig()` from `@contour-ui/vite-config/storybook`),
    a fixed dev port in the `storybook` script, and an entry in `apps/storybook/refs.ts`. Styled
    packages wrap their preview in `withThemes()` (`@contour-ui/vite-config/storybook-preview`) for

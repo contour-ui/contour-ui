@@ -13,3 +13,7 @@ vp run visual           # screenshot tests (Docker)
 ```
 
 See [AGENTS.md](AGENTS.md) for the architecture, rules, commands and how to add a package.
+
+## License
+
+[MIT](LICENSE).

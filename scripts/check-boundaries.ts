@@ -7,11 +7,12 @@
  *   imports it yet;
  * - `react` / `react-dom` must be declared with the right kind per package;
  * - CSS `@import` / `@plugin` / `@reference` must not reach forbidden packages;
- * - the dev `exports` map and `publishConfig.exports` must stay in sync.
+ * - the dev `exports` map and `publishConfig.exports` must stay in sync;
+ * - every package ships a copy of the root `LICENSE`.
  *
  * Run: `vp run boundaries` (or `node scripts/check-boundaries.ts`).
  */
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
 import {
@@ -306,6 +307,21 @@ function checkChangesets(): void {
 }
 
 // ---------------------------------------------------------------------------
+// License: npm packs a package's own LICENSE, so each one keeps a root copy
+// ---------------------------------------------------------------------------
+
+const ROOT_LICENSE = readFileSync(path.join(ROOT, 'LICENSE'), 'utf8');
+
+function checkLicense(dir: string): void {
+  const file = path.join(dir, 'LICENSE');
+  if (!existsSync(file)) {
+    report(file, 'missing: copy the root LICENSE into the package.');
+  } else if (readFileSync(file, 'utf8') !== ROOT_LICENSE) {
+    report(file, 'must be an exact copy of the root LICENSE.');
+  }
+}
+
+// ---------------------------------------------------------------------------
 
 checkChangesets();
 
@@ -326,6 +342,7 @@ for (const dirName of packageDirs) {
   }
   checkPackageJson(dir, pkg);
   checkCss(dir, pkg);
+  checkLicense(dir);
 }
 
 if (violations.length > 0) {
