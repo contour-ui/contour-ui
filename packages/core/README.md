@@ -5,7 +5,7 @@
 
 | Directory       | Purpose                                                    |
 | --------------- | ---------------------------------------------------------- |
-| `machine/`      | tiny finite-state machine                                  |
+| `machine/`      | state machine runtime (below)                              |
 | `states/`       | reusable state machines; **never imports `interactions/`** |
 | `interactions/` | pointer / keyboard logic; **never imports `states/`**      |
 | `scales/`       | value scales (linear, log, dB…)                            |
@@ -14,6 +14,24 @@
 
 - **May depend on (internal):** nothing.
 - **Peers:** `react` — optional, used only by `@contour-ui/core/react`.
+
+## Machines (`machine/`)
+
+A machine is data plus pure functions; a service runs it; the platform gives it the environment.
+
+- `createMachine<Schema>(config)` — states with `on` transitions (`target`, `guard`, `actions`,
+  `reenter`), `entry` / `exit` actions, delayed transitions (`after`), and effects by name. The
+  context holds values the machine owns or that a prop controls (`value` / `defaultValue` /
+  `onChange`). The definition is checked when it is created.
+- `transition(machine, state, event, reads)` — pure: the next state and the commands that get
+  there (run an action, start or stop an effect, schedule or cancel a delay). It runs nothing.
+- `createService(machine, { props, platform })` — keeps the state and context, carries out the
+  commands through the platform, handles events one at a time, and calls subscribers once per
+  event. `setProps` is safe during render; `syncProps` runs `watch` actions; `start` / `stop`.
+- `Platform` — what the adapter gives: `schedule(ms, fire) → cancel` (core has no clock and no
+  globals), the platform actions (`writeText`) and effects (`dismiss`) the machine names.
+- `createTestPlatform(machine)` — a fake clock (`advance(ms)`) and a log of the platform actions
+  and effects, for tests without a DOM or real time.
 
 ## `@contour-ui/core/react`
 
