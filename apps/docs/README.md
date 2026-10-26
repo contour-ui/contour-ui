@@ -29,8 +29,9 @@ vp -C apps/docs run build   # static build -> build/client
 - Code blocks are highlighted at build time with Shiki's css-variables theme (`rehypeCodeOptions`
   in `vite.config.ts`): tokens are colored with `--shiki-*` variables, which Kit's `CodeBlock`
   maps to the syntax color tokens, so one theme follows both color themes. The `pre` mapping
-  (`app/components/mdx-pre.tsx`) puts the `title="…"` meta in the header and turns off
-  fumadocs-ui's own Shiki styles with the `not-fumadocs-codeblock` class.
+  (`app/components/mdx-pre.tsx`) puts the `title="…"` meta in the header, adds a copy button
+  unless the meta says `noCopy`, and turns off fumadocs-ui's own Shiki styles with the
+  `not-fumadocs-codeblock` class.
 - Page content is wrapped in `Prose` (`app/components/prose.tsx`): typography and spacing for MDX,
   in the `prose` cascade layer, between Preflight and contour-ui, so components inside keep their
   own styles. Nothing inside an element with the `docs-not-prose` class, such as `<Preview>`, is
