@@ -1,0 +1,92 @@
+/*
+ * The status sets three colors as custom properties on the root, named after the
+ * roles they take (`<status>-bg`, `-border`, `-fg`). The parts read them from their
+ * own root, so an alert inside another one keeps its colors.
+ */
+.contour-alert {
+  --contour-alert-bg: var(--ct-color-accent-bg);
+  --contour-alert-border: var(--ct-color-accent-border);
+  --contour-alert-fg: var(--ct-color-accent-fg);
+
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ct-space-group-gap);
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--ct-space-panel-inset);
+  border: var(--ct-border-width-default) solid var(--contour-alert-border);
+  border-radius: var(--ct-radius-panel);
+  background: var(--contour-alert-bg);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.contour-alert[data-status='success'] {
+  --contour-alert-bg: var(--ct-color-success-bg);
+  --contour-alert-border: var(--ct-color-success-border);
+  --contour-alert-fg: var(--ct-color-success-fg);
+}
+
+.contour-alert[data-status='warning'] {
+  --contour-alert-bg: var(--ct-color-warning-bg);
+  --contour-alert-border: var(--ct-color-warning-border);
+  --contour-alert-fg: var(--ct-color-warning-fg);
+}
+
+.contour-alert[data-status='danger'] {
+  --contour-alert-bg: var(--ct-color-danger-bg);
+  --contour-alert-border: var(--ct-color-danger-border);
+  --contour-alert-fg: var(--ct-color-danger-fg);
+}
+
+.contour-alert[data-status='neutral'] {
+  --contour-alert-bg: var(--ct-color-bg-surface);
+  --contour-alert-border: var(--ct-color-border-default);
+  --contour-alert-fg: var(--ct-color-fg-muted);
+}
+
+.contour-alert[data-variant='outline'] {
+  background: transparent;
+}
+
+.contour-alert__indicator {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  /* One line of the description tall: the icon centers on the first line of text. */
+  block-size: 1lh;
+  margin: 0;
+  color: var(--contour-alert-fg);
+  font: var(--ct-text-body);
+}
+
+.contour-alert__indicator .contour-icon {
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}
+
+.contour-alert__content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+  /* Long words and URLs wrap instead of widening the alert, in grid and flex layouts too. */
+  min-inline-size: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.contour-alert__title {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.contour-alert__description {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}

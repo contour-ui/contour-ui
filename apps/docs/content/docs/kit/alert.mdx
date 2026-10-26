@@ -1,0 +1,189 @@
+---
+title: Alert
+description: A message set apart from the text around it, such as a note, a tip or a warning, with an icon for its status.
+---
+
+import { moonIcon } from '@contour-ui/icons';
+import { Alert, Icon } from '@contour-ui/kit';
+
+<Preview>
+  <Alert.Root status="warning">
+    <Alert.Indicator />
+    <Alert.Content>
+      <Alert.Title>Pre-release</Alert.Title>
+      <Alert.Description>The packages are not on npm yet.</Alert.Description>
+    </Alert.Content>
+  </Alert.Root>
+</Preview>
+
+```tsx
+import { Alert } from '@contour-ui/kit';
+
+<Alert.Root status="warning">
+  <Alert.Indicator />
+  <Alert.Content>
+    <Alert.Title>Pre-release</Alert.Title>
+    <Alert.Description>The packages are not on npm yet.</Alert.Description>
+  </Alert.Content>
+</Alert.Root>;
+```
+
+`Alert.Indicator` shows the icon of the status, and `Alert.Content` stacks the title and the
+description next to it. The title is optional: the icon lines up with the first line of text either
+way.
+
+## Statuses
+
+`status` sets the colors and the icon: `info` (the default), `success`, `warning`, `danger`, and
+`neutral` for tips and notes that are not about a status.
+
+<Preview>
+  <div style={{ display: 'grid', gap: 'var(--ct-space-group-gap)' }}>
+    <Alert.Root status="info">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Description>The packages are not on npm yet.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+    <Alert.Root status="success">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Description>Preset saved with the project.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+    <Alert.Root status="warning">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Description>The output peaks above 0 dBFS: lower the gain.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+    <Alert.Root status="danger">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Description>The audio engine stopped: reopen the project.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+    <Alert.Root status="neutral">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Description>Hold Shift while dragging a knob to fine-tune it.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+  </div>
+</Preview>
+
+## Variants
+
+`subtle` (the default) tints the background with the status color. `outline` keeps the status
+border and icon on a transparent background, for a quieter alert or one on a colored surface.
+
+<Preview>
+  <div style={{ display: 'grid', gap: 'var(--ct-space-group-gap)' }}>
+    <Alert.Root variant="subtle">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Title>Subtle</Alert.Title>
+        <Alert.Description>A background tinted with the status color.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+    <Alert.Root variant="outline">
+      <Alert.Indicator />
+      <Alert.Content>
+        <Alert.Title>Outline</Alert.Title>
+        <Alert.Description>The status border and icon, no background.</Alert.Description>
+      </Alert.Content>
+    </Alert.Root>
+  </div>
+</Preview>
+
+```tsx
+<Alert.Root status="success" variant="outline">
+  …
+</Alert.Root>
+```
+
+## Custom icon
+
+Children of `Alert.Indicator` replace the status icon. The indicator still sizes the icon and
+paints it in the status color.
+
+<Preview>
+  <Alert.Root status="neutral">
+    <Alert.Indicator>
+      <Icon icon={moonIcon} />
+    </Alert.Indicator>
+    <Alert.Content>
+      <Alert.Title>Dark by default</Alert.Title>
+      <Alert.Description>Set data-theme="light" to switch to the light theme.</Alert.Description>
+    </Alert.Content>
+  </Alert.Root>
+</Preview>
+
+```tsx
+import { moonIcon } from '@contour-ui/icons';
+import { Alert, Icon } from '@contour-ui/kit';
+
+<Alert.Root status="neutral">
+  <Alert.Indicator>
+    <Icon icon={moonIcon} />
+  </Alert.Indicator>
+  …
+</Alert.Root>;
+```
+
+## Anatomy
+
+| Part                | Element | Class                        | Attributes                                                           |
+| ------------------- | ------- | ---------------------------- | -------------------------------------------------------------------- |
+| `Alert.Root`        | `div`   | `contour-alert`              | `data-scope="alert" data-part="root"`, `data-status`, `data-variant` |
+| `Alert.Indicator`   | `span`  | `contour-alert__indicator`   | `data-scope="alert" data-part="indicator"`                           |
+| `Alert.Content`     | `div`   | `contour-alert__content`     | `data-scope="alert" data-part="content"`                             |
+| `Alert.Title`       | `div`   | `contour-alert__title`       | `data-scope="alert" data-part="title"`                               |
+| `Alert.Description` | `div`   | `contour-alert__description` | `data-scope="alert" data-part="description"`                         |
+
+Every part accepts the props of its element and `asChild`; `className` is merged with the part's
+class. `data-status` and `data-variant` always carry the resolved values, defaults included, so
+`.contour-alert[data-status='warning']` selects every warning.
+
+## Props
+
+`Alert.Root`:
+
+| Prop      | Type                                                        | Default    |
+| --------- | ----------------------------------------------------------- | ---------- |
+| `status`  | `'info' \| 'success' \| 'warning' \| 'danger' \| 'neutral'` | `'info'`   |
+| `variant` | `'subtle' \| 'outline'`                                     | `'subtle'` |
+
+The other parts have no props of their own. `Alert.Indicator` without children shows the icon of
+the status: `infoIcon`, `circleCheckIcon`, `triangleAlertIcon`, `circleXIcon` or, for `neutral`,
+`lightbulbIcon`.
+
+## Accessibility
+
+- **No role by default.** An alert is part of the page, read in order like the text around it,
+  which suits notes in docs and messages that are there from the start.
+- **Messages that appear later.** For a message that shows up or changes while the page is open,
+  such as the result of an action, add `role="status"`; screen readers announce it after what they
+  are reading. Keep `role="alert"` for urgent messages: it interrupts them. Screen readers announce
+  changes inside an element that already has the role, so render the alert with its role up front
+  and change its content.
+- **Say the status in words.** The icon is decorative and hidden from assistive technology, and
+  colors are not announced. When the status matters, put it in the text, for example in the title.
+- **Headings.** `Alert.Title` is a `div`. To make it part of the page outline, render a heading
+  with `asChild`: `<Alert.Title asChild><h3>…</h3></Alert.Title>`.
+
+## Tokens
+
+| Status    | Background              | Border                      | Icon                    |
+| --------- | ----------------------- | --------------------------- | ----------------------- |
+| `info`    | `--ct-color-accent-bg`  | `--ct-color-accent-border`  | `--ct-color-accent-fg`  |
+| `success` | `--ct-color-success-bg` | `--ct-color-success-border` | `--ct-color-success-fg` |
+| `warning` | `--ct-color-warning-bg` | `--ct-color-warning-border` | `--ct-color-warning-fg` |
+| `danger`  | `--ct-color-danger-bg`  | `--ct-color-danger-border`  | `--ct-color-danger-fg`  |
+| `neutral` | `--ct-color-bg-surface` | `--ct-color-border-default` | `--ct-color-fg-muted`   |
+
+`outline` drops the background. The title and the description are `--ct-color-fg-default`, in the
+`heading` and `body` text styles. `--ct-space-panel-inset` pads the alert, `--ct-space-group-gap`
+separates the icon from the text and `--ct-space-control-gap` the title from the description;
+corners are `--ct-radius-panel`, the border `--ct-border-width-default`, the icon
+`--ct-size-icon-md`.
