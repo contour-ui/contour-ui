@@ -5,14 +5,10 @@ import { useCallback, useId, useInsertionEffect, useLayoutEffect, useRef, useSta
 import type { CSSProperties, MouseEvent, RefCallback } from 'react';
 
 import { schedule } from '../platform/clock.ts';
+import { scrollIntoContainer } from '../platform/scroll.ts';
 import { observeHeadings } from './toc-observer.ts';
 import type { ObservedHeading } from './toc-observer.ts';
-import {
-  focusHeading,
-  scrollBehaviorOf,
-  scrollIntoContainer,
-  scrollToHeading,
-} from './toc-scroll.ts';
+import { focusHeading, scrollBehaviorOf, scrollToHeading } from './toc-scroll.ts';
 
 /**
  * Props of {@link useToc}: the input of the toc machine of `@contour-ui/core`, and the options

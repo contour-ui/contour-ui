@@ -5,7 +5,7 @@ import { useCallback, useEffect, useId, useLayoutEffect, useRef, useState } from
 import type { FocusEvent, KeyboardEvent, MouseEvent, PointerEvent, RefCallback } from 'react';
 
 import { schedule } from '../platform/clock.ts';
-import { scrollIntoContainer } from './scroll-into-container.ts';
+import { scrollIntoContainer } from '../platform/scroll.ts';
 
 /** Props of {@link useListbox}: the input of the listbox machine of `@contour-ui/core`. */
 export type UseListboxProps<T = unknown> = listbox.Input<T>;
@@ -260,7 +260,7 @@ export function useListbox<T>(props: UseListboxProps<T>): UseListboxReturn<T> {
     }
     const item = content.querySelector<HTMLElement>(`[id="${CSS.escape(highlightedId)}"]`);
     if (item !== null) {
-      scrollIntoContainer(content, item);
+      scrollIntoContainer(item, { container: content });
     }
   }, [contentNode, highlightedId, highlightedValue]);
 
