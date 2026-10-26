@@ -10,7 +10,6 @@
 
 .contour-table {
   inline-size: 100%;
-  margin: 0;
   border: none;
   /* Separate borders let the outline variant round its corners; the dividers sit on the cells. */
   border-collapse: separate;

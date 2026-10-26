@@ -3,7 +3,6 @@
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  margin: 0;
   padding-block: 0;
   /* Relative to the text, so a single character stays within the square of either size. */
   padding-inline: 0.25em;

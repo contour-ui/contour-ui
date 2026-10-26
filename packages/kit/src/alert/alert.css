@@ -12,7 +12,6 @@
   align-items: flex-start;
   gap: var(--ct-space-group-gap);
   box-sizing: border-box;
-  margin: 0;
   padding: var(--ct-space-panel-inset);
   border: var(--ct-border-width-default) solid var(--contour-alert-border);
   border-radius: var(--ct-radius-panel);

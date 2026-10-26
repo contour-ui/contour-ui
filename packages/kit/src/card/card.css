@@ -4,7 +4,6 @@
   gap: var(--ct-space-panel-inset);
   box-sizing: border-box;
   min-inline-size: 0;
-  margin: 0;
   padding: var(--ct-space-panel-inset);
   /* Every variant has this border (transparent in `subtle`), so all of them are the same size. */
   border: var(--ct-border-width-default) solid var(--ct-color-border-default);
