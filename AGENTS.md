@@ -74,7 +74,8 @@ built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` tas
 | `vp -C packages/kit run storybook`       | one package Storybook (tokens 6101, headless 6102, kit 6103, audio 6104)                                                        |
 | `vp run build-storybook`                 | all Storybooks → one deployable folder `apps/storybook/storybook-static`                                                        |
 | `vp run visual` / `vp run visual:update` | screenshot tests of the styled Storybooks in the pinned Playwright Linux image (Docker); `:update` rewrites changed screenshots |
-| `vp -C apps/docs run dev` / `run build`  | Fumadocs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                |
+| `vp -C apps/docs run dev` / `run build`  | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                    |
+| `vp -C apps/docs run e2e`                | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                  |
 | `vp -C apps/playground dev`              | Vite + React sandbox on http://localhost:5173                                                                                   |
 | `vp run changeset`                       | record a changeset (all published packages are versioned together)                                                              |
 | `vp run ready`                           | everything CI's first three jobs run                                                                                            |
@@ -109,6 +110,12 @@ Browser tests never fake `requestAnimationFrame`: overlay effects start on the n
 `setTimeout` / `clearTimeout` only). Once a new dependency is reachable from stories, the first
 local run with a warm Vite cache may fail in `collectTests` while the optimizer rebundles; run it
 again (a cold cache, as in CI, does not).
+
+Browser tests share a page with the files before them: the pointer stays where they left it, and
+Chrome gives `:hover` to whatever renders under it a frame or two later (a hovered label hovers its
+control too). A test that checks the resting look of an element with a `:hover` rule moves the
+pointer off first (`userEvent.unhover(element)`). `toHaveStyle` with camelCase keys reports
+"Expected styles could not be parsed" on a mismatch; kebab-case keys show the values.
 
 ## Source export condition
 
@@ -156,6 +163,12 @@ Storybook token tables read it, it is not published). The generated files are co
   `scripts/semantic-colors.ts`.
 - Contrast targets for the color roles are tests (`packages/tokens/src/contrast.test.ts`); every
   `syntax.*` role is at least 4.5:1 on `bg.inset`, the code block background.
+- Sizes are per-size roles: `size.control-sm|md|lg` are control heights, and `lg` has its own
+  label (`text.label-lg`), side padding (`space.control-inset-lg`) and icon gap
+  (`space.control-gap-lg`), where `sm` and `md` share `text.label`, `space.control-inset` and
+  `space.control-gap`. Overlays take component roles on the `base.size` scale:
+  `size.dialog-sm|md|lg`, `size.drawer-sm|md|lg` and `size.popover`. Kit CSS has no px literals:
+  a new size is a token first.
 - Every token stays expressible in Soundor (`packages/tokens/src/soundor.test.ts`): colors inside
   sRGB, lengths in px, a named easing for every `cubicBezier`, no `calc()` / `color-mix()` in values.
 
@@ -213,12 +226,15 @@ version of these rules.
   has its own. The layer stack writes `--layer-index` inline on the content, the positioner and
   the backdrop, so parts never render it in `style`; kits stack them with
   `z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0))`.
+- **A field over a list** (`Listbox.Input`) is a combobox: `role="combobox"`, `aria-expanded`,
+  `aria-controls` and `aria-activedescendant` on the field. Screen readers announce its options,
+  and axe does not ask the list, which scrolls while the field keeps the focus, to take focus.
 - **Kit styles.** Classes `contour-<component>` on the root or the single element and
   `contour-<component>__<part>` on the other parts, joined with the user's `className` by `cx`
   (`packages/kit/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
   `data-size`, always rendered with the resolved value (defaults included), so selectors read
   `.contour-button[data-variant='solid']`. CSS: one file per component (see "Layers"); it relies
-  on no reset (Storybook has none, the docs site has Tailwind's Preflight), so parts set their own
+  on no reset (neither Storybook nor the docs site has one), so parts set their own
   font and colors and reset the default margins of their elements (`p`, `h3`). A root sets no
   margin (unless its element has a default one, as `<button>` may), so its container spaces it,
   even from a lower cascade layer, as the docs site's Prose does. Text takes `fg-default` or
@@ -230,29 +246,50 @@ version of these rules.
 
 ## Docs
 
-`apps/docs` (Fumadocs) documents what ships: a **Guide** (how the packages fit together,
-installation, themes, styling with tokens) and one section per shipped package — **Kit**,
-**Audio**, **Headless** — as root folders under `content/docs/`. When a component lands, add
+`apps/docs` documents what ships: a **Guide** (how the packages fit together, installation,
+themes, styling with tokens) and one section per shipped package — **Kit**, **Audio**,
+**Headless** — as root folders under `content/docs/`. It runs on React Router (prerendered) with
+`fumadocs-core` (page tree, search index, neighbours, TOC data) and `fumadocs-mdx` (content), and
+its layout is its own, built from Kit: no Fumadocs UI, no Tailwind. When a component lands, add
 `content/docs/<package>/<component>.mdx` (live example in `<Preview>`, anatomy, props, tokens) and
 list it in that section's `meta.json` and on the section's index page. Live examples import the
 component at the top of the page (`import { Button } from '@contour-ui/kit';`); MDX imports
 resolve to package sources like the rest of the app.
 
-- Page content is wrapped in `Prose` (`app/components/prose.tsx`), in the `prose` cascade layer
-  between Tailwind's `base` and `contour`: it styles headings, paragraphs, lists and inline code
-  and spaces blocks, while components inside keep their own styles. `docs-not-prose` opts a
-  subtree out; `<Preview>` uses it.
-- `app/components/mdx.tsx` draws Markdown links, tables and code blocks with Kit's `Link`, `Table`
-  and `CodeBlock`, renders `<Callout>` and `<Card>` (Fumadocs props) with `Alert` and `Card`, and
-  registers `Kbd`. Code is highlighted at build time with Shiki's css-variables theme
-  (`rehypeCodeOptions` in `vite.config.ts`); `CodeBlock` maps its variables to the syntax tokens.
-  A lowercase JSX tag in MDX (`<kbd>`, `<a>`) is a literal element and skips that map: write
-  `<Kbd>`.
+- **Layout** (`app/components/layout/`): `DocsShell` (a sidebar from 48rem with the section
+  switcher and the page tree, collapsible; below 48rem a sticky header whose menu opens a Drawer)
+  around `DocsPage` (`main#content`, the "On this page" bar until 80rem and the column from 80rem),
+  and `SiteLayout` for the home and 404 pages. The shell root sets `--docs-header-height` and
+  `--docs-toc-bar-height` (`0px` where a bar is gone): headings keep their sum free with
+  `scroll-margin-block-start`, and the TOC (`toc-panel.tsx`, Kit's `Toc`) observes the area below.
+- **Before hydration.** What only the browser knows is keyed on attributes of `<html>` that inline
+  scripts set before the first paint: `data-theme` (Kit's `themeScript()`, key `contour-theme`)
+  and `data-sidebar="collapsed"` (key `contour-docs-sidebar`). Components render both states and
+  CSS shows one, as the theme toggle and the shortcut of the search button do.
+- **Search** (`app/components/search/`): Kit's Dialog with a Kit Listbox whose Input is the field,
+  on fumadocs-core's static index (`/api/search`, prerendered by `routes/search.ts`).
+- **Pages**: `PageHeader` (the title, the page's only `h1`, and the description), the MDX in
+  `Prose`, and `PageFooter` (the previous and next page of the section, from `findNeighbour`).
+- **Styles.** Cascade layers `base, prose, contour, docs` (`app/app.css`): `base.css` styles the
+  page only, with no reset, so Kit renders as in Storybook; Prose styles the MDX content and
+  relies on no reset either (it sets the margins, list markers and fonts of what it styles), and
+  every docs stylesheet goes in `docs`. `docs-not-prose` opts a subtree out of Prose; `<Preview>`
+  uses it and drops the block margins of its direct children.
+- `app/components/mdx.tsx` draws Markdown headings as links to themselves (`mdx-heading.tsx`),
+  links, tables and code blocks with Kit's `Link`, `Table` and `CodeBlock`, renders `<Callout>`
+  and `<Card>` (Fumadocs props) with `Alert` and `Card`, and registers `Kbd`; images stay plain
+  `img`. Code is highlighted at build time with Shiki's css-variables theme (`rehypeCodeOptions`
+  in `vite.config.ts`); `CodeBlock` maps its variables to the syntax tokens. A lowercase JSX tag
+  in MDX (`<kbd>`, `<a>`) is a literal element and skips that map: write `<Kbd>`.
 - Oxfmt formats MDX like JSX: the text of an element with several attributes goes on a line of its
-  own, where MDX turns it into a paragraph. Write inline examples as an expression
-  (`{<p>…</p>}`).
+  own, where MDX turns it into a paragraph, even inside a `<button>`. Write inline examples as an
+  expression (`{<p>…</p>}`).
 - Docs-only components are named `docs-<name>`, use plain CSS with semantic tokens, and get their
   cascade layer where `app/app.css` imports their CSS.
+- **End-to-end tests** (`apps/docs/e2e/`, `vp -C apps/docs run e2e`): Playwright against the
+  static build served as a static host serves it, and axe on key pages in both themes. Find
+  elements by role and name, scoped to the banner or the sidebar where page examples share a
+  name, and wait for what a user would see (focus moved into an overlay) before pressing keys.
 
 ## Adding a package
 
