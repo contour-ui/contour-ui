@@ -7,6 +7,7 @@ export * as Dialog from './dialog/index.ts';
 // The portal of the overlays, so that apps need no other package to render them.
 export { Portal } from '@contour-ui/headless';
 export type { PortalContainer, PortalProps } from '@contour-ui/headless';
+export * as Drawer from './drawer/index.ts';
 export { Icon } from './icon/index.ts';
 export type { IconProps } from './icon/index.ts';
 export { Kbd } from './kbd/index.ts';

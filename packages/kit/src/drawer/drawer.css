@@ -1,0 +1,252 @@
+/*
+ * A dialog that slides in from an edge of the viewport: the scrim of the overlay over the page,
+ * and a panel on the surface color against the edge. `start` and `end` are logical: in a
+ * right-to-left page, `start` is the right edge. The backdrop and the positioner sit above the
+ * page, stacked with the other overlays by `--layer-index`, which the overlay stack writes.
+ */
+
+@keyframes contour-drawer-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes contour-drawer-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+/* From the edge: `--contour-drawer-offset` is one whole panel towards it. */
+@keyframes contour-drawer-in {
+  from {
+    translate: var(--contour-drawer-offset);
+  }
+}
+
+@keyframes contour-drawer-out {
+  to {
+    translate: var(--contour-drawer-offset);
+  }
+}
+
+.contour-drawer__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0));
+  background: var(--ct-color-overlay-scrim);
+}
+
+.contour-drawer__backdrop[data-state='open'] {
+  animation: contour-drawer-fade-in var(--ct-motion-enter);
+}
+
+/* Its own keyframes: the closed state must start an animation of another name. */
+.contour-drawer__backdrop[data-state='closed'] {
+  animation: contour-drawer-fade-out var(--ct-motion-exit);
+}
+
+.contour-drawer__positioner {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0));
+  display: flex;
+  /* Presses beside the content go through to the backdrop; the content takes its own. */
+  pointer-events: none;
+}
+
+.contour-drawer__positioner[data-placement='end'] {
+  justify-content: flex-end;
+}
+
+.contour-drawer__positioner[data-placement='top'] {
+  flex-direction: column;
+}
+
+.contour-drawer__positioner[data-placement='bottom'] {
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-drawer__positioner[hidden] {
+  display: none;
+}
+
+.contour-drawer__content {
+  /* How far the drawer reaches in: its width from a side, its greatest height from the top or the bottom. */
+  --contour-drawer-size: 320px;
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-panel-inset);
+  box-sizing: border-box;
+  margin: 0;
+  padding: var(--ct-space-panel-inset);
+  /* Only the inner side has a border: the other sides are the edges of the viewport. */
+  border: 0 solid var(--ct-color-border-default);
+  background: var(--ct-color-bg-surface);
+  /* Decoration: the border sets the drawer apart from the page without it. */
+  box-shadow: var(--ct-shadow-overlay);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  text-align: start;
+  overflow-wrap: break-word;
+  pointer-events: auto;
+  /* It takes focus only when nothing inside does: no ring around the whole drawer. */
+  outline: none;
+}
+
+.contour-drawer__content[hidden] {
+  display: none;
+}
+
+.contour-drawer__content[data-size='md'] {
+  --contour-drawer-size: 448px;
+}
+
+.contour-drawer__content[data-size='lg'] {
+  --contour-drawer-size: 640px;
+}
+
+.contour-drawer__content[data-size='full'] {
+  --contour-drawer-size: 100%;
+}
+
+/* From a side: as high as the viewport, as wide as the size. */
+.contour-drawer__content:is([data-placement='start'], [data-placement='end']) {
+  inline-size: min(var(--contour-drawer-size), 100%);
+  block-size: 100%;
+}
+
+.contour-drawer__content[data-placement='start'] {
+  --contour-drawer-offset: -100% 0;
+
+  border-inline-end-width: var(--ct-border-width-default);
+}
+
+.contour-drawer__content[data-placement='end'] {
+  --contour-drawer-offset: 100% 0;
+
+  border-inline-start-width: var(--ct-border-width-default);
+}
+
+/* `translate` is physical: in a right-to-left page, `start` is the right edge. */
+.contour-drawer__content[data-placement='start']:dir(rtl) {
+  --contour-drawer-offset: 100% 0;
+}
+
+.contour-drawer__content[data-placement='end']:dir(rtl) {
+  --contour-drawer-offset: -100% 0;
+}
+
+/* From the top or the bottom: as wide as the viewport, as high as the content, up to the size. */
+.contour-drawer__content:is([data-placement='top'], [data-placement='bottom']) {
+  inline-size: 100%;
+  max-block-size: min(var(--contour-drawer-size), 100%);
+}
+
+.contour-drawer__content:is([data-placement='top'], [data-placement='bottom'])[data-size='full'] {
+  block-size: 100%;
+}
+
+.contour-drawer__content[data-placement='top'] {
+  --contour-drawer-offset: 0 -100%;
+
+  border-block-end-width: var(--ct-border-width-default);
+}
+
+.contour-drawer__content[data-placement='bottom'] {
+  --contour-drawer-offset: 0 100%;
+
+  border-block-start-width: var(--ct-border-width-default);
+}
+
+.contour-drawer__content[data-state='open'] {
+  animation: contour-drawer-in var(--ct-motion-enter);
+}
+
+.contour-drawer__content[data-state='closed'] {
+  animation: contour-drawer-out var(--ct-motion-exit);
+}
+
+/* No sliding: the content only fades. */
+@media (prefers-reduced-motion: reduce) {
+  .contour-drawer__content[data-state='open'] {
+    animation-name: contour-drawer-fade-in;
+  }
+
+  .contour-drawer__content[data-state='closed'] {
+    animation-name: contour-drawer-fade-out;
+  }
+}
+
+.contour-drawer__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+}
+
+/*
+ * The body takes the free height, so the footer sits at the far end, and scrolls from edge to
+ * edge of the content, its scrollbar too, with room for the focus rings its overflow would cut.
+ */
+.contour-drawer__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--ct-space-group-gap);
+  min-block-size: 0;
+  margin-block: calc(-2 * var(--ct-border-width-focus));
+  margin-inline: calc(-1 * var(--ct-space-panel-inset));
+  padding-block: calc(2 * var(--ct-border-width-focus));
+  padding-inline: var(--ct-space-panel-inset);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.contour-drawer__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+  margin: 0;
+}
+
+.contour-drawer__title {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.contour-drawer__description {
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+/* The x in the top end corner, centered on the first line of the title. */
+.contour-drawer__content > .contour-drawer__close-trigger {
+  position: absolute;
+  inset-block-start: calc(
+    var(--ct-space-panel-inset) +
+      (
+        var(--ct-text-heading-font-size) * var(--ct-text-heading-line-height) -
+          var(--ct-size-control-sm)
+      ) /
+      2
+  );
+  inset-inline-end: var(--ct-space-group-gap);
+}
+
+/* The title does not run under the x. */
+.contour-drawer__content:has(> .contour-drawer__close-trigger)
+  > :is(.contour-drawer__header, .contour-drawer__title) {
+  padding-inline-end: calc(var(--ct-size-control-sm) + var(--ct-space-control-gap));
+}

@@ -15,6 +15,7 @@
 @import './card/card.css' layer(contour.kit);
 @import './code-block/code-block.css' layer(contour.kit);
 @import './dialog/dialog.css' layer(contour.kit);
+@import './drawer/drawer.css' layer(contour.kit);
 @import './icon/icon.css' layer(contour.kit);
 @import './kbd/kbd.css' layer(contour.kit);
 @import './link/link.css' layer(contour.kit);

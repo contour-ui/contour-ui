@@ -1,0 +1,177 @@
+---
+title: Drawer
+description: A dialog that slides in from an edge of the screen, such as the navigation of a page on a phone.
+---
+
+import { Button, Drawer, Link, Portal } from '@contour-ui/kit';
+
+<Preview>
+  {
+    <Drawer.Root>
+      <Drawer.Trigger asChild>
+        <Button variant="outline">Menu</Button>
+      </Drawer.Trigger>
+      <Portal>
+        <Drawer.Backdrop />
+        <Drawer.Positioner>
+          <Drawer.Content>
+            <Drawer.CloseTrigger />
+            <Drawer.Header>
+              <Drawer.Title>contour-ui</Drawer.Title>
+              <Drawer.Description>Components for plugins and pages.</Drawer.Description>
+            </Drawer.Header>
+            <Drawer.Body>
+              <Link href="/docs/guide">Guide</Link>
+              <Link href="/docs/kit">Kit</Link>
+              <Link href="/docs/headless">Headless</Link>
+            </Drawer.Body>
+            <Drawer.Footer>
+              <Drawer.CloseTrigger asChild>
+                <Button variant="outline">Done</Button>
+              </Drawer.CloseTrigger>
+            </Drawer.Footer>
+          </Drawer.Content>
+        </Drawer.Positioner>
+      </Portal>
+    </Drawer.Root>
+  }
+</Preview>
+
+```tsx
+import { Button, Drawer, Portal } from '@contour-ui/kit';
+
+<Drawer.Root>
+  <Drawer.Trigger asChild>
+    <Button variant="outline">Menu</Button>
+  </Drawer.Trigger>
+  <Portal>
+    <Drawer.Backdrop />
+    <Drawer.Positioner>
+      <Drawer.Content>
+        <Drawer.CloseTrigger />
+        <Drawer.Header>
+          <Drawer.Title>contour-ui</Drawer.Title>
+        </Drawer.Header>
+        <Drawer.Body>
+          <nav aria-label="Sections">…</nav>
+        </Drawer.Body>
+      </Drawer.Content>
+    </Drawer.Positioner>
+  </Portal>
+</Drawer.Root>;
+```
+
+A drawer is a [Dialog](/docs/kit/dialog) that slides in from an edge of the screen: the same
+parts on the [Headless Dialog](/docs/headless/dialog), with the same behavior. While it is open,
+focus stays inside it, the page does not scroll and the rest of it is out of reach; Escape, a press
+on the scrim, the x and the other close triggers close it, and focus goes back to the trigger. It
+is a panel on the surface color, with a border on its inner side and a shadow, and it slides back
+out when it closes.
+
+## Placement
+
+`placement` on the root is the edge the drawer slides in from. `start`, the default, and `end` follow
+the direction of the text: in a left-to-right page they are the left and the right edge, and in a
+right-to-left page the other way round. From a side, the drawer is as high as the screen; from
+`top` or `bottom`, it is as wide as the screen and as high as its content.
+
+```tsx
+<Drawer.Root placement="end">…</Drawer.Root>
+```
+
+## Size
+
+`size` sets how far the drawer reaches in: from a side, its width, `sm` (320 px, the default),
+`md` (448 px) or `lg` (640 px); from the top or the bottom, its greatest height. `full` covers the
+screen. The drawer is never larger than the screen.
+
+## The parts
+
+They are the parts of [Dialog](/docs/kit/dialog#the-parts), with their own classes:
+`Drawer.CloseTrigger` is the x in the top end corner, or, with `asChild`, a button of yours that
+closes the drawer; the header stacks the title and the description; the body takes the rest of the
+height and scrolls, from edge to edge of the drawer; the footer sits at the far end and lays out
+its actions in a row. Put the backdrop and the positioner in a `Portal`.
+
+## Open and close
+
+Every option of the [Headless Dialog](/docs/headless/dialog#props) works the same here:
+`defaultOpen`, `open` and `onOpenChange` to keep the state yourself, `closeOnEscape`,
+`closeOnInteractOutside`, `initialFocusEl`, `finalFocusEl`. Close a navigation drawer once a
+link is followed: keep `open` in your state, and set it to `false` when the page changes.
+
+```tsx
+const [open, setOpen] = useState(false);
+const { pathname } = useLocation();
+useEffect(() => {
+  setOpen(false);
+}, [pathname]);
+
+<Drawer.Root open={open} onOpenChange={({ open }) => setOpen(open)}>
+  …
+</Drawer.Root>;
+```
+
+## Anatomy
+
+| Part                  | Element  | Class                           | Attributes                                                                                        |
+| --------------------- | -------- | ------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `Drawer.Root`         | none     | —                               | —                                                                                                 |
+| `Drawer.Trigger`      | `button` | `contour-drawer__trigger`       | `data-scope="dialog" data-part="trigger"`, `aria-haspopup`, `aria-expanded`, `data-state`         |
+| `Drawer.Backdrop`     | `div`    | `contour-drawer__backdrop`      | `data-part="backdrop"`, `data-state`                                                              |
+| `Drawer.Positioner`   | `div`    | `contour-drawer__positioner`    | `data-part="positioner"`, `data-state`, `data-placement`                                          |
+| `Drawer.Content`      | `div`    | `contour-drawer__content`       | `data-part="content"`, `role="dialog"`, `aria-modal`, `data-state`, `data-placement`, `data-size` |
+| `Drawer.CloseTrigger` | `button` | `contour-drawer__close-trigger` | `data-part="close-trigger"`; with `asChild`, the class of your element                            |
+| `Drawer.Header`       | `div`    | `contour-drawer__header`        | `data-part="header"`                                                                              |
+| `Drawer.Body`         | `div`    | `contour-drawer__body`          | `data-part="body"`                                                                                |
+| `Drawer.Footer`       | `div`    | `contour-drawer__footer`        | `data-part="footer"`                                                                              |
+| `Drawer.Title`        | `h2`     | `contour-drawer__title`         | `data-part="title"`, `id`                                                                         |
+| `Drawer.Description`  | `p`      | `contour-drawer__description`   | `data-part="description"`, `id`                                                                   |
+
+A drawer is a dialog: every part carries `data-scope="dialog"`. Style a drawer by its classes.
+
+## Props
+
+`Drawer.Root` takes every prop of the [Headless Dialog](/docs/headless/dialog#props), and:
+
+| Prop        | Values                                  | Default   |
+| ----------- | --------------------------------------- | --------- |
+| `placement` | `'start'`, `'end'`, `'top'`, `'bottom'` | `'start'` |
+| `size`      | `'sm'`, `'md'`, `'lg'`, `'full'`        | `'sm'`    |
+
+`Drawer.CloseTrigger` takes the props of [`CloseButton`](/docs/kit/button), or, with `asChild`,
+renders its child. Every other part takes `asChild` and the props of its element; `className` is
+merged with the part's class.
+
+## Keyboard
+
+| Key                  | Action                                                           |
+| -------------------- | ---------------------------------------------------------------- |
+| `Enter`, `Space`     | On the trigger: opens the drawer. On a close trigger: closes it  |
+| `Tab`, `Shift`+`Tab` | Move focus to the next or the previous element, round the drawer |
+| `Escape`             | Closes the drawer                                                |
+
+## Accessibility
+
+- The content is a modal dialog, named by its title: screen readers announce it as focus moves
+  in, and the rest of the page is `inert` while it is open.
+- Focus goes back to the trigger, such as the menu button, when the drawer closes.
+- `start` and `end` follow the direction of the text, so the drawer slides in from the side
+  readers of the page expect.
+- Under `prefers-reduced-motion`, the drawer fades in and out without sliding.
+
+## Tokens
+
+| Token                                                    | Used for                                              |
+| -------------------------------------------------------- | ----------------------------------------------------- |
+| `--ct-color-overlay-scrim`                               | the backdrop                                          |
+| `--ct-color-bg-surface`                                  | the background of the content                         |
+| `--ct-color-border-default`, `--ct-border-width-default` | the border on the inner side                          |
+| `--ct-shadow-overlay`                                    | the shadow of the content                             |
+| `--ct-space-panel-inset`                                 | the padding of the content and the gap of its parts   |
+| `--ct-space-control-gap`, `--ct-space-group-gap`         | the header, the body and the footer                   |
+| `--ct-text-heading`, `--ct-color-fg-default`             | the title                                             |
+| `--ct-text-body`, `--ct-color-fg-muted`                  | the description; other content is `fg-default`        |
+| `--ct-size-control-sm`                                   | the x, and the room the header makes for it           |
+| `--ct-layer-overlay`                                     | the `z-index` of the overlay, plus `--layer-index`    |
+| `--ct-motion-enter`, `--ct-motion-exit`                  | the slide of the content and the fade of the backdrop |
