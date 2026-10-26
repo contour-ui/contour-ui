@@ -42,6 +42,12 @@ catalog:
   '@vitejs/plugin-react': 6.1.2
   vitest-browser-react: 2.3.0
 
+  # Positioning of floating elements (popovers, menus). Runtime dependencies of the published
+  # packages: core computes positions with the platform-agnostic core, headless measures the DOM
+  # with the DOM platform. Keep both on the same version: dom depends on core.
+  '@floating-ui/core': 1.8.0
+  '@floating-ui/dom': 1.8.0
+
   # Storybook
   storybook: 10.6.3
   '@storybook/react-vite': 10.6.3

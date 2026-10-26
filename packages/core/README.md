@@ -9,6 +9,7 @@
 | `states/`       | reusable state machines; **never imports `interactions/`** |
 | `interactions/` | pointer / keyboard logic; **never imports `states/`**      |
 | `collection/`   | item collections that list machines navigate (below)       |
+| `positioning/`  | where floating elements go, on Floating UI (below)         |
 | `scales/`       | value scales (linear, log, dB…)                            |
 | `format/`       | value formatting / parsing                                 |
 | `react/`        | `@contour-ui/core/react` subpath: React hooks (see below)  |
@@ -94,6 +95,22 @@ The adapter reads the intent of an event and sends its machine an event of its o
   than `timeout` ms apart (500 by default). Core has no clock: the adapter passes `now`, such as
   the time stamp of the key event, and keeps the state. Space counts only within a query, so that
   it can select otherwise.
+
+## Positioning (`positioning/`)
+
+Where a floating element (a popover, a menu) goes next to its reference, computed by Floating UI
+with the platform the adapter passes: the DOM measures elements, another renderer its nodes,
+tests plain rectangles.
+
+- `computePosition(reference, floating, { ...options, platform, compute })` — the options
+  (`placement`, `offset`, `flip`, `shift`, `sameWidth`, `fitViewport`, `strategy`) become
+  middleware. The result is plain data: the coordinates, the placement after `flip`, the sizes,
+  the transform origin and the CSS variables `--reference-width`, `--reference-height`,
+  `--available-width`, `--available-height` and `--transform-origin`. `compute` is the
+  `computePosition` of the Floating UI package the platform comes from (`@floating-ui/core`'s by
+  default; the DOM passes `@floating-ui/dom`'s).
+- `resolvePositioningOptions(...layers)` — the options with every default filled in; a later
+  layer wins, as a component puts its owner's options over its own defaults.
 
 ## `@contour-ui/core/react`
 

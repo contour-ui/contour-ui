@@ -44,6 +44,9 @@
     "build": "vp pack",
     "dev": "vp pack --watch"
   },
+  "dependencies": {
+    "@floating-ui/core": "catalog:"
+  },
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",

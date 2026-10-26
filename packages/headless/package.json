@@ -38,7 +38,8 @@
     "build-storybook": "storybook build --output-dir storybook-static"
   },
   "dependencies": {
-    "@contour-ui/core": "workspace:*"
+    "@contour-ui/core": "workspace:*",
+    "@floating-ui/dom": "catalog:"
   },
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",

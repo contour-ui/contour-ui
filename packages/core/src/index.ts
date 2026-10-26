@@ -51,6 +51,22 @@ export type {
   TypeaheadState,
 } from './interactions/index.ts';
 
+export { computePosition, resolvePositioningOptions } from './positioning/index.ts';
+export type {
+  ComputePositionConfig,
+  Placement,
+  PlacementAlign,
+  PlacementSide,
+  PositioningOffset,
+  PositioningOptions,
+  PositioningPlatform,
+  PositioningResult,
+  PositioningSizeVariables,
+  PositioningStrategy,
+  PositioningVariables,
+  ResolvedPositioningOptions,
+} from './positioning/index.ts';
+
 export * as clipboard from './states/clipboard/index.ts';
 export * as dialog from './states/dialog/index.ts';
 export * as listbox from './states/listbox/index.ts';
