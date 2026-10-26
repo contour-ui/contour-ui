@@ -37,6 +37,11 @@ A machine is data plus pure functions; a service runs it; the platform gives it 
 
 Hooks shared by every renderer adapter: React only, no `react-dom`.
 
+- `useMachine(machine, props, platform)` — runs a machine in a component: creates the service
+  once, passes the props on every render, runs `watch` actions after the commit, starts the
+  machine after mount and stops it on unmount (Strict Mode's extra mount included), and
+  re-renders when the snapshot changes. Returns the service for the component's `connect`.
+
 - `useControllableState({ value, defaultValue, onValueChange, isEqual })` — state that the owner
   of a component may control (`value`) or leave to the component (`defaultValue`). Returns
   `[value, setValue]` like `useState`: the setter is stable, takes a value or an updater, and

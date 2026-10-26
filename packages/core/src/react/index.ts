@@ -9,3 +9,4 @@ export type {
   UseControllableStateReturn,
   ValueChangeDetails,
 } from './use-controllable-state.ts';
+export { useMachine } from './use-machine.ts';
