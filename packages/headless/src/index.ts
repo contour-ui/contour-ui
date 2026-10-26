@@ -15,3 +15,17 @@ export { useClipboardContext } from './clipboard/clipboard-context.ts';
 export { useClipboard } from './clipboard/use-clipboard.ts';
 export type { UseClipboardProps, UseClipboardReturn } from './clipboard/use-clipboard.ts';
 export * as Placeholder from './placeholder/index.ts';
+export * as Toc from './toc/index.ts';
+export { useTocContext } from './toc/toc-context.ts';
+export { useToc } from './toc/use-toc.ts';
+export type {
+  TocIndicatorAttributes,
+  TocIndicatorStyle,
+  TocItemAttributes,
+  TocLinkAttributes,
+  TocPartAttributes,
+  TocRootAttributes,
+  TocTitleAttributes,
+  UseTocProps,
+  UseTocReturn,
+} from './toc/use-toc.ts';
