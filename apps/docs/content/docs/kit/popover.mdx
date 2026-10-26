@@ -1,0 +1,271 @@
+---
+title: Popover
+description: A small raised panel next to its trigger, for a short form, a choice from a list or details, that closes on Escape or a press outside.
+---
+
+import { Button, createListCollection, Listbox, Popover, Portal } from '@contour-ui/kit';
+import { useState } from 'react';
+
+export const waveforms = createListCollection({
+  items: [
+    { value: 'sine', label: 'Sine' },
+    { value: 'triangle', label: 'Triangle' },
+    { value: 'sawtooth', label: 'Sawtooth' },
+    { value: 'square', label: 'Square' },
+  ],
+});
+
+export function WaveformExample() {
+  const [open, setOpen] = useState(false);
+  const [waveform, setWaveform] = useState('square');
+  const label = waveforms.items.find((item) => item.value === waveform)?.label;
+  return (
+    <Popover.Root
+      open={open}
+      onOpenChange={(details) => {
+        setOpen(details.open);
+      }}
+    >
+      <Popover.Trigger asChild>
+        <Button variant="outline">{`Waveform: ${label}`}</Button>
+      </Popover.Trigger>
+      <Portal>
+        <Popover.Positioner>
+          <Popover.Content aria-label="Waveform">
+            <Listbox.Root
+              collection={waveforms}
+              value={[waveform]}
+              onSelect={(details) => {
+                setWaveform(details.value);
+                setOpen(false);
+              }}
+            >
+              <Listbox.Content aria-label="Waveform">
+                {waveforms.items.map((item) => (
+                  <Listbox.Item key={item.value} item={item}>
+                    <Listbox.ItemText>{item.label}</Listbox.ItemText>
+                    <Listbox.ItemIndicator />
+                  </Listbox.Item>
+                ))}
+              </Listbox.Content>
+            </Listbox.Root>
+          </Popover.Content>
+        </Popover.Positioner>
+      </Portal>
+    </Popover.Root>
+  );
+}
+
+<Preview>
+  {
+    <Popover.Root>
+      <Popover.Trigger asChild>
+        <Button variant="outline">Share</Button>
+      </Popover.Trigger>
+      <Portal>
+        <Popover.Positioner>
+          <Popover.Content>
+            <Popover.Title>Share this page</Popover.Title>
+            <Popover.Description>Anyone with the link can view it.</Popover.Description>
+            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+              <Popover.CloseTrigger asChild>
+                <Button size="sm">Copy link</Button>
+              </Popover.CloseTrigger>
+            </div>
+            <Popover.CloseTrigger />
+          </Popover.Content>
+        </Popover.Positioner>
+      </Portal>
+    </Popover.Root>
+  }
+</Preview>
+
+```tsx
+import { Button, Popover, Portal } from '@contour-ui/kit';
+
+<Popover.Root>
+  <Popover.Trigger asChild>
+    <Button variant="outline">Share</Button>
+  </Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Share this page</Popover.Title>
+        <Popover.Description>Anyone with the link can view it.</Popover.Description>
+        <Button size="sm" onClick={copyLink}>
+          Copy link
+        </Button>
+        <Popover.CloseTrigger />
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>;
+```
+
+Popover is the [Headless Popover](/docs/headless/popover) with the look of Kit: a raised panel
+with a border, a shadow and the corners of a panel, next to its trigger. It grows in from the edge
+next to the trigger when it opens and shrinks back when it closes. Focus moves into it as it
+opens; Escape, a press outside it, Tab past its end and its close triggers close it, and focus
+goes back to the trigger.
+
+## The parts
+
+- **The trigger.** `Popover.Trigger` has no look of its own: pass a `Button` or an `IconButton`
+  with `asChild`. It opens the popover and closes it again.
+- **The overlay.** `Portal` renders the positioner at the end of the page, above everything else,
+  and the positioner holds the content next to the trigger, or next to `Popover.Anchor` when there
+  is one.
+- **The content.** `Popover.Content` stacks what it holds: `Popover.Title`, in the heading style,
+  `Popover.Description`, in a muted color, and anything else, such as actions or a list.
+- **The x.** `Popover.CloseTrigger` is a small ghost x labeled "Close" in the top end corner; the
+  title, or a description without a title, makes room for it. Put it after the rest of the
+  content, so that focus goes to the content first. With `asChild`, a button of your own closes the
+  popover instead, such as Copy link above.
+
+## Placement
+
+The content opens below the trigger, at its start edge, 8px away. When that side has no room, it
+flips to the other one, and it slides along its side to stay 8px inside the viewport. Set another
+side with `positioning`:
+
+```tsx
+<Popover.Root positioning={{ placement: 'top' }}>
+```
+
+`placement` takes `top`, `right`, `bottom` and `left`, centered or with `-start` and `-end`;
+`offset` is the gap to the trigger, and `sameWidth` makes the content as wide as its trigger. The
+other options are on the [Headless page](/docs/headless/popover#placement).
+
+## Size
+
+The content is as wide as what it holds, up to 320px, and as wide as its trigger with `sameWidth`.
+It is never higher than the room it has between its trigger and the edge of the viewport: past
+that, it scrolls. For another width, set it on the content:
+
+```tsx
+<Popover.Content style={{ inlineSize: '24rem' }}>
+```
+
+## A choice from a list
+
+A [Listbox](/docs/kit/listbox) fits in a popover as it is, with no frame of its own. Here the
+owner keeps `open` in its state and closes the popover when an item is selected:
+
+<Preview>
+  <WaveformExample />
+</Preview>
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Popover.Root open={open} onOpenChange={(details) => setOpen(details.open)}>
+  <Popover.Trigger asChild>
+    <Button variant="outline">Waveform</Button>
+  </Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content aria-label="Waveform">
+        <Listbox.Root
+          collection={waveforms}
+          value={[waveform]}
+          onSelect={(details) => {
+            setWaveform(details.value);
+            setOpen(false);
+          }}
+        >
+          …
+        </Listbox.Root>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>;
+```
+
+## Open and close
+
+`defaultOpen` opens a popover that keeps its own state; `open` and `onOpenChange` keep it in
+yours, as above. `closeOnEscape={false}` and `closeOnInteractOutside={false}` keep it open on
+Escape and on a press outside. `modal` keeps the user inside it: Tab goes round the content, the
+page does not scroll, and the rest of the page is out of reach until it closes.
+
+## Anatomy
+
+| Part                   | Element  | Class                            | Attributes                                                                                                                  |
+| ---------------------- | -------- | -------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `Popover.Root`         | none     | —                                | renders only its children                                                                                                   |
+| `Popover.Trigger`      | `button` | `contour-popover__trigger`       | `data-part="trigger"`, `aria-haspopup="dialog"`, `aria-expanded`, `aria-controls`, `data-state`                             |
+| `Popover.Anchor`       | `div`    | `contour-popover__anchor`        | `data-part="anchor"`                                                                                                        |
+| `Popover.Positioner`   | `div`    | `contour-popover__positioner`    | `data-part="positioner"`, `data-state`, `data-placement`, `hidden` (closed)                                                 |
+| `Popover.Content`      | `div`    | `contour-popover__content`       | `data-part="content"`, `role="dialog"`, `aria-labelledby`, `aria-describedby`, `aria-modal`, `data-state`, `data-placement` |
+| `Popover.Title`        | `div`    | `contour-popover__title`         | `data-part="title"`, `id`                                                                                                   |
+| `Popover.Description`  | `div`    | `contour-popover__description`   | `data-part="description"`, `id`                                                                                             |
+| `Popover.CloseTrigger` | `button` | `contour-popover__close-trigger` | `data-part="close-trigger"`, a `CloseButton`; with `asChild`, your element                                                  |
+
+Every part carries `data-scope="popover"`. The positioner gets its position, `--layer-index` and
+the positioning variables (`--reference-width`, `--available-height`, `--transform-origin`…) from
+the platform, in its inline style.
+
+## Props
+
+`Popover.Root`:
+
+| Prop                     | Type                                                                           | Default                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `open`                   | `boolean`                                                                      | —                                                                       |
+| `defaultOpen`            | `boolean`                                                                      | `false`                                                                 |
+| `onOpenChange`           | `(details: { open: boolean }) => void`                                         | —                                                                       |
+| `positioning`            | `placement`, `offset`, `flip`, `shift`, `sameWidth`, `fitViewport`, `strategy` | `{ placement: 'bottom-start', offset: 8, shift: 8, fitViewport: true }` |
+| `modal`                  | `boolean`                                                                      | `false`                                                                 |
+| `portalled`              | `boolean`: the positioner is in a `Portal`                                     | `true`                                                                  |
+| `autoFocus`              | `boolean`: focus moves in when it opens                                        | `true`                                                                  |
+| `initialFocusEl`         | `() => HTMLElement \| null`                                                    | —                                                                       |
+| `restoreFocus`           | `boolean`: focus moves back when it closes                                     | `true`                                                                  |
+| `finalFocusEl`           | `() => HTMLElement \| null`                                                    | —                                                                       |
+| `closeOnEscape`          | `boolean`                                                                      | `true`                                                                  |
+| `closeOnInteractOutside` | `boolean`: a press outside or focus moving out                                 | `true`                                                                  |
+| `lazyMount`              | `boolean`                                                                      | `false`                                                                 |
+| `unmountOnExit`          | `boolean`                                                                      | `false`                                                                 |
+| `onExitComplete`         | `() => void`                                                                   | —                                                                       |
+
+`Popover.CloseTrigger` takes the props of `CloseButton` (`label`, `variant`, `size`, `sm` by
+default) for the x, or `asChild` and your own element. Every other part takes `asChild` and the
+props of its element, such as `className`, `style` and `ref`; `className` is merged with the
+part's class.
+
+## Keyboard
+
+| Key                            | Action                                                                             |
+| ------------------------------ | ---------------------------------------------------------------------------------- |
+| `Enter`, `Space`               | On the trigger, opens or closes the popover                                        |
+| `Escape`                       | Closes the top-most popover and moves focus back to its trigger                    |
+| `Tab`                          | Through the content; past its end, on to what follows the trigger, which closes it |
+| `Shift` + `Tab`                | From the first element of the content back to the trigger                          |
+| `Tab`, `Shift` + `Tab` (modal) | Go round the content                                                               |
+
+## Accessibility
+
+- **A dialog.** The content has the `dialog` role and is named by `Popover.Title`; without a
+  title, give it an `aria-label`, as the list above does. `Popover.Description` describes it.
+- **The trigger** tells that it opens a dialog, whether it is open, and which element it
+  controls.
+- **The x** is named "Close"; name what it closes when several things can.
+- **Focus** moves into the content as it opens, and back as it closes. A popover open on the first
+  render leaves focus where it is.
+- **Modal popovers** set `aria-modal="true"` and make the rest of the page inert.
+
+## Tokens
+
+| Token                                                    | Used for                                             |
+| -------------------------------------------------------- | ---------------------------------------------------- |
+| `--ct-color-bg-raised`                                   | the background of the content                        |
+| `--ct-color-border-default`, `--ct-border-width-default` | its border                                           |
+| `--ct-radius-panel`                                      | its corners                                          |
+| `--ct-shadow-raised`                                     | its shadow                                           |
+| `--ct-space-panel-inset`                                 | its padding                                          |
+| `--ct-space-group-gap`                                   | the gap between its parts, the inset of the x        |
+| `--ct-color-fg-default`, `--ct-text-body`                | its text                                             |
+| `--ct-text-heading`                                      | the title                                            |
+| `--ct-color-fg-muted`                                    | the description                                      |
+| `--ct-size-control-sm`, `--ct-space-control-gap`         | the x, and the room the title leaves for it          |
+| `--ct-layer-overlay`                                     | the stacking of the positioner, plus `--layer-index` |
+| `--ct-motion-enter`, `--ct-motion-exit`                  | growing in and shrinking out                         |

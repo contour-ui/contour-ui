@@ -1,0 +1,130 @@
+/*
+ * A raised panel next to its trigger: the surface, the border and the corners of a panel, with
+ * the shadow of a raised surface. The positioner sits above the page, stacked with the other
+ * overlays by `--layer-index`, which the overlay stack writes on it; the platform writes its
+ * position and the variables the content reads (`--available-height`, `--transform-origin`…).
+ */
+
+@keyframes contour-popover-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes contour-popover-out {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes contour-popover-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes contour-popover-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.contour-popover__positioner {
+  z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0));
+}
+
+.contour-popover__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-group-gap);
+  box-sizing: border-box;
+  /*
+   * As wide as its content, up to 320px; never narrower than that cap lets a trigger that is
+   * wider, so that `sameWidth` content is as wide as its trigger.
+   */
+  max-inline-size: max(320px, var(--reference-width, 0px));
+  max-block-size: var(--available-height);
+  margin: 0;
+  padding: var(--ct-space-panel-inset);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-raised);
+  /* Decoration: the raised background and the border set the popover apart without it. */
+  box-shadow: var(--ct-shadow-raised);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  text-align: start;
+  overflow-wrap: break-word;
+  /* It grows from the edge next to its trigger. */
+  transform-origin: var(--transform-origin);
+  /* It takes focus only when nothing inside does: no ring around the whole popover. */
+  outline: none;
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-popover__content[hidden] {
+  display: none;
+}
+
+.contour-popover__content[data-state='open'] {
+  animation: contour-popover-in var(--ct-motion-enter);
+}
+
+/* Its own keyframes: the closed state must start an animation of another name. */
+.contour-popover__content[data-state='closed'] {
+  animation: contour-popover-out var(--ct-motion-exit);
+}
+
+/* No growing: the content only fades. */
+@media (prefers-reduced-motion: reduce) {
+  .contour-popover__content[data-state='open'] {
+    animation-name: contour-popover-fade-in;
+  }
+
+  .contour-popover__content[data-state='closed'] {
+    animation-name: contour-popover-fade-out;
+  }
+}
+
+.contour-popover__title {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.contour-popover__description {
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+/* The x in the top end corner, centered on the first line of the title. */
+.contour-popover__content > .contour-popover__close-trigger {
+  position: absolute;
+  inset-block-start: calc(
+    var(--ct-space-panel-inset) +
+      (
+        var(--ct-text-heading-font-size) * var(--ct-text-heading-line-height) -
+          var(--ct-size-control-sm)
+      ) /
+      2
+  );
+  inset-inline-end: var(--ct-space-group-gap);
+}
+
+/* The title does not run under the x, nor does the description of a popover without a title. */
+.contour-popover__content:has(> .contour-popover__close-trigger) > .contour-popover__title,
+.contour-popover__content:has(> .contour-popover__close-trigger):not(
+    :has(> .contour-popover__title)
+  )
+  > .contour-popover__description {
+  padding-inline-end: calc(var(--ct-size-control-sm) + var(--ct-space-control-gap));
+}

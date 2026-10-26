@@ -1,0 +1,16 @@
+export { PopoverRoot as Root } from './popover-root.tsx';
+export type { PopoverRootProps as RootProps } from './popover-root.tsx';
+export { PopoverTrigger as Trigger } from './popover-trigger.tsx';
+export type { PopoverTriggerProps as TriggerProps } from './popover-trigger.tsx';
+export { PopoverAnchor as Anchor } from './popover-anchor.tsx';
+export type { PopoverAnchorProps as AnchorProps } from './popover-anchor.tsx';
+export { PopoverPositioner as Positioner } from './popover-positioner.tsx';
+export type { PopoverPositionerProps as PositionerProps } from './popover-positioner.tsx';
+export { PopoverContent as Content } from './popover-content.tsx';
+export type { PopoverContentProps as ContentProps } from './popover-content.tsx';
+export { PopoverTitle as Title } from './popover-title.tsx';
+export type { PopoverTitleProps as TitleProps } from './popover-title.tsx';
+export { PopoverDescription as Description } from './popover-description.tsx';
+export type { PopoverDescriptionProps as DescriptionProps } from './popover-description.tsx';
+export { PopoverCloseTrigger as CloseTrigger } from './popover-close-trigger.tsx';
+export type { PopoverCloseTriggerProps as CloseTriggerProps } from './popover-close-trigger.tsx';

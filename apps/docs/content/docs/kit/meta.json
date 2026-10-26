@@ -16,6 +16,7 @@
     "link",
     "listbox",
     "placeholder",
+    "popover",
     "table",
     "theme-provider",
     "toc"
