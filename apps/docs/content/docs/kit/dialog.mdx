@@ -1,0 +1,237 @@
+---
+title: Dialog
+description: A window over the page, in the middle or near the top, with a scrim behind it, an x in its corner, and a header, a body and a footer.
+---
+
+import { Button, Dialog, Portal } from '@contour-ui/kit';
+
+<Preview>
+  {
+    <Dialog.Root>
+      <Dialog.Trigger asChild>
+        <Button>Export</Button>
+      </Dialog.Trigger>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.CloseTrigger />
+            <Dialog.Header>
+              <Dialog.Title>Export the mix</Dialog.Title>
+              <Dialog.Description>Render the session to an audio file.</Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Body>
+              The mix is rendered at the sample rate of the session, from the first marker to the
+              last one.
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.CloseTrigger asChild>
+                <Button variant="outline">Cancel</Button>
+              </Dialog.CloseTrigger>
+              <Dialog.CloseTrigger asChild>
+                <Button>Export</Button>
+              </Dialog.CloseTrigger>
+            </Dialog.Footer>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
+  }
+</Preview>
+
+```tsx
+import { Button, Dialog, Portal } from '@contour-ui/kit';
+
+<Dialog.Root>
+  <Dialog.Trigger asChild>
+    <Button>Export</Button>
+  </Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.CloseTrigger />
+        <Dialog.Header>
+          <Dialog.Title>Export the mix</Dialog.Title>
+          <Dialog.Description>Render the session to an audio file.</Dialog.Description>
+        </Dialog.Header>
+        <Dialog.Body>…</Dialog.Body>
+        <Dialog.Footer>
+          <Dialog.CloseTrigger asChild>
+            <Button variant="outline">Cancel</Button>
+          </Dialog.CloseTrigger>
+          <Button onClick={exportMix}>Export</Button>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>;
+```
+
+Dialog is the [Headless Dialog](/docs/headless/dialog) with the look of Kit: the scrim of the
+overlay over the page, and a raised panel with a border, a shadow and the corners of a panel. It
+grows in when it opens and fades out when it closes. While it is open, focus stays inside it, the
+page does not scroll and the rest of it is out of reach; Escape, a press on the scrim, the x and
+the other close triggers close it, and focus goes back to the trigger.
+
+## The parts
+
+- **The overlay.** `Portal` renders the backdrop and the positioner at the end of the page, above
+  everything else. The positioner holds the content in the middle of the viewport, with a margin
+  all round, and lets presses around it through to the backdrop.
+- **The trigger** has no look of its own: pass a `Button` with `asChild`.
+- **The x.** `Dialog.CloseTrigger` is a small ghost x button, named "Close", in the top end corner
+  of the content; the header and a title right in the content make room for it. Pass another
+  `label` to say what closes, such as "Close the export".
+- **Header, body, footer.** The header stacks the title and the description. The body takes the
+  rest of the height, and scrolls between the header and the footer when the dialog is taller than
+  the viewport. The footer lays out its actions in a row, at the end. Every part is optional: a
+  title and a field right in the content work too.
+- **Other ways to close.** With `asChild`, `Dialog.CloseTrigger` makes a button of yours close the
+  dialog, keeping its look and place, as the Cancel button above.
+
+## Placement and size
+
+`placement` on the root puts the dialog in the middle of the viewport (`center`, the default), or
+near its top (`top`), as a search that grows down as its results change. `size` sets how wide the
+dialog can grow: `sm` (400 px) for a question, `md` (560 px, the default) for a form or a search,
+`lg` (800 px) for more content. It never grows wider than the viewport.
+
+```tsx
+<Dialog.Root placement="top" size="md">
+  …
+</Dialog.Root>
+```
+
+## Open and close
+
+The dialog keeps its own state; `defaultOpen` opens it from the start. To keep it yourself, pass
+`open` and `onOpenChange`, which reports each request to open or close as `{ open }`, and the
+dialog changes when you pass the new `open`:
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Dialog.Root open={open} onOpenChange={({ open }) => setOpen(open)}>
+  …
+</Dialog.Root>;
+```
+
+`closeOnEscape` and `closeOnInteractOutside` turn off Escape and the press on the scrim. A
+dialog with `modal={false}` leaves the page within reach: render no backdrop for it. Focus goes to
+the first element of the dialog when it opens, or to `initialFocusEl()`, and back to the trigger,
+or to `finalFocusEl()`, when it closes. Every option of the
+[Headless Dialog](/docs/headless/dialog#props) works the same here.
+
+## Alert dialogs
+
+`role="alertdialog"` asks for an answer. Leave out the x, and put the safe answer first: the
+dialog focuses its first close trigger, and a press on the scrim does not close it.
+
+```tsx
+<Dialog.Root role="alertdialog" size="sm">
+  <Dialog.Trigger asChild>
+    <Button variant="outline">Delete the take</Button>
+  </Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Header>
+          <Dialog.Title>Delete the take?</Dialog.Title>
+          <Dialog.Description>It is gone for good.</Dialog.Description>
+        </Dialog.Header>
+        <Dialog.Footer>
+          <Dialog.CloseTrigger asChild>
+            <Button variant="outline">Keep it</Button>
+          </Dialog.CloseTrigger>
+          <Dialog.CloseTrigger asChild>
+            <Button onClick={deleteTake}>Delete</Button>
+          </Dialog.CloseTrigger>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>
+```
+
+## Scrolling
+
+The dialog is never taller than the viewport: a long `Dialog.Body` scrolls, from edge to edge of
+the dialog, while the header and the footer stay in view. A body that holds only text takes no
+focus by itself, so give it `tabIndex={0}`: keyboard users can then focus it and scroll it with
+the arrow keys.
+
+## Anatomy
+
+| Part                  | Element  | Class                           | Attributes                                                                                        |
+| --------------------- | -------- | ------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `Dialog.Root`         | none     | —                               | —                                                                                                 |
+| `Dialog.Trigger`      | `button` | `contour-dialog__trigger`       | `data-scope="dialog" data-part="trigger"`, `aria-haspopup`, `aria-expanded`, `data-state`         |
+| `Dialog.Backdrop`     | `div`    | `contour-dialog__backdrop`      | `data-part="backdrop"`, `data-state`                                                              |
+| `Dialog.Positioner`   | `div`    | `contour-dialog__positioner`    | `data-part="positioner"`, `data-state`, `data-placement`                                          |
+| `Dialog.Content`      | `div`    | `contour-dialog__content`       | `data-part="content"`, `role="dialog"`, `aria-modal`, `data-state`, `data-placement`, `data-size` |
+| `Dialog.CloseTrigger` | `button` | `contour-dialog__close-trigger` | `data-part="close-trigger"`; with `asChild`, the class of your element                            |
+| `Dialog.Header`       | `div`    | `contour-dialog__header`        | `data-part="header"`                                                                              |
+| `Dialog.Body`         | `div`    | `contour-dialog__body`          | `data-part="body"`                                                                                |
+| `Dialog.Footer`       | `div`    | `contour-dialog__footer`        | `data-part="footer"`                                                                              |
+| `Dialog.Title`        | `h2`     | `contour-dialog__title`         | `data-part="title"`, `id`                                                                         |
+| `Dialog.Description`  | `p`      | `contour-dialog__description`   | `data-part="description"`, `id`                                                                   |
+
+Every part carries `data-scope="dialog"`; `data-state` is `"open"` or `"closed"`. The closed
+overlay stays mounted, `hidden`, unless `unmountOnExit`; while it fades out it is `inert`. The
+content, the positioner and the backdrop get `--layer-index` while the dialog is open: their place
+among the open overlays, so a dialog opened from another one goes above it. The
+[Headless Dialog](/docs/headless/dialog#anatomy) lists every attribute.
+
+## Props
+
+`Dialog.Root` takes every prop of the [Headless Dialog](/docs/headless/dialog#props) (`open`,
+`defaultOpen`, `onOpenChange`, `modal`, `closeOnEscape`, `closeOnInteractOutside`, `role`,
+`initialFocusEl`, `finalFocusEl`, `restoreFocus`, `lazyMount`, `unmountOnExit`…), and:
+
+| Prop        | Values                 | Default    |
+| ----------- | ---------------------- | ---------- |
+| `placement` | `'center'`, `'top'`    | `'center'` |
+| `size`      | `'sm'`, `'md'`, `'lg'` | `'md'`     |
+
+`Dialog.CloseTrigger` takes the props of [`CloseButton`](/docs/kit/button), `label` (`'Close'`),
+`variant` (`'ghost'`) and `size` (`'sm'`) among them, or, with `asChild`, renders its child. Every
+other part takes `asChild` and the props of its element, such as `className`, `style` and `ref`;
+`className` is merged with the part's class.
+
+## Keyboard
+
+| Key                  | Action                                                           |
+| -------------------- | ---------------------------------------------------------------- |
+| `Enter`, `Space`     | On the trigger: opens the dialog. On a close trigger: closes it  |
+| `Tab`, `Shift`+`Tab` | Move focus to the next or the previous element, round the dialog |
+| `Escape`             | Closes the dialog                                                |
+
+## Accessibility
+
+- The content has the `dialog` role (or `alertdialog`), `aria-modal`, and is named by its title
+  and described by its description: screen readers announce both as focus moves in. A dialog
+  without a title needs an `aria-label`.
+- The x is named "Close". Name it after what closes when the page has several things that do.
+- While the dialog is open, the rest of the page is `inert`: out of reach of the pointer, the
+  keyboard and screen readers.
+- The shadow is decoration: the raised background and the border set the dialog apart without it.
+- Under `prefers-reduced-motion`, the dialog fades in and out without growing.
+
+## Tokens
+
+| Token                                               | Used for                                            |
+| --------------------------------------------------- | --------------------------------------------------- |
+| `--ct-color-overlay-scrim`                          | the backdrop                                        |
+| `--ct-color-bg-raised`, `--ct-color-border-default` | the background and the border of the content        |
+| `--ct-border-width-default`, `--ct-radius-panel`    | the width of the border and the corners             |
+| `--ct-shadow-overlay`                               | the shadow of the content                           |
+| `--ct-space-panel-inset`                            | the padding of the content and the gap of its parts |
+| `--ct-space-section-gap`                            | the margin around the content                       |
+| `--ct-space-control-gap`, `--ct-space-group-gap`    | the header, the body and the footer                 |
+| `--ct-text-heading`, `--ct-color-fg-default`        | the title                                           |
+| `--ct-text-body`, `--ct-color-fg-muted`             | the description; other content is `fg-default`      |
+| `--ct-size-control-sm`                              | the x, and the room the header makes for it         |
+| `--ct-layer-overlay`                                | the `z-index` of the overlay, plus `--layer-index`  |
+| `--ct-motion-enter`, `--ct-motion-exit`             | the animations of the content and the backdrop      |

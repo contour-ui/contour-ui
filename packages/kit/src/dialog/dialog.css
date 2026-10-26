@@ -1,0 +1,200 @@
+/*
+ * A window over the page: the scrim of the overlay over everything, and a raised panel in the
+ * middle of the viewport or near its top. The backdrop and the positioner sit above the page,
+ * stacked with the other overlays by `--layer-index`, which the overlay stack writes on them.
+ */
+
+@keyframes contour-dialog-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes contour-dialog-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes contour-dialog-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes contour-dialog-out {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+.contour-dialog__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0));
+  background: var(--ct-color-overlay-scrim);
+}
+
+.contour-dialog__backdrop[data-state='open'] {
+  animation: contour-dialog-fade-in var(--ct-motion-enter);
+}
+
+/* Its own keyframes: the closed state must start an animation of another name. */
+.contour-dialog__backdrop[data-state='closed'] {
+  animation: contour-dialog-fade-out var(--ct-motion-exit);
+}
+
+.contour-dialog__positioner {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  padding: var(--ct-space-section-gap);
+  /* Presses around the content go through to the backdrop; the content takes its own. */
+  pointer-events: none;
+}
+
+/* Near the top, as a search: the content grows down, and does not move as its results change. */
+.contour-dialog__positioner[data-placement='top'] {
+  align-items: flex-start;
+  padding-block-start: max(var(--ct-space-section-gap), 10dvh);
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-dialog__positioner[hidden] {
+  display: none;
+}
+
+.contour-dialog__content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-panel-inset);
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-block-size: 100%;
+  margin: 0;
+  padding: var(--ct-space-panel-inset);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-raised);
+  /* Decoration: the raised background and the border set the dialog apart without it. */
+  box-shadow: var(--ct-shadow-overlay);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  text-align: start;
+  overflow-wrap: break-word;
+  pointer-events: auto;
+  /* It takes focus only when nothing inside does: no ring around the whole dialog. */
+  outline: none;
+}
+
+.contour-dialog__content[hidden] {
+  display: none;
+}
+
+.contour-dialog__content[data-size='sm'] {
+  max-inline-size: 400px;
+}
+
+.contour-dialog__content[data-size='md'] {
+  max-inline-size: 560px;
+}
+
+.contour-dialog__content[data-size='lg'] {
+  max-inline-size: 800px;
+}
+
+.contour-dialog__content[data-state='open'] {
+  animation: contour-dialog-in var(--ct-motion-enter);
+}
+
+.contour-dialog__content[data-state='closed'] {
+  animation: contour-dialog-out var(--ct-motion-exit);
+}
+
+/* No growing: the content only fades. */
+@media (prefers-reduced-motion: reduce) {
+  .contour-dialog__content[data-state='open'] {
+    animation-name: contour-dialog-fade-in;
+  }
+
+  .contour-dialog__content[data-state='closed'] {
+    animation-name: contour-dialog-fade-out;
+  }
+}
+
+.contour-dialog__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+}
+
+/*
+ * The body scrolls from edge to edge of the content, its scrollbar too, and keeps room for the
+ * focus rings of its controls, which its overflow would cut.
+ */
+.contour-dialog__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--ct-space-group-gap);
+  min-block-size: 0;
+  margin-block: calc(-2 * var(--ct-border-width-focus));
+  margin-inline: calc(-1 * var(--ct-space-panel-inset));
+  padding-block: calc(2 * var(--ct-border-width-focus));
+  padding-inline: var(--ct-space-panel-inset);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.contour-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+  margin: 0;
+}
+
+.contour-dialog__title {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.contour-dialog__description {
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+/* The x in the top end corner, centered on the first line of the title. */
+.contour-dialog__content > .contour-dialog__close-trigger {
+  position: absolute;
+  inset-block-start: calc(
+    var(--ct-space-panel-inset) +
+      (
+        var(--ct-text-heading-font-size) * var(--ct-text-heading-line-height) -
+          var(--ct-size-control-sm)
+      ) /
+      2
+  );
+  inset-inline-end: var(--ct-space-group-gap);
+}
+
+/* The title does not run under the x. */
+.contour-dialog__content:has(> .contour-dialog__close-trigger)
+  > :is(.contour-dialog__header, .contour-dialog__title) {
+  padding-inline-end: calc(var(--ct-size-control-sm) + var(--ct-space-control-gap));
+}
