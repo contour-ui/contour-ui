@@ -1,0 +1,102 @@
+---
+title: Link
+description: A link in the accent color, underlined on hover or always.
+---
+
+import { Link } from '@contour-ui/kit';
+import { vars } from '@contour-ui/tokens';
+
+<Preview>
+  {
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: vars.space['section-gap'] }}>
+      <Link href="/docs/guide">Plain</Link>
+      <Link variant="underline" href="/docs/guide">
+        Underline
+      </Link>
+    </div>
+  }
+</Preview>
+
+```tsx
+import { Link } from '@contour-ui/kit';
+
+<Link href="/docs/guide">Guide</Link>;
+```
+
+A Link takes the font of the text around it. `plain`, the default, is underlined on hover only: use
+it for navigation and standalone links. In running text, use `underline`, so links do not stand
+out by color alone:
+
+<Preview>
+  {
+    <p style={{ margin: 0 }}>
+      Read the{' '}
+      <Link variant="underline" href="/docs/guide">
+        guide
+      </Link>{' '}
+      before you start.
+    </p>
+  }
+</Preview>
+
+## Router links
+
+With `asChild`, Link renders your router's link instead of its own `<a>`, with the Link class and
+attributes merged into it:
+
+```tsx
+import { Link } from '@contour-ui/kit';
+import { Link as RouterLink } from 'react-router';
+
+<Link asChild variant="underline">
+  <RouterLink to="/docs/guide">Guide</RouterLink>
+</Link>;
+```
+
+## External links
+
+Link adds nothing to a link that leaves your site: no `target`, no `rel`, no icon. Set what you
+need yourself:
+
+```tsx
+<Link href="https://github.com/contour-ui/contour-ui" target="_blank" rel="noreferrer">
+  GitHub
+</Link>
+```
+
+## Anatomy
+
+| Part   | Element | Class          | Attributes                                        |
+| ------ | ------- | -------------- | ------------------------------------------------- |
+| `Link` | `a`     | `contour-link` | `data-scope="link" data-part="root" data-variant` |
+
+`Link` accepts every `a` prop; `className` is merged with `contour-link`.
+
+## Props
+
+| Prop      | Values                   | Default   |
+| --------- | ------------------------ | --------- |
+| `variant` | `'plain'`, `'underline'` | `'plain'` |
+| `asChild` | `boolean`                | `false`   |
+
+## Keyboard
+
+| Key     | Action                                           |
+| ------- | ------------------------------------------------ |
+| `Tab`   | Moves focus to the link and shows the focus ring |
+| `Enter` | Follows the link                                 |
+
+## Accessibility
+
+- Give every Link an `href`: without one, `<a>` is not a link, so it cannot be focused and is not
+  announced as a link. For an action, use a button.
+- In running text, use `variant="underline"`: color alone must not be the only way to tell a link
+  from the text around it.
+- With `target="_blank"`, say that the link opens a new tab, in its text or with a labeled icon.
+
+## Tokens
+
+Text and underline in `--ct-color-accent-fg`. The underline is `--ct-border-width-default` thick;
+on hover, an `underline` link's underline doubles with a `--ct-motion-feedback` transition. The
+focus ring is `--ct-border-width-focus` wide in `--ct-color-border-focus`, offset by the same width,
+with `--ct-radius-control` corners.

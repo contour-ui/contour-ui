@@ -1,0 +1,26 @@
+.contour-link {
+  /* Only the focus ring shows the radius: an inline link has no background or border. */
+  border-radius: var(--ct-radius-control);
+  color: var(--ct-color-accent-fg);
+  font: inherit;
+  letter-spacing: inherit;
+  text-decoration: none;
+  /* No underline tokens: the line is as thick as a default border, twice that on hover. */
+  text-decoration-thickness: var(--ct-border-width-default);
+  text-underline-offset: 0.2em;
+  transition: text-decoration-thickness var(--ct-motion-feedback);
+}
+
+.contour-link[data-variant='underline'],
+.contour-link[data-variant='plain']:hover {
+  text-decoration-line: underline;
+}
+
+.contour-link[data-variant='underline']:hover {
+  text-decoration-thickness: calc(2 * var(--ct-border-width-default));
+}
+
+.contour-link:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
