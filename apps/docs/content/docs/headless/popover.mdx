@@ -1,0 +1,316 @@
+---
+title: Popover
+description: A dialog that opens next to its trigger, with placement that flips to stay in view, dismissal by Escape or a press outside, and focus that moves in and back.
+---
+
+import { Popover, Portal } from '@contour-ui/headless';
+
+<Preview>
+  {
+    <Popover.Root>
+      <Popover.Trigger className="docs-popover-trigger">Share</Popover.Trigger>
+      <Portal>
+        <Popover.Positioner className="docs-popover-positioner">
+          <Popover.Content className="docs-popover-content">
+            <Popover.Title style={{ fontWeight: 600 }}>Share this page</Popover.Title>
+            <Popover.Description>Anyone with the link can view it.</Popover.Description>
+            <input aria-label="Link" defaultValue="https://contour-ui.dev/docs" />
+            <Popover.CloseTrigger className="docs-popover-trigger">Done</Popover.CloseTrigger>
+          </Popover.Content>
+        </Popover.Positioner>
+      </Portal>
+      <style>{`
+        .docs-popover-trigger { padding: 2px 10px; border: 1px solid; border-radius: 4px; }
+        .docs-popover-positioner { z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0)); }
+        .docs-popover-content {
+          display: grid;
+          gap: 8px;
+          max-inline-size: 18rem;
+          padding: 12px;
+          border: 1px solid var(--ct-color-border-default);
+          border-radius: 8px;
+          background: var(--ct-color-bg-raised);
+          color: var(--ct-color-fg-default);
+        }
+        .docs-popover-content[hidden] { display: none; }
+        .docs-popover-content input { padding: 2px 6px; border: 1px solid; }
+      `}</style>
+    </Popover.Root>
+  }
+</Preview>
+
+```tsx
+import { Popover, Portal } from '@contour-ui/headless';
+
+<Popover.Root>
+  <Popover.Trigger>Share</Popover.Trigger>
+  <Portal>
+    <Popover.Positioner>
+      <Popover.Content>
+        <Popover.Title>Share this page</Popover.Title>
+        <Popover.Description>Anyone with the link can view it.</Popover.Description>
+        <Popover.CloseTrigger>Done</Popover.CloseTrigger>
+      </Popover.Content>
+    </Popover.Positioner>
+  </Portal>
+</Popover.Root>;
+```
+
+Popover opens a dialog next to its trigger: a short form, a list of choices, details about
+something on the page. The trigger above opens it; focus moves to the field, Tab goes on to Done
+and then out of the popover, and Escape, a press outside or Done closes it and sends focus back to
+the trigger. [Kit's Popover](/docs/kit/popover) is this component with the contour-ui look.
+
+## Opening and closing
+
+`Popover.Trigger` opens the popover and closes it again; `Popover.CloseTrigger` closes it from the
+inside. Escape closes it, and so does a press outside it or focus moving out of it, unless
+`closeOnEscape={false}` or `closeOnInteractOutside={false}`. Each request is reported as
+`onOpenChange({ open })`; a request for the state the popover is in reports nothing.
+
+`defaultOpen` opens a popover that keeps its own state on its first render. To keep the state
+yourself, pass `open` and `onOpenChange`: requests are then only reported, and the popover opens
+or closes when you pass the new `open`, which is not reported back.
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Popover.Root open={open} onOpenChange={(details) => setOpen(details.open)}>
+  …
+</Popover.Root>;
+```
+
+Inside the root, `usePopoverContext()` returns the same API, with `setOpen(open)` and `toggle()`,
+for parts of your own.
+
+## Placement
+
+`Popover.Positioner` holds the content and is placed next to the trigger, or next to
+`Popover.Anchor` when there is one, such as a field with the trigger at its end. By default the
+content opens below, at the start edge, 8px away. `positioning` changes that; the options left out
+keep these defaults:
+
+| Option        | Type                                                                              | Default          |
+| ------------- | --------------------------------------------------------------------------------- | ---------------- |
+| `placement`   | `top`, `right`, `bottom`, `left`, each `-start` or `-end` too                     | `'bottom-start'` |
+| `offset`      | `number`, or `{ mainAxis, crossAxis }`, in px                                     | `8`              |
+| `flip`        | `boolean`, or the placements to try in order                                      | `true`           |
+| `shift`       | `number`: the distance kept from the edges of the viewport; `false` stops sliding | `8`              |
+| `sameWidth`   | `boolean`: as wide as the trigger                                                 | `false`          |
+| `fitViewport` | `boolean`: no larger than the room it has                                         | `true`           |
+| `strategy`    | `'absolute'`, `'fixed'`                                                           | `'absolute'`     |
+
+The content flips to the other side when its side has no room, and slides along it to stay in
+view. Its placement after a flip is `data-placement` on the positioner and on the content.
+
+```tsx
+<Popover.Root positioning={{ placement: 'top', offset: 4, sameWidth: true }}>
+```
+
+Put the positioner in a [Portal](/docs/headless/portal), as above: it is then rendered at the end
+of `document.body`, out of the `overflow` and the stacking context of the trigger's parents. A
+popover rendered in place, without a portal, tells it with `portalled={false}`, so that the
+Tab order is left as it is.
+
+## Focus
+
+- **In.** Opening moves focus into the content: to `initialFocusEl()`, else its first element that
+  takes focus, else the content itself. `autoFocus={false}` leaves focus where it is. A popover
+  open on its first render (`defaultOpen`) does not take focus.
+- **Back.** Closing moves focus back to where it was before the popover opened, as a rule the
+  trigger, or to `finalFocusEl()`. Focus that has moved on to something outside the popover, such
+  as a field pressed outside it, stays there. `restoreFocus={false}` leaves focus alone.
+- **Tab.** The content keeps its place in the Tab order right after the trigger, wherever it is
+  rendered: Tab on the trigger moves into it, Tab on its last element moves on to what follows the
+  trigger, which closes the popover, and Shift+Tab on its first element moves back to the trigger.
+
+## Modal
+
+`modal` keeps the user inside the popover while it is open: Tab goes round the content, the page
+does not scroll, and the rest of the page is `inert`, out of reach of the pointer, the keyboard
+and screen readers. The trigger stays reachable, so it still closes the popover. The content gets
+`aria-modal="true"`.
+
+## Mounting and animations
+
+The positioner and the content are rendered while closed, `hidden`; `lazyMount` renders them only
+once the popover first opens, and `unmountOnExit` removes them once it has closed;
+`onExitComplete` reports each close. The content
+carries `data-state`, `open` or `closed`: give the closed state an animation of its own
+`@keyframes`, and the popover stays on screen, `inert`, until it ends, as
+[Presence](/docs/headless/presence) does.
+
+```css
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes popover-out {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+[data-scope='popover'][data-part='content'] {
+  transform-origin: var(--transform-origin);
+}
+
+[data-scope='popover'][data-part='content'][data-state='open'] {
+  animation: popover-in 150ms ease-out;
+}
+
+[data-scope='popover'][data-part='content'][data-state='closed'] {
+  animation: popover-out 100ms ease-in;
+}
+```
+
+## Styling
+
+Headless renders no CSS. Style the content by its data attributes, and stack the positioner
+above the page with `--layer-index`, its place among the open overlays, from 0:
+
+```css
+[data-scope='popover'][data-part='positioner'] {
+  z-index: calc(1000 + var(--layer-index, 0));
+}
+
+[data-scope='popover'][data-part='content'] {
+  max-block-size: var(--available-height);
+  overflow: auto;
+}
+
+[data-scope='popover'][data-part='content'][hidden] {
+  display: none;
+}
+```
+
+The positioner gets its position from the platform, which writes its `transform`, `data-placement`
+and these variables straight into it, without a render. Leave them out of its `style`, and style
+the content rather than the positioner:
+
+| Variable             | Value                                               |
+| -------------------- | --------------------------------------------------- |
+| `--reference-width`  | the width of the trigger or the anchor              |
+| `--reference-height` | its height                                          |
+| `--available-width`  | the width the content has room for at its placement |
+| `--available-height` | the height it has room for                          |
+| `--transform-origin` | the edge next to the trigger, for a scale animation |
+| `--layer-index`      | its place among the open overlays, from 0           |
+
+## Anatomy
+
+| Part                   | Element  | Attributes                                                                                                                                                      |
+| ---------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Popover.Root`         | none     | renders only its children                                                                                                                                       |
+| `Popover.Trigger`      | `button` | `data-scope="popover" data-part="trigger"`, `type="button"`, `aria-haspopup="dialog"`, `aria-expanded`, `aria-controls` (while open), `data-state`              |
+| `Popover.Anchor`       | `div`    | `data-part="anchor"`                                                                                                                                            |
+| `Popover.Positioner`   | `div`    | `data-part="positioner"`, `data-state`, `data-placement`, `hidden` (closed), `inert` (closing); the position and the variables in its style                     |
+| `Popover.Content`      | `div`    | `data-part="content"`, `role="dialog"`, `tabindex="-1"`, `aria-labelledby`, `aria-describedby`, `aria-modal`, `data-state`, `data-placement`, `hidden`, `inert` |
+| `Popover.Title`        | `div`    | `data-part="title"`, `id`                                                                                                                                       |
+| `Popover.Description`  | `div`    | `data-part="description"`, `id`                                                                                                                                 |
+| `Popover.CloseTrigger` | `button` | `data-part="close-trigger"`, `type="button"`                                                                                                                    |
+
+Every part carries `data-scope="popover"`. The content points to the title and the description
+by id while they are mounted; give one an `id` of your own, and the content follows it.
+
+## Props
+
+`Popover.Root`:
+
+| Prop                     | Type                                           | Default       |
+| ------------------------ | ---------------------------------------------- | ------------- |
+| `open`                   | `boolean`                                      | —             |
+| `defaultOpen`            | `boolean`                                      | `false`       |
+| `onOpenChange`           | `(details: { open: boolean }) => void`         | —             |
+| `modal`                  | `boolean`                                      | `false`       |
+| `portalled`              | `boolean`: the positioner is in a `Portal`     | `true`        |
+| `positioning`            | the options of [Placement](#placement)         | see Placement |
+| `autoFocus`              | `boolean`: focus moves in when it opens        | `true`        |
+| `initialFocusEl`         | `() => HTMLElement \| null`                    | —             |
+| `restoreFocus`           | `boolean`: focus moves back when it closes     | `true`        |
+| `finalFocusEl`           | `() => HTMLElement \| null`                    | —             |
+| `closeOnEscape`          | `boolean`                                      | `true`        |
+| `closeOnInteractOutside` | `boolean`: a press outside or focus moving out | `true`        |
+| `lazyMount`              | `boolean`                                      | `false`       |
+| `unmountOnExit`          | `boolean`                                      | `false`       |
+| `onExitComplete`         | `() => void`: the content has closed           | —             |
+
+Every other part takes `asChild` and the props of its element, such as `className`, `style` and
+`ref`.
+
+## Keyboard
+
+| Key                            | Action                                                                                  |
+| ------------------------------ | --------------------------------------------------------------------------------------- |
+| `Enter`, `Space`               | On the trigger, opens or closes the popover                                             |
+| `Escape`                       | Closes the top-most popover and moves focus back to its trigger                         |
+| `Tab`                          | Through the content; from the trigger into it, from its end to what follows the trigger |
+| `Shift` + `Tab`                | From the first element of the content back to the trigger                               |
+| `Tab`, `Shift` + `Tab` (modal) | Go round the content                                                                    |
+
+## Accessibility
+
+- **A dialog.** The content has the `dialog` role and is named by `Popover.Title`. Without a
+  title, give it an `aria-label`. `Popover.Description` describes it.
+- **The trigger** tells that it opens a dialog (`aria-haspopup="dialog"`), whether it is open
+  (`aria-expanded`), and, while it is, which element it controls (`aria-controls`).
+- **One layer at a time.** Escape and a press outside close the top-most popover only: a popover
+  opened from another one closes first, and a press inside it keeps both open. When a popover
+  closes, those opened from inside it close too.
+- **Modal popovers** set `aria-modal="true"` and make the rest of the page `inert`, so screen
+  readers stay inside them.
+
+## How it works
+
+`Popover.Root` runs the popover machine of `@contour-ui/core`, `popover.machine`, with
+`useMachine`. Its two states are `closed` and `open`; the parts and the platform send it events:
+
+| Event                                 | Sent by                                                 | What happens                                                   |
+| ------------------------------------- | ------------------------------------------------------- | -------------------------------------------------------------- |
+| `OPEN`, `CLOSE`, `TOGGLE`             | `setOpen()`, `toggle()`, the trigger, the close trigger | opens or closes, or only reports it while `open` is controlled |
+| `ESCAPE`                              | Escape, on the top-most popover                         | a close request, with `closeOnEscape`                          |
+| `INTERACT_OUTSIDE`                    | a press or focus outside                                | a close request, with `closeOnInteractOutside`                 |
+| `CONTROLLED.OPEN`, `CONTROLLED.CLOSE` | a new `open` from the owner                             | follows it, without a report                                   |
+
+While it is `open`, the machine runs effects that the DOM platform of Headless implements on its
+shared overlay modules: `position` (places the positioner, writes the placement
+back), `dismiss` (Escape, presses and focus outside, on a stack of layers), `keepTabOrder`, and,
+for a modal popover, `trapFocus`, `preventScroll` and `hideOutside`. Its actions `setInitialFocus`
+and `restoreFocus` move focus in as it opens and back as it closes.
+
+## Hooks
+
+`usePopover` runs the machine without the parts: it takes the props of `Popover.Root` but
+`lazyMount`, `unmountOnExit` and `onExitComplete`, and returns the API (`open`, `modal`,
+`portalled`, `placement`, `setOpen()`, `toggle()`) and the props of each element:
+`getTriggerProps()`, `getAnchorProps()`, `getPositionerProps()`, `getContentProps()`,
+`getTitleProps()`, `getDescriptionProps()` and `getCloseTriggerProps()`. Showing and hiding the
+content is yours: with `hidden`, or with [`usePresence`](/docs/headless/presence) for an exit
+animation, as `Popover.Root` does.
+
+```tsx
+import { Portal, usePopover } from '@contour-ui/headless';
+
+function Share() {
+  const popover = usePopover();
+  return (
+    <>
+      <button {...popover.getTriggerProps()}>Share</button>
+      <Portal>
+        <div {...popover.getPositionerProps()} hidden={!popover.open}>
+          <div {...popover.getContentProps()} aria-label="Share">
+            …
+          </div>
+        </div>
+      </Portal>
+    </>
+  );
+}
+```
+
+Inside `Popover.Root`, `usePopoverContext()` returns the same API, plus `presence`, the presence
+the positioner and the content show and hide with.

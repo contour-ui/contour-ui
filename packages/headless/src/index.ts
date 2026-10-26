@@ -52,6 +52,22 @@ export type {
 export { createListCollection } from '@contour-ui/core';
 export type { ListCollection, ListCollectionGroup, ListCollectionOptions } from '@contour-ui/core';
 export * as Placeholder from './placeholder/index.ts';
+export * as Popover from './popover/index.ts';
+export { usePopoverContext } from './popover/popover-context.ts';
+export type { PopoverContextValue } from './popover/popover-context.ts';
+export { usePopover } from './popover/use-popover.ts';
+export type {
+  PopoverAnchorAttributes,
+  PopoverCloseTriggerAttributes,
+  PopoverContentAttributes,
+  PopoverDataState,
+  PopoverLabelAttributes,
+  PopoverPartAttributes,
+  PopoverPositionerAttributes,
+  PopoverTriggerAttributes,
+  UsePopoverProps,
+  UsePopoverReturn,
+} from './popover/use-popover.ts';
 export * as Toc from './toc/index.ts';
 export { useTocContext } from './toc/toc-context.ts';
 export { useToc } from './toc/use-toc.ts';
