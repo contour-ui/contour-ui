@@ -1,0 +1,132 @@
+/* Button, and IconButton / CloseButton on top of it (`.contour-icon-button` after the Button rules). */
+
+.contour-button {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--ct-space-control-inset);
+  /* Transparent unless a variant colors it; keeps every variant the same size. */
+  border: var(--ct-border-width-default) solid transparent;
+  border-radius: var(--ct-radius-control);
+  background-color: transparent;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  text-align: center;
+  /* An `asChild` link looks like the other buttons. */
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  appearance: none;
+  transition:
+    background-color var(--ct-motion-feedback),
+    border-color var(--ct-motion-feedback),
+    color var(--ct-motion-feedback);
+}
+
+.contour-button[data-size='sm'] {
+  block-size: var(--ct-size-control-sm);
+}
+
+.contour-button[data-size='md'] {
+  block-size: var(--ct-size-control-md);
+}
+
+.contour-button[data-size='lg'] {
+  block-size: var(--ct-size-control-lg);
+}
+
+/* Icons next to the label. CSS sizes win over the `<svg>` width and height attributes. */
+.contour-button > .contour-icon {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+.contour-button[data-size='lg'] > .contour-icon {
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}
+
+.contour-button[data-variant='solid'] {
+  background-color: var(--ct-color-accent-fill);
+  color: var(--ct-color-accent-on-fill);
+}
+
+.contour-button[data-variant='subtle'] {
+  background-color: var(--ct-color-bg-hover);
+}
+
+.contour-button[data-variant='outline'] {
+  border-color: var(--ct-color-border-default);
+}
+
+/* Touch screens would keep the hover look after a tap. */
+@media (hover: hover) {
+  .contour-button[data-variant='solid']:not([data-disabled]):hover {
+    background-color: var(--ct-color-accent-fill-hover);
+  }
+
+  /* `bg-hover` is already the subtle fill, so its edge shows instead. */
+  .contour-button[data-variant='subtle']:not([data-disabled]):hover,
+  .contour-button[data-variant='outline']:not([data-disabled]):hover {
+    border-color: var(--ct-color-border-strong);
+  }
+
+  .contour-button[data-variant='ghost']:not([data-disabled]):hover {
+    background-color: var(--ct-color-bg-hover);
+  }
+}
+
+.contour-button:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
+
+/* After the variants: same specificity, so the disabled color wins. */
+.contour-button[data-disabled] {
+  color: var(--ct-color-fg-disabled);
+  cursor: not-allowed;
+}
+
+.contour-button[data-variant='solid'][data-disabled] {
+  background-color: var(--ct-color-bg-hover);
+}
+
+/* IconButton: square, no inline padding, a larger icon per size. */
+.contour-icon-button {
+  padding-inline: 0;
+}
+
+.contour-icon-button[data-size='sm'] {
+  inline-size: var(--ct-size-control-sm);
+}
+
+.contour-icon-button[data-size='md'] {
+  inline-size: var(--ct-size-control-md);
+}
+
+.contour-icon-button[data-size='lg'] {
+  inline-size: var(--ct-size-control-lg);
+}
+
+.contour-icon-button[data-size='sm'] > .contour-icon {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+.contour-icon-button[data-size='md'] > .contour-icon {
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}
+
+.contour-icon-button[data-size='lg'] > .contour-icon {
+  inline-size: var(--ct-size-icon-lg);
+  block-size: var(--ct-size-icon-lg);
+}

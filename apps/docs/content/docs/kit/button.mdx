@@ -1,0 +1,352 @@
+---
+title: Button
+description: A button in four variants and three sizes, IconButton for a button with only an icon, and CloseButton to close dialogs and panels.
+---
+
+import {
+  chevronRightIcon,
+  copyIcon,
+  githubIcon,
+  menuIcon,
+  moonIcon,
+  searchIcon,
+} from '@contour-ui/icons';
+import { Button, CloseButton, Icon, IconButton } from '@contour-ui/kit';
+
+<Preview>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 'var(--ct-space-group-gap)',
+    }}
+  >
+    <Button>Get started</Button>
+    <Button variant="outline">
+      <Icon icon={searchIcon} />
+      Search
+    </Button>
+    <IconButton label="Open menu" icon={menuIcon} variant="ghost" />
+    <CloseButton />
+  </div>
+</Preview>
+
+```tsx
+import { Button } from '@contour-ui/kit';
+
+<Button onClick={save}>Save</Button>;
+```
+
+`Button` renders a `<button type="button">` and passes the props of `<button>` through: `onClick`,
+`type="submit"` inside a form, `aria-*`, `ref`.
+
+## Variants
+
+`variant` sets how much the button stands out. Give the main action of a view `solid`, and the
+other actions a quieter variant.
+
+<Preview>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 'var(--ct-space-group-gap)',
+    }}
+  >
+    <Button variant="solid">Save</Button>
+    <Button variant="subtle">Duplicate</Button>
+    <Button variant="outline">Export</Button>
+    <Button variant="ghost">Cancel</Button>
+  </div>
+</Preview>
+
+```tsx
+<Button variant="solid">Save</Button>
+<Button variant="subtle">Duplicate</Button>
+<Button variant="outline">Export</Button>
+<Button variant="ghost">Cancel</Button>
+```
+
+| Variant   | Look                  | For                                          |
+| --------- | --------------------- | -------------------------------------------- |
+| `solid`   | accent fill           | the main action; the default                 |
+| `subtle`  | neutral fill          | secondary actions                            |
+| `outline` | border, no fill       | secondary actions next to a `solid` button   |
+| `ghost`   | no fill until hovered | toolbars, icon buttons, actions in dense UIs |
+
+## Sizes
+
+`size` sets the height: `sm` (20 px), `md` (24 px, the default) or `lg` (32 px), the control
+heights of the tokens. The label keeps the same text style in every size.
+
+<Preview>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 'var(--ct-space-group-gap)',
+    }}
+  >
+    <Button size="sm">Small</Button>
+    <Button size="md">Medium</Button>
+    <Button size="lg">Large</Button>
+  </div>
+</Preview>
+
+```tsx
+<Button size="sm">Small</Button>
+<Button size="lg">Large</Button>
+```
+
+## With icons
+
+Put an [`Icon`](/docs/kit/icon) before or after the label. The button sizes it,
+`--ct-size-icon-sm` in `sm` and `md` and `--ct-size-icon-md` in `lg`, and the icon takes the color
+of the label. It is decorative: the label names the button.
+
+<Preview>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 'var(--ct-space-group-gap)',
+    }}
+  >
+    <Button variant="subtle">
+      <Icon icon={copyIcon} />
+      Copy
+    </Button>
+    <Button>
+      Next
+      <Icon icon={chevronRightIcon} />
+    </Button>
+  </div>
+</Preview>
+
+```tsx
+import { chevronRightIcon, copyIcon } from '@contour-ui/icons';
+import { Button, Icon } from '@contour-ui/kit';
+
+<Button variant="subtle">
+  <Icon icon={copyIcon} />
+  Copy
+</Button>
+<Button>
+  Next
+  <Icon icon={chevronRightIcon} />
+</Button>
+```
+
+## Disabled
+
+`disabled` turns the button off: it dims, stops reacting to hover and ignores clicks.
+
+<Preview>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 'var(--ct-space-group-gap)',
+    }}
+  >
+    <Button disabled>Save</Button>
+    <Button variant="outline" disabled>
+      Export
+    </Button>
+  </div>
+</Preview>
+
+```tsx
+<Button disabled>Save</Button>
+```
+
+## Links
+
+A button that takes the user somewhere is a link. With `asChild`, `Button` renders its only child in
+place of the `<button>` and merges its class, attributes and event handlers into it. The child can
+be an `<a>` or your router's link component.
+
+<Preview>
+  <Button asChild variant="outline">
+    <a href="/docs/guide">Read the guide</a>
+  </Button>
+</Preview>
+
+```tsx
+import { Button } from '@contour-ui/kit';
+import { Link } from 'react-router';
+
+<Button asChild variant="outline">
+  <Link to="/docs/guide">Read the guide</Link>
+</Button>;
+```
+
+A link has no `disabled` attribute. With `asChild`, `disabled` sets `aria-disabled="true"` instead
+and cancels clicks and `Enter`: the link does not navigate, and no click handler runs. It stays in
+the tab order, so screen reader users still find it and hear that it is unavailable.
+
+## IconButton
+
+`IconButton` is a square button that shows only an icon. Its `label` is required: with no visible
+text, it is the button's accessible name (`aria-label`). It has the variants and sizes of `Button`,
+and the icon grows with the size.
+
+<Preview>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 'var(--ct-space-group-gap)',
+    }}
+  >
+    <IconButton label="Open menu" icon={menuIcon} variant="ghost" />
+    <IconButton label="Search" icon={searchIcon} variant="outline" />
+    <IconButton label="Copy" icon={copyIcon} variant="subtle" />
+    <IconButton label="Switch to the light theme" icon={moonIcon} />
+    <IconButton label="Open menu" icon={menuIcon} variant="ghost" size="lg" />
+  </div>
+</Preview>
+
+```tsx
+import { menuIcon } from '@contour-ui/icons';
+import { IconButton } from '@contour-ui/kit';
+
+<IconButton label="Open menu" icon={menuIcon} variant="ghost" />;
+```
+
+With `asChild`, the icon becomes the content of the child, such as a link:
+
+<Preview>
+  <IconButton asChild label="GitHub" icon={githubIcon} variant="ghost">
+    <a href="https://github.com/contour-ui/contour-ui" />
+  </IconButton>
+</Preview>
+
+```tsx
+<IconButton asChild label="GitHub" icon={githubIcon} variant="ghost">
+  <a href="https://github.com/contour-ui/contour-ui" />
+</IconButton>
+```
+
+## CloseButton
+
+`CloseButton` is an `IconButton` with an x icon, the label "Close" and the `ghost` variant, for
+dialogs, drawers and alerts. Close the thing in `onClick`. When several things on a page can
+close, say which one in `label`.
+
+<Preview>
+  <div
+    style={{
+      display: 'flex',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: 'var(--ct-space-group-gap)',
+    }}
+  >
+    <CloseButton size="sm" />
+    <CloseButton />
+    <CloseButton size="lg" />
+  </div>
+</Preview>
+
+```tsx
+import { CloseButton } from '@contour-ui/kit';
+
+<CloseButton onClick={() => setOpen(false)} />
+<CloseButton label="Close search" onClick={closeSearch} />
+```
+
+## Anatomy
+
+| Component     | Element  | Class                                                     | Attributes                                                                                |
+| ------------- | -------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `Button`      | `button` | `contour-button`                                          | `data-scope="button" data-part="root"`, `data-variant`, `data-size`, `data-disabled`      |
+| `IconButton`  | `button` | `contour-button contour-icon-button`                      | `data-scope="icon-button" data-part="root"`, `aria-label`, and the attributes of `Button` |
+| `CloseButton` | `button` | `contour-button contour-icon-button contour-close-button` | `data-scope="close-button" data-part="root"`, and the attributes of `IconButton`          |
+
+With `asChild`, the element is the child. `data-variant` and `data-size` always carry the resolved
+values, defaults included, and `data-disabled` marks a disabled button whatever its element, so
+`.contour-button[data-disabled]` selects every disabled one. IconButton and CloseButton keep the
+`contour-button` class: rules for `.contour-button` apply to them too.
+
+## Props
+
+`Button`:
+
+| Prop       | Type                                          | Default   |
+| ---------- | --------------------------------------------- | --------- |
+| `variant`  | `'solid' \| 'subtle' \| 'outline' \| 'ghost'` | `'solid'` |
+| `size`     | `'sm' \| 'md' \| 'lg'`                        | `'md'`    |
+| `disabled` | `boolean`                                     | `false`   |
+| `asChild`  | `boolean`                                     | `false`   |
+
+Other `button` props, such as `onClick`, `type` and `ref`, are passed to the element; `type`
+defaults to `'button'`, and `className` is merged with `contour-button`.
+
+`IconButton` takes the props of `Button` and:
+
+| Prop    | Type       | Default  |
+| ------- | ---------- | -------- |
+| `label` | `string`   | required |
+| `icon`  | `IconData` | required |
+
+It has no children of its own. With `asChild`, its only child is the element to render, and the
+icon replaces that element's content.
+
+`CloseButton` takes the props of `IconButton` except `icon`, with other defaults:
+
+| Prop      | Type                                          | Default   |
+| --------- | --------------------------------------------- | --------- |
+| `label`   | `string`                                      | `'Close'` |
+| `variant` | `'solid' \| 'subtle' \| 'outline' \| 'ghost'` | `'ghost'` |
+
+## Keyboard
+
+| Key     | Action                                             |
+| ------- | -------------------------------------------------- |
+| `Tab`   | Moves focus to the button and shows the focus ring |
+| `Enter` | Activates the button, or follows an `asChild` link |
+| `Space` | Activates a `<button>`; links ignore it            |
+
+These are the browser's own keys for `<button>` and `<a>`: the components add no key handling.
+`Tab` skips a disabled `<button>`; a disabled `asChild` link takes focus but ignores `Enter`.
+
+## Accessibility
+
+- **The element tells what happens.** A `<button>` runs an action and a link (`asChild`) goes to
+  another page; assistive technology announces the role of the element.
+- **Name every icon button.** The types require `label`. Say what the button does, "Open menu",
+  rather than what the icon shows.
+- **Icons are decorative.** An `Icon` inside a button is hidden from assistive technology; the
+  label of the button, or its `label` prop, names it.
+- **Disabled.** A disabled `<button>` leaves the tab order, as in every browser; a disabled link
+  stays in it and is announced as unavailable. Disabled text has no contrast target, so when the
+  reason matters, say it next to the button.
+- **Toggles.** For a button that turns something on and off, pass `aria-pressed`.
+- **Focus.** The focus ring shows on keyboard focus (`:focus-visible`), not on click.
+
+## Tokens
+
+| Variant   | Background               | Text                        | Border                      | On hover                                  |
+| --------- | ------------------------ | --------------------------- | --------------------------- | ----------------------------------------- |
+| `solid`   | `--ct-color-accent-fill` | `--ct-color-accent-on-fill` | none                        | background `--ct-color-accent-fill-hover` |
+| `subtle`  | `--ct-color-bg-hover`    | `--ct-color-fg-default`     | none                        | border `--ct-color-border-strong`         |
+| `outline` | none                     | `--ct-color-fg-default`     | `--ct-color-border-default` | border `--ct-color-border-strong`         |
+| `ghost`   | none                     | `--ct-color-fg-default`     | none                        | background `--ct-color-bg-hover`          |
+
+A disabled button has `--ct-color-fg-disabled` text and no hover; a disabled `solid` button loses
+its fill for `--ct-color-bg-hover`. The focus ring is `--ct-border-width-focus` of
+`--ct-color-border-focus`, offset by the same width. Colors change with `--ct-motion-feedback`.
+
+The height is `--ct-size-control-sm`, `-md` or `-lg`, and an IconButton is as wide as it is high.
+`--ct-space-control-inset` pads the sides of a button with a label, `--ct-space-control-gap`
+separates its icon from the label; corners are `--ct-radius-control`, the border
+`--ct-border-width-default`, the label the `label` text style. Icons next to a label are
+`--ct-size-icon-sm` (`--ct-size-icon-md` in `lg`); the icon of an IconButton is
+`--ct-size-icon-sm`, `-md` or `-lg`, following its size.
