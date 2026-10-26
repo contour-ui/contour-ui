@@ -158,6 +158,9 @@ describe('Listbox', () => {
   it('styles the input as a text field with a focus ring on its border', async () => {
     const screen = await render(<Sounds />);
     const input = screen.getByRole('textbox', { name: 'Sound' });
+    // The pointer stays where earlier tests on the page left it; over the field or its label, it
+    // would turn the border to its hover color.
+    await userEvent.unhover(input);
 
     await expect.element(input).toHaveStyle({
       height: length(vars.size['control-md']),
@@ -169,11 +172,13 @@ describe('Listbox', () => {
       color: computed('color', vars.color.fg.default),
       fontSize: computed('font-size', vars.text.body.fontSize),
     });
-    await userEvent.click(input);
+    await userEvent.tab();
+    await expect.element(input).toHaveFocus();
     await expect.element(input).toHaveStyle({
       outlineStyle: 'solid',
       outlineColor: computed('outline-color', vars.color.border.focus),
       outlineWidth: length(vars['border-width'].focus),
+      outlineOffset: `-${length(vars['border-width'].default)}`,
     });
   });
 
