@@ -3,9 +3,10 @@ title: Kit
 description: Styled general-purpose components in the contour-ui look.
 ---
 
-Kit is the styled layer for everyday UI: each component is a [Headless](/docs/headless) component
-plus a stylesheet built on [tokens](/docs/guide/styling), so it follows the
-[theme](/docs/guide/themes) with no extra code.
+Kit is the styled layer for everyday UI. Its stylesheet is built on [tokens](/docs/guide/styling),
+so every component follows the [theme](/docs/guide/themes) with no extra code. Components with
+behavior, such as popovers and dialogs, are [Headless](/docs/headless) components plus that
+stylesheet; components without behavior, such as buttons, cards and alerts, exist only in Kit.
 
 ## Setup
 
@@ -23,20 +24,34 @@ Details and the reasons for the order: [Installation](/docs/guide/installation).
 
 ## Usage
 
-Components are namespaces of parts; each part renders one element and passes its props through:
+A component made of one element is a plain component, such as `Button`; a component with several
+parts is a namespace of parts, such as `Card`. Each part renders one element and passes its props
+through:
 
 ```tsx
-import { Placeholder } from '@contour-ui/kit';
+import { Button, Card } from '@contour-ui/kit';
 
-export function Panel() {
-  return <Placeholder.Root aria-label="Status">Ready</Placeholder.Root>;
+export function Welcome() {
+  return (
+    <Card.Root>
+      <Card.Body>
+        <Card.Title>Welcome</Card.Title>
+        <Card.Description>Start with the guide.</Card.Description>
+      </Card.Body>
+      <Card.Footer>
+        <Button>Open the guide</Button>
+      </Card.Footer>
+    </Card.Root>
+  );
 }
 ```
 
 ## Customizing
 
-- **Classes.** Each component has a class, `contour-<component>`. Your `className` is added next to
-  it, so you can extend the styles with your own CSS.
+- **Classes.** Each component has a class, `contour-<component>`, and each of its other parts
+  `contour-<component>__<part>`. Your `className` is added next to them, so you can extend the
+  styles with your own CSS. Variants and sizes are attributes, as in
+  `.contour-button[data-variant='ghost']`.
 - **Tokens.** Write overrides with token variables, and they keep following the theme:
 
   ```css
@@ -46,7 +61,8 @@ export function Panel() {
   ```
 
 - **Another look.** If the Kit styles are in the way, use the same component from
-  [Headless](/docs/headless): same parts, same props, no CSS.
+  [Headless](/docs/headless): same parts, same props, no CSS. Components without behavior have no
+  Headless version: build your own from `Primitive`, the elements every part renders through.
 
 ## Components
 

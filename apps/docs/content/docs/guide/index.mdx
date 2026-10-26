@@ -4,8 +4,8 @@ description: What ships, which package to pick, and how the packages fit togethe
 ---
 
 <Callout title="Pre-release">
-  The packages are not on npm yet. The components documented here are placeholders that prove the
-  setup; real components arrive section by section and follow the same shape.
+  The packages are not on npm yet. Kit has its first components; Audio and Headless still show
+  placeholders, and more components arrive section by section.
 </Callout>
 
 ## Pick a package
@@ -45,9 +45,17 @@ component, such as `<Button>` or `<Kbd>`. A component with several parts is a na
 such as `<Card.Root>` with `<Card.Title>` inside:
 
 ```tsx
-import { Placeholder } from '@contour-ui/kit';
+import { Button, Card } from '@contour-ui/kit';
 
-<Placeholder.Root className="my-panel">Hello</Placeholder.Root>;
+<Card.Root className="session">
+  <Card.Body>
+    <Card.Title>Session</Card.Title>
+    <Card.Description>48 kHz, 24-bit</Card.Description>
+  </Card.Body>
+  <Card.Footer>
+    <Button size="sm">Open</Button>
+  </Card.Footer>
+</Card.Root>;
 ```
 
 - Parts accept the props of their element (`className`, `style`, `aria-*`, event handlers, …) and
@@ -56,7 +64,7 @@ import { Placeholder } from '@contour-ui/kit';
   event handlers and ref into it. Use it to render your router's link in place of an `<a>`, for
   example.
 - Every part is marked with `data-scope` (the component) and `data-part` (the part), for example
-  `data-scope="placeholder" data-part="root"`. Headless users style with these attributes; in Kit
+  `data-scope="card" data-part="title"`. Headless users style with these attributes; in Kit
   and Audio they are stable hooks for tests and overrides.
 - Kit and Audio add class names: `contour-<component>` on the root or the single element, and
   `contour-<component>__<part>` on the other parts. Your `className` is merged with them.

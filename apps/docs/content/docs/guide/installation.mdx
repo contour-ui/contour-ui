@@ -56,7 +56,7 @@ whatever its selectors, so your own stylesheet overrides a component without hea
 
 ```css title="app.css"
 /* Wins over Kit's rule for the same class: same selector, but not in a layer. */
-.contour-placeholder {
+.contour-button {
   border-radius: 0;
 }
 ```
@@ -87,7 +87,7 @@ declare the whole order once, at the top of the stylesheet that imports Tailwind
 
 `contour` comes after `base`, so Preflight does not strip the components' padding, borders and
 backgrounds, and before `utilities`, so a utility class overrides a component, as in
-`<Placeholder.Root className="rounded-none">`. Without this line the order follows whichever
+`<Button className="rounded-none">`. Without this line the order follows whichever
 stylesheet loads first: if Kit's comes first, Preflight resets the components; if Tailwind's
 does, utilities cannot override them.
 
@@ -109,7 +109,7 @@ body {
 ## A minimal app
 
 ```tsx title="main.tsx"
-import { Placeholder } from '@contour-ui/kit';
+import { Button } from '@contour-ui/kit';
 import { createRoot } from 'react-dom/client';
 
 import '@contour-ui/tokens/tokens.css';
@@ -119,6 +119,6 @@ import './app.css';
 
 const root = document.querySelector('#root');
 if (root !== null) {
-  createRoot(root).render(<Placeholder.Root>Hello, contour-ui</Placeholder.Root>);
+  createRoot(root).render(<Button>Hello, contour-ui</Button>);
 }
 ```

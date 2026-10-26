@@ -33,6 +33,7 @@ Set the theme on `<html>` rather than on an app wrapper: components that render 
 the stylesheet:
 
 ```tsx title="theme-switch.tsx"
+import { Button } from '@contour-ui/kit';
 import { defaultTheme, themeAttribute, themes } from '@contour-ui/tokens';
 import type { Theme } from '@contour-ui/tokens';
 import { useEffect, useState } from 'react';
@@ -48,14 +49,14 @@ export function ThemeSwitch() {
     <fieldset>
       <legend>Theme</legend>
       {themes.map((name) => (
-        <button
+        <Button
           key={name}
-          type="button"
+          variant={theme === name ? 'solid' : 'outline'}
           aria-pressed={theme === name}
           onClick={() => setTheme(name)}
         >
           {name}
-        </button>
+        </Button>
       ))}
     </fieldset>
   );
