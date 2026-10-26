@@ -18,3 +18,4 @@ export type {
   ThemeScriptOptions,
   UseThemeReturn,
 } from './theme-provider/index.ts';
+export * as Toc from './toc/index.ts';

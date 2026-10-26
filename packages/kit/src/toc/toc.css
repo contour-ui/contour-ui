@@ -1,0 +1,98 @@
+/*
+ * A table of contents: links to the headings of a page, along a line at the start of the list.
+ * The active links take the default text color, and the indicator, an accent bar over the line,
+ * spans them: Headless gives it their box as `--top` and `--height`, in the padding box of the
+ * root.
+ */
+.contour-toc {
+  position: relative;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  text-align: start;
+  overflow-wrap: break-word;
+}
+
+.contour-toc__title {
+  margin: 0 0 var(--ct-space-group-gap);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+.contour-toc__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-inline-start: var(--ct-border-width-default) solid var(--ct-color-border-default);
+}
+
+.contour-toc__item {
+  margin: 0;
+  padding: 0;
+}
+
+/* One step of indent for each level below an `h2`. */
+.contour-toc__item[data-depth='3'] {
+  padding-inline-start: var(--ct-space-panel-inset);
+}
+
+.contour-toc__item[data-depth='4'] {
+  padding-inline-start: calc(2 * var(--ct-space-panel-inset));
+}
+
+.contour-toc__item[data-depth='5'] {
+  padding-inline-start: calc(3 * var(--ct-space-panel-inset));
+}
+
+.contour-toc__item[data-depth='6'] {
+  padding-inline-start: calc(4 * var(--ct-space-panel-inset));
+}
+
+.contour-toc__link {
+  display: block;
+  padding-block: var(--ct-space-control-gap);
+  padding-inline: var(--ct-space-panel-inset) 0;
+  /* Only the focus ring shows the radius. */
+  border-radius: var(--ct-radius-control);
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-decoration: none;
+  transition: color var(--ct-motion-feedback);
+}
+
+.contour-toc__link:hover,
+.contour-toc__link[data-active] {
+  color: var(--ct-color-fg-default);
+}
+
+.contour-toc__link:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  /* Inside the link: a panel that scrolls the list would clip a ring around it. */
+  outline-offset: calc(-1 * var(--ct-border-width-focus));
+}
+
+/* `hidden` while no item is active: no `display` here, so the attribute keeps working. */
+.contour-toc__indicator {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: var(--ct-border-width-focus);
+  block-size: var(--height);
+  translate: 0 var(--top);
+  border-radius: var(--ct-radius-round);
+  background: var(--ct-color-accent-fill);
+  transition:
+    translate var(--ct-motion-feedback),
+    block-size var(--ct-motion-feedback);
+}
+
+/* No slide: the indicator jumps to the new items. */
+@media (prefers-reduced-motion: reduce) {
+  .contour-toc__indicator {
+    transition: none;
+  }
+}

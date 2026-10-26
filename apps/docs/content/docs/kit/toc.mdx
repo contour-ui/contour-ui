@@ -1,0 +1,255 @@
+---
+title: Toc
+description: A table of contents for the headings of a page that marks the sections in view as the page scrolls.
+---
+
+import { Toc } from '@contour-ui/kit';
+import { vars } from '@contour-ui/tokens';
+
+export const manual = [
+  {
+    value: 'kit-toc-oscillators',
+    depth: 2,
+    title: 'Oscillators',
+    text: 'Two oscillators make the raw sound. Each one plays a saw, a square or a sine wave, and the second one can be detuned against the first for a wider tone.',
+  },
+  {
+    value: 'kit-toc-filter',
+    depth: 2,
+    title: 'Filter',
+    text: 'The filter takes away the high end of the sound. Turn the cutoff down for a darker tone, and the resonance up to make the cutoff sing.',
+  },
+  {
+    value: 'kit-toc-envelopes',
+    depth: 2,
+    title: 'Envelopes',
+    text: 'An envelope shapes a sound over time, from the moment a key goes down until the sound fades out after the key is released.',
+  },
+  {
+    value: 'kit-toc-attack',
+    depth: 3,
+    title: 'Attack and decay',
+    text: 'The attack sets how fast the sound rises; the decay, how fast it falls to the sustain level that it keeps while the key is held.',
+  },
+  {
+    value: 'kit-toc-effects',
+    depth: 2,
+    title: 'Effects',
+    text: 'A chorus, a delay and a reverb follow the filter. Each one has a mix control: at zero the effect is off, at full only the effect is heard.',
+  },
+];
+
+<Preview>
+  {
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: vars.space['section-gap'],
+        inlineSize: '100%',
+      }}
+    >
+      <Toc.Root
+        items={manual}
+        scrollEl={() => document.getElementById('kit-toc-manual')}
+        style={{ inlineSize: '10rem', flexShrink: 0 }}
+      >
+        <Toc.Title>Contents</Toc.Title>
+        <Toc.Indicator />
+        <Toc.List>
+          {manual.map(({ value, depth, title }) => (
+            <Toc.Item key={value} item={{ value, depth }}>
+              <Toc.Link>{title}</Toc.Link>
+            </Toc.Item>
+          ))}
+        </Toc.List>
+      </Toc.Root>
+      <section
+        id="kit-toc-manual"
+        aria-label="Synthesizer manual"
+        tabIndex={0}
+        style={{
+          flex: 1,
+          minInlineSize: 0,
+          blockSize: '16rem',
+          overflow: 'auto',
+          paddingInline: vars.space['panel-inset'],
+          border: `${vars['border-width'].default} solid ${vars.color.border.default}`,
+          borderRadius: vars.radius.panel,
+          color: vars.color.fg.muted,
+        }}
+      >
+        {manual.map(({ value, depth, title, text }) => {
+          const Heading = depth === 2 ? 'h3' : 'h4';
+          return (
+            <section key={value}>
+              <Heading
+                id={value}
+                style={{
+                  margin: `${vars.space['section-gap']} 0 ${vars.space['group-gap']}`,
+                  color: vars.color.fg.default,
+                  font: vars.text.heading.font,
+                }}
+              >
+                {title}
+              </Heading>
+              <p style={{ margin: `0 0 ${vars.space['group-gap']}` }}>{text}</p>
+              <p style={{ margin: `0 0 ${vars.space['group-gap']}` }}>{text}</p>
+            </section>
+          );
+        })}
+        <p style={{ blockSize: '12rem', margin: 0 }}>End of the manual.</p>
+      </section>
+    </div>
+  }
+</Preview>
+
+```tsx
+import { Toc } from '@contour-ui/kit';
+
+const items = [
+  { value: 'install', depth: 2 },
+  { value: 'usage', depth: 2 },
+  { value: 'props', depth: 3 },
+];
+
+<Toc.Root items={items}>
+  <Toc.Title>On this page</Toc.Title>
+  <Toc.Indicator />
+  <Toc.List>
+    {items.map((item) => (
+      <Toc.Item key={item.value} item={item}>
+        <Toc.Link>{titles[item.value]}</Toc.Link>
+      </Toc.Item>
+    ))}
+  </Toc.List>
+</Toc.Root>;
+```
+
+Toc lists the headings of a page by id (`value`) and level (`depth`), and watches them as the page
+scrolls. The links of the headings in the upper part of the view, from 20px below its top down to
+60% of its height, are active: they take the default text color, and the indicator spans them.
+When no heading is there, the last one scrolled past stays active, since its section fills the
+view. A click on a link scrolls to the heading and puts its id in the address. Scroll the manual
+above, or click its contents.
+
+Toc is the [Headless Toc](/docs/headless/toc) with the Kit styles: the behavior and every prop are
+described there.
+
+## With Fumadocs
+
+A Fumadocs page has its table of contents as `toc`: items `{ title, url: '#id', depth }`. Its id
+is the url without the `#`:
+
+```tsx title="toc-panel.tsx"
+import { Toc } from '@contour-ui/kit';
+import type { TableOfContents } from 'fumadocs-core/toc';
+
+export function TocPanel({ toc }: { toc: TableOfContents }) {
+  const items = toc.map(({ url, depth }) => ({ value: url.slice(1), depth }));
+  return (
+    <Toc.Root items={items}>
+      <Toc.Title>On this page</Toc.Title>
+      <Toc.Indicator />
+      <Toc.List>
+        {toc.map(({ title, url, depth }) => (
+          <Toc.Item key={url} item={{ value: url.slice(1), depth }}>
+            <Toc.Link>{title}</Toc.Link>
+          </Toc.Item>
+        ))}
+      </Toc.List>
+    </Toc.Root>
+  );
+}
+```
+
+A new array with the same items, as `map` makes on every render, is fine: Toc watches the headings
+again only when the items change.
+
+## Scroll containers
+
+By default the headings scroll with the page. When they scroll in an element of their own, as in
+the example above, return it from `scrollEl`:
+
+```tsx
+<Toc.Root items={items} scrollEl={() => document.getElementById('manual')}>
+  …
+</Toc.Root>
+```
+
+A long table of contents often sits in a panel that scrolls on its own, such as a sticky column.
+As the active links change, Toc scrolls that panel to keep the first one in view, and never the
+page; `autoScroll={false}` turns this off.
+
+## Anatomy
+
+| Part            | Element | Class                    | Attributes                                                                                                  |
+| --------------- | ------- | ------------------------ | ----------------------------------------------------------------------------------------------------------- |
+| `Toc.Root`      | `nav`   | `contour-toc`            | `data-scope="toc" data-part="root"`, `aria-labelledby`                                                      |
+| `Toc.Title`     | `div`   | `contour-toc__title`     | `data-scope="toc" data-part="title"`, `id`                                                                  |
+| `Toc.Indicator` | `div`   | `contour-toc__indicator` | `data-scope="toc" data-part="indicator"`, `aria-hidden`, `hidden`; `--top`, `--left`, `--width`, `--height` |
+| `Toc.List`      | `ul`    | `contour-toc__list`      | `data-scope="toc" data-part="list"`                                                                         |
+| `Toc.Item`      | `li`    | `contour-toc__item`      | `data-scope="toc" data-part="item"`, `data-value`, `data-depth`, `data-active`                              |
+| `Toc.Link`      | `a`     | `contour-toc__link`      | `data-scope="toc" data-part="link"`, `href="#id"`, `data-value`, `data-active`, `aria-current`              |
+
+The list draws a line along its start, and the indicator, an accent bar, runs over it: the root
+places it from `--top` and `--height`, the box around the active items, and it slides there when
+they change. It is hidden while no item is active. Each level below `depth` 2 (an `h2`) indents an
+item one step, down to 6.
+
+`data-active` is present, and empty, on the item and the link of every active heading;
+`aria-current="true"` marks the link of the first one.
+
+## Props
+
+`Toc.Root`:
+
+| Prop               | Type                                                                                | Default                     |
+| ------------------ | ----------------------------------------------------------------------------------- | --------------------------- |
+| `items`            | `{ value: string; depth: number }[]`: the headings, by id, in the order of the page | —                           |
+| `activeIds`        | `string[]`: the active headings, controlled                                         | —                           |
+| `defaultActiveIds` | `string[]`: the active headings until the first observation                         | `[]`                        |
+| `onActiveChange`   | `(details: { activeIds; activeItems }) => void`                                     | —                           |
+| `rootMargin`       | `string`: the observed area, as margins of the scroll container                     | `'-20px 0px -40% 0px'`      |
+| `threshold`        | `number \| number[]`: how much of a heading has to be in the area                   | `0`                         |
+| `scrollEl`         | `() => HTMLElement \| null`: the scroll container of the headings                   | the page                    |
+| `scrollBehavior`   | `'smooth'`, `'instant'`, `'auto'`: how a click scrolls to a heading                 | `'smooth'`; reduced: `auto` |
+| `autoScroll`       | `boolean`: keep the first active link in view in the panel that scrolls the list    | `true`                      |
+
+`Toc.Item` takes the `item` of its heading, `{ value, depth }`. Every part takes `asChild` and the
+props of its element, such as `className`, `style` and `id`; `className` is merged with the part's
+class. More on each prop: [Headless Toc](/docs/headless/toc).
+
+## Keyboard
+
+| Key     | Action                                                  |
+| ------- | ------------------------------------------------------- |
+| `Tab`   | Moves focus to the next link                            |
+| `Enter` | Follows the link: scrolls to the heading and focuses it |
+
+The links are links: these are the browser's own keys.
+
+## Accessibility
+
+- **A named landmark.** `Toc.Root` is a `nav`, named by `Toc.Title` while one is mounted. Without a
+  title, name it with `aria-label`: a page with several navigations needs a name for each.
+- **The current section.** The link of the first active heading has `aria-current="true"`, which
+  screen readers announce as "current". The other active links are marked for the eyes, by the
+  color and the indicator, not by color alone.
+- **Focus follows the link.** A click on a link moves focus to the heading, as following a link
+  to it does, so screen readers read on from there and the next Tab starts there.
+- **Reduced motion.** When the user prefers reduced motion, a click jumps to the heading instead
+  of scrolling smoothly, and the indicator moves without sliding.
+
+## Tokens
+
+| Token                                                                       | Used for                                         |
+| --------------------------------------------------------------------------- | ------------------------------------------------ |
+| `--ct-text-body`, `--ct-color-fg-muted`                                     | the links                                        |
+| `--ct-color-fg-default`                                                     | active and hovered links, the title              |
+| `--ct-text-label`, `--ct-space-group-gap`                                   | the title and the space under it                 |
+| `--ct-space-control-gap`, `--ct-space-panel-inset`                          | the padding of a link, and the indent of a level |
+| `--ct-color-border-default`, `--ct-border-width-default`                    | the line along the list                          |
+| `--ct-color-accent-fill`, `--ct-border-width-focus`, `--ct-radius-round`    | the indicator                                    |
+| `--ct-motion-feedback`                                                      | the slide of the indicator, the color of a link  |
+| `--ct-color-border-focus`, `--ct-border-width-focus`, `--ct-radius-control` | the focus ring, inside the link                  |
