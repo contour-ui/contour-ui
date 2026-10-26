@@ -157,7 +157,7 @@ describe('Listbox', () => {
 
   it('styles the input as a text field with a focus ring on its border', async () => {
     const screen = await render(<Sounds />);
-    const input = screen.getByRole('textbox', { name: 'Sound' });
+    const input = screen.getByRole('combobox', { name: 'Sound' });
     // The pointer stays where earlier tests on the page left it; over the field or its label, it
     // would turn the border to its hover color.
     await userEvent.unhover(input);

@@ -157,18 +157,18 @@ it: the highlighted item scrolls into view inside the list, never the page.
 
 ## Anatomy
 
-| Part                     | Element | Attributes                                                                                                                                                |
-| ------------------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Listbox.Root`           | `div`   | `data-scope="listbox" data-part="root"`, `data-orientation`, `data-disabled`                                                                              |
-| `Listbox.Label`          | `label` | `data-part="label"`, `id`, `for` (the input, when there is one)                                                                                           |
-| `Listbox.Input`          | `input` | `data-part="input"`, `aria-controls`, `aria-activedescendant`, `aria-autocomplete="list"`, `aria-haspopup="listbox"`, `autocomplete="off"`                |
-| `Listbox.Content`        | `div`   | `data-part="content"`, `role="listbox"`, `aria-labelledby`, `aria-activedescendant`, `aria-multiselectable`, `aria-orientation`, `data-empty`, `tabindex` |
-| `Listbox.ItemGroup`      | `div`   | `data-part="item-group"`, `role="group"`, `aria-labelledby`                                                                                               |
-| `Listbox.ItemGroupLabel` | `div`   | `data-part="item-group-label"`, `id`                                                                                                                      |
-| `Listbox.Item`           | `div`   | `data-part="item"`, `role="option"`, `id`, `aria-selected`, `aria-disabled`, `data-value`, `data-highlighted`, `data-selected`, `data-disabled`           |
-| `Listbox.ItemText`       | `span`  | `data-part="item-text"`, `data-highlighted`, `data-selected`, `data-disabled`                                                                             |
-| `Listbox.ItemIndicator`  | `span`  | `data-part="item-indicator"`, `aria-hidden="true"`, `hidden` while not selected                                                                           |
-| `Listbox.Empty`          | `div`   | `data-part="empty"`; rendered only while the collection is empty                                                                                          |
+| Part                     | Element | Attributes                                                                                                                                                 |
+| ------------------------ | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Listbox.Root`           | `div`   | `data-scope="listbox" data-part="root"`, `data-orientation`, `data-disabled`                                                                               |
+| `Listbox.Label`          | `label` | `data-part="label"`, `id`, `for` (the input, when there is one)                                                                                            |
+| `Listbox.Input`          | `input` | `data-part="input"`, `role="combobox"`, `aria-expanded="true"`, `aria-controls`, `aria-activedescendant`, `aria-autocomplete="list"`, `autocomplete="off"` |
+| `Listbox.Content`        | `div`   | `data-part="content"`, `role="listbox"`, `aria-labelledby`, `aria-activedescendant`, `aria-multiselectable`, `aria-orientation`, `data-empty`, `tabindex`  |
+| `Listbox.ItemGroup`      | `div`   | `data-part="item-group"`, `role="group"`, `aria-labelledby`                                                                                                |
+| `Listbox.ItemGroupLabel` | `div`   | `data-part="item-group-label"`, `id`                                                                                                                       |
+| `Listbox.Item`           | `div`   | `data-part="item"`, `role="option"`, `id`, `aria-selected`, `aria-disabled`, `data-value`, `data-highlighted`, `data-selected`, `data-disabled`            |
+| `Listbox.ItemText`       | `span`  | `data-part="item-text"`, `data-highlighted`, `data-selected`, `data-disabled`                                                                              |
+| `Listbox.ItemIndicator`  | `span`  | `data-part="item-indicator"`, `aria-hidden="true"`, `hidden` while not selected                                                                            |
+| `Listbox.Empty`          | `div`   | `data-part="empty"`; rendered only while the collection is empty                                                                                           |
 
 Every part carries `data-scope="listbox"`; the state attributes are present, and empty, while the
 state holds. The parts reference one another by id: the label names the list and is for the
@@ -222,6 +222,10 @@ Typeahead joins the letters typed less than half a second apart: "ba" finds "Bac
 - **One focused element.** The list (or the input) keeps the focus, and `aria-activedescendant`
   points to the highlighted option, so screen readers announce it as the keys move. The highlight
   goes when the focus leaves the listbox, and comes back on the selected item, or the first one.
+- **The input is a combobox** that controls the list, as the field of a command palette: screen
+  readers announce it with its options, and the list scrolls with its keys, so the list needs no
+  focus of its own. The list is shown with the field, so the field is always expanded
+  (`aria-expanded="true"`); pass `aria-expanded={false}` while you hide the list.
 - **Names.** `Listbox.Label` names the list and the input. Without it, give each an `aria-label`.
 - **States.** Options carry `aria-selected` and, when disabled, `aria-disabled`; a multiple
   selection has `aria-multiselectable`. The indicator is hidden from assistive technology.

@@ -122,13 +122,15 @@ describe('Listbox', () => {
   it('renders its parts with their roles and the references between them', async () => {
     const screen = await render(<PresetSearch />);
     const list = screen.getByRole('listbox', { name: 'Preset' });
-    const input = screen.getByRole('textbox', { name: 'Preset' });
+    const input = screen.getByRole('combobox', { name: 'Preset' });
     const label = part(screen.container, 'label');
 
     await expect.element(label).toHaveAttribute('for', input.element().id);
+    // A combobox whose list is always shown.
+    await expect.element(input).toHaveAttribute('role', 'combobox');
+    await expect.element(input).toHaveAttribute('aria-expanded', 'true');
     await expect.element(input).toHaveAttribute('aria-controls', list.element().id);
     await expect.element(input).toHaveAttribute('aria-autocomplete', 'list');
-    await expect.element(input).toHaveAttribute('aria-haspopup', 'listbox');
     await expect.element(input).toHaveAttribute('autocomplete', 'off');
     await expect.element(list).toHaveAttribute('aria-labelledby', label.id);
     // The input takes the keys: the list stays out of the tab order.
@@ -171,7 +173,7 @@ describe('Listbox', () => {
       .toHaveAttribute('aria-labelledby', 'preset-label');
     await expect.element(part(screen.container, 'label')).toHaveAttribute('for', 'preset-search');
     await expect
-      .element(screen.getByRole('textbox', { name: 'Preset' }))
+      .element(screen.getByRole('combobox', { name: 'Preset' }))
       .toHaveAttribute('aria-controls', 'preset-list');
   });
 
@@ -306,7 +308,7 @@ describe('Listbox', () => {
   describe('with an input', () => {
     it('moves the highlight with ↓ and ↑ and leaves Home and End to the text', async () => {
       const screen = await render(<PresetSearch />);
-      const input = screen.getByRole('textbox');
+      const input = screen.getByRole('combobox');
 
       await userEvent.click(input);
       await expect.element(input).not.toHaveAttribute('aria-activedescendant');
@@ -324,7 +326,7 @@ describe('Listbox', () => {
       const onSubmit = vi.fn<() => void>();
       const screen = await render(<PresetSearch onSelect={onSelect} onSubmit={onSubmit} />);
 
-      await userEvent.click(screen.getByRole('textbox'));
+      await userEvent.click(screen.getByRole('combobox'));
       // Nothing highlighted: the form is submitted.
       await userEvent.keyboard('{Enter}');
       expect(onSubmit).toHaveBeenCalledOnce();
@@ -336,7 +338,7 @@ describe('Listbox', () => {
 
     it('highlights the first match as the user types, with autoHighlight', async () => {
       const screen = await render(<PresetSearch autoHighlight />);
-      const input = screen.getByRole('textbox');
+      const input = screen.getByRole('combobox');
 
       await userEvent.click(input);
       expect(activeOption(input.element())).toBe('Warm pad');
@@ -350,7 +352,7 @@ describe('Listbox', () => {
 
     it('highlights the first item of an input that had focus before the listbox started', async () => {
       const screen = await render(<PresetSearch focusOnMount autoHighlight />);
-      const input = screen.getByRole('textbox');
+      const input = screen.getByRole('combobox');
 
       await expect.element(input).toHaveFocus();
       await expect.poll(() => activeOption(input.element())).toBe('Warm pad');
@@ -359,7 +361,7 @@ describe('Listbox', () => {
     it('selects a clicked item and keeps the focus in the input', async () => {
       const onSelect = selectSpy();
       const screen = await render(<PresetSearch onSelect={onSelect} />);
-      const input = screen.getByRole('textbox');
+      const input = screen.getByRole('combobox');
 
       await userEvent.click(input);
       await userEvent.click(screen.getByRole('option', { name: 'Bright lead' }));
@@ -370,7 +372,7 @@ describe('Listbox', () => {
 
     it('keeps the highlight when the focus moves between the input and the list', async () => {
       const screen = await render(<PresetSearch />);
-      const input = screen.getByRole('textbox');
+      const input = screen.getByRole('combobox');
       const list = screen.getByRole('listbox');
 
       await userEvent.click(input);
@@ -385,7 +387,7 @@ describe('Listbox', () => {
     it('lets an input method editor finish its text with Enter', async () => {
       const onSelect = selectSpy();
       const screen = await render(<PresetSearch onSelect={onSelect} />);
-      const input = screen.getByRole('textbox');
+      const input = screen.getByRole('combobox');
 
       await userEvent.click(input);
       await userEvent.keyboard('{ArrowDown}');
@@ -449,7 +451,7 @@ describe('Listbox', () => {
       </>,
     );
 
-    await expect.element(screen.getByRole('textbox')).toBeDisabled();
+    await expect.element(screen.getByRole('combobox')).toBeDisabled();
     const lists = screen.getByRole('listbox').elements();
     for (const list of lists) {
       expect(list).not.toHaveAttribute('tabindex');

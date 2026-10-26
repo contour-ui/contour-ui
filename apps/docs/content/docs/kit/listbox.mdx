@@ -251,18 +251,18 @@ default), so the item under it and the highlighted item are never two different 
 
 ## Anatomy
 
-| Part                     | Element | Class                               | Attributes                                                                                                                                                |
-| ------------------------ | ------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Listbox.Root`           | `div`   | `contour-listbox`                   | `data-scope="listbox" data-part="root"`, `data-orientation`, `data-disabled`                                                                              |
-| `Listbox.Label`          | `label` | `contour-listbox__label`            | `data-part="label"`, `id`, `for` (the input, when there is one)                                                                                           |
-| `Listbox.Input`          | `input` | `contour-listbox__input`            | `data-part="input"`, `aria-controls`, `aria-activedescendant`, `aria-autocomplete="list"`, `aria-haspopup="listbox"`, `autocomplete="off"`                |
-| `Listbox.Content`        | `div`   | `contour-listbox__content`          | `data-part="content"`, `role="listbox"`, `aria-labelledby`, `aria-activedescendant`, `aria-multiselectable`, `aria-orientation`, `data-empty`, `tabindex` |
-| `Listbox.ItemGroup`      | `div`   | `contour-listbox__item-group`       | `data-part="item-group"`, `role="group"`, `aria-labelledby`                                                                                               |
-| `Listbox.ItemGroupLabel` | `div`   | `contour-listbox__item-group-label` | `data-part="item-group-label"`, `id`                                                                                                                      |
-| `Listbox.Item`           | `div`   | `contour-listbox__item`             | `data-part="item"`, `role="option"`, `id`, `aria-selected`, `aria-disabled`, `data-value`, `data-highlighted`, `data-selected`, `data-disabled`           |
-| `Listbox.ItemText`       | `span`  | `contour-listbox__item-text`        | `data-part="item-text"`, `data-highlighted`, `data-selected`, `data-disabled`                                                                             |
-| `Listbox.ItemIndicator`  | `span`  | `contour-listbox__item-indicator`   | `data-part="item-indicator"`, `aria-hidden="true"`, `hidden` while not selected                                                                           |
-| `Listbox.Empty`          | `div`   | `contour-listbox__empty`            | `data-part="empty"`; rendered only while the collection is empty                                                                                          |
+| Part                     | Element | Class                               | Attributes                                                                                                                                                 |
+| ------------------------ | ------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Listbox.Root`           | `div`   | `contour-listbox`                   | `data-scope="listbox" data-part="root"`, `data-orientation`, `data-disabled`                                                                               |
+| `Listbox.Label`          | `label` | `contour-listbox__label`            | `data-part="label"`, `id`, `for` (the input, when there is one)                                                                                            |
+| `Listbox.Input`          | `input` | `contour-listbox__input`            | `data-part="input"`, `role="combobox"`, `aria-expanded="true"`, `aria-controls`, `aria-activedescendant`, `aria-autocomplete="list"`, `autocomplete="off"` |
+| `Listbox.Content`        | `div`   | `contour-listbox__content`          | `data-part="content"`, `role="listbox"`, `aria-labelledby`, `aria-activedescendant`, `aria-multiselectable`, `aria-orientation`, `data-empty`, `tabindex`  |
+| `Listbox.ItemGroup`      | `div`   | `contour-listbox__item-group`       | `data-part="item-group"`, `role="group"`, `aria-labelledby`                                                                                                |
+| `Listbox.ItemGroupLabel` | `div`   | `contour-listbox__item-group-label` | `data-part="item-group-label"`, `id`                                                                                                                       |
+| `Listbox.Item`           | `div`   | `contour-listbox__item`             | `data-part="item"`, `role="option"`, `id`, `aria-selected`, `aria-disabled`, `data-value`, `data-highlighted`, `data-selected`, `data-disabled`            |
+| `Listbox.ItemText`       | `span`  | `contour-listbox__item-text`        | `data-part="item-text"`, `data-highlighted`, `data-selected`, `data-disabled`                                                                              |
+| `Listbox.ItemIndicator`  | `span`  | `contour-listbox__item-indicator`   | `data-part="item-indicator"`, `aria-hidden="true"`, `hidden` while not selected                                                                            |
+| `Listbox.Empty`          | `div`   | `contour-listbox__empty`            | `data-part="empty"`; rendered only while the collection is empty                                                                                           |
 
 Every part carries `data-scope="listbox"`. The state attributes are present, and empty, while the
 state holds. The parts reference one another by id: the label names the list, the input controls
@@ -323,6 +323,10 @@ In the input:
 - **One focused element.** The list (or the input) keeps the focus, and `aria-activedescendant`
   points to the highlighted option, so screen readers announce it as the keys move. The items are
   never focused themselves.
+- **The input is a combobox** that controls the list, as in the search of this site: screen
+  readers announce it with its options, and the list scrolls with its keys, so the list needs no
+  focus of its own. The list is shown with the input, so the input is always expanded
+  (`aria-expanded="true"`); pass `aria-expanded={false}` while you hide the list.
 - **Names.** `Listbox.Label` names the list, and the input when there is one. Without a label,
   give the list an `aria-label`, and the input one too.
 - **Selection.** Every option has `aria-selected`; the check mark is hidden from assistive

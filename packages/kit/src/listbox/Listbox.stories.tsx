@@ -209,7 +209,7 @@ function DocsSearch(): ReactElement {
 export const Search: Story = {
   render: () => <DocsSearch />,
   play: async ({ canvas }) => {
-    const input = canvas.getByRole('textbox', { name: 'Search the docs' });
+    const input = canvas.getByRole('combobox', { name: 'Search the docs' });
     const list = canvas.getByRole('listbox', { name: 'Results' });
     const highlighted = (): string | null | undefined => {
       const id = input.getAttribute('aria-activedescendant');
@@ -231,5 +231,10 @@ export const Search: Story = {
     await expect(highlighted()).toBe('Sizes');
     await expect(canvas.getAllByRole('option')).toHaveLength(2);
     await expect(list.scrollTop).toBe(0);
+
+    // Every result again, so the list scrolls for the a11y check that follows: it needs no focus
+    // of its own, since it is the list of a combobox.
+    await userEvent.clear(input);
+    await expect(list.scrollHeight).toBeGreaterThan(list.clientHeight);
   },
 };

@@ -36,14 +36,19 @@ export interface ListboxLabelAttributes extends ListboxPartAttributes<'label'> {
   readonly ref: RefCallback<HTMLLabelElement>;
 }
 
-/** Props of the input: a text field whose arrow keys and Enter act on the list. */
+/**
+ * Props of the input: a text field with the `combobox` role, whose arrow keys and Enter act on
+ * the list it controls.
+ */
 export interface ListboxInputAttributes extends ListboxPartAttributes<'input'> {
   readonly id: string;
+  readonly role: 'combobox';
   readonly disabled: boolean;
   readonly autoComplete: 'off';
   readonly autoCorrect: 'off';
   readonly spellCheck: false;
-  readonly 'aria-haspopup': 'listbox';
+  /** Always: the list is shown with the input. */
+  readonly 'aria-expanded': true;
   readonly 'aria-controls': string;
   readonly 'aria-autocomplete': 'list';
   /** The highlighted item, which the input's keys act on. */
@@ -319,11 +324,12 @@ export function useListbox<T>(props: UseListboxProps<T>): UseListboxReturn<T> {
       'data-scope': 'listbox',
       'data-part': 'input',
       id: `${baseId}input`,
+      role: 'combobox',
       disabled,
       autoComplete: 'off',
       autoCorrect: 'off',
       spellCheck: false,
-      'aria-haspopup': 'listbox',
+      'aria-expanded': true,
       // The generated id until the list is mounted, so the first render points to it too.
       'aria-controls': contentId ?? `${baseId}content`,
       'aria-autocomplete': 'list',

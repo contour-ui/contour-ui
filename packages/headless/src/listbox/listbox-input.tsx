@@ -12,6 +12,12 @@ export type ListboxInputProps = PrimitiveProps<'input'>;
  * caret, as in any text field. It filters nothing itself: use its value to build the collection,
  * as a search box does.
  *
+ * It has the `combobox` role, as the field of a command palette: a field that controls a list of
+ * options (`aria-controls`). Screen readers announce it with its options, and the list, which
+ * the keys of the field scroll, needs no focus of its own. The list is shown with the field, so
+ * the field is always expanded (`aria-expanded`): pass `aria-expanded={false}` while you hide the
+ * list.
+ *
  * @example
  * <Listbox.Input
  *   aria-label="Search"

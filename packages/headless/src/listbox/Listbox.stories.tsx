@@ -187,7 +187,7 @@ function DocsSearch(): ReactElement {
 export const Search: Story = {
   render: () => <DocsSearch />,
   play: async ({ canvas }) => {
-    const input = canvas.getByRole('textbox', { name: 'Search the docs' });
+    const input = canvas.getByRole('combobox', { name: 'Search the docs' });
     const option = (name: string, group: string): HTMLElement =>
       within(canvas.getByRole('group', { name: group })).getByRole('option', { name });
 
