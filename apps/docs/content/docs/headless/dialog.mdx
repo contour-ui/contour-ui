@@ -1,0 +1,388 @@
+---
+title: Dialog
+description: A window over the page, modal or not, with a backdrop, focus kept inside, Escape and presses outside that close it, and focus that goes back where it was.
+---
+
+import { Dialog, Portal } from '@contour-ui/headless';
+
+<Preview>
+  {
+    <Dialog.Root>
+      <Dialog.Trigger className="docs-dialog-example-button">Rename the track</Dialog.Trigger>
+      <Portal>
+        <Dialog.Backdrop className="docs-dialog-example-backdrop" />
+        <Dialog.Positioner className="docs-dialog-example-positioner">
+          <Dialog.Content className="docs-dialog-example-content">
+            <Dialog.Title>Rename the track</Dialog.Title>
+            <Dialog.Description>The new name shows in the mixer.</Dialog.Description>
+            <label>
+              Name <input defaultValue="Drums" />
+            </label>
+            <div>
+              <Dialog.CloseTrigger className="docs-dialog-example-button">
+                Cancel
+              </Dialog.CloseTrigger>{' '}
+              <Dialog.CloseTrigger className="docs-dialog-example-button">Save</Dialog.CloseTrigger>
+            </div>
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+      <style>{`
+        .docs-dialog-example-button { padding: 0 0.5em; border: 1px solid; }
+        .docs-dialog-example-backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / 0.5); }
+        .docs-dialog-example-positioner {
+          position: fixed; inset: 0; display: grid; place-items: center; padding: 1rem;
+          pointer-events: none;
+        }
+        .docs-dialog-example-positioner[hidden] { display: none; }
+        .docs-dialog-example-content {
+          display: grid; gap: 0.75rem; inline-size: min(100%, 24rem); padding: 1rem;
+          border: 1px solid; background: Canvas; color: CanvasText; pointer-events: auto;
+        }
+        .docs-dialog-example-content[hidden] { display: none; }
+        .docs-dialog-example-content input { border: 1px solid; padding: 0 0.25em; }
+      `}</style>
+    </Dialog.Root>
+  }
+</Preview>
+
+```tsx
+import { Dialog, Portal } from '@contour-ui/headless';
+
+<Dialog.Root>
+  <Dialog.Trigger>Rename the track</Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>Rename the track</Dialog.Title>
+        <Dialog.Description>The new name shows in the mixer.</Dialog.Description>
+        <input aria-label="Name" defaultValue="Drums" />
+        <Dialog.CloseTrigger>Cancel</Dialog.CloseTrigger>
+        <Dialog.CloseTrigger>Save</Dialog.CloseTrigger>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>;
+```
+
+The trigger opens the dialog, and focus moves to its first field. While it is open, Tab and
+Shift+Tab go round its elements, the page behind it does not scroll, and the rest of the page is
+out of reach. Escape, a press on the backdrop and the close triggers close it, and focus goes
+back to the trigger. [Kit's Dialog](/docs/kit/dialog) is this component with the contour-ui look,
+and [Kit's Drawer](/docs/kit/drawer) slides it in from an edge of the screen.
+
+## The overlay
+
+`Dialog.Root` renders no element: it holds the state. The trigger stays in the page; put the
+backdrop and the positioner in a [`Portal`](/docs/headless/portal), at the end of the body, so the
+overlay escapes the `overflow` and the stacking context of the page around the trigger.
+
+- `Dialog.Backdrop` covers the page behind the dialog. A press on it is a press outside the
+  dialog.
+- `Dialog.Positioner` lays the content out on the screen: a box that covers the viewport, with
+  the content in the middle or at the top. Let presses through it with `pointer-events: none`,
+  and take them back on the content, so the backdrop gets the presses around the content.
+- `Dialog.Content` is the dialog itself: the element with the `dialog` role, named by
+  `Dialog.Title` and described by `Dialog.Description`.
+
+Every part is optional but the content. A dialog without a title needs a name of its own: pass
+`aria-label` to the content.
+
+## Open and close
+
+The dialog keeps its own state, closed unless `defaultOpen`. To keep it yourself, pass `open`
+and `onOpenChange`, which reports every request to open or close as `{ open }`: from the trigger,
+the close triggers, Escape or a press outside. A controlled dialog changes only when you pass the
+new `open`, so you may refuse a request, or open the dialog from elsewhere:
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Dialog.Root open={open} onOpenChange={({ open }) => setOpen(open)}>
+  …
+</Dialog.Root>;
+```
+
+`onOpenChange` is not called for the `open` you pass, nor for a request for the state the
+dialog is in. `closeOnEscape` and `closeOnInteractOutside` turn off the two ways out that do not
+go through a button. A click handler on a trigger or a close trigger that calls
+`event.preventDefault()` keeps the dialog as it is.
+
+## Modal or not
+
+A dialog is modal by default (`modal`): while it is open, the rest of the page is `inert`, out of
+reach of the pointer, the keyboard and screen readers, focus stays inside (`trapFocus`), and the
+page does not scroll (`preventScroll`). `trapFocus` and `preventScroll` follow `modal` unless you
+set them.
+
+A dialog with `modal={false}`, such as an inspector next to the work, leaves the page within
+reach: render no backdrop, and keep the positioner from covering the page. Its trigger toggles
+it, and Tab may leave it. By default, a press or focus outside it does not close it; set
+`closeOnInteractOutside` for that.
+
+## Focus
+
+When the dialog opens, focus moves into it, on the next frame:
+
+1. to `initialFocusEl()`, when it gives an element that takes focus;
+2. else to the element inside that already has focus, such as a field with `autoFocus`;
+3. else, in an alert dialog, to its first close trigger;
+4. else to the first element that Tab reaches, or else to the content itself, which has
+   `tabindex="-1"`.
+
+When it closes, with `restoreFocus` (on by default), focus goes back to `finalFocusEl()`, or the
+element that had focus when it opened, or the trigger. Focus that moved on to something outside
+the dialog, such as a field pressed outside a non-modal one, stays there.
+
+```tsx
+<Dialog.Root
+  initialFocusEl={() => searchRef.current}
+  finalFocusEl={() => document.getElementById('toolbar-search')}
+>
+  …
+</Dialog.Root>
+```
+
+## Alert dialogs
+
+`role="alertdialog"` is for a dialog that asks for an answer, such as "Delete the take?". It
+focuses its first close trigger when it opens: put the safe answer there. A press outside does not
+close it (`closeOnInteractOutside` is off unless you set it); Escape does.
+
+```tsx
+<Dialog.Root role="alertdialog">
+  <Dialog.Trigger>Delete</Dialog.Trigger>
+  <Portal>
+    <Dialog.Backdrop />
+    <Dialog.Positioner>
+      <Dialog.Content>
+        <Dialog.Title>Delete the take?</Dialog.Title>
+        <Dialog.Description>It is gone for good.</Dialog.Description>
+        <Dialog.CloseTrigger>Keep it</Dialog.CloseTrigger>
+        <Dialog.CloseTrigger onClick={deleteTake}>Delete</Dialog.CloseTrigger>
+      </Dialog.Content>
+    </Dialog.Positioner>
+  </Portal>
+</Dialog.Root>
+```
+
+## Nested dialogs
+
+A dialog opened from inside another one, in a portal of its own, goes on top of it: Escape and a
+press outside close the top one first, focus goes back to its trigger in the dialog below, and
+it closes when the dialog below closes. Each open dialog gets `--layer-index`, its place in the
+stack, from 0, on its content, its positioner and its backdrop, to stack them by:
+
+```css
+[data-scope='dialog']:is([data-part='backdrop'], [data-part='positioner']) {
+  z-index: calc(1000 + var(--layer-index, 0));
+}
+```
+
+The stack is shared with the other overlays of Headless, such as popovers.
+
+## Animations
+
+The backdrop, the positioner and the content carry `data-state="open"` or `"closed"`. They are
+[`Presence`](/docs/headless/presence) elements: once the dialog closes, they stay on screen,
+`inert`, while an exit animation keyed on `data-state="closed"` runs, then get `hidden`. Give the
+closed state `@keyframes` of its own:
+
+```css
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+@keyframes dialog-out {
+  to {
+    opacity: 0;
+    scale: 0.96;
+  }
+}
+
+[data-scope='dialog'][data-part='content'][data-state='open'] {
+  animation: dialog-in 150ms ease-out;
+}
+
+[data-scope='dialog'][data-part='content'][data-state='closed'] {
+  animation: dialog-out 100ms ease-in;
+}
+```
+
+The positioner waits for the animation of the content, and the backdrop runs its own. The
+overlay is mounted from the start, `hidden` while closed; `lazyMount` mounts it when the dialog
+first opens, `unmountOnExit` unmounts it once it has closed, and `onExitComplete` reports each
+close once the content is hidden.
+
+## Styling
+
+Headless renders no CSS. Style the parts by their data attributes:
+
+```css
+[data-scope='dialog'][data-part='backdrop'] {
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 0.5);
+}
+
+[data-scope='dialog'][data-part='positioner'] {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+[data-scope='dialog'][data-part='content'] {
+  pointer-events: auto;
+}
+```
+
+`hidden` hides the closed parts through the browser's own `display: none`, which a `display` of
+yours overrides: hide them again with `[hidden] { display: none; }`. Write `z-index` with
+`--layer-index` in your CSS, never in `style`: the stack writes it inline.
+
+## Anatomy
+
+| Part                  | Element  | Attributes                                                                                                                                                       |
+| --------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Dialog.Root`         | none     | —                                                                                                                                                                |
+| `Dialog.Trigger`      | `button` | `data-scope="dialog" data-part="trigger"`, `type="button"`, `aria-haspopup="dialog"`, `aria-expanded`, `aria-controls`, `data-state`                             |
+| `Dialog.Backdrop`     | `div`    | `data-part="backdrop"`, `data-state`, `hidden`, `inert`                                                                                                          |
+| `Dialog.Positioner`   | `div`    | `data-part="positioner"`, `data-state`, `hidden`, `inert`                                                                                                        |
+| `Dialog.Content`      | `div`    | `data-part="content"`, `role="dialog"` or `"alertdialog"`, `aria-modal`, `aria-labelledby`, `aria-describedby`, `tabindex="-1"`, `data-state`, `hidden`, `inert` |
+| `Dialog.Title`        | `h2`     | `data-part="title"`, `id`                                                                                                                                        |
+| `Dialog.Description`  | `p`      | `data-part="description"`, `id`                                                                                                                                  |
+| `Dialog.CloseTrigger` | `button` | `data-part="close-trigger"`, `type="button"`                                                                                                                     |
+
+Every part carries `data-scope="dialog"`; `data-state` is `"open"` or `"closed"`. `hidden` is
+present while a part is closed and its exit animation is over, `inert` while the animation runs.
+The trigger points to the content (`aria-controls`) while the content is mounted, and the content
+to the title and the description while they are. Give one of them an `id` of your own, and the
+others follow it. While the dialog is open, the stack writes `--layer-index` inline on the
+content, the positioner and the backdrop.
+
+## Props
+
+`Dialog.Root`:
+
+| Prop                     | Type                                     | Default                                        |
+| ------------------------ | ---------------------------------------- | ---------------------------------------------- |
+| `open`                   | `boolean`                                | —                                              |
+| `defaultOpen`            | `boolean`                                | `false`                                        |
+| `onOpenChange`           | `(details: { open: boolean }) => void`   | —                                              |
+| `modal`                  | `boolean`                                | `true`                                         |
+| `trapFocus`              | `boolean`                                | `modal`                                        |
+| `preventScroll`          | `boolean`                                | `modal`                                        |
+| `closeOnEscape`          | `boolean`                                | `true`                                         |
+| `closeOnInteractOutside` | `boolean`                                | `true` for a modal `dialog`, `false` otherwise |
+| `role`                   | `'dialog'`, `'alertdialog'`              | `'dialog'`                                     |
+| `initialFocusEl`         | `() => HTMLElement \| null \| undefined` | —                                              |
+| `finalFocusEl`           | `() => HTMLElement \| null \| undefined` | —                                              |
+| `restoreFocus`           | `boolean`                                | `true`                                         |
+| `lazyMount`              | `boolean`                                | `false`                                        |
+| `unmountOnExit`          | `boolean`                                | `false`                                        |
+| `onExitComplete`         | `() => void`                             | —                                              |
+
+The other parts take `asChild` and the props of their element, such as `className`, `style` and
+`ref`.
+
+## Keyboard
+
+| Key                  | Action                                                           |
+| -------------------- | ---------------------------------------------------------------- |
+| `Enter`, `Space`     | On the trigger: opens the dialog. On a close trigger: closes it  |
+| `Tab`, `Shift`+`Tab` | Move focus to the next or the previous element, round the dialog |
+| `Escape`             | Closes the dialog on top, unless `closeOnEscape` is off          |
+
+The triggers are `<button>`s: Enter and Space are the browser's own keys. A key that an element
+inside the dialog uses first, such as Escape in a field that clears its text with
+`event.preventDefault()`, does not close it.
+
+## Accessibility
+
+- **Name and description.** The content has the `dialog` role, or `alertdialog`, and screen
+  readers announce its title, then its description, as focus moves in. Without a title, name it
+  with `aria-label`.
+- **Modal.** A modal dialog carries `aria-modal="true"`, and the rest of the page is `inert`:
+  screen readers stay inside, and so do the pointer and the keyboard. Live regions of the page,
+  such as a region of toasts, keep announcing.
+- **Focus in and back.** Focus moves into the dialog when it opens, and back to where it was when
+  it closes, so keyboard users go on where they were. The content takes focus itself when
+  nothing inside it does.
+- **The trigger** has `aria-haspopup="dialog"` and `aria-expanded`, and controls the content.
+- **Alert dialogs** focus the safe answer and do not close on a stray press.
+
+## How it works
+
+`Dialog.Root` runs the dialog machine of `@contour-ui/core`, `dialog.machine`, with
+`useMachine`, on a DOM platform built on the overlay helpers of Headless: the layer stack, the
+focus trap, the scroll lock and `inert` outside.
+
+| State    | Event                        | Next     | What happens                                                     |
+| -------- | ---------------------------- | -------- | ---------------------------------------------------------------- |
+| `closed` | `OPEN`, `TOGGLE`             | `open`   | `onOpenChange({ open: true })`; controlled: only reported        |
+| `closed` | `CONTROLLED.OPEN`            | `open`   | the owner passed `open: true`                                    |
+| `open`   | `CLOSE`, `TOGGLE`            | `closed` | `onOpenChange({ open: false })`; controlled: only reported       |
+| `open`   | `ESCAPE`, `INTERACT_OUTSIDE` | `closed` | as `CLOSE`, when `closeOnEscape`, `closeOnInteractOutside` allow |
+| `open`   | `CONTROLLED.CLOSE`           | `closed` | the owner passed `open: false`                                   |
+
+While `open`, the machine runs the platform effects `dismiss` (the layer that sends `ESCAPE` and
+`INTERACT_OUTSIDE`), `trapFocus`, `preventScroll` and `hideOutside` (`inert` outside); each one
+does nothing while its prop is off. Entering `open` moves focus in (`setInitialFocus`), and
+leaving it, once the effects have stopped, moves focus back (`restoreFocus`). The trigger sends
+`TOGGLE`, the close triggers `CLOSE`. `dialog.connect` turns the running machine into
+`{ open, modal, role, setOpen(), toggle() }`, and the parts turn that into attributes. The
+machine itself has no DOM: a renderer other than React DOM runs it with a platform of its own.
+
+## Hooks
+
+`useDialog` runs the machine without the parts. It takes the props of `Dialog.Root` but the
+mounting ones, and returns `open`, `modal`, `role`, `setOpen()`, `toggle()` and the props of each
+element: `getTriggerProps()`, `getBackdropProps()`, `getPositionerProps()`, `getContentProps()`,
+`getTitleProps()`, `getDescriptionProps()` and `getCloseTriggerProps()`. Show and hide the overlay
+yourself, with [`usePresence`](/docs/headless/presence) for an exit animation:
+
+```tsx
+import { useDialog } from '@contour-ui/headless';
+
+function Confirm({ onConfirm }: { onConfirm: () => void }) {
+  const dialog = useDialog({ role: 'alertdialog' });
+  return (
+    <>
+      <button {...dialog.getTriggerProps()}>Delete</button>
+      <div {...dialog.getContentProps()} hidden={!dialog.open}>
+        <h2 {...dialog.getTitleProps()}>Delete the take?</h2>
+        <button {...dialog.getCloseTriggerProps()}>Keep it</button>
+        <button onClick={onConfirm}>Delete</button>
+      </div>
+    </>
+  );
+}
+```
+
+Inside `Dialog.Root`, `useDialogContext()` returns the same API, with the presence of the
+overlay, for parts of your own:
+
+```tsx
+import { useDialogContext } from '@contour-ui/headless';
+
+function SaveButton({ save }: { save: () => void }) {
+  const { setOpen } = useDialogContext();
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        save();
+        setOpen(false);
+      }}
+    >
+      Save
+    </button>
+  );
+}
+```

@@ -1,0 +1,16 @@
+export { DialogRoot as Root } from './dialog-root.tsx';
+export type { DialogRootProps as RootProps } from './dialog-root.tsx';
+export { DialogTrigger as Trigger } from './dialog-trigger.tsx';
+export type { DialogTriggerProps as TriggerProps } from './dialog-trigger.tsx';
+export { DialogBackdrop as Backdrop } from './dialog-backdrop.tsx';
+export type { DialogBackdropProps as BackdropProps } from './dialog-backdrop.tsx';
+export { DialogPositioner as Positioner } from './dialog-positioner.tsx';
+export type { DialogPositionerProps as PositionerProps } from './dialog-positioner.tsx';
+export { DialogContent as Content } from './dialog-content.tsx';
+export type { DialogContentProps as ContentProps } from './dialog-content.tsx';
+export { DialogTitle as Title } from './dialog-title.tsx';
+export type { DialogTitleProps as TitleProps } from './dialog-title.tsx';
+export { DialogDescription as Description } from './dialog-description.tsx';
+export type { DialogDescriptionProps as DescriptionProps } from './dialog-description.tsx';
+export { DialogCloseTrigger as CloseTrigger } from './dialog-close-trigger.tsx';
+export type { DialogCloseTriggerProps as CloseTriggerProps } from './dialog-close-trigger.tsx';

@@ -14,6 +14,21 @@ export * as Clipboard from './clipboard/index.ts';
 export { useClipboardContext } from './clipboard/clipboard-context.ts';
 export { useClipboard } from './clipboard/use-clipboard.ts';
 export type { UseClipboardProps, UseClipboardReturn } from './clipboard/use-clipboard.ts';
+export * as Dialog from './dialog/index.ts';
+export { useDialogContext } from './dialog/dialog-context.ts';
+export type { DialogContextValue } from './dialog/dialog-context.ts';
+export { useDialog } from './dialog/use-dialog.ts';
+export type {
+  DialogCloseTriggerAttributes,
+  DialogContentAttributes,
+  DialogDataState,
+  DialogLabelAttributes,
+  DialogLayerAttributes,
+  DialogPartAttributes,
+  DialogTriggerAttributes,
+  UseDialogProps,
+  UseDialogReturn,
+} from './dialog/use-dialog.ts';
 export * as Listbox from './listbox/index.ts';
 export { useListboxContext, useListboxItemContext } from './listbox/listbox-context.ts';
 export type { ListboxItemContextValue } from './listbox/listbox-context.ts';
