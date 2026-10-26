@@ -1,0 +1,225 @@
+---
+title: CodeBlock
+description: Code highlighted by Shiki, framed with an optional title, in the syntax colors of the current theme.
+---
+
+<Preview>
+
+```tsx title="save-button.tsx"
+import { Button } from '@contour-ui/kit';
+
+export function SaveButton() {
+  return <Button variant="solid">Save</Button>; // [!code highlight]
+}
+```
+
+</Preview>
+
+```tsx
+import { CodeBlock } from '@contour-ui/kit';
+
+<CodeBlock.Root>
+  <CodeBlock.Header>
+    <CodeBlock.Title>save-button.tsx</CodeBlock.Title>
+  </CodeBlock.Header>
+  <CodeBlock.Content dangerouslySetInnerHTML={{ __html: highlighted }} />
+</CodeBlock.Root>;
+```
+
+CodeBlock frames code that [Shiki](https://shiki.style) has already highlighted; it does not
+highlight by itself. `CodeBlock.Content` holds Shiki's `<pre>` and scrolls long lines sideways.
+Every code block on this site is a CodeBlock: the code is highlighted when the site is built, and
+the MDX `pre` renders it.
+
+## Highlight with Shiki
+
+Use Shiki's css-variables theme. It colors every token with a `--shiki-*` variable instead of a
+color, and `CodeBlock.Root` sets those variables to the syntax colors of the tokens, so the code
+follows the color theme it is shown in. One theme serves both color themes: no light and dark pair.
+
+```ts
+import { codeToHtml, createCssVariablesTheme } from 'shiki';
+
+const theme = createCssVariablesTheme();
+
+// On the server or at build time: `highlighted` is the HTML of a <pre>.
+const highlighted = await codeToHtml(code, { lang: 'tsx', theme, tabindex: false });
+```
+
+`tabindex: false` keeps Shiki's `pre` out of the tab order: `CodeBlock.Content` is the focusable
+scroll area.
+
+With Fumadocs, as this site, pass the theme in `rehypeCodeOptions`. `rehypeCode` merges a default
+light and dark pair into these options, and Shiki uses `themes` whenever it is set, so the one theme
+goes in as a one-entry `themes` map whose key is the default color:
+
+```ts title="vite.config.ts"
+fumadocsMdx({
+  globalOptions: {
+    mdxOptions: {
+      rehypeCodeOptions: {
+        themes: { tokens: createCssVariablesTheme() },
+        defaultColor: 'tokens',
+        tabindex: false,
+      },
+    },
+  },
+});
+```
+
+## Notations
+
+Shiki's notation transformers (`@shikijs/transformers`, which Fumadocs applies by default) read
+comments in the code, remove them, and mark the lines with classes. CodeBlock styles those classes:
+
+| Comment in the code    | Classes                                                  | Look                                              |
+| ---------------------- | -------------------------------------------------------- | ------------------------------------------------- |
+| `// [!code highlight]` | `.highlighted` on the line, `.has-highlighted` on `pre`  | an accent tint and a bar at the start of the line |
+| `// [!code ++]`        | `.diff.add` on the line, `.has-diff` on `pre`            | a success tint and a `+` before the code          |
+| `// [!code --]`        | `.diff.remove` on the line, `.has-diff` on `pre`         | a danger tint and a `-` before the code           |
+| `// [!code focus]`     | `.focused` on the line, `.has-focused` on `pre`          | the other lines lose their colors                 |
+| `// [!code word:name]` | `.highlighted-word` on each `name` in the following code | an accent tint and outline, without padding       |
+
+<Preview>
+
+```css title="button.css"
+.contour-button {
+  border-radius: var(--ct-radius-control); /* [!code --] */
+  border-radius: 0; /* [!code ++] */
+}
+```
+
+```tsx title="main.tsx"
+const root = document.querySelector('#root');
+if (root !== null) {
+  createRoot(root).render(<App />); // [!code focus]
+}
+```
+
+```ts title="theme.ts"
+// [!code word:themeAttribute]
+import { themeAttribute } from '@contour-ui/tokens';
+
+document.documentElement.setAttribute(themeAttribute, 'light');
+```
+
+</Preview>
+
+Every line of a diff makes room for the sign, so the code stays aligned. A highlighted word gets no
+padding either: the columns of monospace code stay where they are.
+
+## Line numbers
+
+A `pre` with `data-line-numbers` gets its lines numbered, in a column before the code. In
+Fumadocs, write `lineNumbers` in the meta of the code block. The numbers come from the CSS counter
+`contour-code-block-line`: to start from another number, reset it on the `pre`, for example
+`counter-reset: contour-code-block-line 9` to start from 10. On this site, `lineNumbers=10` does
+that.
+
+<Preview>
+
+```tsx title="theme-switch.tsx" lineNumbers=10
+export function ThemeSwitch() {
+  const [theme, setTheme] = useState<Theme>(defaultTheme);
+
+  useEffect(() => {
+    document.documentElement.setAttribute(themeAttribute, theme);
+  }, [theme]);
+}
+```
+
+</Preview>
+
+## Long lines
+
+Lines never wrap: `CodeBlock.Content` scrolls them sideways, and every line, a highlighted one too,
+spans the whole width it scrolls.
+
+<Preview>
+
+```bash title="install.sh"
+pnpm add @contour-ui/kit @contour-ui/tokens # [!code highlight]
+pnpm add @contour-ui/kit @contour-ui/tokens @contour-ui/icons @contour-ui/headless react react-dom
+```
+
+</Preview>
+
+## Anatomy
+
+| Part                | Element      | Class                         | Attributes                                                                                                            |
+| ------------------- | ------------ | ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `CodeBlock.Root`    | `figure`     | `contour-code-block`          | `data-scope="code-block" data-part="root"`                                                                            |
+| `CodeBlock.Header`  | `figcaption` | `contour-code-block__header`  | `data-scope="code-block" data-part="header"`                                                                          |
+| `CodeBlock.Title`   | `span`       | `contour-code-block__title`   | `data-scope="code-block" data-part="title"`                                                                           |
+| `CodeBlock.Content` | `div`        | `contour-code-block__content` | `data-scope="code-block" data-part="content"`, `tabindex="0"`; `role="region"` with `aria-label` or `aria-labelledby` |
+
+The header is the figure's caption: place it first in `CodeBlock.Root`, where HTML expects a
+`figcaption`. The title takes the free width of the header, and actions placed after it, such as a
+copy button, sit at the end of the row. Without a title, leave the header out.
+
+## Props
+
+The parts have no props of their own. Every part takes `asChild` and the props of its element, such
+as `className`, `style` and `id`; `className` is merged with the part's class.
+
+## Shiki variables
+
+`CodeBlock.Root` sets the variables of the css-variables theme to these tokens:
+
+| Shiki variable                    | Token                                 |
+| --------------------------------- | ------------------------------------- |
+| `--shiki-foreground`              | `--ct-color-fg-default`               |
+| `--shiki-background`              | `--ct-color-bg-inset`                 |
+| `--shiki-token-constant`          | `--ct-color-syntax-constant`          |
+| `--shiki-token-string`            | `--ct-color-syntax-string`            |
+| `--shiki-token-comment`           | `--ct-color-syntax-comment`           |
+| `--shiki-token-keyword`           | `--ct-color-syntax-keyword`           |
+| `--shiki-token-parameter`         | `--ct-color-syntax-parameter`         |
+| `--shiki-token-function`          | `--ct-color-syntax-function`          |
+| `--shiki-token-string-expression` | `--ct-color-syntax-string-expression` |
+| `--shiki-token-punctuation`       | `--ct-color-syntax-punctuation`       |
+| `--shiki-token-link`              | `--ct-color-syntax-link`              |
+| `--shiki-token-inserted`          | `--ct-color-success-fg`               |
+| `--shiki-token-deleted`           | `--ct-color-danger-fg`                |
+| `--shiki-token-changed`           | `--ct-color-warning-fg`               |
+
+The `--shiki-ansi-*` colors of `ansi` code have no tokens and are not set.
+
+## Keyboard
+
+| Key     | Action                                           |
+| ------- | ------------------------------------------------ |
+| `Tab`   | Moves focus to the code and shows the focus ring |
+| `←` `→` | Scroll the focused code sideways                 |
+
+## Accessibility
+
+- **A named figure.** `CodeBlock.Root` is a `figure`, and the header is its `figcaption`, so screen
+  readers announce the block with its title, such as "save-button.tsx, figure". Name a block without
+  a title with `aria-label` on the root.
+- **One tab stop.** `CodeBlock.Content` is in the tab order, so keyboard users can scroll a long
+  line. Keep the `pre` out of it (`tabindex: false` in Shiki), or the block has two tab stops.
+- **Readable everywhere.** Every syntax color keeps at least 4.5:1 on the code background, in both
+  themes. Lines outside a focus take the comment color instead of fading, so they keep that
+  contrast too.
+- **Code as written.** Ligatures are off, so `!==` shows as three characters, and the code reads
+  left to right on any page. Line numbers are hidden from assistive technology and are not copied;
+  the `+` and `-` of a diff are announced.
+
+## Tokens
+
+| Token                                                                                              | Used for                                    |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `--ct-color-bg-inset`                                                                              | the background                              |
+| `--ct-color-border-default`, `--ct-border-width-default`                                           | the border and the header's divider         |
+| `--ct-radius-panel`                                                                                | the corners                                 |
+| `--ct-text-label`, `--ct-color-fg-muted`                                                           | the title                                   |
+| `--ct-size-control-sm`, `--ct-space-control-gap`, `--ct-space-panel-inset`, `--ct-space-group-gap` | the header's height and padding             |
+| `--ct-text-code`, `--ct-space-panel-inset`                                                         | the code and its padding                    |
+| `--ct-color-accent-bg`, `--ct-color-accent-fill`, `--ct-border-width-focus`                        | highlighted lines: the tint and the bar     |
+| `--ct-color-accent-bg`, `--ct-color-accent-border`, `--ct-radius-control`                          | highlighted words                           |
+| `--ct-color-success-bg`, `--ct-color-success-fg`                                                   | added lines and their sign                  |
+| `--ct-color-danger-bg`, `--ct-color-danger-fg`                                                     | removed lines and their sign                |
+| `--ct-color-syntax-comment`                                                                        | line numbers, and the lines outside a focus |
+| `--ct-space-group-gap`                                                                             | the gap after line numbers and diff signs   |
+| `--ct-color-border-focus`, `--ct-border-width-focus`                                               | the focus ring                              |

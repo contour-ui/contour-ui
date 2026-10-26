@@ -1,0 +1,230 @@
+/*
+ * A frame for code highlighted by Shiki with its css-variables theme. The root maps the theme's
+ * `--shiki-*` variables to token roles, so the code follows the color theme it is shown in; the
+ * rules for Shiki's output (lines, notations, line numbers) are scoped to the content.
+ */
+.contour-code-block {
+  --shiki-foreground: var(--ct-color-fg-default);
+  --shiki-background: var(--ct-color-bg-inset);
+  --shiki-token-constant: var(--ct-color-syntax-constant);
+  --shiki-token-string: var(--ct-color-syntax-string);
+  --shiki-token-comment: var(--ct-color-syntax-comment);
+  --shiki-token-keyword: var(--ct-color-syntax-keyword);
+  --shiki-token-parameter: var(--ct-color-syntax-parameter);
+  --shiki-token-function: var(--ct-color-syntax-function);
+  --shiki-token-string-expression: var(--ct-color-syntax-string-expression);
+  --shiki-token-punctuation: var(--ct-color-syntax-punctuation);
+  --shiki-token-link: var(--ct-color-syntax-link);
+  --shiki-token-inserted: var(--ct-color-success-fg);
+  --shiki-token-deleted: var(--ct-color-danger-fg);
+  --shiki-token-changed: var(--ct-color-warning-fg);
+
+  box-sizing: border-box;
+  /*
+   * As wide as its container in flex layouts too, as a block is in normal flow, and no wider in
+   * grid and flex layouts: a long line scrolls instead of widening the block.
+   */
+  inline-size: 100%;
+  min-inline-size: 0;
+  /*
+   * A figure's default inline margins would narrow the block. Its block margins are left to the
+   * container, which spaces component roots.
+   */
+  margin-inline: 0;
+  /*
+   * In the dark theme `bg-inset` equals the canvas, so the border is the block's only edge; it is
+   * `border-default` because in the light theme `border-subtle` equals `bg-inset`.
+   */
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-inset);
+  color: var(--ct-color-fg-default);
+  text-align: start;
+}
+
+/*
+ * The header is a `figcaption`, which containers style too (the docs' Prose sets its margins,
+ * color and font), so it sets all of them: a layer above wins only for the properties it sets.
+ */
+.contour-code-block__header {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+  /* A small control's height: an action such as a copy button fits without changing it. */
+  min-block-size: var(--ct-size-control-sm);
+  margin: 0;
+  padding-block: var(--ct-space-control-gap);
+  /* Less at the end, where a small icon button lines up its icon with the inset of the code. */
+  padding-inline: var(--ct-space-panel-inset) var(--ct-space-group-gap);
+  border-block-end: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+/* The title takes the free width, so actions after it sit at the end of the row. */
+.contour-code-block__title {
+  flex: 1;
+  min-inline-size: 0;
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  overflow-wrap: anywhere;
+}
+
+/*
+ * The scroll area. Ligatures are off, so code reads literally: JetBrains Mono would draw `!==`
+ * or `=>` as one glyph. `font` resets them, so they come after it.
+ */
+.contour-code-block__content {
+  overflow-x: auto;
+  /* The root's corners inside its border, so the scrollbar and the focus ring follow them. */
+  border-radius: calc(var(--ct-radius-panel) - var(--ct-border-width-default));
+  font: var(--ct-text-code);
+  font-variant-ligatures: none;
+  letter-spacing: var(--ct-text-code-letter-spacing);
+}
+
+.contour-code-block__header ~ .contour-code-block__content {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+/* Inside the area: around it, the ring would cover the root's border and the header's divider. */
+.contour-code-block__content:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: calc(-1 * var(--ct-border-width-focus));
+}
+
+/*
+ * The `pre` is as wide as its longest line, and at least as wide as the area, so the background
+ * of a line spans the whole scroll width. The custom properties are the widths of the line
+ * number and diff sign columns, set below when the block has them.
+ */
+.contour-code-block__content pre {
+  --contour-code-block-numbers: 0px;
+  --contour-code-block-marker: 0px;
+
+  box-sizing: border-box;
+  inline-size: max-content;
+  min-inline-size: 100%;
+  margin: 0;
+  padding: var(--ct-space-panel-inset);
+  /* Code runs left to right on any page. */
+  direction: ltr;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: left;
+  white-space: pre;
+}
+
+.contour-code-block__content code {
+  display: block;
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+/*
+ * A line of Shiki's output reaches into the padding of the `pre` on both sides, so its
+ * background spans the whole width; the line numbers and the diff signs sit in its start
+ * padding. It aligns to the top of its row: an empty line has no baseline to align.
+ */
+.contour-code-block__content .line {
+  display: inline-block;
+  position: relative;
+  box-sizing: border-box;
+  min-inline-size: calc(100% + 2 * var(--ct-space-panel-inset));
+  min-block-size: 1lh;
+  margin-inline: calc(-1 * var(--ct-space-panel-inset));
+  padding-inline: calc(
+      var(--ct-space-panel-inset) + var(--contour-code-block-numbers) +
+        var(--contour-code-block-marker)
+    )
+    var(--ct-space-panel-inset);
+  vertical-align: top;
+}
+
+/* Line numbers, for a `pre` with `data-line-numbers`. Assistive technology skips them. */
+.contour-code-block__content [data-line-numbers] {
+  --contour-code-block-numbers: calc(2ch + var(--ct-space-group-gap));
+
+  counter-reset: contour-code-block-line;
+}
+
+.contour-code-block__content [data-line-numbers] .line {
+  counter-increment: contour-code-block-line;
+}
+
+.contour-code-block__content [data-line-numbers] .line::before {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  box-sizing: border-box;
+  inline-size: calc(var(--ct-space-panel-inset) + 2ch);
+  color: var(--ct-color-syntax-comment);
+  text-align: end;
+  content: counter(contour-code-block-line) / '';
+}
+
+/* Highlighted lines (`[!code highlight]`): a tint and a bar at the start. */
+.contour-code-block__content .highlighted {
+  background: var(--ct-color-accent-bg);
+  box-shadow: inset var(--ct-border-width-focus) 0 0 var(--ct-color-accent-fill);
+}
+
+/* Highlighted words (`[!code word:…]`): a tinted box without padding, so columns stay aligned. */
+.contour-code-block__content .highlighted-word {
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-accent-bg);
+  box-shadow: inset 0 0 0 var(--ct-border-width-default) var(--ct-color-accent-border);
+}
+
+/* Diffs (`[!code ++]`, `[!code --]`): a tint, and a sign in a column before the code. */
+.contour-code-block__content .has-diff {
+  --contour-code-block-marker: calc(1ch + var(--ct-space-group-gap));
+}
+
+.contour-code-block__content .diff::after {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: calc(var(--ct-space-panel-inset) + var(--contour-code-block-numbers));
+}
+
+.contour-code-block__content .diff.add {
+  background: var(--ct-color-success-bg);
+}
+
+.contour-code-block__content .diff.add::after {
+  color: var(--ct-color-success-fg);
+  content: '+';
+}
+
+.contour-code-block__content .diff.remove {
+  background: var(--ct-color-danger-bg);
+}
+
+.contour-code-block__content .diff.remove::after {
+  color: var(--ct-color-danger-fg);
+  content: '-';
+}
+
+/*
+ * Focus (`[!code focus]`): the other lines lose their colors and take the comment color, a gray
+ * that keeps 4.5:1 on the inset background in both themes.
+ */
+.contour-code-block__content .has-focused .line:not(.focused) {
+  --shiki-foreground: var(--ct-color-syntax-comment);
+  --shiki-token-constant: var(--ct-color-syntax-comment);
+  --shiki-token-string: var(--ct-color-syntax-comment);
+  --shiki-token-comment: var(--ct-color-syntax-comment);
+  --shiki-token-keyword: var(--ct-color-syntax-comment);
+  --shiki-token-parameter: var(--ct-color-syntax-comment);
+  --shiki-token-function: var(--ct-color-syntax-comment);
+  --shiki-token-string-expression: var(--ct-color-syntax-comment);
+  --shiki-token-punctuation: var(--ct-color-syntax-comment);
+  --shiki-token-link: var(--ct-color-syntax-comment);
+  --shiki-token-inserted: var(--ct-color-syntax-comment);
+  --shiki-token-deleted: var(--ct-color-syntax-comment);
+  --shiki-token-changed: var(--ct-color-syntax-comment);
+}

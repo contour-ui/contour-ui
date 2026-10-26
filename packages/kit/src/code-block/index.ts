@@ -1,0 +1,8 @@
+export { CodeBlockRoot as Root } from './code-block-root.tsx';
+export type { CodeBlockRootProps as RootProps } from './code-block-root.tsx';
+export { CodeBlockHeader as Header } from './code-block-header.tsx';
+export type { CodeBlockHeaderProps as HeaderProps } from './code-block-header.tsx';
+export { CodeBlockTitle as Title } from './code-block-title.tsx';
+export type { CodeBlockTitleProps as TitleProps } from './code-block-title.tsx';
+export { CodeBlockContent as Content } from './code-block-content.tsx';
+export type { CodeBlockContentProps as ContentProps } from './code-block-content.tsx';

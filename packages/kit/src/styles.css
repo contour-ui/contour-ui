@@ -13,6 +13,7 @@
 @import './alert/alert.css' layer(contour.kit);
 @import './button/button.css' layer(contour.kit);
 @import './card/card.css' layer(contour.kit);
+@import './code-block/code-block.css' layer(contour.kit);
 @import './icon/icon.css' layer(contour.kit);
 @import './kbd/kbd.css' layer(contour.kit);
 @import './link/link.css' layer(contour.kit);
