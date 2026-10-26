@@ -10,6 +10,10 @@
 export const LUCIDE_ICONS: readonly string[] = [
   // Search button, search dialog field.
   'search',
+  // Search results: a page, a match in its text, a row of one of its tables (headings: `hash`).
+  'file-text',
+  'text-align-start',
+  'table',
   // Sidebar, previous / next links, disclosure.
   'chevron-right',
   'chevron-down',

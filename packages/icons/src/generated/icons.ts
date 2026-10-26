@@ -99,6 +99,20 @@ export const copyIcon: IconData = {
   ],
 };
 
+/** [`file-text`](https://lucide.dev/icons/file-text) from Lucide. */
+export const fileTextIcon: IconData = {
+  name: 'file-text',
+  size: 24,
+  strokeWidth: 2,
+  paths: [
+    { d: 'M6 22C4.895 22 4 21.105 4 20L4 4C4 2.895 4.895 2 6 2L14 2C14.639 1.999 15.253 2.253 15.704 2.706L19.292 6.294C19.746 6.745 20.001 7.36 20 8L20 20C20 21.105 19.105 22 18 22Z', commands: [0, 6, 22, 2, 4.895, 22, 4, 21.105, 4, 20, 1, 4, 4, 2, 4, 2.895, 4.895, 2, 6, 2, 1, 14, 2, 2, 14.639, 1.999, 15.253, 2.253, 15.704, 2.706, 1, 19.292, 6.294, 2, 19.746, 6.745, 20.001, 7.36, 20, 8, 1, 20, 20, 2, 20, 21.105, 19.105, 22, 18, 22, 4], fill: false },
+    { d: 'M14 2L14 7C14 7.552 14.448 8 15 8L20 8', commands: [0, 14, 2, 1, 14, 7, 2, 14, 7.552, 14.448, 8, 15, 8, 1, 20, 8], fill: false },
+    { d: 'M10 9L8 9', commands: [0, 10, 9, 1, 8, 9], fill: false },
+    { d: 'M16 13L8 13', commands: [0, 16, 13, 1, 8, 13], fill: false },
+    { d: 'M16 17L8 17', commands: [0, 16, 17, 1, 8, 17], fill: false },
+  ],
+};
+
 /** GitHub logo from Simple Icons (`github`). Brand guidelines: https://github.com/logos */
 export const githubIcon: IconData = {
   name: 'github',
@@ -217,6 +231,31 @@ export const sunIcon: IconData = {
     { d: 'M20 12L22 12', commands: [0, 20, 12, 1, 22, 12], fill: false },
     { d: 'M6.34 17.66L4.93 19.07', commands: [0, 6.34, 17.66, 1, 4.93, 19.07], fill: false },
     { d: 'M19.07 4.93L17.66 6.34', commands: [0, 19.07, 4.93, 1, 17.66, 6.34], fill: false },
+  ],
+};
+
+/** [`table`](https://lucide.dev/icons/table) from Lucide. */
+export const tableIcon: IconData = {
+  name: 'table',
+  size: 24,
+  strokeWidth: 2,
+  paths: [
+    { d: 'M12 3L12 21', commands: [0, 12, 3, 1, 12, 21], fill: false },
+    { d: 'M5 3L19 3C20.105 3 21 3.895 21 5L21 19C21 20.105 20.105 21 19 21L5 21C3.895 21 3 20.105 3 19L3 5C3 3.895 3.895 3 5 3Z', commands: [0, 5, 3, 1, 19, 3, 2, 20.105, 3, 21, 3.895, 21, 5, 1, 21, 19, 2, 21, 20.105, 20.105, 21, 19, 21, 1, 5, 21, 2, 3.895, 21, 3, 20.105, 3, 19, 1, 3, 5, 2, 3, 3.895, 3.895, 3, 5, 3, 4], fill: false },
+    { d: 'M3 9L21 9', commands: [0, 3, 9, 1, 21, 9], fill: false },
+    { d: 'M3 15L21 15', commands: [0, 3, 15, 1, 21, 15], fill: false },
+  ],
+};
+
+/** [`text-align-start`](https://lucide.dev/icons/text-align-start) from Lucide. */
+export const textAlignStartIcon: IconData = {
+  name: 'text-align-start',
+  size: 24,
+  strokeWidth: 2,
+  paths: [
+    { d: 'M21 5L3 5', commands: [0, 21, 5, 1, 3, 5], fill: false },
+    { d: 'M15 12L3 12', commands: [0, 15, 12, 1, 3, 12], fill: false },
+    { d: 'M17 19L3 19', commands: [0, 17, 19, 1, 3, 19], fill: false },
   ],
 };
 
