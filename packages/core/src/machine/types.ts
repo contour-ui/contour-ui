@@ -168,8 +168,11 @@ export type Machine<S extends MachineSchema> = MachineConfig<S>;
  * has no clock and no globals of its own.
  */
 export interface Platform<S extends MachineSchema> {
-  /** Call `fire` after `ms` milliseconds; return a function that cancels the call. */
-  schedule(ms: number, fire: () => void): () => void;
+  /**
+   * Call `fire` after `ms` milliseconds; return a function that cancels the call. `delay` is the
+   * name of the machine's delay, for logs and debugging: a clock may ignore it.
+   */
+  schedule(ms: number, fire: () => void, delay: string): () => void;
   /** The one-off side effects of the machine, by name. */
   readonly actions: { readonly [A in S['platformAction']]: (params: MachineParams<S>) => void };
   /**

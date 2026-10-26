@@ -23,7 +23,7 @@ export interface TestPlatform<S extends MachineSchema> {
   readonly pending: () => number;
   /**
    * What the machine asked the platform to do, in order: `run writeText`,
-   * `start dismiss`, `stop dismiss`, `schedule 3000`, `cancel`, `fire`.
+   * `start dismiss`, `stop dismiss`, `schedule timeout 3000`, `cancel timeout`, `fire timeout`.
    */
   readonly log: readonly string[];
 }
@@ -31,6 +31,7 @@ export interface TestPlatform<S extends MachineSchema> {
 interface FakeTimer {
   readonly at: number;
   readonly order: number;
+  readonly delay: string;
   readonly fire: () => void;
 }
 
@@ -81,14 +82,14 @@ export function createTestPlatform<S extends MachineSchema>(
   );
 
   const platform: Platform<S> = {
-    schedule(ms, fire) {
-      log.push(`schedule ${ms}`);
+    schedule(ms, fire, delay) {
+      log.push(`schedule ${delay} ${ms}`);
       count += 1;
-      const timer: FakeTimer = { at: time + ms, order: count, fire };
+      const timer: FakeTimer = { at: time + ms, order: count, delay, fire };
       timers.push(timer);
       return () => {
         if (timers.includes(timer)) {
-          log.push('cancel');
+          log.push(`cancel ${delay}`);
           timers = timers.filter((other) => other !== timer);
         }
       };
@@ -113,7 +114,7 @@ export function createTestPlatform<S extends MachineSchema>(
         }
         timers = timers.filter((timer) => timer !== due);
         time = due.at;
-        log.push('fire');
+        log.push(`fire ${due.delay}`);
         due.fire();
       }
       time = until;

@@ -42,7 +42,7 @@ describe('createService', () => {
     expect(service.context.get('plays')).toBe(1);
 
     service.send({ type: 'PAUSE' });
-    expect(test.log.slice(3)).toStrictEqual(['stop wakeLock', 'stop meter', 'schedule 1000']);
+    expect(test.log.slice(3)).toStrictEqual(['stop wakeLock', 'stop meter', 'schedule idle 1000']);
   });
 
   it('takes the delayed transition when the time runs out, not before', () => {
@@ -137,7 +137,7 @@ describe('createService', () => {
       'start wakeLock',
       'stop wakeLock',
       'stop meter',
-      'schedule 1000',
+      'schedule idle 1000',
     ]);
     expect(service.matches('paused')).toBe(true);
   });
@@ -170,6 +170,33 @@ describe('createService', () => {
     expect(cleanup).toHaveBeenCalledTimes(1);
   });
 
+  it('completes the transition and notifies before rethrowing what an action threw', () => {
+    const listener = vi.fn<() => void>();
+    const { service, test } = player(
+      {},
+      {
+        actions: {
+          announce: () => {
+            throw new Error('announce failed');
+          },
+        },
+      },
+    );
+    service.subscribe(listener);
+    service.start();
+
+    expect(() => {
+      service.send({ type: 'PLAY' });
+    }).toThrow('announce failed');
+    expect(service.matches('playing')).toBe(true);
+    expect(test.log).toStrictEqual(['run announce', 'start meter', 'start wakeLock']);
+    expect(listener).toHaveBeenCalledTimes(1);
+
+    // The machine goes on as usual.
+    service.send({ type: 'PAUSE' });
+    expect(service.matches('paused')).toBe(true);
+  });
+
   describe('stop and start', () => {
     it('stop cancels delays and stops effects; later events are ignored', () => {
       const { service, test } = player();
@@ -199,6 +226,26 @@ describe('createService', () => {
       expect(test.log.slice(5)).toStrictEqual(['start meter', 'start wakeLock']);
       service.send({ type: 'PAUSE' });
       expect(service.matches('paused')).toBe(true);
+    });
+
+    it('stop runs every cleanup before rethrowing what one threw', () => {
+      const cleanup = vi.fn<() => void>();
+      const { service } = player(
+        {},
+        {
+          effects: {
+            meter: () => cleanup,
+            wakeLock: () => () => {
+              throw new Error('release failed');
+            },
+          },
+        },
+      );
+      service.start();
+      service.send({ type: 'PLAY' });
+
+      expect(service.stop).toThrow('release failed');
+      expect(cleanup).toHaveBeenCalledTimes(1);
     });
 
     it('stop from inside an action ends the event there', () => {

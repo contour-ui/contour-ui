@@ -87,6 +87,8 @@ export function createService<S extends MachineSchema>(
 
   let status: Status = 'created';
   let busy = false;
+  /** The first error an action, an effect or a callback threw during the current macrostep. */
+  let failure: { readonly error: unknown } | undefined;
   const queue: Array<S['event'] | InternalEvent> = [];
   const timers = new Map<S['delay'], Timer>();
   const cleanups = new Map<S['platformEffect'], () => void>();
@@ -112,7 +114,7 @@ export function createService<S extends MachineSchema>(
         if (config.value === undefined) {
           snapshot = { ...snapshot, context: { ...snapshot.context, [key]: value } };
         }
-        config.onChange?.(value);
+        attempt(() => config.onChange?.(value));
       });
     },
   };
@@ -129,6 +131,30 @@ export function createService<S extends MachineSchema>(
     event,
     send,
   });
+
+  /**
+   * Run code the machine does not own (actions, effects, callbacks). If it throws, the error is
+   * kept and the macrostep goes on, so the transition completes and the subscribers hear of it;
+   * the first error is rethrown at the end.
+   */
+  function attempt(run: () => void): void {
+    try {
+      run();
+    } catch (error) {
+      failure ??= { error };
+    }
+  }
+
+  function rethrow(): void {
+    if (failure === undefined) {
+      return;
+    }
+    const { error } = failure;
+    failure = undefined;
+    // What an action, an effect or a callback threw, as it was.
+    // oxlint-disable-next-line typescript/only-throw-error
+    throw error;
+  }
 
   function runAction(name: ActionName<S>, event: S['event'] | InternalEvent): void {
     if (Object.hasOwn(machine.actions, name)) {
@@ -148,13 +174,17 @@ export function createService<S extends MachineSchema>(
     // In the map before `schedule` runs: a clock may fire at once, from inside the call.
     const timer: Timer = { token, cancel: () => {} };
     timers.set(delay, timer);
-    timer.cancel = platform.schedule(ms, () => {
-      if (timers.get(delay)?.token !== token) {
-        return;
-      }
-      timers.delete(delay);
-      dispatch({ type: 'machine.after', delay });
-    });
+    timer.cancel = platform.schedule(
+      ms,
+      () => {
+        if (timers.get(delay)?.token !== token) {
+          return;
+        }
+        timers.delete(delay);
+        dispatch({ type: 'machine.after', delay });
+      },
+      delay,
+    );
   }
 
   function execute(command: Command<S>, event: S['event'] | InternalEvent): void {
@@ -164,29 +194,36 @@ export function createService<S extends MachineSchema>(
     }
     switch (command.type) {
       case 'run': {
-        runAction(command.action, event);
+        attempt(() => {
+          runAction(command.action, event);
+        });
         break;
       }
       case 'start': {
-        const cleanup = platform.effects[command.effect](params(event));
-        if (cleanup !== undefined) {
-          cleanups.set(command.effect, cleanup);
-        }
+        attempt(() => {
+          const cleanup = platform.effects[command.effect](params(event));
+          if (cleanup !== undefined) {
+            cleanups.set(command.effect, cleanup);
+          }
+        });
         break;
       }
       case 'stop': {
         const cleanup = cleanups.get(command.effect);
         cleanups.delete(command.effect);
-        cleanup?.();
+        attempt(() => cleanup?.());
         break;
       }
       case 'schedule': {
-        schedule(command.delay, command.ms);
+        attempt(() => {
+          schedule(command.delay, command.ms);
+        });
         break;
       }
       case 'cancel': {
-        timers.get(command.delay)?.cancel();
+        const timer = timers.get(command.delay);
         timers.delete(command.delay);
+        attempt(() => timer?.cancel());
         break;
       }
     }
@@ -207,7 +244,8 @@ export function createService<S extends MachineSchema>(
 
   /**
    * Run `step`, then the events it queued, and notify the subscribers once if the snapshot
-   * changed. Inside another macrostep, `step` just runs: the outer one drains and notifies.
+   * changed; then rethrow the first error that actions, effects or callbacks threw. Inside
+   * another macrostep, `step` just runs: the outer one drains, notifies and rethrows.
    */
   function macrostep(step: () => void): void {
     if (busy) {
@@ -229,9 +267,10 @@ export function createService<S extends MachineSchema>(
     }
     if (snapshot !== before) {
       for (const listener of listeners) {
-        listener();
+        attempt(listener);
       }
     }
+    rethrow();
   }
 
   function dispatch(event: S['event'] | InternalEvent): void {
@@ -308,13 +347,14 @@ export function createService<S extends MachineSchema>(
       status = 'stopped';
       queue.length = 0;
       for (const timer of timers.values()) {
-        timer.cancel();
+        attempt(timer.cancel);
       }
       timers.clear();
       for (const cleanup of [...cleanups.values()].toReversed()) {
-        cleanup();
+        attempt(cleanup);
       }
       cleanups.clear();
+      rethrow();
     },
   };
 }

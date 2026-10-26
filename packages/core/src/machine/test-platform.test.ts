@@ -8,18 +8,34 @@ describe('createTestPlatform', () => {
   it('fires due timers in time order, including those scheduled while advancing', () => {
     const { platform, advance, now, pending } = createTestPlatform(playerMachine);
     const fired: string[] = [];
-    platform.schedule(300, () => {
-      fired.push('300');
-    });
-    platform.schedule(100, () => {
-      fired.push('100');
-      platform.schedule(50, () => {
-        fired.push('100 + 50');
-      });
-    });
-    platform.schedule(100, () => {
-      fired.push('100, scheduled second');
-    });
+    platform.schedule(
+      300,
+      () => {
+        fired.push('300');
+      },
+      'slow',
+    );
+    platform.schedule(
+      100,
+      () => {
+        fired.push('100');
+        platform.schedule(
+          50,
+          () => {
+            fired.push('100 + 50');
+          },
+          'chained',
+        );
+      },
+      'fast',
+    );
+    platform.schedule(
+      100,
+      () => {
+        fired.push('100, scheduled second');
+      },
+      'fast too',
+    );
 
     advance(200);
     expect(fired).toStrictEqual(['100', '100, scheduled second', '100 + 50']);
@@ -33,14 +49,14 @@ describe('createTestPlatform', () => {
   it('cancels a timer', () => {
     const { platform, advance, pending, log } = createTestPlatform(playerMachine);
     const fire = vi.fn<() => void>();
-    const cancel = platform.schedule(10, fire);
+    const cancel = platform.schedule(10, fire, 'blink');
     cancel();
     cancel();
 
     advance(100);
     expect(fire).not.toHaveBeenCalled();
     expect(pending()).toBe(0);
-    expect(log).toStrictEqual(['schedule 10', 'cancel']);
+    expect(log).toStrictEqual(['schedule blink 10', 'cancel blink']);
   });
 
   it('records the platform actions and effects of a machine and runs the overrides', () => {
