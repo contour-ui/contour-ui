@@ -33,6 +33,24 @@ export type {
   TransitionResult,
 } from './machine/index.ts';
 
+export { createListCollection } from './collection/index.ts';
+export type {
+  ListCollection,
+  ListCollectionGroup,
+  ListCollectionOptions,
+  ListSearchOptions,
+  ListStepOptions,
+} from './collection/index.ts';
+
+export { getListIntent, initialTypeahead, nextTypeahead } from './interactions/index.ts';
+export type {
+  KeyLike,
+  ListIntent,
+  ListNavigationOptions,
+  TypeaheadOptions,
+  TypeaheadState,
+} from './interactions/index.ts';
+
 export * as clipboard from './states/clipboard/index.ts';
 export * as dialog from './states/dialog/index.ts';
 export * as toc from './states/toc/index.ts';

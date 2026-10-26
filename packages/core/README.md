@@ -8,6 +8,7 @@
 | `machine/`      | state machine runtime (below)                              |
 | `states/`       | reusable state machines; **never imports `interactions/`** |
 | `interactions/` | pointer / keyboard logic; **never imports `states/`**      |
+| `collection/`   | item collections that list machines navigate (below)       |
 | `scales/`       | value scales (linear, log, dB…)                            |
 | `format/`       | value formatting / parsing                                 |
 | `react/`        | `@contour-ui/core/react` subpath: React hooks (see below)  |
@@ -61,6 +62,29 @@ const service = createService(clipboard.machine, { props: { value: 'npm i' }, pl
 service.start();
 clipboard.connect(service).copy();
 ```
+
+## Collections (`collection/`)
+
+- `createListCollection({ items, itemToValue, itemToString, isItemDisabled, groupBy })` — an
+  immutable list of items: a string is its own value and text, an object gives `value`, `label`
+  and `disabled`. Every item needs a value of its own. With `groupBy`, the items come group by
+  group (`groups`), in the order the groups first appear. It gives the first, last, next and
+  previous enabled values, with or without `loop`, and `search(query, { from })`, the typeahead
+  match: one character (or the same one again) moves on past `from`, more characters refine the
+  match from `from` itself, ignoring case (`toLowerCase`, no `localeCompare`).
+
+## Interactions (`interactions/`)
+
+Input turned into intent, as pure functions of plain data (`KeyLike`: `key` and the modifiers).
+The adapter reads the intent of an event and sends its machine an event of its own.
+
+- `getListIntent(event, { orientation, dir })` — `first`, `last`, `next` or `previous`: ↓ ↑ (→ ←
+  in a horizontal list, swapped right to left), Home, End; `null` for other keys and for keys
+  with Ctrl, Alt or Meta.
+- `nextTypeahead(state, event, now, { timeout })` — the typeahead query: the characters typed less
+  than `timeout` ms apart (500 by default). Core has no clock: the adapter passes `now`, such as
+  the time stamp of the key event, and keeps the state. Space counts only within a query, so that
+  it can select otherwise.
 
 ## `@contour-ui/core/react`
 
