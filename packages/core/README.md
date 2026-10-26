@@ -49,6 +49,15 @@ need, without a DOM) and its types (`Schema`, `Input`, `Api`…).
   `onOpenChange` and the state follows the prop. While open, the platform effects `dismiss`,
   `trapFocus`, `preventScroll` and `hideOutside` run (`modal` turns the last three on); the
   platform actions `setInitialFocus` and `restoreFocus` move focus in on open and back on close.
+- `listbox` — one state, `idle`; the events change the selection (`value`), the highlighted item
+  (`highlightedValue`) and whether the list or its input has focus. `HIGHLIGHT.FIRST` / `LAST` /
+  `NEXT` / `PREVIOUS` and `TYPEAHEAD` move the highlight over the enabled items of a list
+  collection (`loopFocus` wraps around; `selectOnHighlight` selects too); `ITEM.CLICK`,
+  `ITEM.SELECT` and `HIGHLIGHTED.SELECT` select (`selectionMode` `single` or `multiple`,
+  `deselectable`), reported by `onSelect`; `ITEM.HOVER` and `POINTER.LEAVE` follow the pointer
+  (`highlightOnHover`); `CONTENT.FOCUS`, `INPUT.FOCUS` and `BLUR` follow the focus. No platform
+  actions, effects or delays. New items clear a highlight that is gone, or highlight the first
+  item with `autoHighlight` while the listbox has focus.
 - `toc` — one state, `observing`, with the platform effect `observeHeadings`, which reports each
   heading as `above`, `inside` or `below` the observed area (`VISIBILITY.CHANGE`). The headings
   inside are active, in the order of `items`; when none is, the last one above stays active.
