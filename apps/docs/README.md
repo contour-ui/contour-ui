@@ -23,7 +23,9 @@ vp -C apps/docs run build   # static build -> build/client
   (`import { Button } from '@contour-ui/kit';`) and render them inside `<Preview>`, the frame for
   live examples; imports resolve to package sources (`@contour-ui/source` condition).
   `app/components/mdx.tsx` registers what every page can use without an import (`Preview`,
-  `Cards`, the placeholders).
+  `Callout`, `Cards`, `Card`, `Kbd`, the placeholders) and draws Markdown links and tables with
+  Kit's `Link` and `Table`. `Callout` and `Card` keep the Fumadocs props and render Kit's `Alert`
+  and `Card`; code blocks, headings and images are still Fumadocs'.
 - Page content is wrapped in `Prose` (`app/components/prose.tsx`): typography and spacing for MDX,
   in the `prose` cascade layer, between Preflight and contour-ui, so components inside keep their
   own styles. Nothing inside an element with the `docs-not-prose` class, such as `<Preview>`, is

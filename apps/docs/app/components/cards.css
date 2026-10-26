@@ -10,3 +10,9 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* The icon of an MDX `<Card>`, in its header. */
+.docs-card-icon svg {
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}

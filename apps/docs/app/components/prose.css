@@ -119,14 +119,16 @@
 
 /*
  * Inline code, not code blocks. In the dark theme `bg-inset` equals the canvas, so the border
- * outlines the code there. Ligatures are off: JetBrains Mono would draw the `-<` of
- * `contour-<component>` as an arrow. `font` resets them, so they come after it.
+ * outlines the code there; code that wraps, as in a narrow table column, gets a closed box on
+ * each line. Ligatures are off: JetBrains Mono would draw the `-<` of `contour-<component>` as
+ * an arrow. `font` resets them, so they come after it.
  */
 :where(.docs-prose code):not(:where(pre code, .docs-not-prose *)) {
   padding-inline: var(--ct-space-control-gap);
   border: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
   border-radius: var(--ct-radius-control);
   background: var(--ct-color-bg-inset);
+  box-decoration-break: clone;
   font: var(--ct-text-code);
   font-variant-ligatures: none;
   letter-spacing: var(--ct-text-code-letter-spacing);
