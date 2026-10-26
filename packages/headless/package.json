@@ -37,6 +37,9 @@
     "storybook": "storybook dev --port 6102 --no-open",
     "build-storybook": "storybook build --output-dir storybook-static"
   },
+  "dependencies": {
+    "@contour-ui/core": "workspace:*"
+  },
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",

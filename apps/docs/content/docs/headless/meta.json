@@ -2,5 +2,5 @@
   "title": "Headless",
   "description": "Unstyled components for your own look",
   "root": true,
-  "pages": ["index", "---Components---", "placeholder"]
+  "pages": ["index", "---Components---", "clipboard", "placeholder"]
 }

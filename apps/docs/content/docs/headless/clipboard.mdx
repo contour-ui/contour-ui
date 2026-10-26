@@ -1,0 +1,233 @@
+---
+title: Clipboard
+description: A button that copies a text, an indicator of the copied state, and an announcement for screen readers.
+---
+
+import { Clipboard } from '@contour-ui/headless';
+
+<Preview>
+  <Clipboard.Root
+    value="pnpm add @contour-ui/headless"
+    style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}
+  >
+    <code>pnpm add @contour-ui/headless</code>
+    <Clipboard.Trigger style={{ border: '1px solid', padding: '0 0.5em' }}>Copy</Clipboard.Trigger>
+    <Clipboard.Indicator copied="Copied" />
+  </Clipboard.Root>
+</Preview>
+
+```tsx
+import { Clipboard } from '@contour-ui/headless';
+
+<Clipboard.Root value="pnpm add @contour-ui/headless">
+  <code>pnpm add @contour-ui/headless</code>
+  <Clipboard.Trigger>Copy</Clipboard.Trigger>
+  <Clipboard.Indicator copied="Copied" />
+</Clipboard.Root>;
+```
+
+A click on `Clipboard.Trigger` writes `value` to the clipboard. Once the browser has written it,
+the clipboard is copied for `timeout` milliseconds (3 seconds by default): its parts carry
+`data-copied`, `Clipboard.Indicator` shows its `copied` content in place of its children (it has
+none here, so "Copied" appears next to the trigger), and screen readers hear "Copied to
+clipboard". Another click in that time copies again, and the time starts over once that write is
+done.
+
+## Styling
+
+Headless renders no CSS. Style the parts with your own classes, or by their data attributes, the
+copied state included:
+
+```css
+[data-scope='clipboard'][data-part='trigger'] {
+  border: 1px solid currentColor;
+  border-radius: 4px;
+}
+
+[data-scope='clipboard'][data-part='trigger'][data-copied] {
+  color: green;
+}
+```
+
+## Icons
+
+The indicator takes any content. In a trigger without text, the usual pair is a copy icon that
+turns into a check mark. Hide the icons from assistive technology, and name the trigger after what
+it copies:
+
+```tsx
+<Clipboard.Trigger aria-label="Copy the install command">
+  <Clipboard.Indicator copied={<CheckIcon aria-hidden />}>
+    <CopyIcon aria-hidden />
+  </Clipboard.Indicator>
+</Clipboard.Trigger>
+```
+
+## The value
+
+`defaultValue` gives the clipboard a value it keeps itself. For a value that changes, pass `value`
+from your state, and the trigger copies the current one:
+
+```tsx
+const [manager, setManager] = useState('pnpm');
+
+<Clipboard.Root value={`${manager} add @contour-ui/headless`}>…</Clipboard.Root>;
+```
+
+`onValueChange` reports the values set with `setValue` (see [Hooks](#hooks)) as `{ value }`. A
+controlled value changes only when you pass the new one back.
+
+## Status
+
+`onStatusChange` reports `{ copied: true }` when the browser has written the value and the copied
+state starts, and `{ copied: false }` when the state ends: after `timeout`, or when the browser
+refuses a later write. A refused first write reports nothing, since nothing was copied, and neither
+does a copy during the copied state.
+
+```tsx
+<Clipboard.Root
+  value={command}
+  onStatusChange={({ copied }) => {
+    if (copied) {
+      track('install-command-copied');
+    }
+  }}
+>
+  …
+</Clipboard.Root>
+```
+
+The browser offers the Clipboard API on secure pages only (https, and localhost), and may refuse
+to write, for example in a frame that lacks the `clipboard-write` permission. The clipboard is
+copied only once the browser confirms the write: a refused first write, or a page without the API,
+leaves it idle, with nothing shown or announced. While the first write is pending, a click does
+nothing.
+
+## Anatomy
+
+| Part                  | Element  | Attributes                                                                                 |
+| --------------------- | -------- | ------------------------------------------------------------------------------------------ |
+| `Clipboard.Root`      | `div`    | `data-scope="clipboard" data-part="root"`, `data-copied`                                   |
+| `Clipboard.Trigger`   | `button` | `data-scope="clipboard" data-part="trigger"`, `data-copied`, `type="button"`, `aria-label` |
+| `Clipboard.Indicator` | `span`   | `data-scope="clipboard" data-part="indicator"`, `data-copied`                              |
+| status, by the root   | `span`   | `data-scope="clipboard" data-part="status"`, `role="status"`, `aria-live="polite"`         |
+
+`data-copied` is present, and empty, while the clipboard is copied, which starts once the browser
+has written the value. The root renders the status element right after its own element, also with
+`asChild`: it is empty until a copy, and inline styles hide it from sight but not from screen
+readers.
+
+## Props
+
+`Clipboard.Root`:
+
+| Prop             | Type                                     | Default                 |
+| ---------------- | ---------------------------------------- | ----------------------- |
+| `value`          | `string`                                 | —                       |
+| `defaultValue`   | `string`                                 | `''`                    |
+| `onValueChange`  | `(details: { value: string }) => void`   | —                       |
+| `onStatusChange` | `(details: { copied: boolean }) => void` | —                       |
+| `timeout`        | `number`: milliseconds                   | `3000`                  |
+| `copiedMessage`  | `string`: what screen readers announce   | `'Copied to clipboard'` |
+| `asChild`        | `boolean`                                | `false`                 |
+
+Other `div` props, such as `className` and `ref`, are passed to the element.
+
+`Clipboard.Trigger` takes the props of `button` and `asChild`. Its `aria-label` defaults to
+`'Copy to clipboard'`. Your `onClick` runs before the copy: call `event.preventDefault()` in it to
+cancel the copy.
+
+`Clipboard.Indicator` takes the props of `span`, `asChild`, and:
+
+| Prop     | Type        | Default |
+| -------- | ----------- | ------- |
+| `copied` | `ReactNode` | —       |
+
+It shows `copied` while the clipboard is copied, and its children otherwise. With `asChild`, both
+are single elements.
+
+## Keyboard
+
+| Key     | Action                     |
+| ------- | -------------------------- |
+| `Tab`   | Moves focus to the trigger |
+| `Enter` | Copies the value           |
+| `Space` | Copies the value           |
+
+The trigger is a `<button>`: these are the browser's own keys.
+
+## Accessibility
+
+- **A name that stays.** The trigger is named "Copy to clipboard" by its `aria-label` and keeps
+  the name while copied, so screen readers do not announce it again, and speech users can say
+  "click Copy" at any time. Pass your own label to say what is copied, such as "Copy the install
+  command". When the trigger shows text, start the label with that text (WCAG 2.5.3, Label in
+  Name).
+- **The announcement.** The status element is a polite live region. It is in the page, empty,
+  from the start, and holds `copiedMessage` while copied, so screen readers announce the copy once,
+  without moving focus, and only after the browser has written the value. Clearing it at the end of the copied state is not announced, and neither is
+  a copy during the copied state. Renaming the trigger to "Copied" instead would reach screen
+  readers unevenly: some say nothing when the focused element gets a new name, others speak it,
+  and again when it changes back.
+- **The indicator is for the eyes.** The label names the trigger and the status element announces
+  the copy. Inside the trigger, use icons and hide them from assistive technology. Text there that
+  turns into "Copied" leaves the name behind for the copied moment: put a text indicator next to
+  the trigger, as in the example above, so the visible text of the trigger is always in its name.
+
+## How it works
+
+`Clipboard.Root` runs the clipboard machine of `@contour-ui/core`, `clipboard.machine`, with
+`useMachine`, on a DOM platform: its clock is `setTimeout`, and its `writeText` action calls
+`navigator.clipboard.writeText` with the value.
+
+| State     | Event                | Next      | What happens                                 |
+| --------- | -------------------- | --------- | -------------------------------------------- |
+| `idle`    | `COPY`               | `copying` | `writeText`                                  |
+| `copying` | `COPY.DONE`          | `copied`  | `onStatusChange` with `copied: true`         |
+| `copying` | `COPY.FAILED`        | `idle`    | nothing: nothing was copied                  |
+| `copied`  | `COPY`               | `copied`  | `writeText` again; the timeout keeps running |
+| `copied`  | `COPY.DONE`          | `copied`  | the timeout starts over                      |
+| `copied`  | the timeout runs out | `idle`    | `onStatusChange` with `copied: false`        |
+| `copied`  | `COPY.FAILED`        | `idle`    | `onStatusChange` with `copied: false`        |
+| any       | `VALUE.SET`          | the same  | `setValue`: the value changes                |
+
+`copying` ignores `COPY`. The trigger sends `COPY`; the platform answers every write with
+`COPY.DONE` when `navigator.clipboard.writeText` resolves, or `COPY.FAILED` when it rejects or the
+API is missing; `setValue` sends `VALUE.SET`. `clipboard.connect` turns the running machine into
+`{ copied, value, copy(), setValue() }`, and the parts turn that into attributes. The machine
+itself has no DOM: a renderer other than React DOM runs it with a platform of its own.
+
+## Hooks
+
+`useClipboard` runs the machine without the parts. It takes the props of the machine (`value`,
+`defaultValue`, `onValueChange`, `onStatusChange`, `timeout`) and returns `copied`, `value`,
+`copy()`, `setValue()` and the props of each element: `getRootProps()`, `getTriggerProps()`,
+`getIndicatorProps()` and `getStatusProps()`. Render the status element yourself, empty until a
+copy:
+
+```tsx
+import { useClipboard } from '@contour-ui/headless';
+
+function CopyLink({ url }: { url: string }) {
+  const clipboard = useClipboard({ value: url });
+  return (
+    <>
+      <button {...clipboard.getTriggerProps()} aria-label="Copy link">
+        {clipboard.copied ? 'Copied' : 'Copy link'}
+      </button>
+      <span {...clipboard.getStatusProps()}>{clipboard.copied ? 'Link copied' : null}</span>
+    </>
+  );
+}
+```
+
+Inside `Clipboard.Root`, `useClipboardContext()` returns the same API, for parts of your own:
+
+```tsx
+import { useClipboardContext } from '@contour-ui/headless';
+
+function PasteHint() {
+  const { copied } = useClipboardContext();
+  return copied ? <p>Paste it into your terminal.</p> : null;
+}
+```
