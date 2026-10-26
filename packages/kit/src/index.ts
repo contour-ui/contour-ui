@@ -9,3 +9,4 @@ export type { KbdProps } from './kbd/index.ts';
 export { Link } from './link/index.ts';
 export type { LinkProps } from './link/index.ts';
 export * as Placeholder from './placeholder/index.ts';
+export * as Table from './table/index.ts';

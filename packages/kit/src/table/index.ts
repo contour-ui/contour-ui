@@ -1,0 +1,18 @@
+export { TableScrollArea as ScrollArea } from './table-scroll-area.tsx';
+export type { TableScrollAreaProps as ScrollAreaProps } from './table-scroll-area.tsx';
+export { TableRoot as Root } from './table-root.tsx';
+export type { TableRootProps as RootProps } from './table-root.tsx';
+export { TableCaption as Caption } from './table-caption.tsx';
+export type { TableCaptionProps as CaptionProps } from './table-caption.tsx';
+export { TableHeader as Header } from './table-header.tsx';
+export type { TableHeaderProps as HeaderProps } from './table-header.tsx';
+export { TableBody as Body } from './table-body.tsx';
+export type { TableBodyProps as BodyProps } from './table-body.tsx';
+export { TableFooter as Footer } from './table-footer.tsx';
+export type { TableFooterProps as FooterProps } from './table-footer.tsx';
+export { TableRow as Row } from './table-row.tsx';
+export type { TableRowProps as RowProps } from './table-row.tsx';
+export { TableColumnHeader as ColumnHeader } from './table-column-header.tsx';
+export type { TableColumnHeaderProps as ColumnHeaderProps } from './table-column-header.tsx';
+export { TableCell as Cell } from './table-cell.tsx';
+export type { TableCellProps as CellProps } from './table-cell.tsx';

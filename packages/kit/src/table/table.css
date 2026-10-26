@@ -1,0 +1,74 @@
+/* A wide table scrolls sideways in here instead of overflowing the page. */
+.contour-table__scroll-area {
+  overflow-x: auto;
+}
+
+.contour-table__scroll-area:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
+
+.contour-table {
+  inline-size: 100%;
+  margin: 0;
+  border: none;
+  /* Separate borders let the outline variant round its corners; the dividers sit on the cells. */
+  border-collapse: separate;
+  border-spacing: 0;
+  background: none;
+}
+
+.contour-table[data-variant='outline'] {
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+}
+
+.contour-table__caption {
+  caption-side: bottom;
+  margin: 0;
+  padding: var(--ct-space-group-gap) 0 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-caption);
+  letter-spacing: var(--ct-text-caption-letter-spacing);
+  text-align: start;
+}
+
+.contour-table__column-header,
+.contour-table__cell {
+  padding: var(--ct-space-group-gap) var(--ct-space-panel-inset);
+  border: none;
+  border-block-end: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+  background: none;
+  /* An inline `text-align`, which Markdown tables use for column alignment, still wins. */
+  text-align: start;
+  vertical-align: baseline;
+}
+
+.contour-table[data-size='sm']
+  > *
+  > .contour-table__row
+  > :is(.contour-table__column-header, .contour-table__cell) {
+  padding: var(--ct-space-control-gap) var(--ct-space-group-gap);
+}
+
+/* Dividers go between rows: none under the last one. */
+.contour-table > :last-child > .contour-table__row:last-child > * {
+  border-block-end: none;
+}
+
+.contour-table__column-header {
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+/* Column headers sit on the first row of data, however many lines they wrap to. */
+.contour-table__header .contour-table__column-header {
+  vertical-align: bottom;
+}
+
+.contour-table__cell {
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}

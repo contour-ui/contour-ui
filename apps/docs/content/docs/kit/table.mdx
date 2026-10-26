@@ -1,0 +1,270 @@
+---
+title: Table
+description: Rows and columns of data with a divider between rows, and a scroll area for tables wider than the page.
+---
+
+import { Table } from '@contour-ui/kit';
+
+<Preview>
+  <Table.Root>
+    <Table.Header>
+      <Table.Row>
+        <Table.ColumnHeader>Band</Table.ColumnHeader>
+        <Table.ColumnHeader>Frequency</Table.ColumnHeader>
+        <Table.ColumnHeader>Gain</Table.ColumnHeader>
+        <Table.ColumnHeader>Q</Table.ColumnHeader>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      <Table.Row>
+        <Table.Cell>Low shelf</Table.Cell>
+        <Table.Cell>120 Hz</Table.Cell>
+        <Table.Cell>+2.5 dB</Table.Cell>
+        <Table.Cell>0.71</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Bell</Table.Cell>
+        <Table.Cell>1.2 kHz</Table.Cell>
+        <Table.Cell>-3.0 dB</Table.Cell>
+        <Table.Cell>1.40</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>High shelf</Table.Cell>
+        <Table.Cell>8 kHz</Table.Cell>
+        <Table.Cell>+1.0 dB</Table.Cell>
+        <Table.Cell>0.71</Table.Cell>
+      </Table.Row>
+    </Table.Body>
+  </Table.Root>
+</Preview>
+
+```tsx
+import { Table } from '@contour-ui/kit';
+
+<Table.Root>
+  <Table.Header>
+    <Table.Row>
+      <Table.ColumnHeader>Band</Table.ColumnHeader>
+      <Table.ColumnHeader>Gain</Table.ColumnHeader>
+    </Table.Row>
+  </Table.Header>
+  <Table.Body>
+    <Table.Row>
+      <Table.Cell>Low shelf</Table.Cell>
+      <Table.Cell>+2.5 dB</Table.Cell>
+    </Table.Row>
+  </Table.Body>
+</Table.Root>;
+```
+
+The table fills the width of its container. Cells are start-aligned; to align a column, set
+`textAlign` inline on its cells, as Markdown tables do: `<Table.Cell style={{ textAlign: 'end' }}>`.
+
+## Variants and sizes
+
+`line`, the default, draws a divider between rows; `outline` also draws a rounded border around
+the table. `size` sets the cell padding: `md` for reading, `sm` for dense data.
+
+<Preview>
+  <Table.Root variant="outline" size="sm">
+    <Table.Header>
+      <Table.Row>
+        <Table.ColumnHeader>Band</Table.ColumnHeader>
+        <Table.ColumnHeader>Frequency</Table.ColumnHeader>
+        <Table.ColumnHeader>Gain</Table.ColumnHeader>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      <Table.Row>
+        <Table.Cell>Low shelf</Table.Cell>
+        <Table.Cell>120 Hz</Table.Cell>
+        <Table.Cell>+2.5 dB</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>High shelf</Table.Cell>
+        <Table.Cell>8 kHz</Table.Cell>
+        <Table.Cell>+1.0 dB</Table.Cell>
+      </Table.Row>
+    </Table.Body>
+  </Table.Root>
+</Preview>
+
+```tsx
+<Table.Root variant="outline" size="sm">
+  …
+</Table.Root>
+```
+
+## Caption and footer
+
+`Table.Caption` names the table and sits under it; put it first in `Table.Root`, as HTML requires.
+`Table.Footer` holds summary rows such as totals; a `Table.ColumnHeader` with `scope="row"` labels
+such a row.
+
+<Preview>
+  <Table.Root>
+    <Table.Caption>CPU load per plugin</Table.Caption>
+    <Table.Header>
+      <Table.Row>
+        <Table.ColumnHeader>Plugin</Table.ColumnHeader>
+        <Table.ColumnHeader style={{ textAlign: 'end' }}>CPU</Table.ColumnHeader>
+      </Table.Row>
+    </Table.Header>
+    <Table.Body>
+      <Table.Row>
+        <Table.Cell>EQ</Table.Cell>
+        <Table.Cell style={{ textAlign: 'end' }}>6.5%</Table.Cell>
+      </Table.Row>
+      <Table.Row>
+        <Table.Cell>Reverb</Table.Cell>
+        <Table.Cell style={{ textAlign: 'end' }}>9.5%</Table.Cell>
+      </Table.Row>
+    </Table.Body>
+    <Table.Footer>
+      <Table.Row>
+        <Table.ColumnHeader scope="row">Total</Table.ColumnHeader>
+        <Table.Cell style={{ textAlign: 'end' }}>16.0%</Table.Cell>
+      </Table.Row>
+    </Table.Footer>
+  </Table.Root>
+</Preview>
+
+```tsx
+<Table.Root>
+  <Table.Caption>CPU load per plugin</Table.Caption>
+  <Table.Header>…</Table.Header>
+  <Table.Body>…</Table.Body>
+  <Table.Footer>
+    <Table.Row>
+      <Table.ColumnHeader scope="row">Total</Table.ColumnHeader>
+      <Table.Cell style={{ textAlign: 'end' }}>16.0%</Table.Cell>
+    </Table.Row>
+  </Table.Footer>
+</Table.Root>
+```
+
+## Wide tables
+
+When space runs short, cells wrap their text. A table that still does not fit needs
+`Table.ScrollArea`: it scrolls the table sideways instead of letting it overflow the page. Name the
+area after the caption, so it is announced as a region. To keep values such as numbers with units
+on one line, set `white-space: nowrap` on the table or on their cells.
+
+<Preview>
+  <div style={{ maxWidth: '20rem' }}>
+    <Table.ScrollArea aria-labelledby="mixer-caption">
+      <Table.Root size="sm" style={{ whiteSpace: 'nowrap' }}>
+        <Table.Caption id="mixer-caption">Mixer channels</Table.Caption>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Channel</Table.ColumnHeader>
+            <Table.ColumnHeader>Input</Table.ColumnHeader>
+            <Table.ColumnHeader>Gain</Table.ColumnHeader>
+            <Table.ColumnHeader>Pan</Table.ColumnHeader>
+            <Table.ColumnHeader>Low</Table.ColumnHeader>
+            <Table.ColumnHeader>Mid</Table.ColumnHeader>
+            <Table.ColumnHeader>High</Table.ColumnHeader>
+            <Table.ColumnHeader>Output</Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>Kick</Table.Cell>
+            <Table.Cell>In 1</Table.Cell>
+            <Table.Cell>+4.0 dB</Table.Cell>
+            <Table.Cell>C</Table.Cell>
+            <Table.Cell>+2.0 dB</Table.Cell>
+            <Table.Cell>0.0 dB</Table.Cell>
+            <Table.Cell>-1.5 dB</Table.Cell>
+            <Table.Cell>Drums</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Bass</Table.Cell>
+            <Table.Cell>DI 1</Table.Cell>
+            <Table.Cell>+3.0 dB</Table.Cell>
+            <Table.Cell>C</Table.Cell>
+            <Table.Cell>+1.5 dB</Table.Cell>
+            <Table.Cell>-2.0 dB</Table.Cell>
+            <Table.Cell>0.0 dB</Table.Cell>
+            <Table.Cell>Main</Table.Cell>
+          </Table.Row>
+        </Table.Body>
+      </Table.Root>
+    </Table.ScrollArea>
+  </div>
+</Preview>
+
+```tsx
+<Table.ScrollArea aria-labelledby="mixer-caption">
+  <Table.Root size="sm" style={{ whiteSpace: 'nowrap' }}>
+    <Table.Caption id="mixer-caption">Mixer channels</Table.Caption>
+    <Table.Header>…</Table.Header>
+    <Table.Body>…</Table.Body>
+  </Table.Root>
+</Table.ScrollArea>
+```
+
+## Anatomy
+
+| Part                 | Element   | Class                          | Attributes                                                                                                           |
+| -------------------- | --------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `Table.ScrollArea`   | `div`     | `contour-table__scroll-area`   | `data-scope="table" data-part="scroll-area"`, `tabindex="0"`; `role="region"` with `aria-label` or `aria-labelledby` |
+| `Table.Root`         | `table`   | `contour-table`                | `data-scope="table" data-part="root"`, `data-variant`, `data-size`                                                   |
+| `Table.Caption`      | `caption` | `contour-table__caption`       | `data-scope="table" data-part="caption"`                                                                             |
+| `Table.Header`       | `thead`   | `contour-table__header`        | `data-scope="table" data-part="header"`                                                                              |
+| `Table.Body`         | `tbody`   | `contour-table__body`          | `data-scope="table" data-part="body"`                                                                                |
+| `Table.Footer`       | `tfoot`   | `contour-table__footer`        | `data-scope="table" data-part="footer"`                                                                              |
+| `Table.Row`          | `tr`      | `contour-table__row`           | `data-scope="table" data-part="row"`                                                                                 |
+| `Table.ColumnHeader` | `th`      | `contour-table__column-header` | `data-scope="table" data-part="column-header"`, `scope="col"`                                                        |
+| `Table.Cell`         | `td`      | `contour-table__cell`          | `data-scope="table" data-part="cell"`                                                                                |
+
+## Props
+
+`Table.Root`:
+
+| Prop      | Values                                                        | Default  |
+| --------- | ------------------------------------------------------------- | -------- |
+| `variant` | `'line'`, `'outline'`: dividers only, or a border around them | `'line'` |
+| `size`    | `'sm'`, `'md'`: the cell padding                              | `'md'`   |
+
+`Table.ColumnHeader`:
+
+| Prop    | Values                                       | Default |
+| ------- | -------------------------------------------- | ------- |
+| `scope` | `'col'`, `'row'`, `'colgroup'`, `'rowgroup'` | `'col'` |
+
+Every part takes `asChild` and the props of its element, such as `className`, `style` and `id`;
+`className` is merged with the part's class.
+
+## Keyboard
+
+| Key     | Action                                                  |
+| ------- | ------------------------------------------------------- |
+| `Tab`   | Moves focus to the scroll area and shows the focus ring |
+| `←` `→` | Scroll the focused area sideways                        |
+
+## Accessibility
+
+- The parts render a real `<table>`, so screen readers announce rows, columns and their headers.
+  Mark every header cell with `Table.ColumnHeader`: it labels its column, or its row with
+  `scope="row"`.
+- Name the table with `Table.Caption`, or with `aria-label` on `Table.Root` when the name should not
+  be shown.
+- `Table.ScrollArea` is in the tab order, so keyboard users can scroll it too. Name it with
+  `aria-labelledby` (the caption's `id`) or `aria-label`: it becomes a region with that name, and
+  screen readers say what the focused area holds. Each scroll area is a tab stop, so wrap only
+  tables that can overflow.
+- Use a table for data with rows and columns, not for layout.
+
+## Tokens
+
+| Token                                                              | Used for                               |
+| ------------------------------------------------------------------ | -------------------------------------- |
+| `--ct-text-label`, `--ct-color-fg-muted`                           | column headers                         |
+| `--ct-text-body`, `--ct-color-fg-default`                          | cells                                  |
+| `--ct-color-border-subtle`, `--ct-border-width-default`            | the dividers between rows              |
+| `--ct-color-border-default`, `--ct-radius-panel`                   | the outline border and its corners     |
+| `--ct-space-group-gap`, `--ct-space-panel-inset`                   | cell padding, `md`: block, inline      |
+| `--ct-space-control-gap`, `--ct-space-group-gap`                   | cell padding, `sm`: block, inline      |
+| `--ct-text-caption`, `--ct-color-fg-muted`, `--ct-space-group-gap` | the caption and its gap from the table |
+| `--ct-color-border-focus`, `--ct-border-width-focus`               | the scroll area's focus ring           |
