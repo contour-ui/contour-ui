@@ -70,12 +70,6 @@ export interface TocInput {
    */
   readonly threshold?: number | readonly number[] | undefined;
   /**
-   * A function that returns the scroll container of the headings, in the terms of the platform
-   * (on the DOM, an `HTMLElement`), called when the observation starts. Without it, or when it
-   * returns nothing, the headings scroll with the page.
-   */
-  readonly scrollEl?: (() => unknown) | undefined;
-  /**
    * How `scrollTo` scrolls to a heading, unless a call says otherwise.
    *
    * @defaultValue `'smooth'`, or `'auto'` when the user prefers reduced motion (the platform
@@ -132,17 +126,18 @@ export interface TocSchema {
   guard: never;
   delay: never;
   /**
-   * Scroll the heading `event.value` of a `SCROLL_TO` to the top of the container that
-   * `prop('scrollEl')` returns, or of the page, as `event.behavior ?? prop('scrollBehavior')`
-   * says; the platform's default when both are undefined.
+   * Scroll the heading `event.value` of a `SCROLL_TO` to the top of its scroll container, as
+   * `event.behavior ?? prop('scrollBehavior')` says; the platform's default when both are
+   * undefined. Which element scrolls the headings is up to the platform: the page, unless its
+   * adapter was given another.
    */
   platformAction: 'scrollToHeading';
   /**
    * While the machine runs: find the heading of every item in `prop('items')`, observe them in
-   * the area that `prop('rootMargin')` and `prop('threshold')` set, and send
-   * `VISIBILITY.CHANGE` with the positions of every heading once, then of the headings whose
-   * position changed. A heading that skips the area in one jump, from below to above it or
-   * back, counts as moved.
+   * the area of their scroll container that `prop('rootMargin')` and `prop('threshold')` set,
+   * and send `VISIBILITY.CHANGE` with the positions of every heading once, then of the headings
+   * whose position changed. A heading that skips the area in one jump, from below to above it
+   * or back, counts as moved.
    */
   platformEffect: 'observeHeadings';
 }

@@ -1,7 +1,7 @@
 import { toc } from '@contour-ui/core';
 import type { Platform } from '@contour-ui/core';
 import { useMachine } from '@contour-ui/core/react';
-import { useCallback, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useId, useInsertionEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { CSSProperties, MouseEvent, RefCallback } from 'react';
 
 import { schedule } from '../platform/clock.ts';
@@ -14,11 +14,15 @@ import {
   scrollToHeading,
 } from './toc-scroll.ts';
 
-/** Props of {@link useToc}: the input of the toc machine of `@contour-ui/core`, for the DOM. */
-export interface UseTocProps extends Omit<toc.Input, 'scrollEl'> {
+/**
+ * Props of {@link useToc}: the input of the toc machine of `@contour-ui/core`, and the options
+ * of the DOM.
+ */
+export interface UseTocProps extends toc.Input {
   /**
    * A function that returns the scroll container of the headings, called when the observation
-   * starts. Without it, or when it returns `null`, the headings scroll with the page.
+   * starts and when a link is clicked. Without it, or when it returns `null`, the headings
+   * scroll with the page.
    */
   readonly scrollEl?: (() => HTMLElement | null) | undefined;
   /**
@@ -104,10 +108,9 @@ interface IndicatorRect {
   readonly height: number;
 }
 
-/** The scroll container `scrollEl` returns, if it is an element. */
-function scrollContainer(scrollEl: (() => unknown) | undefined): HTMLElement | null {
-  const element = scrollEl?.();
-  return element instanceof HTMLElement ? element : null;
+/** What the DOM platform reads besides the props of the machine: the options of the DOM. */
+interface TocDomOptions {
+  readonly scrollEl: UseTocProps['scrollEl'];
 }
 
 /**
@@ -118,52 +121,74 @@ function headingById(container: HTMLElement | null, id: string): HTMLElement | n
   return (container?.ownerDocument ?? document).querySelector<HTMLElement>(`#${CSS.escape(id)}`);
 }
 
+/** The DOM platform of one table of contents, with the options of the DOM it reads. */
+interface TocDomPlatform {
+  readonly platform: Platform<toc.Schema>;
+  /** Give the platform the options of the latest commit. */
+  readonly setOptions: (options: TocDomOptions) => void;
+  /** The scroll container of the headings, as the options give it, or `null` for the page. */
+  readonly scrollContainer: () => HTMLElement | null;
+}
+
 /**
- * The DOM platform of the toc machine: the `setTimeout` clock, headings observed with
+ * The DOM platform of one table of contents: the `setTimeout` clock, headings observed with
  * `IntersectionObserver` (see `observeHeadings`), and scrolling to a heading in its scroll
- * container or the page. A module-level constant, since `useMachine` reads it once; what an
- * instance needs, it reads from the props.
+ * container or the page. The scroll container is an option of the DOM, not a prop of the
+ * machine: the platform keeps the options its hook gives it with `setOptions` after each
+ * commit, and reads them when it runs. Created once per hook, since `useMachine` reads the
+ * platform once.
  */
-const platform: Platform<toc.Schema> = {
-  schedule,
-  actions: {
-    scrollToHeading: ({ event, prop }) => {
-      if (event.type !== 'SCROLL_TO') {
-        return;
-      }
-      const container = scrollContainer(prop('scrollEl'));
-      const heading = headingById(container, event.value);
-      if (heading !== null) {
-        const behavior = scrollBehaviorOf(event.behavior ?? prop('scrollBehavior'));
-        scrollToHeading(heading, container, behavior);
-      }
-    },
-  },
-  effects: {
-    observeHeadings: ({ prop, send }) => {
-      const container = scrollContainer(prop('scrollEl'));
-      const headings: ObservedHeading[] = [];
-      for (const { value } of prop('items')) {
-        const element = headingById(container, value);
-        if (element !== null) {
-          headings.push({ value, element });
+function createDomPlatform(initial: TocDomOptions): TocDomPlatform {
+  let options = initial;
+  const scrollContainer = (): HTMLElement | null => options.scrollEl?.() ?? null;
+  const platform: Platform<toc.Schema> = {
+    schedule,
+    actions: {
+      scrollToHeading: ({ event, prop }) => {
+        if (event.type !== 'SCROLL_TO') {
+          return;
         }
-      }
-      if (headings.length === 0) {
-        return undefined;
-      }
-      return observeHeadings({
-        headings,
-        root: container,
-        rootMargin: prop('rootMargin'),
-        threshold: prop('threshold'),
-        onChange: (positions) => {
-          send({ type: 'VISIBILITY.CHANGE', headings: positions });
-        },
-      });
+        const container = scrollContainer();
+        const heading = headingById(container, event.value);
+        if (heading !== null) {
+          const behavior = scrollBehaviorOf(event.behavior ?? prop('scrollBehavior'));
+          scrollToHeading(heading, container, behavior);
+        }
+      },
     },
-  },
-};
+    effects: {
+      observeHeadings: ({ prop, send }) => {
+        const container = scrollContainer();
+        const headings: ObservedHeading[] = [];
+        for (const { value } of prop('items')) {
+          const element = headingById(container, value);
+          if (element !== null) {
+            headings.push({ value, element });
+          }
+        }
+        if (headings.length === 0) {
+          return undefined;
+        }
+        return observeHeadings({
+          headings,
+          root: container,
+          rootMargin: prop('rootMargin'),
+          threshold: prop('threshold'),
+          onChange: (positions) => {
+            send({ type: 'VISIBILITY.CHANGE', headings: positions });
+          },
+        });
+      },
+    },
+  };
+  return {
+    platform,
+    setOptions: (next) => {
+      options = next;
+    },
+    scrollContainer,
+  };
+}
 
 /** Whether two lists hold the same headings at the same depths, in the same order. */
 function sameItems(a: readonly toc.Item[], b: readonly toc.Item[]): boolean {
@@ -279,10 +304,16 @@ function isPlainClick(event: MouseEvent<HTMLAnchorElement>): boolean {
  * </nav>;
  */
 export function useToc(props: UseTocProps): UseTocReturn {
-  const { autoScroll = true, ...input } = props;
+  const { autoScroll = true, scrollEl, ...input } = props;
   const items = useStableValue(input.items, sameItems);
   const threshold = useStableValue(input.threshold, sameThreshold);
-  const service = useMachine(toc.machine, { ...input, items, threshold }, platform);
+  // The options of the DOM go to the platform after each commit, before it runs. They are not
+  // props of the machine: a new `scrollEl` function on every render restarts nothing.
+  const [dom] = useState(() => createDomPlatform({ scrollEl }));
+  useInsertionEffect(() => {
+    dom.setOptions({ scrollEl });
+  });
+  const service = useMachine(toc.machine, { ...input, items, threshold }, dom.platform);
   const api = toc.connect(service);
 
   const rootRef = useRef<HTMLElement | null>(null);
@@ -343,10 +374,10 @@ export function useToc(props: UseTocProps): UseTocReturn {
       scrollIntoContainer(item, {
         behavior: scrollBehaviorOf(service.prop('scrollBehavior')),
         // The headings' scroll container never scrolls for the table of contents.
-        boundary: scrollContainer(service.prop('scrollEl')),
+        boundary: dom.scrollContainer(),
       });
     }
-  }, [service, first, autoScroll]);
+  }, [service, dom, first, autoScroll]);
 
   return {
     ...api,
@@ -385,7 +416,7 @@ export function useToc(props: UseTocProps): UseTocReturn {
           if (event.defaultPrevented || !isPlainClick(event)) {
             return;
           }
-          const container = scrollContainer(service.prop('scrollEl'));
+          const container = dom.scrollContainer();
           const heading = headingById(container, item.value);
           if (heading === null) {
             return;

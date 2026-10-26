@@ -354,7 +354,9 @@ platform. The machine has one state, `observing`, in which the platform effect `
 watches the headings with two `IntersectionObserver`s: one on the observed area, and one on
 everything above its bottom edge, which tells a heading scrolled past the area from one not
 reached yet, even when a jump carries it across the area between two frames. The effect reports
-each heading as `above`, `inside` or `below` the area.
+each heading as `above`, `inside` or `below` the area. The scroll container is an option of the
+DOM, not of the machine: each root gives its own platform the latest `scrollEl`, which the
+platform calls when it starts to observe and when a link is clicked.
 
 | Event               | What happens                                                                        |
 | ------------------- | ----------------------------------------------------------------------------------- |
