@@ -23,8 +23,10 @@
     "react-router": "catalog:"
   },
   "devDependencies": {
+    "@axe-core/playwright": "catalog:",
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",
+    "@playwright/test": "catalog:",
     "@react-router/dev": "catalog:",
     "@types/mdx": "catalog:",
     "@types/node": "catalog:",

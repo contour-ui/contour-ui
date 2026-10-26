@@ -40,4 +40,15 @@ export default defineConfig({
   },
   // Fixed port next to the playground (5173), so both can run at once.
   server: { port: 5174 },
+  run: {
+    tasks: {
+      // End-to-end and axe tests (playwright.config.ts) against a fresh static build. CI builds
+      // the site in a step of its own and runs this with `--ignore-depends-on`.
+      e2e: {
+        command: 'playwright test',
+        cache: false,
+        dependsOn: ['build'],
+      },
+    },
+  },
 });

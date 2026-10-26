@@ -167,6 +167,7 @@ export default defineConfig({
           '**/.storybook/preview.tsx',
           '**/playwright.config.ts',
           'apps/storybook/visual/global-setup.ts',
+          'apps/docs/e2e/global-setup.ts',
           'apps/docs/react-router.config.ts',
           'apps/docs/app/root.tsx',
           'apps/docs/app/routes.ts',

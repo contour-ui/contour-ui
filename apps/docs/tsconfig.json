@@ -3,5 +3,5 @@
   "compilerOptions": {
     "types": ["node", "vite-plus/client"]
   },
-  "include": ["app", "react-router.config.ts", "vite.config.ts"]
+  "include": ["app", "e2e", "playwright.config.ts", "react-router.config.ts", "vite.config.ts"]
 }
