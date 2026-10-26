@@ -96,6 +96,9 @@ catalogs:
     react-router:
       specifier: 8.5.0
       version: 8.5.0
+    shiki:
+      specifier: 4.5.0
+      version: 4.5.0
     simple-icons:
       specifier: 16.35.0
       version: 16.35.0
@@ -231,6 +234,9 @@ importers:
       '@types/react-dom':
         specifier: 'catalog:'
         version: 19.3.0(@types/react@19.3.0)
+      shiki:
+        specifier: 'catalog:'
+        version: 4.5.0
       tailwindcss:
         specifier: 'catalog:'
         version: 4.3.3

@@ -68,6 +68,9 @@ catalog:
   fumadocs-core: 16.17.8
   fumadocs-mdx: 15.4.10
   fumadocs-ui: 16.17.8
+  # Code highlighting theme for the docs build (`createCssVariablesTheme`): the Shiki that
+  # fumadocs-core uses, so the docs app does not get a second copy.
+  shiki: 4.5.0
   '@types/mdx': 2.0.14
   react-router: 8.5.0
   '@react-router/dev': 8.5.0

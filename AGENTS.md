@@ -205,9 +205,11 @@ resolve to package sources like the rest of the app.
   between Tailwind's `base` and `contour`: it styles headings, paragraphs, lists and inline code
   and spaces blocks, while components inside keep their own styles. `docs-not-prose` opts a
   subtree out; `<Preview>` uses it.
-- `app/components/mdx.tsx` draws Markdown links and tables with Kit's `Link` and `Table`, renders
-  `<Callout>` and `<Card>` (Fumadocs props) with `Alert` and `Card`, and registers `Kbd`. A
-  lowercase JSX tag in MDX (`<kbd>`, `<a>`) is a literal element and skips that map: write
+- `app/components/mdx.tsx` draws Markdown links, tables and code blocks with Kit's `Link`, `Table`
+  and `CodeBlock`, renders `<Callout>` and `<Card>` (Fumadocs props) with `Alert` and `Card`, and
+  registers `Kbd`. Code is highlighted at build time with Shiki's css-variables theme
+  (`rehypeCodeOptions` in `vite.config.ts`); `CodeBlock` maps its variables to the syntax tokens.
+  A lowercase JSX tag in MDX (`<kbd>`, `<a>`) is a literal element and skips that map: write
   `<Kbd>`.
 - Oxfmt formats MDX like JSX: the text of an element with several attributes goes on a line of its
   own, where MDX turns it into a paragraph. Write inline examples as an expression

@@ -1,18 +1,17 @@
-import { AudioPlaceholder } from '@contour-ui/audio';
-import { Placeholder as HeadlessPlaceholder } from '@contour-ui/headless';
-import { Kbd, Placeholder } from '@contour-ui/kit';
+import { Kbd } from '@contour-ui/kit';
 import defaultMdxComponents from 'fumadocs-ui/mdx';
 import type { MDXComponents } from 'mdx/types';
 
 import { Callout } from './callout.tsx';
 import { Card, Cards } from './cards.tsx';
 import { MdxLink } from './mdx-link.tsx';
+import { mdxPlaceholderComponents } from './mdx-placeholders.ts';
+import { MdxPre } from './mdx-pre.tsx';
 import { mdxTableComponents } from './mdx-table.tsx';
 import { Preview } from './preview.tsx';
 
-/** What still comes from Fumadocs: code blocks and code tabs, headings with anchors, images. */
+/** What still comes from Fumadocs: code tabs, headings with anchors, images. */
 const {
-  pre,
   CodeBlockTab,
   CodeBlockTabs,
   CodeBlockTabsList,
@@ -27,12 +26,12 @@ const {
 } = defaultMdxComponents;
 
 /**
- * MDX components: Markdown links and tables drawn by Kit, the components every page can use
- * without an import, and live contour-ui components rendered from package sources.
+ * MDX components: Markdown links, tables and code blocks drawn by Kit, the components every page
+ * can use without an import, and live contour-ui components rendered from package sources.
  */
 export function getMdxComponents(components?: MDXComponents): MDXComponents {
   return {
-    pre,
+    pre: MdxPre,
     CodeBlockTab,
     CodeBlockTabs,
     CodeBlockTabsList,
@@ -51,9 +50,7 @@ export function getMdxComponents(components?: MDXComponents): MDXComponents {
     Cards,
     Kbd,
     Preview,
-    KitPlaceholder: Placeholder.Root,
-    AudioPlaceholder: AudioPlaceholder.Root,
-    HeadlessPlaceholder: HeadlessPlaceholder.Root,
+    ...mdxPlaceholderComponents,
     ...components,
   };
 }
