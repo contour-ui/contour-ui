@@ -34,3 +34,4 @@ export type {
 } from './machine/index.ts';
 
 export * as clipboard from './states/clipboard/index.ts';
+export * as dialog from './states/dialog/index.ts';

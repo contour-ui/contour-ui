@@ -1,0 +1,5 @@
+---
+'@contour-ui/core': minor
+---
+
+Add the dialog machine, exported as the `dialog` namespace: `dialog.machine`, `dialog.connect` (`open`, `modal`, `role`, `setOpen()`, `toggle()`) and its types. `OPEN`, `CLOSE` and `TOGGLE` move the dialog between `closed` and `open` and report each change as `onOpenChange({ open })`, never a request for the state it is in. `ESCAPE` and `INTERACT_OUTSIDE`, sent by the platform's `dismiss` effect, close it when `closeOnEscape` and `closeOnInteractOutside` allow it; by default, an `alertdialog` and a non-modal dialog stay open on an interaction outside them. With `open` controlled, requests are only reported and the state follows the prop; otherwise it starts from `defaultOpen`. While open, the machine runs the platform effects `dismiss`, `trapFocus`, `preventScroll` and `hideOutside`: `modal` (the default) turns the last three on, and `trapFocus` and `preventScroll` can also be set on their own. It moves focus into the dialog when it opens (`setInitialFocus`) and back when it closes (`restoreFocus`).

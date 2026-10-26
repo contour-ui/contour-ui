@@ -42,6 +42,12 @@ need, without a DOM) and its types (`Schema`, `Input`, `Api`…).
   action `writeText`, which answers with `COPY.DONE` or `COPY.FAILED`; once the write is done the
   machine stays `copied` for `timeout` ms (3000 by default). A `COPY` while copied writes again
   and keeps the state; its `COPY.DONE` starts the time over.
+- `dialog` — `closed` and `open`. `OPEN`, `CLOSE` and `TOGGLE` come from the parts; `ESCAPE` and
+  `INTERACT_OUTSIDE` from the platform effect `dismiss`, and close only when `closeOnEscape` and
+  `closeOnInteractOutside` allow it. With `open` controlled, requests are only reported through
+  `onOpenChange` and the state follows the prop. While open, the platform effects `dismiss`,
+  `trapFocus`, `preventScroll` and `hideOutside` run (`modal` turns the last three on); the
+  platform actions `setInitialFocus` and `restoreFocus` move focus in on open and back on close.
 
 ```ts
 import { clipboard, createService } from '@contour-ui/core';
