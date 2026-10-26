@@ -16,6 +16,11 @@
   overflow-wrap: break-word;
 }
 
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-card[hidden] {
+  display: none;
+}
+
 .contour-card[data-variant='subtle'] {
   border-color: transparent;
 }
@@ -71,6 +76,11 @@ button.contour-card {
   margin: 0;
 }
 
+.contour-card__header[hidden],
+.contour-card__body[hidden] {
+  display: none;
+}
+
 /* The body takes the free height, so the footers of cards stretched to one row height line up. */
 .contour-card__body {
   flex-grow: 1;
@@ -82,6 +92,10 @@ button.contour-card {
   align-items: center;
   gap: var(--ct-space-group-gap);
   margin: 0;
+}
+
+.contour-card__footer[hidden] {
+  display: none;
 }
 
 .contour-card__title {

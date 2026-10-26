@@ -212,6 +212,27 @@ describe('Card', () => {
     expect(bottom('first')).toBe(bottom('second'));
   });
 
+  it('hides any part with `hidden`, though each sets its display', async () => {
+    const screen = await render(
+      <Card.Root hidden>
+        <Card.Header hidden />
+        <Card.Body hidden />
+        <Card.Footer hidden />
+      </Card.Root>,
+    );
+    const parts = [...screen.container.querySelectorAll<HTMLElement>('[data-scope="card"]')];
+
+    // The display of each part itself, whatever its ancestors show.
+    expect(
+      parts.map((part) => [part.dataset['part'], getComputedStyle(part).display]),
+    ).toStrictEqual([
+      ['root', 'none'],
+      ['header', 'none'],
+      ['body', 'none'],
+      ['footer', 'none'],
+    ]);
+  });
+
   describe('with a link as the root', () => {
     it('is one link, named by its content with the title first', async () => {
       const screen = await render(<LinkCard />);

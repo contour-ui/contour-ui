@@ -190,6 +190,10 @@
   margin: 0;
 }
 
+.contour-drawer__header[hidden] {
+  display: none;
+}
+
 /*
  * The body takes the free height, so the footer sits at the far end, and scrolls from edge to
  * edge of the content, its scrollbar too, with room for the focus rings its overflow would cut.
@@ -208,6 +212,10 @@
   overscroll-behavior: contain;
 }
 
+.contour-drawer__body[hidden] {
+  display: none;
+}
+
 .contour-drawer__footer {
   display: flex;
   flex-wrap: wrap;
@@ -215,6 +223,10 @@
   align-items: center;
   gap: var(--ct-space-group-gap);
   margin: 0;
+}
+
+.contour-drawer__footer[hidden] {
+  display: none;
 }
 
 .contour-drawer__title {

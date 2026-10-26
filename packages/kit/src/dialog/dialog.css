@@ -138,6 +138,10 @@
   margin: 0;
 }
 
+.contour-dialog__header[hidden] {
+  display: none;
+}
+
 /*
  * The body scrolls from edge to edge of the content, its scrollbar too, and keeps room for the
  * focus rings of its controls, which its overflow would cut.
@@ -156,6 +160,10 @@
   overscroll-behavior: contain;
 }
 
+.contour-dialog__body[hidden] {
+  display: none;
+}
+
 .contour-dialog__footer {
   display: flex;
   flex-wrap: wrap;
@@ -163,6 +171,10 @@
   align-items: center;
   gap: var(--ct-space-group-gap);
   margin: 0;
+}
+
+.contour-dialog__footer[hidden] {
+  display: none;
 }
 
 .contour-dialog__title {

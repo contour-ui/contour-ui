@@ -272,6 +272,28 @@ describe('Dialog', () => {
     expect(footer).toHaveStyle({ columnGap: px(vars.space['group-gap']) });
   });
 
+  it('hides a header, a body or a footer with `hidden`, though each sets its display', async () => {
+    await render(
+      <Dialog.Root defaultOpen>
+        <Portal>
+          <Dialog.Positioner>
+            <Dialog.Content aria-label="Export the mix">
+              <Dialog.Header hidden />
+              <Dialog.Body hidden />
+              <Dialog.Footer hidden />
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>,
+    );
+
+    const names = ['header', 'body', 'footer'];
+
+    expect(names.map((name) => [name, getComputedStyle(part(name)).display])).toStrictEqual(
+      names.map((name) => [name, 'none']),
+    );
+  });
+
   it('scrolls a long body between the header and the footer, which stay in view', async () => {
     const lines = Array.from({ length: 80 }, (_, index) => <p key={index}>{`Line ${index}`}</p>);
     await render(<Export defaultOpen body={lines} />);

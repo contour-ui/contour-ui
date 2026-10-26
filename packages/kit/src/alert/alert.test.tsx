@@ -261,4 +261,20 @@ describe('Alert', () => {
       expect(offset).toBeLessThanOrEqual(1);
     }
   });
+
+  test('parts that set a display still hide with `hidden`', async () => {
+    const screen = await render(
+      <Alert.Root hidden>
+        <Alert.Indicator hidden />
+        <Alert.Content hidden />
+      </Alert.Root>,
+    );
+
+    const selectors = ['.contour-alert', '.contour-alert__indicator', '.contour-alert__content'];
+
+    // The display of each part itself, whatever its ancestors show.
+    expect(
+      selectors.map((selector) => [selector, styleOf(screen.container, selector).display]),
+    ).toStrictEqual(selectors.map((selector) => [selector, 'none']));
+  });
 });

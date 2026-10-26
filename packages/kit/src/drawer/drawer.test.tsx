@@ -211,6 +211,28 @@ describe('Drawer', () => {
     expect(content.bottom - footer.bottom).toBeCloseTo(pixels(vars.space['panel-inset']), 0);
   });
 
+  it('hides a header, a body or a footer with `hidden`, though each sets its display', async () => {
+    await render(
+      <Drawer.Root defaultOpen>
+        <Portal>
+          <Drawer.Positioner>
+            <Drawer.Content aria-label="Menu">
+              <Drawer.Header hidden />
+              <Drawer.Body hidden />
+              <Drawer.Footer hidden />
+            </Drawer.Content>
+          </Drawer.Positioner>
+        </Portal>
+      </Drawer.Root>,
+    );
+
+    const names = ['header', 'body', 'footer'];
+
+    expect(names.map((name) => [name, getComputedStyle(part(name)).display])).toStrictEqual(
+      names.map((name) => [name, 'none']),
+    );
+  });
+
   it('opens from its trigger, closes on Escape, and focus goes back to the trigger', async () => {
     const screen = await render(<Navigation />);
     const trigger = screen.getByRole('button', { name: 'Menu' });

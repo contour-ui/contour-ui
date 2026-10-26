@@ -95,4 +95,10 @@ describe('Kbd', () => {
     expect(ref.current).toBe(key.element());
     await expect.element(key).toHaveAttribute('title', 'Command');
   });
+
+  it('hides with `hidden`, though it sets its display', async () => {
+    const screen = await render(<Kbd hidden>⌘</Kbd>);
+
+    expect(getComputedStyle(screen.getByText('⌘').element()).display).toBe('none');
+  });
 });

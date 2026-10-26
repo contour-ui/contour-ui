@@ -64,6 +64,11 @@
   letter-spacing: var(--ct-text-label-letter-spacing);
 }
 
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-code-block__header[hidden] {
+  display: none;
+}
+
 /*
  * A copy trigger in a block without a header: at the top end of the block, where it would sit in
  * a header, and the code starts below it, so it never covers a line, however wide the code.

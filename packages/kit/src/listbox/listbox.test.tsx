@@ -237,6 +237,31 @@ describe('Listbox', () => {
     });
   });
 
+  it('hides the parts that set a display with `hidden`, such as a list without results', async () => {
+    const screen = await render(
+      <Listbox.Root collection={sounds} hidden>
+        <Listbox.Content aria-label="Sounds" hidden>
+          {sounds.groups.map((group) => (
+            <Listbox.ItemGroup key={group.key} hidden>
+              {group.items.map((item) => (
+                <Listbox.Item key={item.value} item={item} hidden>
+                  {item.label}
+                </Listbox.Item>
+              ))}
+            </Listbox.ItemGroup>
+          ))}
+        </Listbox.Content>
+      </Listbox.Root>,
+    );
+
+    const names = ['root', 'content', 'item-group', 'item'];
+
+    // The display of each part itself, whatever its ancestors show.
+    expect(
+      names.map((name) => [name, getComputedStyle(part(screen.container, name)).display]),
+    ).toStrictEqual(names.map((name) => [name, 'none']));
+  });
+
   it('takes a mark of its own for the indicator', async () => {
     const one = createListCollection({ items: ['Kick'] });
     const screen = await render(

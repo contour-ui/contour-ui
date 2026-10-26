@@ -21,6 +21,11 @@
   letter-spacing: var(--ct-text-body-letter-spacing);
 }
 
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-alert[hidden] {
+  display: none;
+}
+
 .contour-alert[data-status='success'] {
   --contour-alert-bg: var(--ct-color-success-bg);
   --contour-alert-border: var(--ct-color-success-border);
@@ -60,6 +65,10 @@
   font: var(--ct-text-body);
 }
 
+.contour-alert__indicator[hidden] {
+  display: none;
+}
+
 .contour-alert__indicator .contour-icon {
   inline-size: var(--ct-size-icon-md);
   block-size: var(--ct-size-icon-md);
@@ -74,6 +83,10 @@
   min-inline-size: 0;
   margin: 0;
   overflow-wrap: anywhere;
+}
+
+.contour-alert__content[hidden] {
+  display: none;
 }
 
 .contour-alert__title {

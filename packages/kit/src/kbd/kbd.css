@@ -23,6 +23,11 @@
   white-space: nowrap;
 }
 
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-kbd[hidden] {
+  display: none;
+}
+
 /* The minimum width equals the height: a single character sits on a square key. */
 .contour-kbd[data-size='md'] {
   min-inline-size: var(--ct-size-icon-lg);

@@ -319,6 +319,21 @@ describe('CodeBlock', () => {
     expect(root.marginTop).toBe(root.fontSize);
   });
 
+  test('hides its header with `hidden`, though the header sets its display', async () => {
+    const screen = await render(
+      <CodeBlock.Root>
+        <CodeBlock.Header hidden>
+          <CodeBlock.Title>save-button.tsx</CodeBlock.Title>
+        </CodeBlock.Header>
+        <CodeBlock.Content>
+          <ShikiPre lines={SAVE_BUTTON} />
+        </CodeBlock.Content>
+      </CodeBlock.Root>,
+    );
+
+    expect(getComputedStyle(find(screen.container, 'figcaption')).display).toBe('none');
+  });
+
   test('keeps its header styles under a container rule for figcaptions in a lower layer', async () => {
     // As the docs' Prose does: a layer declared before `contour`, styling `figure > figcaption`.
     const containerStyles = document.createElement('style');
