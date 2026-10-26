@@ -1,12 +1,24 @@
 /*
  * Cascade layer order, as the installation guide recommends with Tailwind: contour-ui's
- * layers rank above Preflight (`base`) and below the utilities.
+ * layers rank above Preflight (`base`) and below the utilities. `prose`, the typography of
+ * the page content, sits between them: it beats Preflight, and every Kit and Audio component
+ * inside the content beats it.
  */
-@layer theme, base, contour, components, utilities;
+@layer theme, base, prose, contour, components, utilities;
 
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
+
+/*
+ * Docs components. Their files hold plain rules and get their layer here, next to the order
+ * above, as Kit's styles.css does for its components: imported from the components instead,
+ * they would land in the route's stylesheet, and the layers would hold only while that one
+ * loads after this file.
+ */
+@import './components/prose.css' layer(prose);
+@import './components/preview.css' layer(components);
+@import './components/cards.css' layer(components);
 
 /*
  * Fumadocs theme -> contour-ui tokens. The token roles switch with `data-theme`

@@ -19,7 +19,14 @@ vp -C apps/docs run build   # static build -> build/client
   section at a time, with a switcher on top. `index.mdx` at the top is the entry page with links
   to the sections.
 
-- Live contour-ui components are exposed to MDX in `app/components/mdx.tsx` (plus `<Preview>`, the
-  frame for live examples) and consumed from package sources (`@contour-ui/source` condition).
+- Live examples import contour-ui components at the top of the page
+  (`import { Button } from '@contour-ui/kit';`) and render them inside `<Preview>`, the frame for
+  live examples; imports resolve to package sources (`@contour-ui/source` condition).
+  `app/components/mdx.tsx` registers what every page can use without an import (`Preview`,
+  `Cards`, the placeholders).
+- Page content is wrapped in `Prose` (`app/components/prose.tsx`): typography and spacing for MDX,
+  in the `prose` cascade layer, between Preflight and contour-ui, so components inside keep their
+  own styles. Nothing inside an element with the `docs-not-prose` class, such as `<Preview>`, is
+  styled by Prose.
 - The Fumadocs theme is mapped onto `@contour-ui/tokens` in `app/app.css` (colors and font
   families); next-themes sets both `.dark` and `data-theme`, so docs and tokens switch together.

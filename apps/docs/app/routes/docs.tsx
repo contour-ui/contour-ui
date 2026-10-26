@@ -1,12 +1,13 @@
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
 import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { DocsBody, DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
+import { DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
 import { use } from 'react';
 import type { ReactElement } from 'react';
 import { useLoaderData } from 'react-router';
 import type { LoaderFunctionArgs } from 'react-router';
 
 import { getMdxComponents } from '../components/mdx.tsx';
+import { Prose } from '../components/prose.tsx';
 import { baseOptions } from '../lib/layout.shared.tsx';
 import { docs, source } from '../lib/source.ts';
 
@@ -38,9 +39,11 @@ function Content({ path }: { readonly path: string }): ReactElement {
       <meta name="description" content={page.description} />
       <DocsTitle>{page.title}</DocsTitle>
       <DocsDescription>{page.description}</DocsDescription>
-      <DocsBody>
+      {/* `flex-1`, as on fumadocs' DocsBody: the content fills the page column, so the page
+          footer stays at the bottom of a short page. */}
+      <Prose className="flex-1">
         <Mdx components={getMdxComponents()} />
-      </DocsBody>
+      </Prose>
     </DocsPage>
   );
 }

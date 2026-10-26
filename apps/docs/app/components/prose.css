@@ -1,0 +1,157 @@
+/*
+ * Prose: typography and vertical rhythm for the MDX content of a docs page.
+ *
+ * app.css imports this file into the `prose` cascade layer, between Preflight (`base`) and
+ * contour-ui (`contour`): Prose restores what Preflight strips (margins, list markers, heading
+ * sizes), and a Kit or Audio component inside the content keeps its own styles.
+ *
+ * - Fonts are set on the root, the headings and inline code only. Paragraphs and list items
+ *   inherit, so text inside a component keeps the component's font.
+ * - Links, tables, `kbd` and code blocks are drawn by components (the MDX mapping in mdx.tsx);
+ *   Prose only spaces them.
+ * - Every selector has zero specificity (`:where()`) and skips whatever is inside an element with
+ *   `docs-not-prose`, the opt-out (the frame of a live example uses it). The opt-out element
+ *   itself is still spaced as a block.
+ */
+
+:where(.docs-prose) {
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-prose);
+  letter-spacing: var(--ct-text-prose-letter-spacing);
+}
+
+/*
+ * Rhythm: blocks keep a section gap on both sides and adjacent margins collapse. Component roots
+ * set no margin, so Prose spaces them like any other block.
+ */
+:where(.docs-prose > *, .docs-prose :is(p, ul, ol, dl, blockquote, pre, table, figure)):not(
+  :where(.docs-not-prose *)
+) {
+  margin-block: var(--ct-space-section-gap);
+}
+
+/* A heading belongs to the text after it: more space above it than below. */
+:where(.docs-prose :is(h1, h2)):not(:where(.docs-not-prose *)) {
+  margin-block: calc(2 * var(--ct-space-section-gap)) var(--ct-space-group-gap);
+}
+
+:where(.docs-prose :is(h3, h4)):not(:where(.docs-not-prose *)) {
+  margin-block: calc(var(--ct-space-section-gap) + var(--ct-space-group-gap))
+    var(--ct-space-group-gap);
+}
+
+/* The block after a heading gives up its larger margin, so the heading's own applies. */
+:where(.docs-prose :is(h1, h2, h3, h4) + *):not(:where(.docs-not-prose *)) {
+  margin-block-start: var(--ct-space-group-gap);
+}
+
+:where(.docs-prose h1):not(:where(.docs-not-prose *)) {
+  font: var(--ct-text-display);
+  letter-spacing: var(--ct-text-display-letter-spacing);
+}
+
+:where(.docs-prose h2):not(:where(.docs-not-prose *)) {
+  font: var(--ct-text-title);
+  letter-spacing: var(--ct-text-title-letter-spacing);
+}
+
+:where(.docs-prose h3):not(:where(.docs-not-prose *)) {
+  font: var(--ct-text-subtitle);
+  letter-spacing: var(--ct-text-subtitle-letter-spacing);
+}
+
+:where(.docs-prose h4):not(:where(.docs-not-prose *)) {
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+/* Lists get back the markers and the indent that Preflight removes. */
+:where(.docs-prose :is(ul, ol)):not(:where(.docs-not-prose *)) {
+  padding-inline-start: calc(var(--ct-space-section-gap) + var(--ct-space-group-gap));
+}
+
+:where(.docs-prose ul):not(:where(.docs-not-prose *)) {
+  list-style-type: disc;
+}
+
+:where(.docs-prose ol):not(:where(.docs-not-prose *)) {
+  list-style-type: decimal;
+}
+
+:where(.docs-prose li):not(:where(.docs-not-prose *))::marker {
+  color: var(--ct-color-fg-muted);
+}
+
+:where(.docs-prose li + li):not(:where(.docs-not-prose *)) {
+  margin-block-start: var(--ct-space-group-gap);
+}
+
+/* A nested list sits as close to its item as the items sit to each other. */
+:where(.docs-prose li > :is(ul, ol)):not(:where(.docs-not-prose *)) {
+  margin-block: var(--ct-space-group-gap);
+}
+
+:where(.docs-prose dt):not(:where(.docs-not-prose *)) {
+  font-weight: var(--ct-text-heading-font-weight);
+}
+
+:where(.docs-prose dd):not(:where(.docs-not-prose *)) {
+  padding-inline-start: calc(var(--ct-space-section-gap) + var(--ct-space-group-gap));
+}
+
+:where(.docs-prose dd + dt):not(:where(.docs-not-prose *)) {
+  margin-block-start: var(--ct-space-group-gap);
+}
+
+/* Twice a default border: a 1px line reads as a divider rather than a quote bar. */
+:where(.docs-prose blockquote):not(:where(.docs-not-prose *)) {
+  padding-inline-start: var(--ct-space-panel-inset);
+  border-inline-start: calc(2 * var(--ct-border-width-default)) solid var(--ct-color-border-strong);
+  color: var(--ct-color-fg-muted);
+}
+
+/* A thematic break separates more than a paragraph break does. */
+:where(.docs-prose hr):not(:where(.docs-not-prose *)) {
+  margin-block: calc(2 * var(--ct-space-section-gap));
+  border: 0;
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+}
+
+/*
+ * Inline code, not code blocks. In the dark theme `bg-inset` equals the canvas, so the border
+ * outlines the code there. Ligatures are off: JetBrains Mono would draw the `-<` of
+ * `contour-<component>` as an arrow. `font` resets them, so they come after it.
+ */
+:where(.docs-prose code):not(:where(pre code, .docs-not-prose *)) {
+  padding-inline: var(--ct-space-control-gap);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-bg-inset);
+  font: var(--ct-text-code);
+  font-variant-ligatures: none;
+  letter-spacing: var(--ct-text-code-letter-spacing);
+}
+
+:where(.docs-prose :is(img, figure)):not(:where(.docs-not-prose *)) {
+  border-radius: var(--ct-radius-panel);
+}
+
+:where(.docs-prose figure > figcaption):not(:where(.docs-not-prose *)) {
+  margin-block: var(--ct-space-group-gap);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-caption);
+  letter-spacing: var(--ct-text-caption-letter-spacing);
+}
+
+/*
+ * A container adds no space of its own: the first and last child of any element lose their
+ * outer margin, so a paragraph inside an alert or a card adds no stray space. These rules come
+ * last to win over the margins above.
+ */
+:where(.docs-prose :first-child):not(:where(.docs-not-prose *)) {
+  margin-block-start: 0;
+}
+
+:where(.docs-prose :last-child):not(:where(.docs-not-prose *)) {
+  margin-block-end: 0;
+}
