@@ -1,0 +1,194 @@
+---
+title: ThemeProvider
+description: Keeps the theme of the page on <html>, the system's until the user chooses one, stored and restored without a flash.
+---
+
+ThemeProvider keeps the theme of the page on `<html>`, as the `data-theme` attribute the token
+stylesheet reads, so every Kit and Audio component follows it ([Themes](/docs/guide/themes)). It
+starts from the color scheme of the operating system, stores the user's choice in `localStorage`
+and restores it on the next visit. `useTheme` reads the theme and changes it, and `themeScript()`
+sets it before the first paint of a page rendered on the server.
+
+```tsx
+import { ThemeProvider, useTheme } from '@contour-ui/kit';
+
+<ThemeProvider>
+  <App />
+</ThemeProvider>;
+
+// In any component inside:
+const { theme, resolvedTheme, setTheme } = useTheme();
+```
+
+The attribute is all ThemeProvider sets: the token stylesheet does the rest, `color-scheme`
+included. This page shows code only: this site still sets its theme with Fumadocs' provider, and
+two providers would fight over `<html>`.
+
+## Set up
+
+Render one ThemeProvider, around the whole app. A page rendered on the server, or prerendered,
+also needs two things in its root layout: the script of `themeScript()` at the top of `<head>`, and
+`suppressHydrationWarning` on `<html>`. With React Router:
+
+```tsx title="root.tsx"
+import { ThemeProvider, themeScript } from '@contour-ui/kit';
+import type { ReactNode } from 'react';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+
+export function Layout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <script dangerouslySetInnerHTML={{ __html: themeScript() }} />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+export default function App() {
+  return <Outlet />;
+}
+```
+
+- **`themeScript()`** returns the source of a small inline script. The browser runs it as it reads
+  `<head>`, before it paints anything, and the script sets `data-theme` as ThemeProvider would:
+  the stored choice, or else the default. Without it, the page shows the default theme of the
+  stylesheet, dark, until the app hydrates: a flash for everyone who chose light.
+- **`suppressHydrationWarning`** tells React that the attributes of `<html>` may differ from its
+  render, since the script adds one. It covers `<html>` itself, not the elements inside.
+- **ThemeProvider** keeps the theme from hydration on. Where the script has set the attribute, it
+  leaves it as it is.
+
+Give the script the options of the provider, so both read the same key and set the same
+attribute:
+
+```tsx
+import { ThemeProvider, themeScript } from '@contour-ui/kit';
+import type { ThemeScriptOptions } from '@contour-ui/kit';
+
+const themeOptions = {
+  defaultTheme: 'light',
+  storageKey: 'app-theme',
+} satisfies ThemeScriptOptions;
+
+<script dangerouslySetInnerHTML={{ __html: themeScript(themeOptions) }} />;
+<ThemeProvider {...themeOptions}>{children}</ThemeProvider>;
+```
+
+The source is the same for the same options and version of Kit, so a Content Security Policy can
+allow the script by its hash, or by a nonce on the `<script>` element.
+
+An app rendered only in the browser hydrates nothing, so it needs no `suppressHydrationWarning`,
+and ThemeProvider applies the theme before the first paint of the app. While the app's code
+loads, though, the page shows the default theme: to theme it from the start, put the output of
+`themeScript()` in a `<script>` at the top of the `<head>` of `index.html`.
+
+## Read and change the theme
+
+`useTheme()` returns the theme of the ThemeProvider around the component, and throws outside one:
+
+| Field           | Type                                           | Value                                                 |
+| --------------- | ---------------------------------------------- | ----------------------------------------------------- |
+| `theme`         | `'light'`, `'dark'`, `'system'` or `undefined` | the user's choice: `defaultTheme` until they make one |
+| `resolvedTheme` | `'light'`, `'dark'` or `undefined`             | the theme in use: `theme`, with `system` resolved     |
+| `setTheme`      | `(theme: ThemeChoice) => void`                 | stores the choice and applies it at once              |
+
+Both values are `undefined` on the server and in the render that hydrates its HTML, see
+[Server rendering](#server-rendering). A toggle shows the theme in use and switches to the other
+one:
+
+```tsx title="theme-toggle.tsx"
+import { moonIcon, sunIcon } from '@contour-ui/icons';
+import { IconButton, useTheme } from '@contour-ui/kit';
+
+export function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+
+  return (
+    <IconButton
+      variant="ghost"
+      label="Toggle theme"
+      icon={resolvedTheme === 'light' ? sunIcon : moonIcon}
+      onClick={() => setTheme(resolvedTheme === 'light' ? 'dark' : 'light')}
+    />
+  );
+}
+```
+
+After a click, the page keeps that theme whatever the system does. To let users go back to the
+system theme, offer `system` as a choice too, as the switch in
+[Themes](/docs/guide/themes#switch-at-runtime) does.
+
+## System theme
+
+While the choice is `system`, the theme in use is `dark` when the operating system prefers a dark
+color scheme (`prefers-color-scheme: dark`) and `light` otherwise, and it follows the system as
+it changes, without a reload. Where the browser has no `matchMedia`, as in DOM emulations such as
+jsdom, `system` stands for `dark`, the default theme of the stylesheet.
+
+## Storage
+
+The choice is stored in `localStorage` under `storageKey`, `contour-theme` by default, as
+`light`, `dark` or `system`, once the user makes one. The default is never stored, so a new
+`defaultTheme` reaches everyone who has not chosen yet, and a stored value that is not a choice is
+ignored.
+
+- **Other tabs** of the site follow a new choice at once, through the `storage` event.
+- **Blocked storage.** Where the browser blocks `localStorage`, as it does for a user who blocks
+  site data, reading and writing it fail without an error: ThemeProvider and the script apply the
+  default, and a choice lasts until the page closes.
+
+## Server rendering
+
+The server knows neither the storage nor the system, so there `useTheme()` returns `undefined` for
+`theme` and `resolvedTheme`. The render that hydrates the server's HTML gets the same values, so
+it matches that HTML; right after it, React renders again with the stored choice and the system
+theme. In an app rendered only in the browser, both are known from the first render.
+
+On a page rendered on the server, whatever depends on the theme thus appears in two steps. Render
+a neutral state while `resolvedTheme` is `undefined`, or let CSS draw the difference from the
+attribute, which the script sets before the first paint:
+
+```css
+[data-theme='light'] .logo-on-dark,
+[data-theme='dark'] .logo-on-light {
+  display: none;
+}
+```
+
+## Transitions
+
+With `disableTransitionOnChange`, the default, ThemeProvider turns CSS transitions off for the
+moment of the switch: every color changes at once, instead of each component fading at the pace of
+its own transition. Set it to `false` to keep them.
+
+## One provider
+
+`<html>` holds one theme, so a page has one ThemeProvider. A ThemeProvider inside another changes
+nothing: below it, `useTheme` returns the theme of the outer one. To show a part of the page in
+another theme, set `data-theme` on its element, see
+[Choose a theme](/docs/guide/themes#choose-a-theme).
+
+## Props
+
+`ThemeProvider`:
+
+| Prop                        | Type                                                                    | Default           |
+| --------------------------- | ----------------------------------------------------------------------- | ----------------- |
+| `defaultTheme`              | `'light'`, `'dark'`, `'system'`: the choice until the user makes one    | `'system'`        |
+| `storageKey`                | `string`: the `localStorage` key of the choice                          | `'contour-theme'` |
+| `attribute`                 | `string`, a `data-*` attribute: the attribute of `<html>` for the theme | `'data-theme'`    |
+| `disableTransitionOnChange` | `boolean`: turn CSS transitions off while the theme switches            | `true`            |
+
+`themeScript(options)` takes `defaultTheme`, `storageKey` and `attribute`, with the same defaults,
+and returns the source of the script. `ThemeChoice` is the type of a choice, `Theme | 'system'`,
+with `Theme` from `@contour-ui/tokens`.

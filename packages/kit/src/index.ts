@@ -11,3 +11,10 @@ export { Link } from './link/index.ts';
 export type { LinkProps } from './link/index.ts';
 export * as Placeholder from './placeholder/index.ts';
 export * as Table from './table/index.ts';
+export { ThemeProvider, themeScript, useTheme } from './theme-provider/index.ts';
+export type {
+  ThemeChoice,
+  ThemeProviderProps,
+  ThemeScriptOptions,
+  UseThemeReturn,
+} from './theme-provider/index.ts';

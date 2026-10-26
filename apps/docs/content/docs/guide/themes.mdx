@@ -29,39 +29,53 @@ Set the theme on `<html>` rather than on an app wrapper: components that render 
 
 ## Switch at runtime
 
-`@contour-ui/tokens` exports the theme names and the attribute, so a switcher stays in sync with
-the stylesheet:
+Kit's [ThemeProvider](/docs/kit/theme-provider) keeps the theme on `<html>` for you: the system
+theme until the user chooses one, then their choice, stored in `localStorage` and restored on the
+next visit. Render it once, around the app:
+
+```tsx
+import { ThemeProvider } from '@contour-ui/kit';
+
+<ThemeProvider>
+  <App />
+</ThemeProvider>;
+```
+
+Below it, `useTheme` reads the theme and changes it. `theme` is the user's choice, `system`
+included; `resolvedTheme` is the theme in use, `light` or `dark`:
 
 ```tsx title="theme-switch.tsx"
-import { Button } from '@contour-ui/kit';
-import { defaultTheme, themeAttribute, themes } from '@contour-ui/tokens';
-import type { Theme } from '@contour-ui/tokens';
-import { useEffect, useState } from 'react';
+import { Button, useTheme } from '@contour-ui/kit';
+import type { ThemeChoice } from '@contour-ui/kit';
+
+const choices: ThemeChoice[] = ['system', 'light', 'dark'];
 
 export function ThemeSwitch() {
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
-
-  useEffect(() => {
-    document.documentElement.setAttribute(themeAttribute, theme);
-  }, [theme]);
+  const { theme, setTheme } = useTheme();
 
   return (
     <fieldset>
       <legend>Theme</legend>
-      {themes.map((name) => (
+      {choices.map((choice) => (
         <Button
-          key={name}
-          variant={theme === name ? 'solid' : 'outline'}
-          aria-pressed={theme === name}
-          onClick={() => setTheme(name)}
+          key={choice}
+          variant={theme === choice ? 'solid' : 'outline'}
+          aria-pressed={theme === choice}
+          onClick={() => setTheme(choice)}
         >
-          {name}
+          {choice}
         </Button>
       ))}
     </fieldset>
   );
 }
 ```
+
+A page rendered on the server also needs the script of `themeScript()` at the top of its
+`<head>`, so the browser paints it in the right theme before the app runs: see
+[Set up](/docs/kit/theme-provider#set-up). For code of your own, `@contour-ui/tokens` exports the
+theme names (`themes`, `defaultTheme`) and the attribute (`themeAttribute`), so it stays in sync
+with the stylesheet.
 
 ## Headless
 
