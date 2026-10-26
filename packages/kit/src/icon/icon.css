@@ -1,4 +1,6 @@
 .contour-icon {
+  /* A glyph in the line, even under a reset that makes every `svg` a block (Tailwind's Preflight). */
+  display: inline-block;
   /* Sits on the text baseline like a glyph when it is `1em` tall. */
   vertical-align: -0.125em;
   flex-shrink: 0;

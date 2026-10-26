@@ -78,6 +78,18 @@ describe('Icon', () => {
     expect(getComputedStyle(logoPath).stroke).toBe('none');
   });
 
+  test('stays in the line of text', async () => {
+    const screen = await render(
+      <p>
+        Search <Icon icon={searchIcon} /> here
+      </p>,
+    );
+    const svg = present(screen.container.querySelector('svg'));
+
+    // Set explicitly, so a reset that makes every `svg` a block cannot move it to its own line.
+    expect(getComputedStyle(svg).display).toBe('inline-block');
+  });
+
   test('uses the icon stroke width unless one is given', async () => {
     const screen = await render(
       <>
