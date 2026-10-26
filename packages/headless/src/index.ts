@@ -14,6 +14,28 @@ export * as Clipboard from './clipboard/index.ts';
 export { useClipboardContext } from './clipboard/clipboard-context.ts';
 export { useClipboard } from './clipboard/use-clipboard.ts';
 export type { UseClipboardProps, UseClipboardReturn } from './clipboard/use-clipboard.ts';
+export * as Listbox from './listbox/index.ts';
+export { useListboxContext, useListboxItemContext } from './listbox/listbox-context.ts';
+export type { ListboxItemContextValue } from './listbox/listbox-context.ts';
+export { useListbox } from './listbox/use-listbox.ts';
+export type {
+  ListboxContentAttributes,
+  ListboxInputAttributes,
+  ListboxItemAttributes,
+  ListboxItemGroupAttributes,
+  ListboxItemGroupLabelAttributes,
+  ListboxItemIndicatorAttributes,
+  ListboxItemStateAttributes,
+  ListboxItemTextAttributes,
+  ListboxLabelAttributes,
+  ListboxPartAttributes,
+  ListboxRootAttributes,
+  UseListboxProps,
+  UseListboxReturn,
+} from './listbox/use-listbox.ts';
+// The collections of list components come from core: re-exported for apps that use only this package.
+export { createListCollection } from '@contour-ui/core';
+export type { ListCollection, ListCollectionGroup, ListCollectionOptions } from '@contour-ui/core';
 export * as Placeholder from './placeholder/index.ts';
 export * as Toc from './toc/index.ts';
 export { useTocContext } from './toc/toc-context.ts';

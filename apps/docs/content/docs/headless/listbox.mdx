@@ -1,0 +1,287 @@
+---
+title: Listbox
+description: A list of options to highlight and select with the keyboard or the pointer, with groups, typeahead, and an input that drives it from outside.
+---
+
+import { createListCollection, Listbox } from '@contour-ui/headless';
+
+export const waveforms = createListCollection({
+  items: [
+    { value: 'sine', label: 'Sine' },
+    { value: 'triangle', label: 'Triangle' },
+    { value: 'sawtooth', label: 'Sawtooth' },
+    { value: 'square', label: 'Square' },
+    { value: 'noise', label: 'Noise', disabled: true },
+  ],
+});
+
+<Preview>
+  {
+    <Listbox.Root
+      collection={waveforms}
+      defaultValue={['square']}
+      style={{ minInlineSize: '12rem' }}
+    >
+      <Listbox.Label style={{ display: 'block', fontWeight: 600 }}>Waveform</Listbox.Label>
+      <Listbox.Content className="docs-listbox-example">
+        {waveforms.items.map((item) => (
+          <Listbox.Item key={item.value} item={item}>
+            <Listbox.ItemText>{item.label}</Listbox.ItemText>{' '}
+            <Listbox.ItemIndicator>✓</Listbox.ItemIndicator>
+          </Listbox.Item>
+        ))}
+      </Listbox.Content>
+      <style>{`
+        .docs-listbox-example { padding: 2px; border: 1px solid; }
+        .docs-listbox-example [data-part='item'] { padding: 2px 8px; cursor: default; }
+        .docs-listbox-example [data-highlighted] { outline: 2px solid; outline-offset: -2px; }
+        .docs-listbox-example [data-disabled] { opacity: 0.6; }
+      `}</style>
+    </Listbox.Root>
+  }
+</Preview>
+
+```tsx
+import { createListCollection, Listbox } from '@contour-ui/headless';
+
+const collection = createListCollection({
+  items: [
+    { value: 'sine', label: 'Sine' },
+    { value: 'saw', label: 'Sawtooth' },
+  ],
+});
+
+<Listbox.Root collection={collection}>
+  <Listbox.Label>Waveform</Listbox.Label>
+  <Listbox.Content>
+    {collection.items.map((item) => (
+      <Listbox.Item key={item.value} item={item}>
+        <Listbox.ItemText>{item.label}</Listbox.ItemText>
+        <Listbox.ItemIndicator>✓</Listbox.ItemIndicator>
+      </Listbox.Item>
+    ))}
+  </Listbox.Content>
+</Listbox.Root>;
+```
+
+Listbox shows the items of a collection, highlights one of them, where the keyboard acts, and
+selects one or several. Focus the list above with Tab: the arrows, Home and End move the
+highlight past the disabled Noise, typing the first letters of an item highlights it, and Enter,
+Space or a click selects. [Kit's Listbox](/docs/kit/listbox) is this component with the
+contour-ui look.
+
+## The collection
+
+`createListCollection` (exported by `@contour-ui/core`, and again here) takes the items and tells
+Listbox how to read them. A string is its own value and text; an object gives its `value`, its
+`label` and `disabled`, or you pass the functions that read them:
+
+```ts
+const collection = createListCollection({
+  items: results,
+  itemToValue: (result) => result.url,
+  itemToString: (result) => result.title,
+  isItemDisabled: (result) => result.draft,
+  groupBy: (result) => result.page,
+});
+```
+
+A collection never changes: for other items, create another one, inside `useMemo` in a
+component. Every item needs a value of its own. Typeahead matches the text, ignoring case. With
+`groupBy`, the collection holds its items group by group, in the order the groups first come, and
+`collection.groups` lists them with their `key`: render them in that order, so the keys go
+through the items as they are shown.
+
+## Selection
+
+`value` is the list of the selected values: `defaultValue` for a listbox that keeps it, `value`
+and `onValueChange({ value, items })` to keep it yourself. `onSelect({ value, item })` reports
+each item the user selects, with Enter, Space or a click, also one that was selected already, and
+none that a multiple selection toggles off.
+
+- `selectionMode="multiple"` toggles items instead of replacing the selection.
+- `deselectable` clears a single selection when its item is selected again.
+- `selectOnHighlight` makes a single selection follow the keys.
+
+## An input
+
+`Listbox.Input` drives the list from a text field, as a search box does: the focus stays in the
+input, ↓ and ↑ move the highlight in the list (`aria-activedescendant`), and Enter selects the
+highlighted item. Home, End, ← and → stay with the text. Filter the collection by the value of
+the input yourself; with `autoHighlight`, the first item is highlighted as the user types, so Enter
+selects the best match at once. `Listbox.Empty` renders only while the collection is empty.
+
+```tsx
+const [query, setQuery] = useState('');
+const collection = useMemo(
+  () => createListCollection({ items: pages.filter((page) => page.title.includes(query)) }),
+  [query],
+);
+
+<Listbox.Root collection={collection} autoHighlight onSelect={({ item }) => navigate(item.url)}>
+  <Listbox.Input
+    aria-label="Search"
+    value={query}
+    onChange={(event) => setQuery(event.target.value)}
+  />
+  <Listbox.Content aria-label="Results">…</Listbox.Content>
+  <Listbox.Empty>No results</Listbox.Empty>
+</Listbox.Root>;
+```
+
+A click on an item keeps the focus in the input. While the input is there, the list leaves the
+tab order: the input takes the keys.
+
+## Styling
+
+Headless renders no CSS. Style the parts by their data attributes, the state included:
+
+```css
+[data-scope='listbox'][data-part='content'] {
+  max-block-size: 20rem;
+  overflow-y: auto;
+}
+
+[data-scope='listbox'][data-part='item'][data-highlighted] {
+  background: #eee;
+}
+
+[data-scope='listbox'][data-part='item'][data-disabled] {
+  opacity: 0.5;
+}
+```
+
+`data-highlighted` marks the item the keyboard acts on, and the item under the pointer
+(`highlightOnHover`, on by default), so one style serves both. Give the list a height to scroll
+it: the highlighted item scrolls into view inside the list, never the page.
+
+## Anatomy
+
+| Part                     | Element | Attributes                                                                                                                                                |
+| ------------------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Listbox.Root`           | `div`   | `data-scope="listbox" data-part="root"`, `data-orientation`, `data-disabled`                                                                              |
+| `Listbox.Label`          | `label` | `data-part="label"`, `id`, `for` (the input, when there is one)                                                                                           |
+| `Listbox.Input`          | `input` | `data-part="input"`, `aria-controls`, `aria-activedescendant`, `aria-autocomplete="list"`, `aria-haspopup="listbox"`, `autocomplete="off"`                |
+| `Listbox.Content`        | `div`   | `data-part="content"`, `role="listbox"`, `aria-labelledby`, `aria-activedescendant`, `aria-multiselectable`, `aria-orientation`, `data-empty`, `tabindex` |
+| `Listbox.ItemGroup`      | `div`   | `data-part="item-group"`, `role="group"`, `aria-labelledby`                                                                                               |
+| `Listbox.ItemGroupLabel` | `div`   | `data-part="item-group-label"`, `id`                                                                                                                      |
+| `Listbox.Item`           | `div`   | `data-part="item"`, `role="option"`, `id`, `aria-selected`, `aria-disabled`, `data-value`, `data-highlighted`, `data-selected`, `data-disabled`           |
+| `Listbox.ItemText`       | `span`  | `data-part="item-text"`, `data-highlighted`, `data-selected`, `data-disabled`                                                                             |
+| `Listbox.ItemIndicator`  | `span`  | `data-part="item-indicator"`, `aria-hidden="true"`, `hidden` while not selected                                                                           |
+| `Listbox.Empty`          | `div`   | `data-part="empty"`; rendered only while the collection is empty                                                                                          |
+
+Every part carries `data-scope="listbox"`; the state attributes are present, and empty, while the
+state holds. The parts reference one another by id: the label names the list and is for the
+input, the input controls the list. Give a part an `id` of your own, and the others follow it.
+
+## Props
+
+`Listbox.Root`:
+
+| Prop                      | Type                                                                         | Default      |
+| ------------------------- | ---------------------------------------------------------------------------- | ------------ |
+| `collection`              | `ListCollection`, from `createListCollection`                                | required     |
+| `value`                   | `string[]`: the selected values                                              | —            |
+| `defaultValue`            | `string[]`                                                                   | `[]`         |
+| `onValueChange`           | `(details: { value: string[]; items: T[] }) => void`                         | —            |
+| `highlightedValue`        | `string \| null`                                                             | —            |
+| `defaultHighlightedValue` | `string \| null`                                                             | `null`       |
+| `onHighlightChange`       | `(details: { highlightedValue; highlightedItem; highlightedIndex }) => void` | —            |
+| `onSelect`                | `(details: { value: string; item: T }) => void`                              | —            |
+| `selectionMode`           | `'single'`, `'multiple'`                                                     | `'single'`   |
+| `deselectable`            | `boolean`                                                                    | `false`      |
+| `selectOnHighlight`       | `boolean`                                                                    | `false`      |
+| `loopFocus`               | `boolean`: the arrows wrap around at the ends                                | `false`      |
+| `typeahead`               | `boolean`                                                                    | `true`       |
+| `highlightOnHover`        | `boolean`                                                                    | `true`       |
+| `autoHighlight`           | `boolean`                                                                    | `false`      |
+| `disabled`                | `boolean`: ignores the user; the value can still be set                      | `false`      |
+| `orientation`             | `'vertical'`, `'horizontal'`                                                 | `'vertical'` |
+
+`Listbox.Item` takes `item`, the item of the collection it shows. Every part takes `asChild` and
+the props of its element, such as `className`, `style` and `ref`.
+
+## Keyboard
+
+| Where | Key                  | Action                                                                |
+| ----- | -------------------- | --------------------------------------------------------------------- |
+| List  | `↓` `↑`              | Highlights the next or the previous enabled item (`→` `←` in a row)   |
+| List  | `Home` `End`         | Highlights the first or the last enabled item                         |
+| List  | Letters              | Highlight the next item whose text starts with them                   |
+| List  | `Enter`              | Selects the highlighted item                                          |
+| List  | `Space`              | Selects the highlighted item; while typing a name, adds a space to it |
+| Input | `↓` `↑`              | Highlights the next or the previous enabled item                      |
+| Input | `Enter`              | Selects the highlighted item; without one, submits a form             |
+| Input | `Home` `End` `←` `→` | Move the caret in the text                                            |
+
+Typeahead joins the letters typed less than half a second apart: "ba" finds "Bach" after
+"Banana". Pressing the same letter again moves on to the next item that starts with it.
+
+## Accessibility
+
+- **One focused element.** The list (or the input) keeps the focus, and `aria-activedescendant`
+  points to the highlighted option, so screen readers announce it as the keys move. The highlight
+  goes when the focus leaves the listbox, and comes back on the selected item, or the first one.
+- **Names.** `Listbox.Label` names the list and the input. Without it, give each an `aria-label`.
+- **States.** Options carry `aria-selected` and, when disabled, `aria-disabled`; a multiple
+  selection has `aria-multiselectable`. The indicator is hidden from assistive technology.
+- **The empty state** is not in the list: a list holds only options and groups. Announce result
+  counts with a polite status of your own.
+
+## How it works
+
+`Listbox.Root` runs the listbox machine of `@contour-ui/core`, `listbox.machine`, with
+`useMachine`. The machine has one state; the events change its context (the selection, the
+highlight, whether it has focus), and it needs nothing from the platform. The parts turn the keys
+into intents with `getListIntent` and `nextTypeahead` of core, and send the events:
+
+| Event                                            | Sent by                                     | What happens                                                               |
+| ------------------------------------------------ | ------------------------------------------- | -------------------------------------------------------------------------- |
+| `HIGHLIGHT.FIRST`, `.LAST`, `.NEXT`, `.PREVIOUS` | `Home`, `End`, `↓`, `↑`                     | the highlight moves to an enabled item; with `selectOnHighlight`, selects  |
+| `TYPEAHEAD`                                      | letters in the list                         | the item whose text starts with the query is highlighted                   |
+| `ITEM.HOVER`, `POINTER.LEAVE`                    | the pointer                                 | highlights the item under it; leaving a list without focus clears it       |
+| `ITEM.CLICK`                                     | a click                                     | highlights and selects the item                                            |
+| `HIGHLIGHTED.SELECT`                             | `Enter`, `Space`                            | selects the highlighted item                                               |
+| `CONTENT.FOCUS`, `INPUT.FOCUS`, `BLUR`           | focus                                       | highlights the selected or first item; clears the highlight on the way out |
+| `HIGHLIGHT.SET`, `ITEM.SELECT`, `VALUE.SET`      | `highlightValue`, `selectValue`, `setValue` | as their names say                                                         |
+
+The typeahead query is built in the adapter, from the time stamps of the key events: core keeps
+no clock. A new collection with other items clears a highlighted item that is gone, or, with
+`autoHighlight` while the listbox has focus, highlights the first item.
+
+## Hooks
+
+`useListbox` runs the machine without the parts: it takes the props of `Listbox.Root` and returns
+the API (`value`, `selectedItems`, `highlightedValue`, `highlightedItem`, `getItemState(item)`,
+`highlightValue()`, `highlightNext()`, `selectValue()`, `setValue()`, `clearValue()`…) and the
+props of each element: `getLabelProps()`, `getInputProps()`, `getContentProps()`,
+`getItemProps({ item })`, `getItemGroupProps({ labelId })` and the rest.
+
+```tsx
+import { useListbox } from '@contour-ui/headless';
+
+function Waveforms({ collection }) {
+  const listbox = useListbox({ collection });
+  return (
+    <div {...listbox.getContentProps()} aria-label="Waveform">
+      {collection.items.map((item) => (
+        <div key={item.value} {...listbox.getItemProps({ item })}>
+          {item.label}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+Inside `Listbox.Root`, `useListboxContext()` returns the same API, and inside `Listbox.Item`,
+`useListboxItemContext()` returns `{ item, state }`, for parts of your own:
+
+```tsx
+import { useListboxContext } from '@contour-ui/headless';
+
+function SelectionCount() {
+  const { value } = useListboxContext();
+  return <p>{`${value.length} selected`}</p>;
+}
+```
