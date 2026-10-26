@@ -15,7 +15,14 @@
     "control-lg": { "$value": "{base.space.32}" },
     "icon-sm":    { "$value": "{base.space.12}", "$description": "Icons next to label text, and in small icon buttons." },
     "icon-md":    { "$value": "{base.space.16}", "$description": "Standalone icons: medium icon buttons, alert indicators." },
-    "icon-lg":    { "$value": "{base.space.20}", "$description": "Icons in large icon buttons." }
+    "icon-lg":    { "$value": "{base.space.20}", "$description": "Icons in large icon buttons." },
+    "dialog-sm":  { "$value": "{base.size.400}", "$description": "Greatest width of a small dialog: questions, alert dialogs." },
+    "dialog-md":  { "$value": "{base.size.560}", "$description": "Greatest width of a medium dialog, the default: forms, search." },
+    "dialog-lg":  { "$value": "{base.size.800}", "$description": "Greatest width of a large dialog: longer content." },
+    "drawer-sm":  { "$value": "{base.size.320}", "$description": "Reach of a small drawer, the default: its width from a side, its greatest height from the top or the bottom." },
+    "drawer-md":  { "$value": "{base.size.448}", "$description": "Reach of a medium drawer: its width from a side, its greatest height from the top or the bottom." },
+    "drawer-lg":  { "$value": "{base.size.640}", "$description": "Reach of a large drawer: its width from a side, its greatest height from the top or the bottom." },
+    "popover":    { "$value": "{base.size.320}", "$description": "Greatest width of a popover, or the width of its trigger when that is wider." }
   },
   "radius": {
     "$type": "dimension",

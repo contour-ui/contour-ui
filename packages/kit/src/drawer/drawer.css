@@ -75,7 +75,7 @@
 
 .contour-drawer__content {
   /* How far the drawer reaches in: its width from a side, its greatest height from the top or the bottom. */
-  --contour-drawer-size: 320px;
+  --contour-drawer-size: var(--ct-size-drawer-sm);
 
   position: relative;
   display: flex;
@@ -104,11 +104,11 @@
 }
 
 .contour-drawer__content[data-size='md'] {
-  --contour-drawer-size: 448px;
+  --contour-drawer-size: var(--ct-size-drawer-md);
 }
 
 .contour-drawer__content[data-size='lg'] {
-  --contour-drawer-size: 640px;
+  --contour-drawer-size: var(--ct-size-drawer-lg);
 }
 
 .contour-drawer__content[data-size='full'] {

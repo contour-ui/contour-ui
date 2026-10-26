@@ -19,7 +19,7 @@ import {
   partOf,
   tokensIn,
 } from './token-docs.tsx';
-import type { Column } from './token-docs.tsx';
+import type { Column, TokenDoc } from './token-docs.tsx';
 
 /**
  * Token reference built from `src/generated/docs.json` (the Style Dictionary build):
@@ -187,13 +187,41 @@ export const Space: Story = {
   ),
 };
 
-/** Control heights. */
+/** Overlays whose sizes are `size.<overlay>` or `size.<overlay>-<size>`. */
+const OVERLAYS = new Set(['dialog', 'drawer', 'popover']);
+
+const isOverlaySize = (doc: TokenDoc): boolean =>
+  OVERLAYS.has(doc.token.slice('size.'.length).split('-')[0] ?? '');
+
+/** Control heights and icon sizes. */
 export const Size: Story = {
   render: () => (
     <TokenTable
       caption="Size"
-      rows={tokensIn('size.')}
+      rows={tokensIn('size.').filter((doc) => !isOverlaySize(doc))}
       columns={[sample('token-box', (ref) => ({ inlineSize: ref, blockSize: ref })), value]}
+    />
+  ),
+};
+
+/**
+ * How wide dialogs and popovers grow, and how far drawers reach in. The samples are drawn at a
+ * quarter of the size.
+ */
+export const OverlaySize: Story = {
+  render: () => (
+    <TokenTable
+      caption="Overlay size"
+      rows={tokensIn('size.').filter((doc) => isOverlaySize(doc))}
+      columns={[
+        {
+          title: 'Sample (1:4)',
+          render: (doc) => (
+            <Sample className="token-bar" style={{ inlineSize: `calc(var(${doc.name}) / 4)` }} />
+          ),
+        },
+        value,
+      ]}
     />
   ),
 };

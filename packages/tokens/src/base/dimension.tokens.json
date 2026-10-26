@@ -17,6 +17,16 @@
       "40": { "$value": { "value": 40, "unit": "px" } },
       "48": { "$value": { "value": 48, "unit": "px" } }
     },
+    "size": {
+      "$type": "dimension",
+      "$description": "Panel sizes past the space grid, on a 16px grid: how far overlays reach.",
+      "320": { "$value": { "value": 320, "unit": "px" } },
+      "400": { "$value": { "value": 400, "unit": "px" } },
+      "448": { "$value": { "value": 448, "unit": "px" } },
+      "560": { "$value": { "value": 560, "unit": "px" } },
+      "640": { "$value": { "value": 640, "unit": "px" } },
+      "800": { "$value": { "value": 800, "unit": "px" } }
+    },
     "radius": {
       "$type": "dimension",
       "0":    { "$value": { "value": 0,    "unit": "px" } },

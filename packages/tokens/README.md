@@ -6,8 +6,8 @@ properties and typed TS references.
 
 - **May depend on (internal):** nothing.
 - **Storybook:** token reference (port 6101) — tables of every custom property with its value and
-  alias per theme (color roles, syntax colors, palette, text styles, space, size, radius, border
-  width, shadow, layer, motion), built from `src/generated/docs.json`.
+  alias per theme (color roles, syntax colors, palette, text styles, space, size, overlay size,
+  radius, border width, shadow, layer, motion), built from `src/generated/docs.json`.
 
 ## Usage
 

@@ -105,6 +105,12 @@
   --ct-base-space-32: 32px;
   --ct-base-space-40: 40px;
   --ct-base-space-48: 48px;
+  --ct-base-size-320: 320px;
+  --ct-base-size-400: 400px;
+  --ct-base-size-448: 448px;
+  --ct-base-size-560: 560px;
+  --ct-base-size-640: 640px;
+  --ct-base-size-800: 800px;
   --ct-base-radius-0: 0px;
   --ct-base-radius-2: 2px;
   --ct-base-radius-4: 4px;
@@ -153,6 +159,13 @@
   --ct-size-icon-sm: var(--ct-base-space-12);
   --ct-size-icon-md: var(--ct-base-space-16);
   --ct-size-icon-lg: var(--ct-base-space-20);
+  --ct-size-dialog-sm: var(--ct-base-size-400);
+  --ct-size-dialog-md: var(--ct-base-size-560);
+  --ct-size-dialog-lg: var(--ct-base-size-800);
+  --ct-size-drawer-sm: var(--ct-base-size-320);
+  --ct-size-drawer-md: var(--ct-base-size-448);
+  --ct-size-drawer-lg: var(--ct-base-size-640);
+  --ct-size-popover: var(--ct-base-size-320);
   --ct-radius-control: var(--ct-base-radius-4);
   --ct-radius-panel: var(--ct-base-radius-8);
   --ct-radius-round: var(--ct-base-radius-full);

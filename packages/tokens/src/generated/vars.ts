@@ -27,6 +27,20 @@ export const vars = {
     'icon-md': 'var(--ct-size-icon-md)',
     /** Icons in large icon buttons. */
     'icon-lg': 'var(--ct-size-icon-lg)',
+    /** Greatest width of a small dialog: questions, alert dialogs. */
+    'dialog-sm': 'var(--ct-size-dialog-sm)',
+    /** Greatest width of a medium dialog, the default: forms, search. */
+    'dialog-md': 'var(--ct-size-dialog-md)',
+    /** Greatest width of a large dialog: longer content. */
+    'dialog-lg': 'var(--ct-size-dialog-lg)',
+    /** Reach of a small drawer, the default: its width from a side, its greatest height from the top or the bottom. */
+    'drawer-sm': 'var(--ct-size-drawer-sm)',
+    /** Reach of a medium drawer: its width from a side, its greatest height from the top or the bottom. */
+    'drawer-md': 'var(--ct-size-drawer-md)',
+    /** Reach of a large drawer: its width from a side, its greatest height from the top or the bottom. */
+    'drawer-lg': 'var(--ct-size-drawer-lg)',
+    /** Greatest width of a popover, or the width of its trigger when that is wider. */
+    popover: 'var(--ct-size-popover)',
   },
   radius: {
     control: 'var(--ct-radius-control)',

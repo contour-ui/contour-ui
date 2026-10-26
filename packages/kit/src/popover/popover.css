@@ -42,10 +42,10 @@
   gap: var(--ct-space-group-gap);
   box-sizing: border-box;
   /*
-   * As wide as its content, up to 320px; never narrower than that cap lets a trigger that is
-   * wider, so that `sameWidth` content is as wide as its trigger.
+   * As wide as its content, up to the popover size, or up to the width of a wider trigger, so
+   * that `sameWidth` content is as wide as its trigger.
    */
-  max-inline-size: max(320px, var(--reference-width, 0px));
+  max-inline-size: max(var(--ct-size-popover), var(--reference-width, 0px));
   max-block-size: var(--available-height);
   margin: 0;
   padding: var(--ct-space-panel-inset);

@@ -101,15 +101,15 @@
 }
 
 .contour-dialog__content[data-size='sm'] {
-  max-inline-size: 400px;
+  max-inline-size: var(--ct-size-dialog-sm);
 }
 
 .contour-dialog__content[data-size='md'] {
-  max-inline-size: 560px;
+  max-inline-size: var(--ct-size-dialog-md);
 }
 
 .contour-dialog__content[data-size='lg'] {
-  max-inline-size: 800px;
+  max-inline-size: var(--ct-size-dialog-lg);
 }
 
 .contour-dialog__content[data-state='open'] {

@@ -138,12 +138,15 @@ other options are on the [Headless page](/docs/headless/popover#placement).
 
 ## Size
 
-The content is as wide as what it holds, up to 320px, and as wide as its trigger with `sameWidth`.
-It is never higher than the room it has between its trigger and the edge of the viewport: past
-that, it scrolls. For another width, set it on the content:
+The content is as wide as what it holds, up to 320px (`--ct-size-popover`), and as wide as its
+trigger with `sameWidth`. It is never higher than the room it has between its trigger and the edge
+of the viewport: past that, it scrolls. For another greatest width, set the token on the content,
+with a class of your own:
 
-```tsx
-<Popover.Content style={{ inlineSize: '24rem' }}>
+```css
+.wide-popover {
+  --ct-size-popover: 24rem;
+}
 ```
 
 ## A choice from a list
@@ -261,6 +264,7 @@ part's class.
 | `--ct-color-border-default`, `--ct-border-width-default` | its border                                           |
 | `--ct-radius-panel`                                      | its corners                                          |
 | `--ct-shadow-raised`                                     | its shadow                                           |
+| `--ct-size-popover`                                      | its greatest width, unless its trigger is wider      |
 | `--ct-space-panel-inset`                                 | its padding                                          |
 | `--ct-space-group-gap`                                   | the gap between its parts, the inset of the x        |
 | `--ct-color-fg-default`, `--ct-text-body`                | its text                                             |

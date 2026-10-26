@@ -241,13 +241,13 @@ const tokens = {
         const target = aliasPath(token['$value'])?.join('.') ?? '';
         return `${typeof description === 'string' ? description : ''} Resolves to ${target}.`;
       }),
-      ...list(
-        semanticGroup('size'),
-        'ct-size',
-        resolvedDimension,
-        (key) =>
-          `Height of ${(key.split('-')[1] ?? key).toUpperCase()} controls: buttons, inputs, selects.`,
-      ),
+      ...list(base['size'], 'ct-base-size', cssUnitValue, (key) => `Base panel size, ${key}px.`),
+      ...list(semanticGroup('size'), 'ct-size', resolvedDimension, (key, token) => {
+        const description = token['$description'];
+        return typeof description === 'string'
+          ? description
+          : `Height of ${(key.split('-')[1] ?? key).toUpperCase()} controls: buttons, inputs, selects.`;
+      }),
     ],
   },
   radius: {
