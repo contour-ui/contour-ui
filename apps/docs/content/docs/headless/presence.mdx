@@ -1,0 +1,188 @@
+---
+title: Presence
+description: Shows and hides an element with the state of its owner, and keeps it on screen while its exit animation runs.
+---
+
+```tsx
+import { Presence } from '@contour-ui/headless';
+
+<Presence present={open} className="details">
+  Ships in two days.
+</Presence>;
+```
+
+```css
+@keyframes details-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes details-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.details[data-state='open'] {
+  animation: details-in 200ms ease-out;
+}
+
+.details[data-state='closed'] {
+  animation: details-out 150ms ease-in;
+}
+```
+
+`Presence` renders a `div` that shows while `present` is `true`, with `data-state="open"`. When
+`present` turns `false`, `data-state` turns `"closed"`; if that starts an animation, the element
+stays on screen until the animation ends, and only then gets `hidden`. Without an exit animation,
+it is hidden at once.
+
+## Exit animations
+
+- **What counts.** Presence looks at the CSS animations of the element itself once
+  `data-state="closed"` applies. An `animation-name` that the open state did not have is an exit
+  animation, and Presence waits until every one of them ends or is cancelled. The animations of
+  the children do not count, and neither do CSS transitions: use `@keyframes`.
+- **Nothing to wait for.** No animation, `@keyframes` that do not exist, `display: none`, a
+  duration of `0s` or an endless animation: the element is hidden at once, before the browser
+  paints it.
+- **A name of its own.** An animation of both states keeps running and is no exit. Give the closed
+  state its own `@keyframes`: the open animation reversed (`animation-direction: reverse`) keeps
+  its name, so the browser does not run it again.
+- **While it runs**, the element is `inert`: it takes no clicks and no focus, and screen readers
+  skip it.
+- **Open again.** `present` turning `true` during the exit cancels it: the element shows again,
+  with `data-state="open"`.
+- **No flash.** The element is hidden in the frame in which its animation ends, so the browser
+  never paints it without the animation: `animation-fill-mode` is not needed.
+
+Under `prefers-reduced-motion: reduce`, keep a short fade without movement, or no animation at
+all: both work.
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .details[data-state='open'],
+  .details[data-state='closed'] {
+    animation: none;
+  }
+}
+```
+
+## Mounting
+
+By default, the element is mounted from the start and stays mounted: `hidden` while closed, so it
+keeps its state, such as the text of a field. `lazyMount` waits for the first `present` to mount
+it, and `unmountOnExit` unmounts it once it has closed.
+
+| `lazyMount` | `unmountOnExit` | Before it first opens | Once it has closed       |
+| ----------- | --------------- | --------------------- | ------------------------ |
+| `false`     | `false`         | mounted, `hidden`     | mounted, `hidden`        |
+| `true`      | `false`         | not rendered          | mounted, `hidden`        |
+| `false`     | `true`          | mounted, `hidden`     | unmounted after the exit |
+| `true`      | `true`          | not rendered          | unmounted after the exit |
+
+`onExitComplete` is called each time the element has closed, once it is hidden or unmounted: when
+its exit animation ends, or right after `present` turns `false` if it has none.
+
+## Styling
+
+Headless renders no CSS: the animations are yours, keyed on `data-state`. `hidden` hides the
+element through the browser's own `display: none`, which any `display` of yours overrides. If your
+CSS sets `display` on the element, hide it again:
+
+```css
+.details[hidden] {
+  display: none;
+}
+```
+
+## Anatomy
+
+| Part       | Element | Attributes                                                                                   |
+| ---------- | ------- | -------------------------------------------------------------------------------------------- |
+| `Presence` | `div`   | `data-scope="presence" data-part="root"`, `data-state="open" \| "closed"`, `hidden`, `inert` |
+
+`hidden` is present while the element is closed and its exit animation is over, `inert` while the
+exit animation runs.
+
+## Props
+
+| Prop             | Type         | Default |
+| ---------------- | ------------ | ------- |
+| `present`        | `boolean`    | —       |
+| `lazyMount`      | `boolean`    | `false` |
+| `unmountOnExit`  | `boolean`    | `false` |
+| `onExitComplete` | `() => void` | —       |
+| `asChild`        | `boolean`    | `false` |
+
+`present` is required. Other `div` props, such as `className` and `ref`, are passed to the
+element. With `asChild`, Presence renders its only child instead, with the attributes merged in.
+
+## Hooks
+
+`usePresence` is Presence without its element, for a part that renders its own, such as the
+content of an overlay. It takes `present`, `lazyMount`, `unmountOnExit` and `onExitComplete`, and
+returns:
+
+| Field                | Type                                        | What it is                                                              |
+| -------------------- | ------------------------------------------- | ----------------------------------------------------------------------- |
+| `mounted`            | `boolean`                                   | Whether to render the element: render `null` while it is `false`        |
+| `visible`            | `boolean`                                   | Whether the element shows: while `present`, and until its exit ends     |
+| `ref`                | `RefCallback<Element>`                      | The ref of the element that carries `data-state` and runs the animation |
+| `getPresenceProps()` | `() => { hidden: boolean; inert: boolean }` | `hidden` and `inert`, for the element and for parts that show with it   |
+
+The part renders `data-state` from its own state, and combines the ref with its own:
+
+```tsx
+import { mergeProps, Primitive, useComposedRefs, usePresence } from '@contour-ui/headless';
+
+function Panel({ open, ref, ...props }: PanelProps) {
+  const presence = usePresence({ present: open, unmountOnExit: true });
+  const composedRef = useComposedRefs(presence.ref, ref);
+  if (!presence.mounted) {
+    return null;
+  }
+  const ownProps = { 'data-state': open ? 'open' : 'closed', ...presence.getPresenceProps() };
+  return <Primitive.div {...mergeProps(ownProps, props)} ref={composedRef} />;
+}
+```
+
+Several parts can share one presence. The element that animates takes the ref, and the parts
+around it spread the same props and render while `mounted`, so that a positioner stays on screen
+until the exit animation of the content inside it ends:
+
+```tsx
+function Layer({ open, children }: LayerProps) {
+  const { mounted, ref, getPresenceProps } = usePresence({ present: open });
+  if (!mounted) {
+    return null;
+  }
+  return (
+    <div className="positioner" {...getPresenceProps()}>
+      <div
+        ref={ref}
+        className="content"
+        data-state={open ? 'open' : 'closed'}
+        {...getPresenceProps()}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+```
+
+Take `ref` apart from the rest, as here, or pass it through `useComposedRefs`: the lint of the
+React Compiler takes an object whose member goes straight into a `ref` attribute for a ref, and
+then reports every other read of it during render.
+
+## How it works
+
+Once React has committed the closed state, Presence reads the animations of the element through
+the Web Animations API (`element.getAnimations()`) and waits for the `finished` promise of each
+exit animation. That promise settles when the animation ends (the moment of `animationend`) or is
+cancelled (`animationcancel`), even for an animation cancelled before it started, for which the
+browser sends no event, and it belongs to these animations alone: neither those of the children
+nor an earlier exit can end the wait. In a DOM without the Web Animations API, such as jsdom,
+nothing animates, and the element is hidden at once.

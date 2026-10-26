@@ -2,5 +2,13 @@
   "title": "Headless",
   "description": "Unstyled components for your own look",
   "root": true,
-  "pages": ["index", "---Components---", "clipboard", "placeholder"]
+  "pages": [
+    "index",
+    "---Components---",
+    "clipboard",
+    "placeholder",
+    "---Utilities---",
+    "portal",
+    "presence"
+  ]
 }

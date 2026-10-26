@@ -1,0 +1,87 @@
+---
+title: Portal
+description: Renders its children at the end of the page or into another container, so that an overlay escapes the overflow and the stacking of its parents.
+---
+
+```tsx
+import { Portal } from '@contour-ui/headless';
+
+<Portal>
+  <div className="toast">Saved</div>
+</Portal>;
+```
+
+`Portal` renders its children at the end of `document.body`, outside the element it sits in, so
+that an overlay, such as the content of a popover or of a dialog, is not cut off by a parent with
+`overflow: hidden` and does not end up under the content that comes after it. It renders no
+element of its own.
+
+Only the DOM moves. In React, the children stay where the portal is: they read the context around
+it, and their events, such as a click, bubble up through the components around the portal, not
+through `body`.
+
+## Container
+
+`container` renders the children into another element: the element itself, or a ref to it. A shadow
+root works too.
+
+```tsx
+const layerRef = useRef<HTMLDivElement>(null);
+
+<>
+  <div ref={layerRef} className="layer" />
+  <Portal container={layerRef}>…</Portal>
+</>;
+```
+
+The portal reads the ref again after each of its commits, so the element may be rendered in the
+same commit as the portal, or later. While there is no element, with `container={null}` or a ref
+that is still empty, the portal renders nothing: it never falls back to `document.body`, where the
+children would mount, only to move once the container is there.
+
+## In place
+
+`disabled` renders the children where the portal is, as if there were none: for content that is
+an overlay in one layout and part of the page in another.
+
+```tsx
+<Portal disabled={inline}>
+  <Menu />
+</Portal>
+```
+
+## Server rendering
+
+On the server, `Portal` renders nothing, and so does the render that hydrates that markup in the
+browser: the markup matches, so React reports no mismatch. The children are rendered into the
+container right after hydration. A page rendered in the browser alone gets them at once, in the
+same commit. With `disabled`, the children are part of the markup, on the server and in the
+browser alike.
+
+## With Presence
+
+Overlays combine the two: `Portal` puts the content at the end of the page, and
+[Presence](/docs/headless/presence) keeps it on screen while its exit animation runs.
+
+```tsx
+<Portal>
+  <Presence present={open} unmountOnExit className="toast">
+    Saved
+  </Presence>
+</Portal>
+```
+
+## Props
+
+| Prop        | Type                                                                                    | Default         |
+| ----------- | --------------------------------------------------------------------------------------- | --------------- |
+| `container` | `Element \| DocumentFragment \| RefObject<Element \| DocumentFragment \| null> \| null` | `document.body` |
+| `disabled`  | `boolean`                                                                               | `false`         |
+| `children`  | `ReactNode`                                                                             | —               |
+
+## Accessibility
+
+At the end of `body`, the children come last in the reading order and in the Tab order of the
+page. An overlay that renders through a portal moves focus into its content when it opens, and
+back to the element that opened it when it closes, so that keyboard and screen reader users get
+there and back.
