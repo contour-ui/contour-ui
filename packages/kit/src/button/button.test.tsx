@@ -54,6 +54,9 @@ describe('Button', () => {
     const screen = await render(<Button>Save</Button>);
     const button = screen.getByRole('button', { name: 'Save' });
     const accentFill = computed('background-color', vars.color.accent.fill);
+    // The pointer stays where earlier tests on the page left it; over the button, it would give it
+    // the hover fill.
+    await userEvent.unhover(button);
 
     // The token resolves to a real color (tokens.css is loaded), and the kit uses it.
     expect(accentFill).toMatch(/^oklch\(/u);
@@ -124,6 +127,8 @@ describe('Button', () => {
     );
     const transparent = computed('background-color', 'transparent');
     const foreground = computed('color', vars.color.fg.default);
+    // Off the buttons, wherever earlier tests on the page left the pointer.
+    await userEvent.unhover(screen.getByRole('button', { name: 'Ghost' }));
 
     await expect.element(screen.getByRole('button', { name: 'Subtle' })).toHaveStyle({
       backgroundColor: computed('background-color', vars.color.bg.hover),

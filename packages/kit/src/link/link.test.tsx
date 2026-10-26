@@ -64,6 +64,9 @@ describe('Link', () => {
     );
     const link = screen.getByRole('link', { name: 'Docs' });
     const accentForeground = computed('color', vars.color.accent.fg);
+    // The pointer stays where earlier tests on the page left it; over the link, it would thicken
+    // the underline.
+    await userEvent.unhover(link);
 
     // The token resolves to a real color (tokens.css is loaded), and the kit uses it.
     expect(accentForeground).toMatch(/^oklch\(/u);
@@ -86,6 +89,8 @@ describe('Link', () => {
     const plain = screen.getByRole('link', { name: 'Plain' });
     const underline = screen.getByRole('link', { name: 'Underline' });
     const thick = computed('padding-top', `calc(2 * ${vars['border-width'].default})`);
+    // Off both links first, wherever earlier tests on the page left the pointer.
+    await userEvent.unhover(plain);
 
     await expect.element(plain).toHaveStyle({ textDecorationLine: 'none' });
     await userEvent.hover(plain);

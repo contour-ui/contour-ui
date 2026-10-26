@@ -117,6 +117,9 @@ describe('Toc', () => {
     const nav = screen.getByRole('navigation');
     const intro = screen.getByRole('link', { name: 'Introduction' });
     const usage = screen.getByRole('link', { name: 'Usage' });
+    // The pointer stays where earlier tests on the page left it; over a link, it would give the
+    // link the default color.
+    await userEvent.unhover(usage);
 
     await expect.element(intro).toHaveAttribute('data-active');
     await expect.element(intro).toHaveStyle({ color: color(vars.color.fg.default) });
