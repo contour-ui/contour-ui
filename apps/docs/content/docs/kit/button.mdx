@@ -79,7 +79,9 @@ other actions a quieter variant.
 ## Sizes
 
 `size` sets the height: `sm` (20 px), `md` (24 px, the default) or `lg` (32 px), the control
-heights of the tokens. The label keeps the same text style in every size.
+heights of the tokens. `sm` and `md` share the label, the side padding and the gap between an icon
+and the label; `lg` has a larger label (13 px instead of 11 px), wider sides (12 px instead of 6 px)
+and a wider gap (6 px instead of 4 px), in proportion to its height.
 
 <Preview>
   <div
@@ -345,8 +347,9 @@ its fill for `--ct-color-bg-hover`. The focus ring is `--ct-border-width-focus` 
 `--ct-color-border-focus`, offset by the same width. Colors change with `--ct-motion-feedback`.
 
 The height is `--ct-size-control-sm`, `-md` or `-lg`, and an IconButton is as wide as it is high.
-`--ct-space-control-inset` pads the sides of a button with a label, `--ct-space-control-gap`
-separates its icon from the label; corners are `--ct-radius-control`, the border
-`--ct-border-width-default`, the label the `label` text style. Icons next to a label are
-`--ct-size-icon-sm` (`--ct-size-icon-md` in `lg`); the icon of an IconButton is
-`--ct-size-icon-sm`, `-md` or `-lg`, following its size.
+`--ct-space-control-inset` pads the sides of a button with a label (`--ct-space-control-inset-lg`
+in `lg`), `--ct-space-control-gap` separates its icon from the label (`--ct-space-control-gap-lg`
+in `lg`); corners are
+`--ct-radius-control`, the border `--ct-border-width-default`, the label the `label` text style
+(`label-lg` in `lg`). Icons next to a label are `--ct-size-icon-sm` (`--ct-size-icon-md` in `lg`);
+the icon of an IconButton is `--ct-size-icon-sm`, `-md` or `-lg`, following its size.

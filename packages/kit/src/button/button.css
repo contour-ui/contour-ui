@@ -31,6 +31,11 @@
     color var(--ct-motion-feedback);
 }
 
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-button[hidden] {
+  display: none;
+}
+
 .contour-button[data-size='sm'] {
   block-size: var(--ct-size-control-sm);
 }
@@ -39,8 +44,13 @@
   block-size: var(--ct-size-control-md);
 }
 
+/* A larger label, inset and icon gap to suit the height; `sm` and `md` share the base ones. */
 .contour-button[data-size='lg'] {
   block-size: var(--ct-size-control-lg);
+  gap: var(--ct-space-control-gap-lg);
+  padding-inline: var(--ct-space-control-inset-lg);
+  font: var(--ct-text-label-lg);
+  letter-spacing: var(--ct-text-label-lg-letter-spacing);
 }
 
 /* Icons next to the label. CSS sizes win over the `<svg>` width and height attributes. */
@@ -99,8 +109,11 @@
   background-color: var(--ct-color-bg-hover);
 }
 
-/* IconButton: square, no inline padding, a larger icon per size. */
-.contour-icon-button {
+/*
+ * IconButton: square, no inline padding, a larger icon per size. Both classes, so it outranks the
+ * inset of a `lg` Button.
+ */
+.contour-button.contour-icon-button {
   padding-inline: 0;
 }
 

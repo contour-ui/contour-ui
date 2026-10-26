@@ -2,11 +2,13 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "space": {
     "$type": "dimension",
-    "control-inset": { "$value": "{base.space.6}", "$description": "Horizontal padding inside buttons, inputs, selects." },
-    "control-gap":   { "$value": "{base.space.4}", "$description": "Gap between icon and label, or between a control and its value readout." },
-    "group-gap":     { "$value": "{base.space.8}", "$description": "Gap between controls inside one group." },
-    "section-gap":   { "$value": "{base.space.16}", "$description": "Gap between panels or sections." },
-    "panel-inset":   { "$value": "{base.space.12}", "$description": "Padding inside a panel." }
+    "control-inset":    { "$value": "{base.space.6}", "$description": "Horizontal padding inside sm and md buttons, inputs, selects." },
+    "control-inset-lg": { "$value": "{base.space.12}", "$description": "Horizontal padding inside lg buttons, inputs, selects." },
+    "control-gap":      { "$value": "{base.space.4}", "$description": "Gap between icon and label in sm and md controls, or between a control and its value readout." },
+    "control-gap-lg":   { "$value": "{base.space.6}", "$description": "Gap between icon and label in lg controls." },
+    "group-gap":        { "$value": "{base.space.8}", "$description": "Gap between controls inside one group." },
+    "section-gap":      { "$value": "{base.space.16}", "$description": "Gap between panels or sections." },
+    "panel-inset":      { "$value": "{base.space.12}", "$description": "Padding inside a panel." }
   },
   "size": {
     "$type": "dimension",

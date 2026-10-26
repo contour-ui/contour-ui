@@ -169,6 +169,54 @@ describe('Button', () => {
     );
   });
 
+  it('takes a larger label, inset and icon gap in lg', async () => {
+    const screen = await render(
+      <>
+        {sizes.map((size) => (
+          <Button key={size} size={size}>
+            Save {size}
+          </Button>
+        ))}
+      </>,
+    );
+    const buttons = sizes.map((size) =>
+      screen.getByRole('button', { name: `Save ${size}` }).element(),
+    );
+    const roles = {
+      sm: { text: 'label', inset: 'control-inset', gap: 'control-gap' },
+      md: { text: 'label', inset: 'control-inset', gap: 'control-gap' },
+      lg: { text: 'label-lg', inset: 'control-inset-lg', gap: 'control-gap-lg' },
+    } as const;
+
+    expect(
+      buttons.map((button) => {
+        const style = getComputedStyle(button);
+        return {
+          paddingLeft: style.paddingLeft,
+          paddingRight: style.paddingRight,
+          columnGap: style.columnGap,
+          fontFamily: style.fontFamily,
+          fontSize: style.fontSize,
+          fontWeight: style.fontWeight,
+          letterSpacing: style.letterSpacing,
+        };
+      }),
+    ).toStrictEqual(
+      sizes.map((size) => {
+        const { text, inset, gap } = roles[size];
+        return {
+          paddingLeft: length(vars.space[inset]),
+          paddingRight: length(vars.space[inset]),
+          columnGap: length(vars.space[gap]),
+          fontFamily: computed('font-family', vars.text[text].fontFamily),
+          fontSize: computed('font-size', vars.text[text].fontSize),
+          fontWeight: computed('font-weight', vars.text[text].fontWeight),
+          letterSpacing: computed('letter-spacing', vars.text[text].letterSpacing),
+        };
+      }),
+    );
+  });
+
   it('disables a button with the disabled attribute', async () => {
     const onClick = vi.fn<() => void>();
     const screen = await render(
@@ -191,6 +239,12 @@ describe('Button', () => {
     click(button.element());
 
     expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it('hides with `hidden`, though it sets its display', async () => {
+    const screen = await render(<Button hidden>Save</Button>);
+
+    expect(getComputedStyle(screen.getByText('Save').element()).display).toBe('none');
   });
 
   it('renders its child with asChild', async () => {
@@ -344,7 +398,7 @@ describe('IconButton', () => {
     expect(element.props).not.toHaveProperty('label');
   });
 
-  it('is square, with a larger icon in each size', async () => {
+  it('is square, with no inset and a larger icon in each size', async () => {
     const screen = await render(
       <>
         {sizes.map((size) => (
@@ -359,6 +413,13 @@ describe('IconButton', () => {
     expect(buttons.map((button) => sizeOf(button))).toStrictEqual(
       sizes.map((size) => square(length(vars.size[`control-${size}`]))),
     );
+    // No inset in any size: the inset of a `lg` Button does not reach an IconButton.
+    expect(
+      buttons.map((button) => {
+        const { paddingLeft, paddingRight } = getComputedStyle(button);
+        return { paddingLeft, paddingRight };
+      }),
+    ).toStrictEqual(sizes.map(() => ({ paddingLeft: '0px', paddingRight: '0px' })));
     expect(buttons.map((button) => sizeOf(iconOf(button)))).toStrictEqual(
       sizes.map((size) => square(length(vars.size[`icon-${size}`]))),
     );

@@ -149,7 +149,9 @@
   --ct-base-easing-out: cubic-bezier(0, 0, 0.2, 1);
   --ct-base-easing-in: cubic-bezier(0.4, 0, 1, 1);
   --ct-space-control-inset: var(--ct-base-space-6);
+  --ct-space-control-inset-lg: var(--ct-base-space-12);
   --ct-space-control-gap: var(--ct-base-space-4);
+  --ct-space-control-gap-lg: var(--ct-base-space-6);
   --ct-space-group-gap: var(--ct-base-space-8);
   --ct-space-section-gap: var(--ct-base-space-16);
   --ct-space-panel-inset: var(--ct-base-space-12);
@@ -189,6 +191,12 @@
   --ct-text-label-font-weight: var(--ct-base-font-weight-medium);
   --ct-text-label-line-height: var(--ct-base-line-height-tight);
   --ct-text-label-letter-spacing: var(--ct-base-letter-spacing-wide);
+  --ct-text-label-lg: var(--ct-text-label-lg-font-weight) var(--ct-text-label-lg-font-size)/var(--ct-text-label-lg-line-height) var(--ct-text-label-lg-font-family);
+  --ct-text-label-lg-font-family: var(--ct-base-font-family-ui);
+  --ct-text-label-lg-font-size: var(--ct-base-font-size-13);
+  --ct-text-label-lg-font-weight: var(--ct-base-font-weight-medium);
+  --ct-text-label-lg-line-height: var(--ct-base-line-height-tight);
+  --ct-text-label-lg-letter-spacing: var(--ct-base-letter-spacing-normal);
   --ct-text-value: var(--ct-text-value-font-weight) var(--ct-text-value-font-size)/var(--ct-text-value-line-height) var(--ct-text-value-font-family);
   --ct-text-value-font-family: var(--ct-base-font-family-mono);
   --ct-text-value-font-size: var(--ct-base-font-size-12);

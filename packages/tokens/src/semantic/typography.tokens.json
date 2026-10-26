@@ -30,6 +30,16 @@
         "letterSpacing": "{base.letter-spacing.wide}"
       }
     },
+    "label-lg": {
+      "$description": "Labels of lg controls, such as lg buttons. Body-sized, so without the letter spacing that small labels need.",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.13}",
+        "fontWeight": "{base.font-weight.medium}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
     "value": {
       "$description": "Numeric readouts: -6.0 dB, 1.2 kHz. Monospace so digits do not shift while the value changes.",
       "$value": {

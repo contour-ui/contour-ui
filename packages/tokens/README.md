@@ -39,8 +39,12 @@ vars.color.bg.surface; // 'var(--ct-color-bg-surface)'
   A story test checks that every family × weight from the tokens actually loads.
 - **Typography:** each text style is `--ct-text-<style>` (`font` shorthand) plus
   `--ct-text-<style>-font-family | -font-size | -font-weight | -line-height | -letter-spacing`.
-  The dense plugin styles (`heading`, `body`, `label`, `value`, `caption`) have long-form
-  companions for docs pages: `display`, `title`, `subtitle` (h1–h3), `prose` and `code`.
+  The dense plugin styles (`heading`, `body`, `label`, `label-lg`, `value`, `caption`) have
+  long-form companions for docs pages: `display`, `title`, `subtitle` (h1–h3), `prose` and `code`.
+- **Control sizes:** `--ct-size-control-sm | -md | -lg` are the heights of controls. `sm` and `md`
+  share the label (`--ct-text-label`), the side padding (`--ct-space-control-inset`) and the gap
+  between icon and label (`--ct-space-control-gap`); `lg` has its own: `--ct-text-label-lg`,
+  `--ct-space-control-inset-lg` and `--ct-space-control-gap-lg`.
 - **Code highlighting:** `--ct-color-syntax-<name>` uses the names of Shiki's `css-variables`
   theme (`--shiki-token-<name>`); every one is at least 4.5:1 on `bg-inset`, the code block
   background.

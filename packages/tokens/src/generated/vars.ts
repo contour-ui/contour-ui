@@ -6,10 +6,14 @@
  */
 export const vars = {
   space: {
-    /** Horizontal padding inside buttons, inputs, selects. */
+    /** Horizontal padding inside sm and md buttons, inputs, selects. */
     'control-inset': 'var(--ct-space-control-inset)',
-    /** Gap between icon and label, or between a control and its value readout. */
+    /** Horizontal padding inside lg buttons, inputs, selects. */
+    'control-inset-lg': 'var(--ct-space-control-inset-lg)',
+    /** Gap between icon and label in sm and md controls, or between a control and its value readout. */
     'control-gap': 'var(--ct-space-control-gap)',
+    /** Gap between icon and label in lg controls. */
+    'control-gap-lg': 'var(--ct-space-control-gap-lg)',
     /** Gap between controls inside one group. */
     'group-gap': 'var(--ct-space-group-gap)',
     /** Gap between panels or sections. */
@@ -76,6 +80,15 @@ export const vars = {
       fontWeight: 'var(--ct-text-label-font-weight)',
       lineHeight: 'var(--ct-text-label-line-height)',
       letterSpacing: 'var(--ct-text-label-letter-spacing)',
+    },
+    /** Labels of lg controls, such as lg buttons. Body-sized, so without the letter spacing that small labels need. */
+    'label-lg': {
+      font: 'var(--ct-text-label-lg)',
+      fontFamily: 'var(--ct-text-label-lg-font-family)',
+      fontSize: 'var(--ct-text-label-lg-font-size)',
+      fontWeight: 'var(--ct-text-label-lg-font-weight)',
+      lineHeight: 'var(--ct-text-label-lg-line-height)',
+      letterSpacing: 'var(--ct-text-label-lg-letter-spacing)',
     },
     /** Numeric readouts: -6.0 dB, 1.2 kHz. Monospace so digits do not shift while the value changes. */
     value: {

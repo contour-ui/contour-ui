@@ -212,7 +212,9 @@ const tokens = {
       {
         name: 'Text',
         family: 'ui',
-        styles: ['heading', 'body', 'label', 'caption'].map((style) => textStyle(style, 'Gain')),
+        styles: ['heading', 'body', 'label', 'label-lg', 'caption'].map((style) =>
+          textStyle(style, 'Gain'),
+        ),
       },
       {
         name: 'Numeric',

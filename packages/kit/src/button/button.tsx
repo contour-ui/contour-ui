@@ -14,7 +14,10 @@ export interface ButtonProps extends PrimitiveProps<'button'> {
    */
   variant?: 'solid' | 'subtle' | 'outline' | 'ghost' | undefined;
   /**
-   * Height: `sm`, `md` or `lg`, the `--ct-size-control-*` tokens.
+   * Height: `sm`, `md` or `lg`, the `--ct-size-control-*` tokens. In `lg`, the
+   * label is larger too, with wider sides and a wider gap to its icon: the
+   * `label-lg` text style, `--ct-space-control-inset-lg` and
+   * `--ct-space-control-gap-lg`.
    *
    * @defaultValue 'md'
    */
