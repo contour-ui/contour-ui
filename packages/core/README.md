@@ -48,6 +48,11 @@ need, without a DOM) and its types (`Schema`, `Input`, `Api`…).
   `onOpenChange` and the state follows the prop. While open, the platform effects `dismiss`,
   `trapFocus`, `preventScroll` and `hideOutside` run (`modal` turns the last three on); the
   platform actions `setInitialFocus` and `restoreFocus` move focus in on open and back on close.
+- `toc` — one state, `observing`, with the platform effect `observeHeadings`, which reports each
+  heading as `above`, `inside` or `below` the observed area (`VISIBILITY.CHANGE`). The headings
+  inside are active, in the order of `items`; when none is, the last one above stays active.
+  `activeIds` may be controlled; `SCROLL_TO` asks the platform action `scrollToHeading` to scroll;
+  new `items`, `rootMargin` or `threshold` restart the observation.
 
 ```ts
 import { clipboard, createService } from '@contour-ui/core';

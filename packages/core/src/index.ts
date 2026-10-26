@@ -35,3 +35,4 @@ export type {
 
 export * as clipboard from './states/clipboard/index.ts';
 export * as dialog from './states/dialog/index.ts';
+export * as toc from './states/toc/index.ts';
