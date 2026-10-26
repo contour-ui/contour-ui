@@ -2,5 +2,15 @@
   "title": "Kit",
   "description": "Styled general-purpose components",
   "root": true,
-  "pages": ["index", "---Components---", "alert", "button", "card", "icon", "link", "placeholder"]
+  "pages": [
+    "index",
+    "---Components---",
+    "alert",
+    "button",
+    "card",
+    "icon",
+    "kbd",
+    "link",
+    "placeholder"
+  ]
 }

@@ -1,0 +1,38 @@
+.contour-kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0;
+  padding-block: 0;
+  /* Relative to the text, so a single character stays within the square of either size. */
+  padding-inline: 0.25em;
+  /* A raised key: the bottom edge is twice as thick as the others. */
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-block-end-width: calc(2 * var(--ct-border-width-default));
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-bg-surface);
+  color: var(--ct-color-fg-muted);
+  /*
+   * The UI family, as in macOS menus: the code font has no ⌘ ⌥ ⇧ ⌃, and the monospace
+   * fallbacks draw them smaller than letters; system-ui draws them full size.
+   */
+  font-family: var(--ct-text-label-font-family);
+  font-weight: var(--ct-text-label-font-weight);
+  line-height: 1;
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  white-space: nowrap;
+}
+
+/* The minimum width equals the height: a single character sits on a square key. */
+.contour-kbd[data-size='md'] {
+  min-inline-size: var(--ct-size-icon-lg);
+  block-size: var(--ct-size-icon-lg);
+  font-size: var(--ct-text-body-font-size);
+}
+
+.contour-kbd[data-size='sm'] {
+  min-inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+  font-size: var(--ct-text-label-font-size);
+}

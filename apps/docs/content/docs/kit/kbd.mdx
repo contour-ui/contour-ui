@@ -1,0 +1,69 @@
+---
+title: Kbd
+description: A keyboard key, for shortcuts in text and on controls.
+---
+
+import { Kbd } from '@contour-ui/kit';
+import { vars } from '@contour-ui/tokens';
+
+<Preview>
+  <div style={{ display: 'grid', justifyItems: 'start', gap: vars.space['group-gap'] }}>
+    <span style={{ display: 'inline-flex', gap: vars.space['control-gap'] }}>
+      <Kbd>⌘</Kbd>
+      <Kbd>K</Kbd>
+    </span>
+    <span style={{ display: 'inline-flex', gap: vars.space['control-gap'] }}>
+      <Kbd size="sm">Shift</Kbd>
+      <Kbd size="sm">⌥</Kbd>
+      <Kbd size="sm">P</Kbd>
+    </span>
+  </div>
+</Preview>
+
+```tsx
+import { Kbd } from '@contour-ui/kit';
+
+<p>
+  Press <Kbd>Ctrl</Kbd> <Kbd>K</Kbd> to search.
+</p>;
+```
+
+Render one Kbd per key. A single character sits on a square key; longer names widen it. `md`, the
+default, suits running text and large controls; `sm` suits small controls and menus.
+
+## Platform keys
+
+Kbd shows its text as is and does not detect the platform: you pick the keys, such as ⌘ on macOS
+and Ctrl elsewhere. The server cannot know the platform, so in a server-rendered app, render one of
+them first and switch after hydration, in an effect, so the first client render matches the
+server's markup.
+
+## Anatomy
+
+| Part  | Element | Class         | Attributes                                    |
+| ----- | ------- | ------------- | --------------------------------------------- |
+| `Kbd` | `kbd`   | `contour-kbd` | `data-scope="kbd" data-part="root" data-size` |
+
+`Kbd` accepts every `kbd` prop, `asChild` included; `className` is merged with `contour-kbd`.
+
+## Props
+
+| Prop   | Values         | Default |
+| ------ | -------------- | ------- |
+| `size` | `'sm'`, `'md'` | `'md'`  |
+
+## Accessibility
+
+- `<kbd>` has no ARIA role: screen readers read its text, and may read a symbol such as ⌘ or ⌥ by
+  its character name. Where it fits, write the key's name, such as `Ctrl` or `Shift`.
+- A Kbd on a control only shows the shortcut: handle the keys in your code, and set
+  `aria-keyshortcuts` on the control (for example `aria-keyshortcuts="Meta+K"`) so assistive
+  technology can announce it.
+
+## Tokens
+
+Background `--ct-color-bg-surface`, text `--ct-color-fg-muted`, border `--ct-color-border-default`
+at `--ct-border-width-default`, twice as thick at the bottom, corners `--ct-radius-control`. The
+text is in the UI family of the `label` style, as in macOS menus, at the `body` size for `md` and
+the `label` size for `sm`: the code font has no ⌘, ⌥, ⇧ and ⌃ glyphs. The height, which is also the minimum width, is `--ct-size-icon-lg` for `md`
+and `--ct-size-icon-md` for `sm`.
