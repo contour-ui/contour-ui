@@ -33,6 +33,24 @@ A machine is data plus pure functions; a service runs it; the platform gives it 
 - `createTestPlatform(machine)` — a fake clock (`advance(ms)`) and a log of the platform actions
   and effects, for tests without a DOM or real time.
 
+## Component machines (`states/`)
+
+One namespace per component: its `machine`, `connect(service)` (the state and actions its parts
+need, without a DOM) and its types (`Schema`, `Input`, `Api`…).
+
+- `clipboard` — `idle`, `copying` and `copied`. `COPY` writes the value through the platform
+  action `writeText`, which answers with `COPY.DONE` or `COPY.FAILED`; once the write is done the
+  machine stays `copied` for `timeout` ms (3000 by default). A `COPY` while copied writes again
+  and keeps the state; its `COPY.DONE` starts the time over.
+
+```ts
+import { clipboard, createService } from '@contour-ui/core';
+
+const service = createService(clipboard.machine, { props: { value: 'npm i' }, platform });
+service.start();
+clipboard.connect(service).copy();
+```
+
 ## `@contour-ui/core/react`
 
 Hooks shared by every renderer adapter: React only, no `react-dom`.

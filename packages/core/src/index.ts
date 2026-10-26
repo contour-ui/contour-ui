@@ -32,3 +32,5 @@ export type {
   TransitionMap,
   TransitionResult,
 } from './machine/index.ts';
+
+export * as clipboard from './states/clipboard/index.ts';
