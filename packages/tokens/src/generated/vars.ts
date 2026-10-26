@@ -21,6 +21,12 @@ export const vars = {
     'control-sm': 'var(--ct-size-control-sm)',
     'control-md': 'var(--ct-size-control-md)',
     'control-lg': 'var(--ct-size-control-lg)',
+    /** Icons next to label text, and in small icon buttons. */
+    'icon-sm': 'var(--ct-size-icon-sm)',
+    /** Standalone icons: medium icon buttons, alert indicators. */
+    'icon-md': 'var(--ct-size-icon-md)',
+    /** Icons in large icon buttons. */
+    'icon-lg': 'var(--ct-size-icon-lg)',
   },
   radius: {
     control: 'var(--ct-radius-control)',

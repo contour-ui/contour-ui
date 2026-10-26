@@ -12,7 +12,10 @@
     "$type": "dimension",
     "control-sm": { "$value": "{base.space.20}" },
     "control-md": { "$value": "{base.space.24}" },
-    "control-lg": { "$value": "{base.space.32}" }
+    "control-lg": { "$value": "{base.space.32}" },
+    "icon-sm":    { "$value": "{base.space.12}", "$description": "Icons next to label text, and in small icon buttons." },
+    "icon-md":    { "$value": "{base.space.16}", "$description": "Standalone icons: medium icon buttons, alert indicators." },
+    "icon-lg":    { "$value": "{base.space.20}", "$description": "Icons in large icon buttons." }
   },
   "radius": {
     "$type": "dimension",

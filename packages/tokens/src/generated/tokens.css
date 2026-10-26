@@ -150,6 +150,9 @@
   --ct-size-control-sm: var(--ct-base-space-20);
   --ct-size-control-md: var(--ct-base-space-24);
   --ct-size-control-lg: var(--ct-base-space-32);
+  --ct-size-icon-sm: var(--ct-base-space-12);
+  --ct-size-icon-md: var(--ct-base-space-16);
+  --ct-size-icon-lg: var(--ct-base-space-20);
   --ct-radius-control: var(--ct-base-radius-4);
   --ct-radius-panel: var(--ct-base-radius-8);
   --ct-radius-round: var(--ct-base-radius-full);
