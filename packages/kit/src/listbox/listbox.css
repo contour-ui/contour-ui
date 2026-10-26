@@ -1,0 +1,174 @@
+/*
+ * A list of options: the highlighted one, where the keyboard (and the pointer) is, on the hover
+ * background; a check mark in the accent color on the selected ones. The list has no frame of
+ * its own: it sits on the surface around it, such as a card, a popover or a dialog.
+ */
+.contour-listbox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  text-align: start;
+}
+
+.contour-listbox__label {
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+.contour-listbox__label[data-disabled] {
+  color: var(--ct-color-fg-disabled);
+}
+
+/* A text field: the height of a medium control, a border, the corners of a control. */
+.contour-listbox__input {
+  box-sizing: border-box;
+  inline-size: 100%;
+  min-inline-size: 0;
+  block-size: var(--ct-size-control-md);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--ct-space-control-inset);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-control);
+  background: transparent;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  appearance: none;
+  transition: border-color var(--ct-motion-feedback);
+}
+
+.contour-listbox__input::placeholder {
+  color: var(--ct-color-fg-muted);
+  /* Firefox fades placeholders by default. */
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .contour-listbox__input:enabled:hover {
+    border-color: var(--ct-color-border-strong);
+  }
+}
+
+/* On the border: a text field keeps its ring where the eye already is. */
+.contour-listbox__input:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: calc(-1 * var(--ct-border-width-default));
+}
+
+.contour-listbox__input:disabled {
+  color: var(--ct-color-fg-disabled);
+  cursor: not-allowed;
+}
+
+/*
+ * The list. It grows with its items; give it a `max-block-size` to scroll, and the highlighted
+ * item scrolls into view inside it. Scrolling it to an end does not scroll the page.
+ */
+.contour-listbox__content {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.contour-listbox__content[data-orientation='horizontal'] {
+  flex-direction: row;
+  overflow: auto hidden;
+}
+
+.contour-listbox__content:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
+
+.contour-listbox__item-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.contour-listbox__item-group + .contour-listbox__item-group {
+  margin-block-start: var(--ct-space-control-gap);
+}
+
+/*
+ * `fg-muted`, not `fg-subtle`: a caption is text, and needs 4.5:1 against the surface, which
+ * only `fg-muted` keeps.
+ */
+.contour-listbox__item-group-label {
+  padding-block: var(--ct-space-control-gap);
+  padding-inline: var(--ct-space-control-inset);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-caption);
+  letter-spacing: var(--ct-text-caption-letter-spacing);
+}
+
+.contour-listbox__item {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  box-sizing: border-box;
+  min-block-size: var(--ct-size-control-md);
+  padding-block: var(--ct-space-control-gap);
+  padding-inline: var(--ct-space-control-inset);
+  border-radius: var(--ct-radius-control);
+  color: var(--ct-color-fg-default);
+  cursor: pointer;
+  user-select: none;
+}
+
+/* The highlight follows the pointer too (`highlightOnHover`): no separate hover look. */
+.contour-listbox__item[data-highlighted] {
+  background-color: var(--ct-color-bg-hover);
+}
+
+.contour-listbox__item[data-disabled] {
+  color: var(--ct-color-fg-disabled);
+  cursor: not-allowed;
+}
+
+/* The text takes the free width, so an indicator after it sits at the end of the row. */
+.contour-listbox__item-text {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.contour-listbox__item-indicator {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--ct-color-accent-fg);
+}
+
+/* Hidden while the item is not selected, but it keeps its room, so the rows line up. */
+.contour-listbox__item-indicator[hidden] {
+  visibility: hidden;
+}
+
+/* A disabled item marks its selection in its own color. */
+.contour-listbox__item[data-disabled] > .contour-listbox__item-indicator {
+  color: inherit;
+}
+
+.contour-listbox__item-indicator > .contour-icon {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+.contour-listbox__empty {
+  padding-block: var(--ct-space-control-gap);
+  padding-inline: var(--ct-space-control-inset);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}

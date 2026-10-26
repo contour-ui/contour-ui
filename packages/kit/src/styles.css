@@ -17,6 +17,7 @@
 @import './icon/icon.css' layer(contour.kit);
 @import './kbd/kbd.css' layer(contour.kit);
 @import './link/link.css' layer(contour.kit);
+@import './listbox/listbox.css' layer(contour.kit);
 @import './placeholder/placeholder.css' layer(contour.kit);
 @import './table/table.css' layer(contour.kit);
 @import './toc/toc.css' layer(contour.kit);

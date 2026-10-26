@@ -9,6 +9,14 @@ export { Kbd } from './kbd/index.ts';
 export type { KbdProps } from './kbd/index.ts';
 export { Link } from './link/index.ts';
 export type { LinkProps } from './link/index.ts';
+export * as Listbox from './listbox/index.ts';
+// The collections of list components, so that apps need no other package to fill a Listbox.
+export { createListCollection } from '@contour-ui/headless';
+export type {
+  ListCollection,
+  ListCollectionGroup,
+  ListCollectionOptions,
+} from '@contour-ui/headless';
 export * as Placeholder from './placeholder/index.ts';
 export * as Table from './table/index.ts';
 export { ThemeProvider, themeScript, useTheme } from './theme-provider/index.ts';

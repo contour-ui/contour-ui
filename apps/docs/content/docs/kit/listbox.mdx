@@ -1,0 +1,350 @@
+---
+title: Listbox
+description: A list of options to highlight and select with the keyboard or the pointer, with groups, typeahead, and an input that filters it, as in a search box.
+---
+
+import { createListCollection, Listbox } from '@contour-ui/kit';
+import { useMemo, useState } from 'react';
+
+export const pages = [
+  { url: '/docs/kit/alert', page: 'Alert', text: 'Alert' },
+  { url: '/docs/kit/alert#status', page: 'Alert', text: 'Status' },
+  { url: '/docs/kit/button', page: 'Button', text: 'Button' },
+  { url: '/docs/kit/button#variants', page: 'Button', text: 'Variants' },
+  { url: '/docs/kit/button#sizes', page: 'Button', text: 'Sizes' },
+  { url: '/docs/kit/card', page: 'Card', text: 'Card' },
+  { url: '/docs/kit/card#variants', page: 'Card', text: 'Variants' },
+  { url: '/docs/kit/code-block', page: 'CodeBlock', text: 'CodeBlock' },
+  { url: '/docs/kit/code-block#copy', page: 'CodeBlock', text: 'Copy' },
+];
+
+export function SearchExample() {
+  const [query, setQuery] = useState('');
+  const [opened, setOpened] = useState('nothing yet');
+  const collection = useMemo(() => {
+    const words = query.trim().toLowerCase();
+    return createListCollection({
+      items: pages.filter((result) =>
+        `${result.page} ${result.text}`.toLowerCase().includes(words),
+      ),
+      itemToValue: (result) => result.url,
+      itemToString: (result) => result.text,
+      groupBy: (result) => result.page,
+    });
+  }, [query]);
+  return (
+    <div style={{ display: 'grid', gap: '0.75rem', inlineSize: '100%', maxInlineSize: '24rem' }}>
+      <Listbox.Root
+        collection={collection}
+        autoHighlight
+        onSelect={({ value }) => {
+          setOpened(value);
+        }}
+      >
+        <Listbox.Input
+          aria-label="Search the docs"
+          placeholder="Search the docs"
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value);
+          }}
+        />
+        <Listbox.Content aria-label="Results" style={{ maxBlockSize: '12rem' }}>
+          {collection.groups.map((group) => (
+            <Listbox.ItemGroup key={group.key}>
+              <Listbox.ItemGroupLabel>{group.key}</Listbox.ItemGroupLabel>
+              {group.items.map((result) => (
+                <Listbox.Item key={result.url} item={result}>
+                  <Listbox.ItemText>{result.text}</Listbox.ItemText>
+                </Listbox.Item>
+              ))}
+            </Listbox.ItemGroup>
+          ))}
+        </Listbox.Content>
+        <Listbox.Empty>No results</Listbox.Empty>
+      </Listbox.Root>
+      <p style={{ margin: 0 }}>{`Opened: ${opened}`}</p>
+    </div>
+  );
+}
+
+export const waveforms = createListCollection({
+  items: [
+    { value: 'sine', label: 'Sine' },
+    { value: 'triangle', label: 'Triangle' },
+    { value: 'sawtooth', label: 'Sawtooth' },
+    { value: 'square', label: 'Square' },
+    { value: 'noise', label: 'Noise', disabled: true },
+  ],
+});
+
+<Preview>
+  <SearchExample />
+</Preview>
+
+```tsx
+import { createListCollection, Listbox } from '@contour-ui/kit';
+
+const collection = createListCollection({
+  items: [
+    { value: 'sine', label: 'Sine' },
+    { value: 'saw', label: 'Sawtooth' },
+  ],
+});
+
+<Listbox.Root collection={collection}>
+  <Listbox.Label>Waveform</Listbox.Label>
+  <Listbox.Content>
+    {collection.items.map((item) => (
+      <Listbox.Item key={item.value} item={item}>
+        <Listbox.ItemText>{item.label}</Listbox.ItemText>
+        <Listbox.ItemIndicator />
+      </Listbox.Item>
+    ))}
+  </Listbox.Content>
+</Listbox.Root>;
+```
+
+Listbox shows the items of a collection, highlights one of them, where the keyboard acts, and
+selects one or several. It is the [Headless Listbox](/docs/headless/listbox) with the look of Kit:
+the highlighted item on the hover background, a check mark in the accent color on the selected
+ones. The list has no frame of its own, so it sits on the card, popover or dialog around it.
+
+## The collection
+
+`createListCollection` takes the items and tells Listbox how to read them. A string is its own
+value and text; an object gives its `value`, its `label` and `disabled`, or you pass the functions
+that read them:
+
+```ts
+const collection = createListCollection({
+  items: results,
+  itemToValue: (result) => result.url,
+  itemToString: (result) => result.title,
+  isItemDisabled: (result) => result.draft,
+});
+```
+
+A collection never changes: for other items, create another one, inside `useMemo` in a
+component. Every item needs a value of its own, which identifies it in the selection, as the
+highlighted item, and in the ids of the options. The text is what typeahead matches. Disabled
+items are shown, but the keys skip them and they cannot be selected.
+
+## A single selection
+
+Without an input, the list takes the keys itself. Tab focuses it and highlights the selected
+item, or the first one; the arrows, Home and End move the highlight, typing the first letters of
+an item highlights it, and Enter, Space or a click selects. `Listbox.ItemIndicator` shows the
+check mark of the selected items, and keeps its room on the others, so the rows line up.
+
+<Preview>
+  {
+    <Listbox.Root
+      collection={waveforms}
+      defaultValue={['square']}
+      style={{ inlineSize: '100%', maxInlineSize: '14rem' }}
+    >
+      <Listbox.Label>Waveform</Listbox.Label>
+      <Listbox.Content>
+        {waveforms.items.map((item) => (
+          <Listbox.Item key={item.value} item={item}>
+            <Listbox.ItemText>{item.label}</Listbox.ItemText>
+            <Listbox.ItemIndicator />
+          </Listbox.Item>
+        ))}
+      </Listbox.Content>
+    </Listbox.Root>
+  }
+</Preview>
+
+The value is the list of the selected values: `defaultValue={['square']}` in a listbox that keeps
+it, or `value` and `onValueChange` to keep it yourself. `onValueChange` receives
+`{ value, items }`.
+
+```tsx
+const [value, setValue] = useState(['square']);
+
+<Listbox.Root
+  collection={collection}
+  value={value}
+  onValueChange={(details) => setValue(details.value)}
+>
+  …
+</Listbox.Root>;
+```
+
+- `selectionMode="multiple"`: each selection toggles an item, and the list is
+  `aria-multiselectable`.
+- `deselectable`: selecting the selected item of a single selection clears it.
+- `selectOnHighlight`: in a single selection, the selection follows the keys, as in a list of
+  presets that load as you browse them.
+- `loopFocus`: the arrows wrap around from the last item to the first, and back.
+- `typeahead={false}`: letters do nothing.
+- `orientation="horizontal"`: the items line up in a row, and ← and → move the highlight.
+
+## A search box
+
+`Listbox.Input` is a text field above the list, as in the search of this site. The focus stays in
+it: ↓ and ↑ move the highlight in the list, Enter selects the highlighted item, and Home, End, ←
+and → move the caret, as in any text field. The input filters nothing by itself: keep its value in
+your state and build the collection from it. With `autoHighlight`, the first result is highlighted
+as you type, so Enter opens it at once.
+
+```tsx
+const [query, setQuery] = useState('');
+const collection = useMemo(
+  () =>
+    createListCollection({
+      items: pages.filter((page) => page.title.toLowerCase().includes(query.toLowerCase())),
+      itemToValue: (page) => page.url,
+      itemToString: (page) => page.title,
+    }),
+  [query],
+);
+
+<Listbox.Root collection={collection} autoHighlight onSelect={({ value }) => navigate(value)}>
+  <Listbox.Input
+    aria-label="Search"
+    value={query}
+    onChange={(event) => setQuery(event.target.value)}
+  />
+  <Listbox.Content aria-label="Results">…</Listbox.Content>
+  <Listbox.Empty>No results</Listbox.Empty>
+</Listbox.Root>;
+```
+
+`onSelect` reports each item the user selects, with Enter, Space or a click, as `{ value, item }`:
+also an item that was already selected, so a search box can open the same result twice.
+`Listbox.Empty` shows only while the collection has no items. Put it after `Listbox.Content`, not
+inside: a list holds only options and groups.
+
+## Groups
+
+With `groupBy`, the collection holds its items group by group, in the order the groups first
+come, and `collection.groups` lists them with their `key`. Render each group in a
+`Listbox.ItemGroup` with a `Listbox.ItemGroupLabel`, so the keys go through the items in the order
+they are shown:
+
+```tsx
+const collection = createListCollection({ items: results, groupBy: (result) => result.page });
+
+{
+  collection.groups.map((group) => (
+    <Listbox.ItemGroup key={group.key}>
+      <Listbox.ItemGroupLabel>{group.key}</Listbox.ItemGroupLabel>
+      {group.items.map((result) => (
+        <Listbox.Item key={result.url} item={result}>
+          <Listbox.ItemText>{result.text}</Listbox.ItemText>
+        </Listbox.Item>
+      ))}
+    </Listbox.ItemGroup>
+  ));
+}
+```
+
+## Scrolling
+
+The list grows with its items. Give `Listbox.Content` a height, such as `max-block-size: 20rem`,
+and it scrolls: the highlighted item then scrolls into view inside the list as the keys move it,
+and the page stays where it is. The pointer moves the highlight too (`highlightOnHover`, on by
+default), so the item under it and the highlighted item are never two different ones.
+
+## Anatomy
+
+| Part                     | Element | Class                               | Attributes                                                                                                                                                |
+| ------------------------ | ------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Listbox.Root`           | `div`   | `contour-listbox`                   | `data-scope="listbox" data-part="root"`, `data-orientation`, `data-disabled`                                                                              |
+| `Listbox.Label`          | `label` | `contour-listbox__label`            | `data-part="label"`, `id`, `for` (the input, when there is one)                                                                                           |
+| `Listbox.Input`          | `input` | `contour-listbox__input`            | `data-part="input"`, `aria-controls`, `aria-activedescendant`, `aria-autocomplete="list"`, `aria-haspopup="listbox"`, `autocomplete="off"`                |
+| `Listbox.Content`        | `div`   | `contour-listbox__content`          | `data-part="content"`, `role="listbox"`, `aria-labelledby`, `aria-activedescendant`, `aria-multiselectable`, `aria-orientation`, `data-empty`, `tabindex` |
+| `Listbox.ItemGroup`      | `div`   | `contour-listbox__item-group`       | `data-part="item-group"`, `role="group"`, `aria-labelledby`                                                                                               |
+| `Listbox.ItemGroupLabel` | `div`   | `contour-listbox__item-group-label` | `data-part="item-group-label"`, `id`                                                                                                                      |
+| `Listbox.Item`           | `div`   | `contour-listbox__item`             | `data-part="item"`, `role="option"`, `id`, `aria-selected`, `aria-disabled`, `data-value`, `data-highlighted`, `data-selected`, `data-disabled`           |
+| `Listbox.ItemText`       | `span`  | `contour-listbox__item-text`        | `data-part="item-text"`, `data-highlighted`, `data-selected`, `data-disabled`                                                                             |
+| `Listbox.ItemIndicator`  | `span`  | `contour-listbox__item-indicator`   | `data-part="item-indicator"`, `aria-hidden="true"`, `hidden` while not selected                                                                           |
+| `Listbox.Empty`          | `div`   | `contour-listbox__empty`            | `data-part="empty"`; rendered only while the collection is empty                                                                                          |
+
+Every part carries `data-scope="listbox"`. The state attributes are present, and empty, while the
+state holds. The parts reference one another by id: the label names the list, the input controls
+it, and `aria-activedescendant` points to the highlighted item. Give a part an `id` of your own,
+and the others follow it.
+
+## Props
+
+`Listbox.Root`:
+
+| Prop                      | Type                                                                         | Default      |
+| ------------------------- | ---------------------------------------------------------------------------- | ------------ |
+| `collection`              | `ListCollection`, from `createListCollection`                                | required     |
+| `value`                   | `string[]`: the selected values                                              | —            |
+| `defaultValue`            | `string[]`                                                                   | `[]`         |
+| `onValueChange`           | `(details: { value: string[]; items: T[] }) => void`                         | —            |
+| `highlightedValue`        | `string \| null`                                                             | —            |
+| `defaultHighlightedValue` | `string \| null`                                                             | `null`       |
+| `onHighlightChange`       | `(details: { highlightedValue; highlightedItem; highlightedIndex }) => void` | —            |
+| `onSelect`                | `(details: { value: string; item: T }) => void`: each item the user selects  | —            |
+| `selectionMode`           | `'single'`, `'multiple'`                                                     | `'single'`   |
+| `deselectable`            | `boolean`: selecting the selected item clears a single selection             | `false`      |
+| `selectOnHighlight`       | `boolean`: a single selection follows the keys                               | `false`      |
+| `loopFocus`               | `boolean`: the arrows wrap around                                            | `false`      |
+| `typeahead`               | `boolean`: typed letters highlight an item                                   | `true`       |
+| `highlightOnHover`        | `boolean`: the pointer highlights the item under it                          | `true`       |
+| `autoHighlight`           | `boolean`: the first item is highlighted as the user types in the input      | `false`      |
+| `disabled`                | `boolean`                                                                    | `false`      |
+| `orientation`             | `'vertical'`, `'horizontal'`                                                 | `'vertical'` |
+
+`Listbox.Item` takes `item`, the item of the collection it shows. `Listbox.ItemIndicator` shows a
+check mark unless you pass children. Every part takes `asChild` and the props of its element, such
+as `className`, `style` and `ref`; `className` is merged with the part's class.
+
+## Keyboard
+
+In the list, when it has focus:
+
+| Key          | Action                                                                |
+| ------------ | --------------------------------------------------------------------- |
+| `↓` `↑`      | Highlights the next or the previous enabled item (`→` `←` in a row)   |
+| `Home` `End` | Highlights the first or the last enabled item                         |
+| Letters      | Highlight the next item whose text starts with them                   |
+| `Enter`      | Selects the highlighted item                                          |
+| `Space`      | Selects the highlighted item; while typing a name, adds a space to it |
+| `Tab`        | Moves focus out of the list                                           |
+
+In the input:
+
+| Key                  | Action                                                    |
+| -------------------- | --------------------------------------------------------- |
+| `↓` `↑`              | Highlights the next or the previous enabled item          |
+| `Enter`              | Selects the highlighted item; without one, submits a form |
+| `Home` `End` `←` `→` | Move the caret in the text                                |
+
+## Accessibility
+
+- **One focused element.** The list (or the input) keeps the focus, and `aria-activedescendant`
+  points to the highlighted option, so screen readers announce it as the keys move. The items are
+  never focused themselves.
+- **Names.** `Listbox.Label` names the list, and the input when there is one. Without a label,
+  give the list an `aria-label`, and the input one too.
+- **Selection.** Every option has `aria-selected`; the check mark is hidden from assistive
+  technology, which hears the selection from the option. A multiple selection has
+  `aria-multiselectable`.
+- **Disabled items** have `aria-disabled` and stay in the list, so they are announced; the keys
+  and the pointer skip them.
+- **The empty state** is text next to the list, not inside it. To announce how many results a
+  search found, put a polite status of your own next to the input.
+
+## Tokens
+
+| Token                                                                                | Used for                                      |
+| ------------------------------------------------------------------------------------ | --------------------------------------------- |
+| `--ct-color-bg-hover`                                                                | the highlighted item                          |
+| `--ct-color-accent-fg`, `--ct-size-icon-sm`                                          | the check mark of a selected item             |
+| `--ct-color-fg-default`, `--ct-text-body`                                            | the items and the text of the input           |
+| `--ct-color-fg-disabled`                                                             | disabled items, the label and input too       |
+| `--ct-space-control-gap`, `--ct-space-control-inset`, `--ct-size-control-md`         | the padding and the height of the items       |
+| `--ct-radius-control`                                                                | the corners of the items and of the input     |
+| `--ct-text-caption`, `--ct-color-fg-muted`                                           | the labels of groups                          |
+| `--ct-text-label`                                                                    | the label                                     |
+| `--ct-color-border-default`, `--ct-color-border-strong`, `--ct-border-width-default` | the border of the input, on hover             |
+| `--ct-color-fg-muted`                                                                | the placeholder of the input, the empty state |
+| `--ct-color-border-focus`, `--ct-border-width-focus`                                 | the focus rings of the input and the list     |
