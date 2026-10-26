@@ -59,6 +59,12 @@ need, without a DOM) and its types (`Schema`, `Input`, `Api`…).
   (`highlightOnHover`); `CONTENT.FOCUS`, `INPUT.FOCUS` and `BLUR` follow the focus. No platform
   actions, effects or delays. New items clear a highlight that is gone, or highlight the first
   item with `autoHighlight` while the listbox has focus.
+- `popover` — `closed` and `open`, with the requests, dismissal and controlled `open` of `dialog`.
+  While open, the platform effects `position` (writes the placement after `flip` to the
+  `placement` field), `dismiss`, `trapFocus`, `preventScroll` and `hideOutside` (the last three
+  when `modal`) and `keepTabOrder` (a portalled popover that is not modal stays in the Tab order
+  after its trigger) run. Opening moves focus in (`setInitialFocus`, with `autoFocus`); a popover
+  that starts open leaves focus alone.
 - `toc` — one state, `observing`, with the platform effect `observeHeadings`, which reports each
   heading as `above`, `inside` or `below` the observed area (`VISIBILITY.CHANGE`). The headings
   inside are active, in the order of `items`; when none is, the last one above stays active.
