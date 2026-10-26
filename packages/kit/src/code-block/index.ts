@@ -4,5 +4,7 @@ export { CodeBlockHeader as Header } from './code-block-header.tsx';
 export type { CodeBlockHeaderProps as HeaderProps } from './code-block-header.tsx';
 export { CodeBlockTitle as Title } from './code-block-title.tsx';
 export type { CodeBlockTitleProps as TitleProps } from './code-block-title.tsx';
+export { CodeBlockCopyTrigger as CopyTrigger } from './code-block-copy-trigger.tsx';
+export type { CodeBlockCopyTriggerProps as CopyTriggerProps } from './code-block-copy-trigger.tsx';
 export { CodeBlockContent as Content } from './code-block-content.tsx';
 export type { CodeBlockContentProps as ContentProps } from './code-block-content.tsx';

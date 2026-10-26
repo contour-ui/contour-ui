@@ -1,7 +1,11 @@
+import type { IconData } from '@contour-ui/icons';
+import { checkIcon, copyIcon } from '@contour-ui/icons';
 import { themes, vars } from '@contour-ui/tokens';
 import { createRef } from 'react';
 import type { ReactElement, ReactNode } from 'react';
-import { describe, expect, test } from 'vite-plus/test';
+import { hydrateRoot } from 'react-dom/client';
+import { renderToString } from 'react-dom/server';
+import { afterEach, describe, expect, test, vi } from 'vite-plus/test';
 import { userEvent } from 'vite-plus/test/browser';
 import type { Locator } from 'vite-plus/test/browser';
 import { render } from 'vitest-browser-react';
@@ -96,22 +100,56 @@ function lineHeightIn(parent: Element): number {
 
 interface BlockProps {
   readonly title?: string | undefined;
+  /** Adds a copy trigger: in the header, or in the root of a block without a title. */
+  readonly copy?: boolean | undefined;
+  /** The `value` of the root. */
+  readonly value?: string | undefined;
   readonly children: ReactNode;
 }
 
 /** A code block as the docs render one: a header when it has a title. */
-function Block({ title, children }: BlockProps): ReactElement {
+function Block({ title, copy = false, value, children }: BlockProps): ReactElement {
+  const trigger = copy ? <CodeBlock.CopyTrigger /> : null;
   return (
-    <CodeBlock.Root>
-      {title === undefined ? null : (
+    <CodeBlock.Root value={value}>
+      {title === undefined ? (
+        trigger
+      ) : (
         <CodeBlock.Header>
           <CodeBlock.Title>{title}</CodeBlock.Title>
+          {trigger}
         </CodeBlock.Header>
       )}
       <CodeBlock.Content>{children}</CodeBlock.Content>
     </CodeBlock.Root>
   );
 }
+
+type WriteText = (text: string) => Promise<void>;
+
+/**
+ * Replace `navigator.clipboard` for one test: the real one needs permissions that headless
+ * Chromium does not grant. Returns the spy of its `writeText`.
+ */
+function stubClipboard(write: WriteText = () => Promise.resolve()) {
+  const writeText = vi.fn<WriteText>(write);
+  Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+  return writeText;
+}
+
+/** The icon a button shows, by the path data of its `<svg>`. */
+function iconOf(button: Element): string | null | undefined {
+  return button.querySelector('svg path')?.getAttribute('d');
+}
+
+/** The path data an icon starts with. */
+const firstPath = (icon: IconData): string | undefined => icon.paths[0]?.d;
+
+afterEach(() => {
+  // The own property hid the browser's getter on `Navigator.prototype`.
+  Reflect.deleteProperty(navigator, 'clipboard');
+  vi.useRealTimers();
+});
 
 /** Every `--shiki-*` color and the token role CodeBlock gives it. */
 const MAPPING: ReadonlyArray<readonly [ShikiColor, string]> = [
@@ -154,7 +192,7 @@ describe('CodeBlock', () => {
     ]);
   });
 
-  test('is a figure named by its header', async () => {
+  test('is a figure named by its title', async () => {
     const screen = await render(
       <>
         <Block title="save-button.tsx">
@@ -536,5 +574,245 @@ describe('CodeBlock.Content', () => {
     expect(ring.outlineColor).toBe(color(vars.color.border.focus));
     expect(ring.outlineWidth).toBe(px(vars['border-width'].focus));
     expect(ring.outlineOffset).toBe(`-${px(vars['border-width'].focus)}`);
+  });
+});
+
+describe('CodeBlock.CopyTrigger', () => {
+  test('is a small ghost icon button named "Copy code", next to an empty status', async () => {
+    stubClipboard();
+    const screen = await render(
+      <Block title="save-button.tsx" copy>
+        <ShikiPre lines={SAVE_BUTTON} />
+      </Block>,
+    );
+    const trigger = screen.getByRole('button', { name: 'Copy code', exact: true });
+    const status = screen.getByRole('status');
+
+    await expect
+      .element(trigger)
+      .toHaveClass('contour-button contour-icon-button contour-code-block__copy-trigger', {
+        exact: true,
+      });
+    await expect.element(trigger).toHaveAttribute('type', 'button');
+    await expect.element(trigger).toHaveAttribute('data-scope', 'code-block');
+    await expect.element(trigger).toHaveAttribute('data-part', 'copy-trigger');
+    await expect.element(trigger).toHaveAttribute('data-variant', 'ghost');
+    await expect.element(trigger).toHaveAttribute('data-size', 'sm');
+    await expect.element(trigger).not.toHaveAttribute('data-copied');
+    expect(iconOf(trigger.element())).toBe(firstPath(copyIcon));
+    await expect.element(status).toHaveAttribute('data-part', 'copy-status');
+    await expect.element(status).toBeEmptyDOMElement();
+  });
+
+  test('copies the text of the content as it is when clicked', async () => {
+    const writeText = stubClipboard();
+    const screen = await render(
+      <Block title="save-button.tsx" copy>
+        <ShikiPre lines={SAVE_BUTTON} />
+      </Block>,
+    );
+    await screen.rerender(
+      <Block title="save-button.tsx" copy>
+        <ShikiPre lines={STYLESHEETS} />
+      </Block>,
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Copy code' }));
+
+    expect(writeText).toHaveBeenCalledExactlyOnceWith(sourceOf(STYLESHEETS));
+  });
+
+  test('copies the value of the root, or its own value first', async () => {
+    const writeText = stubClipboard();
+    const screen = await render(
+      <>
+        <Block title="install.sh" value="pnpm add @contour-ui/kit" copy>
+          <ShikiPre lines={STYLESHEETS} />
+        </Block>
+        <CodeBlock.Root value="pnpm add @contour-ui/kit">
+          <CodeBlock.CopyTrigger value="npm install @contour-ui/kit" label="Copy with npm" />
+          <CodeBlock.Content>
+            <ShikiPre lines={STYLESHEETS} />
+          </CodeBlock.Content>
+        </CodeBlock.Root>
+      </>,
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Copy code' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Copy with npm' }));
+
+    expect(writeText.mock.calls).toStrictEqual([
+      ['pnpm add @contour-ui/kit'],
+      ['npm install @contour-ui/kit'],
+    ]);
+  });
+
+  test('shows a check mark and announces the copy until the timeout', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    stubClipboard();
+    const onStatusChange = vi.fn<(details: { copied: boolean }) => void>();
+    const screen = await render(
+      <CodeBlock.Root>
+        <CodeBlock.CopyTrigger timeout={1000} onStatusChange={onStatusChange} />
+        <CodeBlock.Content>
+          <ShikiPre lines={STYLESHEETS} />
+        </CodeBlock.Content>
+      </CodeBlock.Root>,
+    );
+    const trigger = screen.getByRole('button', { name: 'Copy code' });
+    const status = screen.getByRole('status');
+
+    await userEvent.click(trigger);
+    await expect.element(trigger).toHaveAttribute('data-copied', '');
+    expect(iconOf(trigger.element())).toBe(firstPath(checkIcon));
+    await expect.element(status).toHaveTextContent('Copied to clipboard');
+    // The name stays: the icon is for the eyes, the status speaks.
+    await expect.element(screen.getByRole('button', { name: 'Copy code' })).toBeInTheDocument();
+    expect(onStatusChange.mock.calls).toStrictEqual([[{ copied: true }]]);
+
+    vi.advanceTimersByTime(1000);
+    await expect.element(trigger).not.toHaveAttribute('data-copied');
+    expect(iconOf(trigger.element())).toBe(firstPath(copyIcon));
+    await expect.element(status).toBeEmptyDOMElement();
+    expect(onStatusChange.mock.calls).toStrictEqual([[{ copied: true }], [{ copied: false }]]);
+  });
+
+  test('shows and announces nothing when the browser refuses to write', async () => {
+    const writeText = stubClipboard(() => Promise.reject(new Error('Not allowed')));
+    const screen = await render(
+      <Block copy>
+        <ShikiPre lines={STYLESHEETS} />
+      </Block>,
+    );
+    const trigger = screen.getByRole('button', { name: 'Copy code' });
+
+    await userEvent.click(trigger);
+
+    await expect.poll(() => writeText.mock.results[0]?.type).toBe('return');
+    await expect.element(trigger).not.toHaveAttribute('data-copied');
+    await expect.element(screen.getByRole('status')).toBeEmptyDOMElement();
+  });
+
+  test('copies nothing when the owner cancels the click', async () => {
+    const writeText = stubClipboard();
+    const screen = await render(
+      <CodeBlock.Root>
+        <CodeBlock.CopyTrigger
+          onClick={(event) => {
+            event.preventDefault();
+          }}
+        />
+        <CodeBlock.Content>
+          <ShikiPre lines={STYLESHEETS} />
+        </CodeBlock.Content>
+      </CodeBlock.Root>,
+    );
+
+    await userEvent.click(screen.getByRole('button', { name: 'Copy code' }));
+
+    expect(writeText).not.toHaveBeenCalled();
+  });
+
+  test('keeps the name of the figure the title, before and after a copy', async () => {
+    stubClipboard();
+    const screen = await render(
+      <Block title="save-button.tsx" copy>
+        <ShikiPre lines={SAVE_BUTTON} />
+      </Block>,
+    );
+    const figure = screen.getByRole('figure', { name: 'save-button.tsx', exact: true });
+    const title = screen.getByText('save-button.tsx');
+
+    await expect.element(figure).toBeInTheDocument();
+    await expect.element(figure).toHaveAttribute('aria-labelledby', title.element().id);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Copy code' }));
+    await expect.element(screen.getByRole('status')).toHaveTextContent('Copied to clipboard');
+
+    await expect
+      .element(screen.getByRole('figure', { name: 'save-button.tsx', exact: true }))
+      .toBeInTheDocument();
+  });
+
+  test('names the figure by a title only while one is mounted, and never over a name of its own', async () => {
+    stubClipboard();
+    const screen = await render(
+      <Block title="save-button.tsx" copy>
+        <ShikiPre lines={SAVE_BUTTON} />
+      </Block>,
+    );
+    const figure = screen.getByRole('figure');
+    await expect.element(figure).toHaveAttribute('aria-labelledby');
+
+    await screen.rerender(
+      <Block copy>
+        <ShikiPre lines={SAVE_BUTTON} />
+      </Block>,
+    );
+    await expect.element(figure).not.toHaveAttribute('aria-labelledby');
+
+    await screen.rerender(
+      <CodeBlock.Root aria-label="Save button">
+        <CodeBlock.Header>
+          <CodeBlock.Title>save-button.tsx</CodeBlock.Title>
+        </CodeBlock.Header>
+      </CodeBlock.Root>,
+    );
+    await expect.element(figure).not.toHaveAttribute('aria-labelledby');
+    await expect.element(screen.getByRole('figure', { name: 'Save button' })).toBeInTheDocument();
+  });
+
+  test('renders no name on the server and hydrates to the title without a mismatch', async () => {
+    stubClipboard();
+    const block = (
+      <Block title="save-button.tsx" copy>
+        <ShikiPre lines={SAVE_BUTTON} />
+      </Block>
+    );
+    const html = renderToString(block);
+    const container = document.createElement('div');
+    container.innerHTML = html;
+    document.body.append(container);
+    const errors: unknown[] = [];
+    const root = hydrateRoot(container, block, {
+      onRecoverableError: (error) => {
+        errors.push(error);
+      },
+    });
+
+    try {
+      expect(html).not.toContain('aria-labelledby');
+      await expect
+        .poll(() => container.querySelector('figure')?.getAttribute('aria-labelledby'))
+        .toBe(find(container, '.contour-code-block__title').id);
+      expect(errors).toStrictEqual([]);
+    } finally {
+      root.unmount();
+      container.remove();
+    }
+  });
+
+  test('sits at the top end of a block without a title, above the code, on a phone too', async () => {
+    stubClipboard();
+    const screen = await render(
+      <div style={{ inlineSize: '358px' }}>
+        <Block copy>
+          <ShikiPre lines={[...TRANSITION, ...STYLESHEETS]} />
+        </Block>
+      </div>,
+    );
+    const figure = screen.getByRole('figure').element().getBoundingClientRect();
+    const trigger = screen.getByRole('button', { name: 'Copy code' }).element();
+    const button = trigger.getBoundingClientRect();
+    const firstLine = lineAt(screen.container, 0).getBoundingClientRect();
+
+    // Not in a caption: a caption with only a button would name the figure after it.
+    expect(screen.container.querySelector('figcaption')).toBeNull();
+    expect(trigger.parentElement).toHaveClass('contour-code-block', { exact: true });
+    await expect.element(screen.getByRole('figure')).not.toHaveAttribute('aria-labelledby');
+    expect(button.right).toBeLessThanOrEqual(figure.right);
+    expect(button.top).toBeGreaterThanOrEqual(figure.top);
+    // Above the first line, however long it is: it covers no code.
+    expect(button.bottom).toBeLessThanOrEqual(firstLine.top);
   });
 });

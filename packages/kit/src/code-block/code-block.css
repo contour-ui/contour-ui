@@ -19,6 +19,8 @@
   --shiki-token-deleted: var(--ct-color-danger-fg);
   --shiki-token-changed: var(--ct-color-warning-fg);
 
+  /* The frame of a copy trigger placed in the root itself. */
+  position: relative;
   box-sizing: border-box;
   /*
    * As wide as its container in flex layouts too, as a block is in normal flow, and no wider in
@@ -60,6 +62,20 @@
   color: var(--ct-color-fg-muted);
   font: var(--ct-text-label);
   letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+/*
+ * A copy trigger in a block without a header: at the top end of the block, where it would sit in
+ * a header, and the code starts below it, so it never covers a line, however wide the code.
+ */
+.contour-code-block > .contour-code-block__copy-trigger {
+  position: absolute;
+  inset-block-start: var(--ct-space-control-gap);
+  inset-inline-end: var(--ct-space-group-gap);
+}
+
+.contour-code-block:has(> .contour-code-block__copy-trigger) > .contour-code-block__content pre {
+  padding-block-start: calc(var(--ct-size-control-sm) + 2 * var(--ct-space-control-gap));
 }
 
 /* The title takes the free width, so actions after it sit at the end of the row. */

@@ -1,7 +1,7 @@
 import { vars } from '@contour-ui/tokens';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ReactElement, ReactNode } from 'react';
-import { expect, userEvent } from 'storybook/test';
+import { expect, fn, userEvent, waitFor } from 'storybook/test';
 
 import { CodeBlock } from '../index.ts';
 import {
@@ -10,11 +10,18 @@ import {
   RENDER_ROOT,
   SAVE_BUTTON,
   ShikiPre,
+  sourceOf,
   STYLESHEETS,
   THEME_ATTRIBUTE,
   THEME_SWITCH,
   TRANSITION,
 } from './shiki-markup.tsx';
+
+/**
+ * Stands in for `navigator.clipboard.writeText`: the stories never touch the real clipboard,
+ * whose permissions a test browser does not grant.
+ */
+const writeText = fn((_text: string): Promise<void> => Promise.resolve()).mockName('writeText');
 
 interface ExampleProps {
   /** Shown in the header; without it the block has no header. */
@@ -61,6 +68,14 @@ const meta: Meta<typeof CodeBlock.Root> = {
   title: 'Kit/CodeBlock',
   component: CodeBlock.Root,
   tags: ['autodocs'],
+  beforeEach: () => {
+    writeText.mockClear();
+    // An own property hides the browser's getter on `Navigator.prototype` until the cleanup.
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+    return () => {
+      Reflect.deleteProperty(navigator, 'clipboard');
+    };
+  },
 };
 
 export default meta;
@@ -214,5 +229,67 @@ export const LongLine: Story = {
     await userEvent.tab();
 
     await expect(area).toHaveFocus();
+  },
+};
+
+/**
+ * A copy button in the header, after the title. A click copies the code, as shown; the copy icon
+ * turns into a check mark and a status element announces the copy, while the button keeps its
+ * name and the figure keeps the title as its name. The story ends copied, so the accessibility
+ * check sees that state too.
+ */
+export const CopyWithTitle: Story = {
+  render: () => (
+    <Columns>
+      <CodeBlock.Root>
+        <CodeBlock.Header>
+          <CodeBlock.Title>save-button.tsx</CodeBlock.Title>
+          <CodeBlock.CopyTrigger />
+        </CodeBlock.Header>
+        <CodeBlock.Content>
+          <ShikiPre lines={SAVE_BUTTON} />
+        </CodeBlock.Content>
+      </CodeBlock.Root>
+    </Columns>
+  ),
+  play: async ({ canvas }) => {
+    const trigger = canvas.getByRole('button', { name: 'Copy code' });
+    await userEvent.click(trigger);
+
+    await expect(writeText).toHaveBeenCalledWith(sourceOf(SAVE_BUTTON));
+    await waitFor(async () => {
+      await expect(trigger).toHaveAttribute('data-copied');
+    });
+    await expect(canvas.getByRole('status')).toHaveTextContent('Copied to clipboard');
+    await expect(canvas.getByRole('figure', { name: 'save-button.tsx' })).toBeVisible();
+  },
+};
+
+/**
+ * A block without a title gets no header: the copy button sits at its top end, and the code
+ * starts below it, so the button covers no line, even one that scrolls.
+ */
+export const CopyWithoutTitle: Story = {
+  render: () => (
+    <div style={{ maxInlineSize: '24rem' }}>
+      <CodeBlock.Root>
+        <CodeBlock.CopyTrigger />
+        <CodeBlock.Content>
+          <ShikiPre lines={[...TRANSITION, ...STYLESHEETS]} />
+        </CodeBlock.Content>
+      </CodeBlock.Root>
+    </div>
+  ),
+  play: async ({ canvas, canvasElement }) => {
+    const trigger = canvas.getByRole('button', { name: 'Copy code' });
+    const [firstLine] = linesOf(canvasElement);
+    await expect(canvasElement.querySelector('figcaption')).toBeNull();
+    await expect(trigger.getBoundingClientRect().bottom).toBeLessThanOrEqual(
+      firstLine?.getBoundingClientRect().top ?? 0,
+    );
+
+    await userEvent.click(trigger);
+
+    await expect(writeText).toHaveBeenCalledWith(sourceOf([...TRANSITION, ...STYLESHEETS]));
   },
 };

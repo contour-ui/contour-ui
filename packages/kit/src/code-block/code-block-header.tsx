@@ -7,10 +7,11 @@ import { cx } from '../utils/cx.ts';
 export type CodeBlockHeaderProps = PrimitiveProps<'figcaption'>;
 
 /**
- * The header: a `figcaption` with the title, and actions after it, in a row
- * above the code, divided from it by a line. It is the caption of the figure,
- * so it names the code block for assistive technology: place it first in
- * `CodeBlock.Root`, where HTML expects a `figcaption`.
+ * The header: a `figcaption` with the title, and actions after it such as
+ * `CodeBlock.CopyTrigger`, in a row above the code, divided from it by a
+ * line. Place it first in `CodeBlock.Root`, where HTML expects a
+ * `figcaption`. Render it only with a title: the title names the figure, and
+ * a caption that held only a button would name it after the button.
  */
 export function CodeBlockHeader({ className, ...props }: CodeBlockHeaderProps): ReactElement {
   const ownProps = {

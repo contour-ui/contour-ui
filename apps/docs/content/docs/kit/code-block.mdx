@@ -1,6 +1,6 @@
 ---
 title: CodeBlock
-description: Code highlighted by Shiki, framed with an optional title, in the syntax colors of the current theme.
+description: Code highlighted by Shiki, framed with an optional title and a copy button, in the syntax colors of the current theme.
 ---
 
 <Preview>
@@ -21,15 +21,16 @@ import { CodeBlock } from '@contour-ui/kit';
 <CodeBlock.Root>
   <CodeBlock.Header>
     <CodeBlock.Title>save-button.tsx</CodeBlock.Title>
+    <CodeBlock.CopyTrigger />
   </CodeBlock.Header>
   <CodeBlock.Content dangerouslySetInnerHTML={{ __html: highlighted }} />
 </CodeBlock.Root>;
 ```
 
 CodeBlock frames code that [Shiki](https://shiki.style) has already highlighted; it does not
-highlight by itself. `CodeBlock.Content` holds Shiki's `<pre>` and scrolls long lines sideways.
-Every code block on this site is a CodeBlock: the code is highlighted when the site is built, and
-the MDX `pre` renders it.
+highlight by itself. `CodeBlock.Content` holds Shiki's `<pre>` and scrolls long lines sideways, and
+`CodeBlock.CopyTrigger` copies the code. Every code block on this site is a CodeBlock: the code is
+highlighted when the site is built, and the MDX `pre` renders it.
 
 ## Highlight with Shiki
 
@@ -66,6 +67,41 @@ fumadocsMdx({
   },
 });
 ```
+
+## Copy
+
+`CodeBlock.CopyTrigger` is a small ghost icon button that copies the code. Put it in the header,
+after the title. In a block without a title, put it in `CodeBlock.Root` itself: it sits at the top
+end of the block, and the code starts below it, so it never covers a line, however long.
+
+```tsx
+<CodeBlock.Root>
+  <CodeBlock.CopyTrigger />
+  <CodeBlock.Content dangerouslySetInnerHTML={{ __html: highlighted }} />
+</CodeBlock.Root>
+```
+
+It copies its `value`, or else the `value` of `CodeBlock.Root`, or else the text of
+`CodeBlock.Content` as it is when clicked: the code as shown, without the notation comments
+Shiki removed, the line numbers or the signs of a diff. Once the browser has written it, the
+copy icon turns into a check mark for `timeout` milliseconds (3 seconds by default), and screen
+readers hear "Copied to clipboard". The button runs the clipboard of Headless
+([Clipboard](/docs/headless/clipboard)): nothing changes when the browser refuses to write.
+
+On this site every code block gets the button; `noCopy` in the meta of a code block leaves it out,
+as in the second block here:
+
+<Preview>
+
+```bash
+pnpm add @contour-ui/kit @contour-ui/tokens
+```
+
+```bash noCopy
+pnpm add @contour-ui/headless
+```
+
+</Preview>
 
 ## Notations
 
@@ -146,21 +182,49 @@ pnpm add @contour-ui/kit @contour-ui/tokens @contour-ui/icons @contour-ui/headle
 
 ## Anatomy
 
-| Part                | Element      | Class                         | Attributes                                                                                                            |
-| ------------------- | ------------ | ----------------------------- | --------------------------------------------------------------------------------------------------------------------- |
-| `CodeBlock.Root`    | `figure`     | `contour-code-block`          | `data-scope="code-block" data-part="root"`                                                                            |
-| `CodeBlock.Header`  | `figcaption` | `contour-code-block__header`  | `data-scope="code-block" data-part="header"`                                                                          |
-| `CodeBlock.Title`   | `span`       | `contour-code-block__title`   | `data-scope="code-block" data-part="title"`                                                                           |
-| `CodeBlock.Content` | `div`        | `contour-code-block__content` | `data-scope="code-block" data-part="content"`, `tabindex="0"`; `role="region"` with `aria-label` or `aria-labelledby` |
+| Part                    | Element      | Class                              | Attributes                                                                                                            |
+| ----------------------- | ------------ | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `CodeBlock.Root`        | `figure`     | `contour-code-block`               | `data-scope="code-block" data-part="root"`                                                                            |
+| `CodeBlock.Header`      | `figcaption` | `contour-code-block__header`       | `data-scope="code-block" data-part="header"`                                                                          |
+| `CodeBlock.Title`       | `span`       | `contour-code-block__title`        | `data-scope="code-block" data-part="title"`, `id`                                                                     |
+| `CodeBlock.CopyTrigger` | `button`     | `contour-code-block__copy-trigger` | `data-scope="code-block" data-part="copy-trigger"`, `data-copied`, `aria-label`, `type="button"`                      |
+| status, by the trigger  | `span`       | —                                  | `data-scope="code-block" data-part="copy-status"`, `role="status"`, `aria-live="polite"`                              |
+| `CodeBlock.Content`     | `div`        | `contour-code-block__content`      | `data-scope="code-block" data-part="content"`, `tabindex="0"`; `role="region"` with `aria-label` or `aria-labelledby` |
 
 The header is the figure's caption: place it first in `CodeBlock.Root`, where HTML expects a
-`figcaption`. The title takes the free width of the header, and actions placed after it, such as a
-copy button, sit at the end of the row. Without a title, leave the header out.
+`figcaption`, and only with a title. The title takes the free width of the header, and the copy
+trigger after it sits at the end of the row. While a title is mounted, the root has
+`aria-labelledby` with the title's `id`.
+
+The copy trigger is Kit's `IconButton`, so it also has the classes and attributes of a
+[button](/docs/kit/button) in the `ghost` variant and the `sm` size. `data-copied` is present, and
+empty, while the code is copied. The status element right after it is empty until a copy, and
+hidden from sight but not from screen readers.
 
 ## Props
 
-The parts have no props of their own. Every part takes `asChild` and the props of its element, such
-as `className`, `style` and `id`; `className` is merged with the part's class.
+`CodeBlock.Root`:
+
+| Prop    | Type                                                                                             | Default |
+| ------- | ------------------------------------------------------------------------------------------------ | ------- |
+| `value` | `string`: what the copy trigger copies; without it, the text of `CodeBlock.Content` when clicked | —       |
+
+`CodeBlock.CopyTrigger`:
+
+| Prop             | Type                                                                    | Default                 |
+| ---------------- | ----------------------------------------------------------------------- | ----------------------- |
+| `value`          | `string`: what it copies, before the root's `value` and the content     | —                       |
+| `label`          | `string`: the accessible name                                           | `'Copy code'`           |
+| `copiedMessage`  | `string`: what screen readers announce after a copy                     | `'Copied to clipboard'` |
+| `timeout`        | `number`: milliseconds the check mark shows                             | `3000`                  |
+| `onStatusChange` | `(details: { copied: boolean }) => void`                                | —                       |
+| `variant`        | the variants of `IconButton`                                            | `'ghost'`               |
+| `size`           | `'sm'`, `'md'`, `'lg'`: the header and the room above the code fit `sm` | `'sm'`                  |
+
+It also takes the props of `button`; your `onClick` runs first, and `event.preventDefault()` in it
+cancels the copy. The other parts have no props of their own. Every part takes `asChild` and the
+props of its element, such as `className`, `style` and `id`; `className` is merged with the part's
+class.
 
 ## Shiki variables
 
@@ -187,16 +251,22 @@ The `--shiki-ansi-*` colors of `ansi` code have no tokens and are not set.
 
 ## Keyboard
 
-| Key     | Action                                           |
-| ------- | ------------------------------------------------ |
-| `Tab`   | Moves focus to the code and shows the focus ring |
-| `←` `→` | Scroll the focused code sideways                 |
+| Key              | Action                                           |
+| ---------------- | ------------------------------------------------ |
+| `Tab`            | Moves focus to the copy button, then to the code |
+| `Enter`, `Space` | On the copy button: copy the code                |
+| `←` `→`          | Scroll the focused code sideways                 |
 
 ## Accessibility
 
-- **A named figure.** `CodeBlock.Root` is a `figure`, and the header is its `figcaption`, so screen
-  readers announce the block with its title, such as "save-button.tsx, figure". Name a block without
-  a title with `aria-label` on the root.
+- **Named by the title only.** `CodeBlock.Root` is a `figure` named by its title
+  (`aria-labelledby`), so screen readers announce the block as "save-button.tsx, figure", without
+  the copy button or its status, which share the caption. Until the page's script runs, the caption
+  names it. A block without a title has no caption, and no name: give it one with `aria-label` on
+  the root.
+- **A copy button that keeps its name.** The trigger is "Copy code" before and after a copy. The
+  check mark is for the eyes; the status element announces "Copied to clipboard" once the browser
+  has written the code, without moving focus.
 - **One tab stop.** `CodeBlock.Content` is in the tab order, so keyboard users can scroll a long
   line. Keep the `pre` out of it (`tabindex: false` in Shiki), or the block has two tab stops.
 - **Readable everywhere.** Every syntax color keeps at least 4.5:1 on the code background, in both
@@ -208,18 +278,19 @@ The `--shiki-ansi-*` colors of `ansi` code have no tokens and are not set.
 
 ## Tokens
 
-| Token                                                                                              | Used for                                    |
-| -------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `--ct-color-bg-inset`                                                                              | the background                              |
-| `--ct-color-border-default`, `--ct-border-width-default`                                           | the border and the header's divider         |
-| `--ct-radius-panel`                                                                                | the corners                                 |
-| `--ct-text-label`, `--ct-color-fg-muted`                                                           | the title                                   |
-| `--ct-size-control-sm`, `--ct-space-control-gap`, `--ct-space-panel-inset`, `--ct-space-group-gap` | the header's height and padding             |
-| `--ct-text-code`, `--ct-space-panel-inset`                                                         | the code and its padding                    |
-| `--ct-color-accent-bg`, `--ct-color-accent-fill`, `--ct-border-width-focus`                        | highlighted lines: the tint and the bar     |
-| `--ct-color-accent-bg`, `--ct-color-accent-border`, `--ct-radius-control`                          | highlighted words                           |
-| `--ct-color-success-bg`, `--ct-color-success-fg`                                                   | added lines and their sign                  |
-| `--ct-color-danger-bg`, `--ct-color-danger-fg`                                                     | removed lines and their sign                |
-| `--ct-color-syntax-comment`                                                                        | line numbers, and the lines outside a focus |
-| `--ct-space-group-gap`                                                                             | the gap after line numbers and diff signs   |
-| `--ct-color-border-focus`, `--ct-border-width-focus`                                               | the focus ring                              |
+| Token                                                                                              | Used for                                                                      |
+| -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `--ct-color-bg-inset`                                                                              | the background                                                                |
+| `--ct-color-border-default`, `--ct-border-width-default`                                           | the border and the header's divider                                           |
+| `--ct-radius-panel`                                                                                | the corners                                                                   |
+| `--ct-text-label`, `--ct-color-fg-muted`                                                           | the title                                                                     |
+| `--ct-size-control-sm`, `--ct-space-control-gap`, `--ct-space-panel-inset`, `--ct-space-group-gap` | the header's height and padding                                               |
+| `--ct-text-code`, `--ct-space-panel-inset`                                                         | the code and its padding                                                      |
+| `--ct-color-accent-bg`, `--ct-color-accent-fill`, `--ct-border-width-focus`                        | highlighted lines: the tint and the bar                                       |
+| `--ct-color-accent-bg`, `--ct-color-accent-border`, `--ct-radius-control`                          | highlighted words                                                             |
+| `--ct-color-success-bg`, `--ct-color-success-fg`                                                   | added lines and their sign                                                    |
+| `--ct-color-danger-bg`, `--ct-color-danger-fg`                                                     | removed lines and their sign                                                  |
+| `--ct-color-syntax-comment`                                                                        | line numbers, and the lines outside a focus                                   |
+| `--ct-space-group-gap`                                                                             | the gap after line numbers and diff signs                                     |
+| `--ct-color-border-focus`, `--ct-border-width-focus`                                               | the focus ring                                                                |
+| `--ct-size-control-sm`, `--ct-space-control-gap`, `--ct-space-group-gap`                           | the copy button's place without a header, and the room the code leaves for it |
