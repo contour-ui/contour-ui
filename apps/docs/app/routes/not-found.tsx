@@ -1,23 +1,24 @@
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { Link } from '@contour-ui/kit';
 import type { ReactElement } from 'react';
-import { Link } from 'react-router';
+import { Link as RouterLink } from 'react-router';
 
-import { baseOptions } from '../lib/layout.shared.tsx';
+import { SiteLayout, SiteMessage } from '../components/layout/site-layout.tsx';
 
-export function meta(): Array<Record<string, string>> {
-  return [{ title: 'Not found' }];
-}
-
+/**
+ * The 404 page, for paths outside the routes and for docs pages that do not exist (the root
+ * `ErrorBoundary` renders it), so it sets its own title.
+ */
 export function NotFound(): ReactElement {
   return (
-    <HomeLayout {...baseOptions()}>
-      <div className="flex flex-1 flex-col items-center justify-center p-4 text-center">
-        <h1 className="mb-2 text-xl font-bold">Not found</h1>
-        <Link className="text-sm underline" to="/docs">
-          Back to docs
+    <SiteLayout>
+      <title>Not found</title>
+      <SiteMessage title="Not found">
+        <p>There is no page at this address.</p>
+        <Link asChild>
+          <RouterLink to="/docs">Back to docs</RouterLink>
         </Link>
-      </div>
-    </HomeLayout>
+      </SiteMessage>
+    </SiteLayout>
   );
 }
 

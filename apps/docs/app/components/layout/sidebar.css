@@ -1,0 +1,99 @@
+/*
+ * The sidebar, from 48rem: a `header`, the banner of the page there, that holds the panel and the
+ * toolbar. The panel is a column on the surface color as high as the viewport, which stays in view
+ * while the page scrolls; only the page tree scrolls inside it. `data-sidebar="collapsed"` on
+ * `<html>` hides the panel, so the header takes no room, and shows the toolbar, a small raised
+ * panel at the top start of the viewport, below the bar of the table of contents while there is
+ * one.
+ */
+.docs-sidebar {
+  display: none;
+  flex-shrink: 0;
+}
+
+.docs-sidebar__panel {
+  position: sticky;
+  inset-block-start: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-group-gap);
+  box-sizing: border-box;
+  inline-size: var(--docs-sidebar-width);
+  block-size: 100dvh;
+  padding: var(--ct-space-panel-inset);
+  border-inline-end: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+  background: var(--ct-color-bg-surface);
+}
+
+/* The brand lines up with the text of the links below it. */
+.docs-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ct-space-group-gap);
+  padding-inline-start: var(--ct-space-group-gap);
+}
+
+.docs-sidebar__search {
+  inline-size: 100%;
+}
+
+/* The page tree scrolls between the switcher and the footer, its scrollbar at the edge. */
+.docs-sidebar__body {
+  flex: 1 1 auto;
+  min-block-size: 0;
+  margin-inline: calc(-1 * var(--ct-space-panel-inset));
+  padding: var(--ct-space-group-gap) var(--ct-space-panel-inset);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.docs-sidebar__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ct-space-group-gap);
+  padding-block-start: var(--ct-space-group-gap);
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+}
+
+/*
+ * The room the toolbar takes from the start edge of the viewport, with a section gap after it:
+ * the page keeps clear of it (`docs-page.css`). Its offset, borders, padding, two `lg` buttons
+ * and the gap between them.
+ */
+.docs-shell {
+  --docs-toolbar-clearance: calc(
+    var(--ct-space-group-gap) + 2 * var(--ct-border-width-default) + 3 *
+      var(--ct-space-control-gap) + 2 * var(--ct-size-control-lg) + var(--ct-space-section-gap)
+  );
+}
+
+.docs-sidebar__toolbar {
+  position: fixed;
+  inset-block-start: calc(var(--docs-toc-bar-height) + var(--ct-space-group-gap));
+  inset-inline-start: var(--ct-space-group-gap);
+  z-index: var(--ct-layer-sticky);
+  display: none;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  padding: var(--ct-space-control-gap);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-raised);
+  box-shadow: var(--ct-shadow-raised);
+}
+
+@media (min-width: 48rem) {
+  .docs-sidebar {
+    display: block;
+  }
+
+  :root[data-sidebar='collapsed'] .docs-sidebar__panel {
+    display: none;
+  }
+
+  :root[data-sidebar='collapsed'] .docs-sidebar__toolbar {
+    display: flex;
+  }
+}

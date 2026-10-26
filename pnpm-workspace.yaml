@@ -73,7 +73,6 @@ catalog:
   # Docs
   fumadocs-core: 16.17.8
   fumadocs-mdx: 15.4.10
-  fumadocs-ui: 16.17.8
   # Code highlighting theme for the docs build (`createCssVariablesTheme`): the Shiki that
   # fumadocs-core uses, so the docs app does not get a second copy.
   shiki: 4.5.0
@@ -83,8 +82,6 @@ catalog:
   '@react-router/node': 8.5.0
   # Required by React Router's built-in entry.server (used for prerendering).
   isbot: 5.2.2
-  tailwindcss: 4.3.3
-  '@tailwindcss/vite': 4.3.3
 
   # Release / package validation
   '@changesets/cli': 3.0.3
@@ -116,7 +113,6 @@ minimumReleaseAgeExclude:
   - vite-plus@1.4.0
   - fumadocs-core@16.17.8
   - fumadocs-mdx@15.4.10
-  - fumadocs-ui@16.17.8
 
 # Dependency build scripts. esbuild's postinstall only verifies its binary; the
 # platform binary arrives via optionalDependencies, so the script is not needed.

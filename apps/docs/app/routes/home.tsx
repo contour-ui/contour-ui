@@ -1,8 +1,9 @@
-import { HomeLayout } from 'fumadocs-ui/layouts/home';
+import { Button, Card } from '@contour-ui/kit';
 import type { ReactElement } from 'react';
-import { Link } from 'react-router';
+import { Link as RouterLink } from 'react-router';
 
-import { baseOptions } from '../lib/layout.shared.tsx';
+import { SiteLayout } from '../components/layout/site-layout.tsx';
+import { SITE_DESCRIPTION, SITE_NAME } from '../lib/site.ts';
 
 /** The shipped packages; each has its own docs section. */
 const PACKAGES = [
@@ -20,42 +21,38 @@ const PACKAGES = [
 ] as const;
 
 export function meta(): Array<Record<string, string>> {
-  return [
-    { title: 'contour-ui' },
-    { name: 'description', content: 'Design system for audio-plugin UIs and general web UI.' },
-  ];
+  return [{ title: SITE_NAME }, { name: 'description', content: SITE_DESCRIPTION }];
 }
 
+/** The home page (`home.css`): what contour-ui is, the way into the guide, and a card per package. */
 export default function Home(): ReactElement {
   return (
-    <HomeLayout {...baseOptions()}>
-      <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col justify-center gap-10 px-4 py-16">
-        <div className="text-center">
-          <h1 className="mb-2 text-2xl font-bold">contour-ui</h1>
-          <p className="mb-6 text-fd-muted-foreground">
-            Design system for audio-plugin UIs and general web UI.
-          </p>
-          <Link
-            className="rounded-full bg-fd-primary px-4 py-2.5 text-sm font-medium text-fd-primary-foreground"
-            to="/docs/guide"
-          >
-            How it works
-          </Link>
+    <SiteLayout>
+      <div className="docs-home">
+        <div className="docs-home__hero">
+          <h1 className="docs-home__title">{SITE_NAME}</h1>
+          <p className="docs-home__description">{SITE_DESCRIPTION}</p>
+          <Button asChild size="lg">
+            <RouterLink to="/docs/guide">How it works</RouterLink>
+          </Button>
         </div>
-        <ul className="grid gap-4 sm:grid-cols-3">
+        <ul className="docs-home__packages">
           {PACKAGES.map(({ title, href, description }) => (
             <li key={href}>
-              <Link
-                className="block h-full rounded-xl border border-fd-border bg-fd-card p-4 transition-colors hover:bg-fd-accent"
-                to={href}
-              >
-                <span className="font-medium">{title}</span>
-                <span className="mt-1 block text-sm text-fd-muted-foreground">{description}</span>
-              </Link>
+              <Card.Root asChild size="lg">
+                <RouterLink to={href}>
+                  <Card.Body>
+                    <Card.Title asChild>
+                      <h2>{title}</h2>
+                    </Card.Title>
+                    <Card.Description>{description}</Card.Description>
+                  </Card.Body>
+                </RouterLink>
+              </Card.Root>
             </li>
           ))}
         </ul>
       </div>
-    </HomeLayout>
+    </SiteLayout>
   );
 }

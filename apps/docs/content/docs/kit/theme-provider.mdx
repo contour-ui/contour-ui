@@ -1,7 +1,48 @@
 ---
 title: ThemeProvider
-description: Keeps the theme of the page on <html>, the system's until the user chooses one, stored and restored without a flash.
+description: Keeps the theme of the page on the html element, the system's until the user chooses one, stored and restored without a flash.
 ---
+
+import { Button, useTheme } from '@contour-ui/kit';
+
+export const themeChoices = [
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+  { value: 'system', label: 'System' },
+];
+
+export function ThemeExample() {
+  const { theme, resolvedTheme, setTheme } = useTheme();
+  return (
+    <div style={{ display: 'grid', gap: 'var(--ct-space-group-gap)' }}>
+      <div
+        role="group"
+        aria-label="Theme"
+        style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--ct-space-group-gap)' }}
+      >
+        {themeChoices.map((choice) => (
+          <Button
+            key={choice.value}
+            variant={theme === choice.value ? 'solid' : 'outline'}
+            aria-pressed={theme === choice.value}
+            onClick={() => {
+              setTheme(choice.value);
+            }}
+          >
+            {choice.label}
+          </Button>
+        ))}
+      </div>
+      <p style={{ margin: 0 }}>
+        {`theme: ${theme ?? '…'}, resolvedTheme: ${resolvedTheme ?? '…'}`}
+      </p>
+    </div>
+  );
+}
+
+<Preview>
+  <ThemeExample />
+</Preview>
 
 ThemeProvider keeps the theme of the page on `<html>`, as the `data-theme` attribute the token
 stylesheet reads, so every Kit and Audio component follows it ([Themes](/docs/guide/themes)). It
@@ -21,8 +62,9 @@ const { theme, resolvedTheme, setTheme } = useTheme();
 ```
 
 The attribute is all ThemeProvider sets: the token stylesheet does the rest, `color-scheme`
-included. This page shows code only: this site still sets its theme with Fumadocs' provider, and
-two providers would fight over `<html>`.
+included. This site runs on ThemeProvider: the buttons above call `setTheme`, so the theme you
+choose holds on every page, now and on your next visit. The example shows `…` for both values
+until the page has hydrated, when they become known ([Server rendering](#server-rendering)).
 
 ## Set up
 

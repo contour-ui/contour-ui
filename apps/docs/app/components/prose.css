@@ -1,12 +1,13 @@
 /*
  * Prose: typography and vertical rhythm for the MDX content of a docs page.
  *
- * app.css imports this file into the `prose` cascade layer, between Preflight (`base`) and
- * contour-ui (`contour`): Prose restores what Preflight strips (margins, list markers, heading
- * sizes), and a Kit or Audio component inside the content keeps its own styles.
+ * app.css imports this file into the `prose` cascade layer, between the site's base styles
+ * (`base`) and contour-ui (`contour`): a Kit or Audio component inside the content keeps its own
+ * styles. Prose relies on no reset: it sets the margins, paddings, list markers and fonts of the
+ * elements it styles over the browser's defaults.
  *
- * - Fonts are set on the root, the headings and inline code only. Paragraphs and list items
- *   inherit, so text inside a component keeps the component's font.
+ * - Fonts are set on the root, the headings, inline code and captions only. Paragraphs and list
+ *   items inherit, so text inside a component keeps the component's font.
  * - Links, tables, `kbd` and code blocks are drawn by components (the MDX mapping in mdx.tsx);
  *   Prose only spaces them.
  * - Every selector has zero specificity (`:where()`) and skips whatever is inside an element with
@@ -35,13 +36,13 @@
   margin-block: calc(2 * var(--ct-space-section-gap)) var(--ct-space-group-gap);
 }
 
-:where(.docs-prose :is(h3, h4)):not(:where(.docs-not-prose *)) {
+:where(.docs-prose :is(h3, h4, h5, h6)):not(:where(.docs-not-prose *)) {
   margin-block: calc(var(--ct-space-section-gap) + var(--ct-space-group-gap))
     var(--ct-space-group-gap);
 }
 
 /* The block after a heading gives up its larger margin, so the heading's own applies. */
-:where(.docs-prose :is(h1, h2, h3, h4) + *):not(:where(.docs-not-prose *)) {
+:where(.docs-prose :is(h1, h2, h3, h4, h5, h6) + *):not(:where(.docs-not-prose *)) {
   margin-block-start: var(--ct-space-group-gap);
 }
 
@@ -60,12 +61,13 @@
   letter-spacing: var(--ct-text-subtitle-letter-spacing);
 }
 
-:where(.docs-prose h4):not(:where(.docs-not-prose *)) {
+/* The text styles stop at `heading`: the deeper levels share it. */
+:where(.docs-prose :is(h4, h5, h6)):not(:where(.docs-not-prose *)) {
   font: var(--ct-text-heading);
   letter-spacing: var(--ct-text-heading-letter-spacing);
 }
 
-/* Lists get back the markers and the indent that Preflight removes. */
+/* Lists indent their markers less than the browser does. */
 :where(.docs-prose :is(ul, ol)):not(:where(.docs-not-prose *)) {
   padding-inline-start: calc(var(--ct-space-section-gap) + var(--ct-space-group-gap));
 }
@@ -95,7 +97,9 @@
   font-weight: var(--ct-text-heading-font-weight);
 }
 
+/* Indented as far as list items, by a padding that replaces the browser's margin. */
 :where(.docs-prose dd):not(:where(.docs-not-prose *)) {
+  margin-inline-start: 0;
   padding-inline-start: calc(var(--ct-space-section-gap) + var(--ct-space-group-gap));
 }
 
@@ -105,6 +109,7 @@
 
 /* Twice a default border: a 1px line reads as a divider rather than a quote bar. */
 :where(.docs-prose blockquote):not(:where(.docs-not-prose *)) {
+  margin-inline: 0;
   padding-inline-start: var(--ct-space-panel-inset);
   border-inline-start: calc(2 * var(--ct-border-width-default)) solid var(--ct-color-border-strong);
   color: var(--ct-color-fg-muted);
@@ -134,15 +139,25 @@
   letter-spacing: var(--ct-text-code-letter-spacing);
 }
 
+/* An image fits the column and keeps its aspect ratio. */
+:where(.docs-prose img):not(:where(.docs-not-prose *)) {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
 :where(.docs-prose :is(img, figure)):not(:where(.docs-not-prose *)) {
   border-radius: var(--ct-radius-panel);
+}
+
+:where(.docs-prose figure):not(:where(.docs-not-prose *)) {
+  margin-inline: 0;
 }
 
 :where(.docs-prose figure > figcaption):not(:where(.docs-not-prose *)) {
   margin-block: var(--ct-space-group-gap);
   color: var(--ct-color-fg-muted);
-  font: var(--ct-text-caption);
-  letter-spacing: var(--ct-text-caption-letter-spacing);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
 }
 
 /*
@@ -156,4 +171,12 @@
 
 :where(.docs-prose :last-child):not(:where(.docs-not-prose *)) {
   margin-block-end: 0;
+}
+
+/*
+ * Except above a nested list: the text of its item comes before it, as a text node, which
+ * `:first-child` does not count.
+ */
+:where(.docs-prose li > :is(ul, ol)):not(:where(.docs-not-prose *)) {
+  margin-block-start: var(--ct-space-group-gap);
 }

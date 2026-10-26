@@ -1,4 +1,4 @@
-import { RootProvider } from 'fumadocs-ui/provider/react-router';
+import { ThemeProvider, themeScript } from '@contour-ui/kit';
 import type { ReactElement, ReactNode } from 'react';
 import {
   isRouteErrorResponse,
@@ -9,7 +9,10 @@ import {
   ScrollRestoration,
 } from 'react-router';
 
-import { SearchDialog } from './components/search.tsx';
+import { sidebarScript } from './components/layout/sidebar-state.ts';
+import { SiteLayout, SiteMessage } from './components/layout/site-layout.tsx';
+import { SkipLink } from './components/layout/skip-link.tsx';
+import { SearchProvider } from './components/search/search-provider.tsx';
 import { NotFound } from './routes/not-found.tsx';
 
 import './app.css';
@@ -20,18 +23,25 @@ import '@contour-ui/audio/styles.css';
 
 export function Layout({ children }: { readonly children: ReactNode }): ReactElement {
   return (
+    // The inline scripts set `data-theme` and `data-sidebar` on `<html>` before React hydrates it.
     <html lang="en" suppressHydrationWarning>
       <head>
         <meta charSet="utf-8" />
+        {/* Before the stylesheets, so the first paint has the theme and the sidebar state. */}
+        <script dangerouslySetInnerHTML={{ __html: themeScript() }} />
+        <script dangerouslySetInnerHTML={{ __html: sidebarScript }} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <Meta />
         <Links />
       </head>
-      <body className="flex min-h-screen flex-col">
-        {/* `class` drives Fumadocs' `.dark`; `data-theme` drives the contour-ui tokens. */}
-        <RootProvider search={{ SearchDialog }} theme={{ attribute: ['class', 'data-theme'] }}>
-          {children}
-        </RootProvider>
+      <body>
+        <ThemeProvider>
+          <SearchProvider>
+            <SkipLink />
+            {children}
+          </SearchProvider>
+        </ThemeProvider>
         <ScrollRestoration />
         <Scripts />
       </body>
@@ -48,9 +58,11 @@ export function ErrorBoundary({ error }: { readonly error: unknown }): ReactElem
     return <NotFound />;
   }
   return (
-    <main className="mx-auto w-full max-w-350 p-4 pt-16">
-      <h1>Error</h1>
-      <p>{error instanceof Error ? error.message : 'An unexpected error occurred.'}</p>
-    </main>
+    <SiteLayout>
+      <title>Error</title>
+      <SiteMessage title="Error">
+        <p>{error instanceof Error ? error.message : 'An unexpected error occurred.'}</p>
+      </SiteMessage>
+    </SiteLayout>
   );
 }

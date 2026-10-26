@@ -8,7 +8,7 @@ import { Dialog, Portal } from '@contour-ui/headless';
 <Preview>
   {
     <Dialog.Root>
-      <Dialog.Trigger className="docs-dialog-example-button">Rename the track</Dialog.Trigger>
+      <Dialog.Trigger>Rename the track</Dialog.Trigger>
       <Portal>
         <Dialog.Backdrop className="docs-dialog-example-backdrop" />
         <Dialog.Positioner className="docs-dialog-example-positioner">
@@ -19,16 +19,13 @@ import { Dialog, Portal } from '@contour-ui/headless';
               Name <input defaultValue="Drums" />
             </label>
             <div>
-              <Dialog.CloseTrigger className="docs-dialog-example-button">
-                Cancel
-              </Dialog.CloseTrigger>{' '}
-              <Dialog.CloseTrigger className="docs-dialog-example-button">Save</Dialog.CloseTrigger>
+              <Dialog.CloseTrigger>Cancel</Dialog.CloseTrigger>{' '}
+              <Dialog.CloseTrigger>Save</Dialog.CloseTrigger>
             </div>
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>
       <style>{`
-        .docs-dialog-example-button { padding: 0 0.5em; border: 1px solid; }
         .docs-dialog-example-backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / 0.5); }
         .docs-dialog-example-positioner {
           position: fixed; inset: 0; display: grid; place-items: center; padding: 1rem;
@@ -40,7 +37,7 @@ import { Dialog, Portal } from '@contour-ui/headless';
           border: 1px solid; background: Canvas; color: CanvasText; pointer-events: auto;
         }
         .docs-dialog-example-content[hidden] { display: none; }
-        .docs-dialog-example-content input { border: 1px solid; padding: 0 0.25em; }
+        .docs-dialog-example-content :is(h2, p) { margin: 0; }
       `}</style>
     </Dialog.Root>
   }

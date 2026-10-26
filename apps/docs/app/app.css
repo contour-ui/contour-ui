@@ -1,14 +1,12 @@
 /*
- * Cascade layer order, as the installation guide recommends with Tailwind: contour-ui's
- * layers rank above Preflight (`base`) and below the utilities. `prose`, the typography of
- * the page content, sits between them: it beats Preflight, and every Kit and Audio component
- * inside the content beats it.
+ * Cascade layer order. `base` is the page itself (base.css). `prose`, the typography of the
+ * page content, beats it, and every Kit and Audio component (`contour`) inside the content beats
+ * Prose. The docs components and the layout (`docs`) rank above contour-ui's styles, which they
+ * adjust where they use them.
  */
-@layer theme, base, prose, contour, components, utilities;
+@layer base, prose, contour, docs;
 
-@import 'tailwindcss';
-@import 'fumadocs-ui/css/neutral.css';
-@import 'fumadocs-ui/css/preset.css';
+@import './base.css' layer(base);
 
 /*
  * Docs components. Their files hold plain rules and get their layer here, next to the order
@@ -17,46 +15,22 @@
  * loads after this file.
  */
 @import './components/prose.css' layer(prose);
-@import './components/preview.css' layer(components);
-@import './components/cards.css' layer(components);
-
-/*
- * Fumadocs theme -> contour-ui tokens. The token roles switch with `data-theme`
- * (set together with `.dark` by next-themes, see root.tsx), so one mapping covers
- * both themes. The selectors only out-rank the stock neutral theme, which sets
- * these variables on `.dark` and `.dark #nd-sidebar`.
- */
-:root,
-.dark,
-.dark #nd-sidebar {
-  --color-fd-background: var(--ct-color-bg-canvas);
-  --color-fd-foreground: var(--ct-color-fg-default);
-  --color-fd-muted: var(--ct-color-bg-surface);
-  --color-fd-muted-foreground: var(--ct-color-fg-muted);
-  --color-fd-popover: var(--ct-color-bg-raised);
-  --color-fd-popover-foreground: var(--ct-color-fg-default);
-  --color-fd-card: var(--ct-color-bg-surface);
-  --color-fd-card-foreground: var(--ct-color-fg-default);
-  --color-fd-border: var(--ct-color-border-default);
-  --color-fd-primary: var(--ct-color-accent-fill);
-  --color-fd-primary-foreground: var(--ct-color-accent-on-fill);
-  --color-fd-secondary: var(--ct-color-bg-raised);
-  --color-fd-secondary-foreground: var(--ct-color-fg-default);
-  --color-fd-accent: var(--ct-color-bg-hover);
-  --color-fd-accent-foreground: var(--ct-color-fg-default);
-  --color-fd-ring: var(--ct-color-border-focus);
-  --color-fd-info: var(--ct-color-accent-fg);
-  --color-fd-warning: var(--ct-color-warning-fg);
-  --color-fd-error: var(--ct-color-danger-fg);
-  --color-fd-success: var(--ct-color-success-fg);
-}
-
-/* Text and code use the design system's families (from @contour-ui/tokens/fonts.css). */
-@theme inline {
-  --font-sans: var(--ct-text-body-font-family);
-  --font-mono: var(--ct-text-value-font-family);
-}
-
-html {
-  scrollbar-gutter: stable;
-}
+@import './components/preview.css' layer(docs);
+@import './components/cards.css' layer(docs);
+@import './components/mdx-heading.css' layer(docs);
+@import './components/page-header.css' layer(docs);
+@import './components/page-footer.css' layer(docs);
+@import './components/toc-panel.css' layer(docs);
+@import './components/search/search.css' layer(docs);
+@import './components/theme-toggle.css' layer(docs);
+@import './components/layout/docs-shell.css' layer(docs);
+@import './components/layout/docs-page.css' layer(docs);
+@import './components/layout/header.css' layer(docs);
+@import './components/layout/mobile-nav.css' layer(docs);
+@import './components/layout/page-tree.css' layer(docs);
+@import './components/layout/section-switcher.css' layer(docs);
+@import './components/layout/sidebar.css' layer(docs);
+@import './components/layout/site-layout.css' layer(docs);
+@import './components/layout/site-links.css' layer(docs);
+@import './components/layout/skip-link.css' layer(docs);
+@import './routes/home.css' layer(docs);

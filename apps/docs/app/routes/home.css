@@ -1,0 +1,64 @@
+/*
+ * The home page: the hero, then the cards of the packages, centered in the free space. One
+ * column of cards on phones, three from 40rem, all as high as the highest.
+ */
+.docs-home {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2.5rem;
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: 52rem;
+  margin-inline: auto;
+  padding: 4rem var(--docs-page-inset);
+}
+
+.docs-home__hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+  text-align: center;
+}
+
+.docs-home__title {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-display);
+  letter-spacing: var(--ct-text-display-letter-spacing);
+}
+
+/* The section gap below it sets the button apart from the text. */
+.docs-home__description {
+  margin: 0 0 var(--ct-space-section-gap);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-prose);
+  letter-spacing: var(--ct-text-prose-letter-spacing);
+}
+
+.docs-home__packages {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ct-space-section-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The card fills its cell, so the cards of a row are as high as each other. */
+.docs-home__packages > li {
+  display: flex;
+  flex-direction: column;
+}
+
+.docs-home__packages > li > * {
+  flex: 1 1 auto;
+}
+
+@media (min-width: 40rem) {
+  .docs-home__packages {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

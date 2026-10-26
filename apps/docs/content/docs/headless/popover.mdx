@@ -8,19 +8,18 @@ import { Popover, Portal } from '@contour-ui/headless';
 <Preview>
   {
     <Popover.Root>
-      <Popover.Trigger className="docs-popover-trigger">Share</Popover.Trigger>
+      <Popover.Trigger>Share</Popover.Trigger>
       <Portal>
         <Popover.Positioner className="docs-popover-positioner">
           <Popover.Content className="docs-popover-content">
             <Popover.Title style={{ fontWeight: 600 }}>Share this page</Popover.Title>
             <Popover.Description>Anyone with the link can view it.</Popover.Description>
             <input aria-label="Link" defaultValue="https://contour-ui.dev/docs" />
-            <Popover.CloseTrigger className="docs-popover-trigger">Done</Popover.CloseTrigger>
+            <Popover.CloseTrigger>Done</Popover.CloseTrigger>
           </Popover.Content>
         </Popover.Positioner>
       </Portal>
       <style>{`
-        .docs-popover-trigger { padding: 2px 10px; border: 1px solid; border-radius: 4px; }
         .docs-popover-positioner { z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0)); }
         .docs-popover-content {
           display: grid;
@@ -33,7 +32,6 @@ import { Popover, Portal } from '@contour-ui/headless';
           color: var(--ct-color-fg-default);
         }
         .docs-popover-content[hidden] { display: none; }
-        .docs-popover-content input { padding: 2px 6px; border: 1px solid; }
       `}</style>
     </Popover.Root>
   }

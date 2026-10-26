@@ -14,22 +14,24 @@ import {
 import { Button, CloseButton, Icon, IconButton } from '@contour-ui/kit';
 
 <Preview>
-  <div
-    style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      gap: 'var(--ct-space-group-gap)',
-    }}
-  >
-    <Button>Get started</Button>
-    <Button variant="outline">
-      <Icon icon={searchIcon} />
-      Search
-    </Button>
-    <IconButton label="Open menu" icon={menuIcon} variant="ghost" />
-    <CloseButton />
-  </div>
+  {
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 'var(--ct-space-group-gap)',
+      }}
+    >
+      <Button>Get started</Button>
+      <Button variant="outline">
+        <Icon icon={searchIcon} />
+        Search
+      </Button>
+      <IconButton label="Open menu" icon={menuIcon} variant="ghost" />
+      <CloseButton />
+    </div>
+  }
 </Preview>
 
 ```tsx
@@ -110,23 +112,25 @@ Put an [`Icon`](/docs/kit/icon) before or after the label. The button sizes it,
 of the label. It is decorative: the label names the button.
 
 <Preview>
-  <div
-    style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      gap: 'var(--ct-space-group-gap)',
-    }}
-  >
-    <Button variant="subtle">
-      <Icon icon={copyIcon} />
-      Copy
-    </Button>
-    <Button>
-      Next
-      <Icon icon={chevronRightIcon} />
-    </Button>
-  </div>
+  {
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 'var(--ct-space-group-gap)',
+      }}
+    >
+      <Button variant="subtle">
+        <Icon icon={copyIcon} />
+        Copy
+      </Button>
+      <Button>
+        Next
+        <Icon icon={chevronRightIcon} />
+      </Button>
+    </div>
+  }
 </Preview>
 
 ```tsx
@@ -148,19 +152,21 @@ import { Button, Icon } from '@contour-ui/kit';
 `disabled` turns the button off: it dims, stops reacting to hover and ignores clicks.
 
 <Preview>
-  <div
-    style={{
-      display: 'flex',
-      flexWrap: 'wrap',
-      alignItems: 'center',
-      gap: 'var(--ct-space-group-gap)',
-    }}
-  >
-    <Button disabled>Save</Button>
-    <Button variant="outline" disabled>
-      Export
-    </Button>
-  </div>
+  {
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 'var(--ct-space-group-gap)',
+      }}
+    >
+      <Button disabled>Save</Button>
+      <Button variant="outline" disabled>
+        Export
+      </Button>
+    </div>
+  }
 </Preview>
 
 ```tsx

@@ -1,0 +1,46 @@
+/*
+ * Headings of the page content, with their anchor links (mdx-heading.tsx). Prose sets their font
+ * and spacing; these rules draw the link inside, which looks like the heading text.
+ */
+
+/* A jump to the heading leaves it below the sticky header and the "On this page" bar. */
+.docs-heading {
+  scroll-margin-block-start: calc(
+    var(--docs-header-height, 0px) + var(--docs-toc-bar-height, 0px) + var(--ct-space-section-gap)
+  );
+}
+
+/*
+ * A link of the table of contents moves the focus to the heading (Kit's Toc), only to start the
+ * Tab order there: no ring around the heading. The next Tab stop, its own link, has one.
+ */
+.docs-heading:focus {
+  outline: none;
+}
+
+.docs-heading__link {
+  border-radius: var(--ct-radius-control);
+  color: inherit;
+  text-decoration: none;
+}
+
+.docs-heading__link:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
+
+/* After the last word, hidden until the heading is hovered or the link has the focus. */
+.docs-heading__hash {
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+  margin-inline-start: var(--ct-space-group-gap);
+  color: var(--ct-color-fg-muted);
+  vertical-align: middle;
+  opacity: 0;
+  transition: opacity var(--ct-motion-feedback);
+}
+
+.docs-heading:hover .docs-heading__hash,
+.docs-heading__link:focus-visible .docs-heading__hash {
+  opacity: 1;
+}

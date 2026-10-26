@@ -15,9 +15,7 @@ interface MdxPreProps extends ComponentProps<'pre'> {
 /**
  * A fenced code block as Kit's `CodeBlock`: a header with the title when the block has one, the
  * highlighted `pre` in the scroll area, and a copy button unless the meta says `noCopy`, in the
- * header or, without a title, at the top end of the block. `not-fumadocs-codeblock` turns off
- * the Shiki styles of `fumadocs-ui/css/preset.css`, which are not in a cascade layer and would
- * beat Kit's.
+ * header or, without a title, at the top end of the block.
  */
 export function MdxPre({ title, allowCopy, style, ...props }: MdxPreProps): ReactElement {
   const start = Number(props['data-line-numbers-start']);
@@ -29,7 +27,7 @@ export function MdxPre({ title, allowCopy, style, ...props }: MdxPreProps): Reac
   const copy = allowCopy === 'false' ? null : <CodeBlock.CopyTrigger />;
 
   return (
-    <CodeBlock.Root className="not-fumadocs-codeblock">
+    <CodeBlock.Root>
       {title === undefined || title === '' ? (
         copy
       ) : (

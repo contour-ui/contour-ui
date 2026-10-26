@@ -1,15 +1,16 @@
+import type { Root } from 'fumadocs-core/page-tree';
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
-import { DocsLayout } from 'fumadocs-ui/layouts/docs';
-import { DocsDescription, DocsPage, DocsTitle } from 'fumadocs-ui/layouts/docs/page';
 import { use } from 'react';
 import type { ReactElement } from 'react';
-import { useLoaderData } from 'react-router';
-import type { LoaderFunctionArgs } from 'react-router';
+import { isRouteErrorResponse, useLoaderData } from 'react-router';
+import type { ClientLoaderFunctionArgs, LoaderFunctionArgs } from 'react-router';
 
+import { DocsPage } from '../components/layout/docs-page.tsx';
+import { DocsShell } from '../components/layout/docs-shell.tsx';
 import { getMdxComponents } from '../components/mdx.tsx';
 import { Prose } from '../components/prose.tsx';
-import { baseOptions } from '../lib/layout.shared.tsx';
 import { docs, source } from '../lib/source.ts';
+import { NotFound } from './not-found.tsx';
 
 export async function loader({ params }: LoaderFunctionArgs) {
   const slugs = (params['*'] ?? '').split('/').filter((segment) => segment.length > 0);
@@ -21,11 +22,35 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
   return {
     path: page.path,
+    url: page.url,
+    title: page.data.title,
+    description: page.data.description,
     pageTree: await source.serializePageTree(source.getPageTree()),
   };
 }
 
-function Content({ path }: { readonly path: string }): ReactElement {
+/**
+ * The same data in the browser, from the prerendered `.data` file of the page. A static host
+ * serves a path that was not prerendered, such as a page that does not exist, with the SPA
+ * fallback, which hydrates with no data for this route: without a client loader, React Router
+ * fails with "No result found"; through `serverLoader()`, it asks for the page's `.data` file,
+ * the host answers 404, and the root error boundary shows the 404 page.
+ */
+export function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
+  return serverLoader<typeof loader>();
+}
+
+interface ContentProps {
+  /** The path of the page's file, as the collection knows it (`kit/button.mdx`). */
+  readonly path: string;
+  readonly url: string;
+  readonly title: string;
+  readonly description: string | undefined;
+  readonly tree: Root;
+}
+
+/** The page itself, once its MDX and its table of contents have loaded. */
+function Content({ path, url, title, description, tree }: ContentProps): ReactElement {
   const page = docs.getPage(path);
   if (page === undefined) {
     throw new Error(`Unknown page: ${path}`);
@@ -34,14 +59,8 @@ function Content({ path }: { readonly path: string }): ReactElement {
   const Mdx = page.body;
 
   return (
-    <DocsPage toc={toc}>
-      <title>{page.title}</title>
-      <meta name="description" content={page.description} />
-      <DocsTitle>{page.title}</DocsTitle>
-      <DocsDescription>{page.description}</DocsDescription>
-      {/* `flex-1`, as on fumadocs' DocsBody: the content fills the page column, so the page
-          footer stays at the bottom of a short page. */}
-      <Prose className="flex-1">
+    <DocsPage title={title} description={description} toc={toc} tree={tree} url={url}>
+      <Prose>
         <Mdx components={getMdxComponents()} />
       </Prose>
     </DocsPage>
@@ -49,11 +68,28 @@ function Content({ path }: { readonly path: string }): ReactElement {
 }
 
 export default function Page(): ReactElement {
-  const { path, pageTree } = useFumadocsLoader(useLoaderData<typeof loader>());
+  const { path, url, title, description, pageTree } =
+    useFumadocsLoader(useLoaderData<typeof clientLoader>());
 
   return (
-    <DocsLayout {...baseOptions()} tree={pageTree}>
-      <Content path={path} />
-    </DocsLayout>
+    <>
+      <title>{title}</title>
+      {description === undefined ? null : <meta name="description" content={description} />}
+      <DocsShell tree={pageTree} url={url}>
+        <Content path={path} url={url} title={title} description={description} tree={pageTree} />
+      </DocsShell>
+    </>
   );
+}
+
+/**
+ * A docs page that does not exist shows the 404 page in place of this route, so the root layout
+ * stays mounted, as it does for a path outside the routes. Other errors go on to the root error
+ * boundary.
+ */
+export function ErrorBoundary({ error }: { readonly error: unknown }): ReactElement {
+  if (isRouteErrorResponse(error) && error.status === 404) {
+    return <NotFound />;
+  }
+  throw error;
 }

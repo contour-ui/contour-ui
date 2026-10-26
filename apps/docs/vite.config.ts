@@ -1,6 +1,5 @@
 import { contourSource } from '@contour-ui/vite-config';
 import { reactRouter } from '@react-router/dev/vite';
-import tailwindcss from '@tailwindcss/vite';
 import { fumadocsMdx } from 'fumadocs-mdx/vite';
 import { createCssVariablesTheme } from 'shiki';
 import { defineConfig } from 'vite-plus';
@@ -34,9 +33,6 @@ export default defineConfig({
         },
       },
     }),
-    // Tailwind's own Lightning CSS pass warns on fumadocs-ui's `::highlight()`
-    // rules; Vite's CSS minifier still minifies the output.
-    tailwindcss({ optimize: false }),
     reactRouter(),
   ],
   resolve: {

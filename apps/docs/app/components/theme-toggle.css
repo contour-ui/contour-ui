@@ -1,0 +1,36 @@
+/*
+ * The theme toggle: a ghost Button of size `lg`, square like an IconButton of that size. It holds
+ * both choices; the one that fits the theme of the page shows, keyed on the `data-theme` of
+ * `<html>`. The page is dark unless it says `light`, as the token stylesheet is.
+ */
+.docs-theme-toggle {
+  inline-size: var(--ct-size-control-lg);
+  padding-inline: 0;
+}
+
+/* Its parts lay out as children of the button. */
+.docs-theme-toggle__choice {
+  display: contents;
+}
+
+/* `display: none` takes the other choice out of the accessible name too. */
+:root[data-theme='light'] .docs-theme-toggle__choice[data-target='light'],
+:root:not([data-theme='light']) .docs-theme-toggle__choice[data-target='dark'] {
+  display: none;
+}
+
+/* As large as the icon of an IconButton of size `lg`. */
+.docs-theme-toggle .contour-icon {
+  inline-size: var(--ct-size-icon-lg);
+  block-size: var(--ct-size-icon-lg);
+}
+
+/* The name, for assistive technology only. */
+.docs-theme-toggle__label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

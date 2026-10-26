@@ -17,7 +17,6 @@
     "@react-router/node": "catalog:",
     "fumadocs-core": "catalog:",
     "fumadocs-mdx": "catalog:",
-    "fumadocs-ui": "catalog:",
     "isbot": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -27,13 +26,11 @@
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",
     "@react-router/dev": "catalog:",
-    "@tailwindcss/vite": "catalog:",
     "@types/mdx": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "shiki": "catalog:",
-    "tailwindcss": "catalog:",
     "vite": "catalog:",
     "vite-plus": "catalog:"
   }

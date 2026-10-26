@@ -1,0 +1,54 @@
+/*
+ * The docs shell: the header above the page below 48rem, the sidebar beside it from 48rem.
+ *
+ * Its root sets, for every component inside:
+ * - `--docs-header-height`: the height of the sticky header, `0px` from 48rem, where it goes;
+ * - `--docs-toc-bar-height`: the height of the sticky bar of the table of contents (`docs-page.css`),
+ *   `0px` from 80rem, where the column of the table of contents replaces it, and on a page
+ *   without one.
+ * Content below both bars, such as a heading a link scrolls to, keeps their sum free at the top
+ * with `scroll-margin-block-start`.
+ *
+ * And for the layout: `--docs-sidebar-width`, `--docs-page-inset` (the inline padding of the
+ * page and the header), `--docs-article-width` (the widest the article gets: a readable line of
+ * prose, room for code) and `--docs-toc-width`.
+ */
+.docs-shell {
+  --docs-header-height: 3rem;
+  --docs-toc-bar-height: 2.5rem;
+  --docs-sidebar-width: 16rem;
+  --docs-page-inset: 1rem;
+  --docs-article-width: 44rem;
+  --docs-toc-width: 13rem;
+
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+@media (min-width: 48rem) {
+  .docs-shell {
+    --docs-header-height: 0px;
+    --docs-page-inset: 2rem;
+
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 80rem) {
+  .docs-shell {
+    --docs-toc-bar-height: 0px;
+  }
+}
+
+.docs-shell:not(:has(.docs-page__toc-bar)) {
+  --docs-toc-bar-height: 0px;
+}
+
+/* The column of the page: what the sidebar leaves, at least the rest of the viewport. */
+.docs-shell__main {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-inline-size: 0;
+}

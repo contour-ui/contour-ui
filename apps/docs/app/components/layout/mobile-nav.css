@@ -1,0 +1,6 @@
+/* The footer of the menu drawer, as in the sidebar: the GitHub link at the start, the theme toggle at the end. */
+.docs-mobile-nav__footer {
+  justify-content: space-between;
+  padding-block-start: var(--ct-space-group-gap);
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+}
