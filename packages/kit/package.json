@@ -47,6 +47,7 @@
   },
   "dependencies": {
     "@contour-ui/headless": "workspace:*",
+    "@contour-ui/icons": "workspace:*",
     "@contour-ui/tokens": "workspace:*"
   },
   "devDependencies": {

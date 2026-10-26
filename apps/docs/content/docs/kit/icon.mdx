@@ -1,0 +1,85 @@
+---
+title: Icon
+description: An icon from the contour-ui set as an inline SVG that takes the size and color of the text around it.
+---
+
+import { circleCheckIcon, copyIcon, githubIcon, searchIcon } from '@contour-ui/icons';
+import { Icon } from '@contour-ui/kit';
+
+<Preview>
+  <Icon icon={searchIcon} size={20} />
+  <Icon icon={copyIcon} size={20} />
+  <Icon icon={circleCheckIcon} size={20} style={{ color: 'var(--ct-color-success-fg)' }} />
+  <Icon icon={githubIcon} size={20} label="GitHub" />
+</Preview>
+
+```bash
+pnpm add @contour-ui/icons
+```
+
+```tsx
+import { searchIcon } from '@contour-ui/icons';
+import { Icon } from '@contour-ui/kit';
+
+<Icon icon={searchIcon} />;
+```
+
+Icons are data in `@contour-ui/icons`: one `<name>Icon` export per icon, so your bundle carries only
+the icons you import. `Icon` draws one of them as an `<svg>`.
+
+## Size and color
+
+By default an icon is `1em` square, so it follows the font size of the text around it. Pass `size`
+in pixels or as any CSS length to fix it. The icon paints with `currentColor`: set `color` on the
+icon or on its parent.
+
+```tsx
+<Icon icon={copyIcon} size={16} />
+<Icon icon={circleCheckIcon} style={{ color: 'var(--ct-color-success-fg)' }} />
+```
+
+Components that hold icons, such as buttons and alerts, size them with the `--ct-size-icon-*`
+tokens in their own CSS, which takes precedence over `size`.
+
+## Decorative and meaningful icons
+
+Most icons repeat what the text next to them says, so `Icon` hides them from assistive technology
+by default (`aria-hidden="true"`). When an icon stands alone and carries meaning, give it a `label`:
+it becomes an image with that name.
+
+```tsx
+<Icon icon={githubIcon} label="GitHub" />
+```
+
+An icon inside a button or a link names nothing: name the button or the link instead, for example
+with `IconButton`'s `label`.
+
+## Anatomy
+
+| Part   | Element | Class          | Attributes                                                                                   |
+| ------ | ------- | -------------- | -------------------------------------------------------------------------------------------- |
+| `Icon` | `svg`   | `contour-icon` | `data-scope="icon" data-part="root"`; `aria-hidden="true"`, or `role="img"` and `aria-label` |
+
+## Props
+
+| Prop          | Type               | Default                        |
+| ------------- | ------------------ | ------------------------------ |
+| `icon`        | `IconData`         | required                       |
+| `size`        | `number \| string` | `'1em'`                        |
+| `label`       | `string`           | none: the icon is decorative   |
+| `strokeWidth` | `number`           | the icon's own: `2` for Lucide |
+
+Other `svg` props, such as `className`, `style` and `id`, are passed to the element; `className`
+is merged with `contour-icon`.
+
+## The icon set
+
+The set holds the icons contour-ui components and this site use: [Lucide](https://lucide.dev)
+icons, drawn as outlines, and brand logos from [Simple Icons](https://simpleicons.org), drawn
+filled. Every icon is on a 24 × 24 grid. The same data drives the canvas renderer of
+`@contour-ui/icons` (`drawIcon`), for UIs that do not render to the DOM.
+
+## Tokens
+
+None of its own: an icon uses the text color and size. Components size their icons with
+`--ct-size-icon-sm`, `--ct-size-icon-md` and `--ct-size-icon-lg`.

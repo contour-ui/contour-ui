@@ -173,6 +173,9 @@ importers:
       '@contour-ui/headless':
         specifier: workspace:*
         version: link:../../packages/headless
+      '@contour-ui/icons':
+        specifier: workspace:*
+        version: link:../../packages/icons
       '@contour-ui/kit':
         specifier: workspace:*
         version: link:../../packages/kit
@@ -505,6 +508,9 @@ importers:
       '@contour-ui/headless':
         specifier: workspace:*
         version: link:../headless
+      '@contour-ui/icons':
+        specifier: workspace:*
+        version: link:../icons
       '@contour-ui/tokens':
         specifier: workspace:*
         version: link:../tokens

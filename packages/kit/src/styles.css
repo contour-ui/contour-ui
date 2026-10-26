@@ -10,4 +10,5 @@
  */
 @layer contour.kit;
 
+@import './icon/icon.css' layer(contour.kit);
 @import './placeholder/placeholder.css' layer(contour.kit);
