@@ -9,14 +9,14 @@ All published packages live under `@contour-ui/` in `packages/`. Dependencies
 point **down** the table only — never up, never sideways — with one exception:
 `audio → kit`.
 
-| Layer        | Package    | Purpose                                                                                         | May depend on (internal)             |
-| ------------ | ---------- | ----------------------------------------------------------------------------------------------- | ------------------------------------ |
-| 0 foundation | `tokens`   | DTCG design tokens → CSS vars / TS (Style Dictionary)                                           | —                                    |
-| 0 foundation | `icons`    | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                         | —                                    |
-| 1 logic      | `core`     | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `scales/`, `format/` | —                                    |
-| 2 headless   | `headless` | unstyled React DOM components + hooks (Ark UI–like)                                             | `core`                               |
-| 3 kit        | `kit`      | styled general-purpose components                                                               | `headless`, `tokens`, `icons`        |
-| 3 kit        | `audio`    | styled audio components                                                                         | `headless`, `tokens`, `icons`, `kit` |
+| Layer        | Package    | Purpose                                                                                                                        | May depend on (internal)             |
+| ------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
+| 0 foundation | `tokens`   | DTCG design tokens → CSS vars / TS (Style Dictionary)                                                                          | —                                    |
+| 0 foundation | `icons`    | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                        | —                                    |
+| 1 logic      | `core`     | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/` | —                                    |
+| 2 headless   | `headless` | unstyled React DOM components + hooks (Ark UI–like)                                                                            | `core`                               |
+| 3 kit        | `kit`      | styled general-purpose components                                                                                              | `headless`, `tokens`, `icons`        |
+| 3 kit        | `audio`    | styled audio components                                                                                                        | `headless`, `tokens`, `icons`, `kit` |
 
 Rules:
 
@@ -28,7 +28,8 @@ Rules:
 - `core` also runs on Hermes (the Soundor runtime, built without `Intl`): no `Intl`, no
   locale-dependent methods (`toLocale*`, `localeCompare`), no `eval` / `new Function`, no
   `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`.
-- Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`.
+- Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`,
+  `collection/` and `positioning/`.
 - `headless` must not depend on `tokens`, `icons`, `kit`, `audio`. Peers: `react`, `react-dom`.
 - Kits (`kit`, `audio`) are styled with plain CSS + token CSS variables. **No Tailwind in packages.**
   Use semantic roles only (`--ct-color-*`, `--ct-space-*`, `--ct-text-*`…), never `--ct-base-*`.
@@ -98,6 +99,16 @@ then the job runs on every push again.
 Lint and format config lives **only** in the root `vite.config.ts` (per-package
 rules via `lint.overrides`). Package `vite.config.ts` files hold Vite, Vitest and
 `pack` settings only. CI runs `vp check --deny-warnings`: warnings are errors.
+
+`vp check --fix` (and the pre-commit `vp staged`) rewrites `getElementById(id)` to
+`querySelector('#' + id)`, which throws for ids that start with a digit: write
+``querySelector(`#${CSS.escape(id)}`)``. It also turns `getAttribute('data-x')` into `dataset.x`,
+which `noPropertyAccessFromIndexSignature` rejects: write `dataset['x']`.
+
+Browser tests never fake `requestAnimationFrame`: overlay effects start on the next frame (fake
+`setTimeout` / `clearTimeout` only). Once a new dependency is reachable from stories, the first
+local run with a warm Vite cache may fail in `collectTests` while the optimizer rebundles; run it
+again (a cold cache, as in CI, does not).
 
 ## Source export condition
 
@@ -180,7 +191,28 @@ version of these rules.
   the user's as `mergeProps(ownProps, props)` and refs with `useComposedRefs`. Every part, in
   headless and in the kits, carries `data-scope` (component) and `data-part` (part; `root` for a
   single-element component), and its state as `data-state` and the like. `Icon` is the exception
-  to `Primitive`: it renders its `<svg>` directly.
+  to `Primitive`: it renders its `<svg>` directly. Parts that point at each other by id
+  (`aria-labelledby`, `aria-controls`) register through a stable ref callback that reads the
+  element's `id`, so an `id` given to a part is followed.
+- **Behavior.** A machine names what it needs from its environment (platform actions and effects);
+  the `headless` hook implements them for the DOM. DOM-only options (part elements,
+  `initialFocusEl`, `scrollEl`…) never enter the machine's schema: the hook creates its platform
+  once per instance (`useState`) and hands it the latest options with `setOptions` in
+  `useInsertionEffect`, since the React Compiler lint `react(refs)` rejects a ref passed to a
+  factory during render (see `headless/src/dialog/use-dialog.ts`). `watch` compares props by
+  identity: a hook passes arrays that owners rebuild on every render through a value comparison
+  first.
+- **Platform modules.** `packages/headless/src/platform/` holds the DOM side of what machines ask
+  for: the clock, positioning (`trackPosition`), the overlay layer stack (`trackLayer`: Escape and
+  presses outside reach the top layer only; nested layers close with their parent), the focus
+  trap and focus moves, scroll lock, `inert` outside a modal layer, scrolling inside a container,
+  tabbable elements. They are internal, not exported, and each waits for its element itself:
+  effects start as the machine enters a state, often before React has rendered it.
+- **Overlays.** Users compose `Portal` around the positioner, as in Ark (Kit re-exports it). One
+  `usePresence` in Root drives Positioner and Content, its ref on the animated Content; Backdrop
+  has its own. The layer stack writes `--layer-index` inline on the content, the positioner and
+  the backdrop, so parts never render it in `style`; kits stack them with
+  `z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0))`.
 - **Kit styles.** Classes `contour-<component>` on the root or the single element and
   `contour-<component>__<part>` on the other parts, joined with the user's `className` by `cx`
   (`packages/kit/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
@@ -189,7 +221,12 @@ version of these rules.
   on no reset (Storybook has none, the docs site has Tailwind's Preflight), so parts set their own
   font and colors and reset the default margins of their elements (`p`, `h3`). A root sets no
   margin (unless its element has a default one, as `<button>` may), so its container spaces it,
-  even from a lower cascade layer, as the docs site's Prose does.
+  even from a lower cascade layer, as the docs site's Prose does. Text takes `fg-default` or
+  `fg-muted` (`fg-subtle` is 3:1, below what axe asks of text).
+- **Kit motion.** An overlay's closed state runs `@keyframes` of its own: Presence waits for it,
+  and a reversed open animation keeps its name and does not run again. A part that sets `display`
+  restores `[hidden] { display: none }`. Under `prefers-reduced-motion: reduce`, CSS drops
+  movement (translate, scale, slides) and keeps opacity and color changes.
 
 ## Docs
 
