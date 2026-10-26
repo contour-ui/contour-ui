@@ -1,0 +1,162 @@
+---
+title: Card
+description: A surface that groups a title, a description and related content. With a link as its root, the whole card is one link.
+---
+
+import { Card } from '@contour-ui/kit';
+
+<Preview>
+  <Card.Root>
+    <Card.Header>
+      <Card.Title>Live set</Card.Title>
+      <Card.Description>Recorded on 12 October.</Card.Description>
+    </Card.Header>
+    <Card.Body>Two stereo stems and a click track.</Card.Body>
+    <Card.Footer>
+      <span>12 tracks</span>
+      <span>48 kHz</span>
+      <span>4:32</span>
+    </Card.Footer>
+  </Card.Root>
+</Preview>
+
+```tsx
+import { Card } from '@contour-ui/kit';
+
+<Card.Root>
+  <Card.Header>
+    <Card.Title>Live set</Card.Title>
+    <Card.Description>Recorded on 12 October.</Card.Description>
+  </Card.Header>
+  <Card.Body>Two stereo stems and a click track.</Card.Body>
+  <Card.Footer>
+    <span>12 tracks</span>
+    <span>48 kHz</span>
+  </Card.Footer>
+</Card.Root>;
+```
+
+Every part is optional. For a card with a title and a description only, put both in `Card.Body`.
+
+## Variants
+
+<Preview>
+  <div
+    style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fit, minmax(10rem, 1fr))',
+      gap: 'var(--ct-space-section-gap)',
+    }}
+  >
+    <Card.Root variant="outline">
+      <Card.Body>
+        <Card.Title>Outline</Card.Title>
+        <Card.Description>A border around the surface.</Card.Description>
+      </Card.Body>
+    </Card.Root>
+    <Card.Root variant="subtle">
+      <Card.Body>
+        <Card.Title>Subtle</Card.Title>
+        <Card.Description>The surface alone.</Card.Description>
+      </Card.Body>
+    </Card.Root>
+    <Card.Root variant="elevated">
+      <Card.Body>
+        <Card.Title>Elevated</Card.Title>
+        <Card.Description>A raised surface with a shadow.</Card.Description>
+      </Card.Body>
+    </Card.Root>
+  </div>
+</Preview>
+
+A `subtle` card keeps a transparent border, so cards of every variant have the same size. `size`
+sets the padding and the gap between the parts.
+
+## As a link
+
+Pass a link to `Card.Root` with `asChild`, and the whole card is that link, with a hover color and
+a focus ring. Use your router's link in place of `<a>`:
+
+<Preview>
+  <div style={{ maxWidth: '20rem' }}>
+    <Card.Root asChild>
+      <a href="/docs/kit">
+        <Card.Body>
+          <Card.Title>Kit</Card.Title>
+          <Card.Description>Styled general-purpose components.</Card.Description>
+        </Card.Body>
+      </a>
+    </Card.Root>
+  </div>
+</Preview>
+
+```tsx
+import { Link } from 'react-router';
+
+<Card.Root asChild>
+  <Link to="/docs/kit">
+    <Card.Body>
+      <Card.Title>Kit</Card.Title>
+      <Card.Description>Styled general-purpose components.</Card.Description>
+    </Card.Body>
+  </Link>
+</Card.Root>;
+```
+
+A `<button>` works the same way and fills its container like any card.
+
+## Anatomy
+
+| Part               | Element | Class                       | Attributes                                                        |
+| ------------------ | ------- | --------------------------- | ----------------------------------------------------------------- |
+| `Card.Root`        | `div`   | `contour-card`              | `data-scope="card" data-part="root"`, `data-variant`, `data-size` |
+| `Card.Header`      | `div`   | `contour-card__header`      | `data-scope="card" data-part="header"`                            |
+| `Card.Body`        | `div`   | `contour-card__body`        | `data-scope="card" data-part="body"`                              |
+| `Card.Footer`      | `div`   | `contour-card__footer`      | `data-scope="card" data-part="footer"`                            |
+| `Card.Title`       | `h3`    | `contour-card__title`       | `data-scope="card" data-part="title"`                             |
+| `Card.Description` | `p`     | `contour-card__description` | `data-scope="card" data-part="description"`                       |
+
+The header and the body stack their content; the body takes the free height, so the footers of
+cards in one grid row line up. The footer lays out its items in a row.
+
+## Props
+
+`Card.Root`:
+
+| Prop      | Values                                                        | Default     |
+| --------- | ------------------------------------------------------------- | ----------- |
+| `variant` | `'outline'`, `'subtle'`, `'elevated'`                         | `'outline'` |
+| `size`    | `'sm'`, `'md'`, `'lg'`: the padding and the gap between parts | `'md'`      |
+| `asChild` | `boolean`: render the only child, such as a link, as the card | `false`     |
+
+Every part takes `asChild` and the props of its element, such as `className`, `style` and `id`;
+`className` is merged with the part's class.
+
+## Accessibility
+
+- `Card.Root` is a `div` without a role: it groups content visually. `Card.Title` is an `h3`; to
+  fit the headings of your page, pass another level with `asChild`:
+  `<Card.Title asChild><h2>Kit</h2></Card.Title>`.
+- A link card is one link, named by its text: the title first, then the description. Keep the
+  description short, and put no other links or buttons inside: interactive elements cannot nest.
+- A button may only contain phrasing content: in a button card, render the parts as `span`s with
+  `asChild`.
+- Hover changes the border and the background, and keyboard focus shows a focus ring. The elevated
+  shadow is decoration: a raised background and a border set the card apart without it.
+
+## Tokens
+
+| Token                                                                      | Used for                                            |
+| -------------------------------------------------------------------------- | --------------------------------------------------- |
+| `--ct-color-bg-surface`, `--ct-color-bg-raised`                            | the background: outline and subtle, elevated        |
+| `--ct-color-border-default`                                                | the border: outline and elevated                    |
+| `--ct-shadow-raised`                                                       | the elevated shadow                                 |
+| `--ct-color-bg-hover`, `--ct-color-border-strong`                          | a hovered link or button card                       |
+| `--ct-color-border-focus`, `--ct-border-width-focus`                       | the focus ring                                      |
+| `--ct-border-width-default`, `--ct-radius-panel`                           | the border width and the corners                    |
+| `--ct-space-group-gap`, `--ct-space-panel-inset`, `--ct-space-section-gap` | padding and the gap between parts: `sm`, `md`, `lg` |
+| `--ct-space-control-gap`                                                   | between the title and the description               |
+| `--ct-space-group-gap`                                                     | between the footer's items                          |
+| `--ct-text-heading`, `--ct-color-fg-default`                               | the title                                           |
+| `--ct-text-body`, `--ct-color-fg-muted`                                    | the description; other content is `fg-default`      |
+| `--ct-motion-feedback`                                                     | the hover transition                                |

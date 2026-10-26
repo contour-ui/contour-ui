@@ -1,0 +1,12 @@
+export { CardRoot as Root } from './card-root.tsx';
+export { CardHeader as Header } from './card-header.tsx';
+export { CardBody as Body } from './card-body.tsx';
+export { CardFooter as Footer } from './card-footer.tsx';
+export { CardTitle as Title } from './card-title.tsx';
+export { CardDescription as Description } from './card-description.tsx';
+export type { CardRootProps as RootProps } from './card-root.tsx';
+export type { CardHeaderProps as HeaderProps } from './card-header.tsx';
+export type { CardBodyProps as BodyProps } from './card-body.tsx';
+export type { CardFooterProps as FooterProps } from './card-footer.tsx';
+export type { CardTitleProps as TitleProps } from './card-title.tsx';
+export type { CardDescriptionProps as DescriptionProps } from './card-description.tsx';

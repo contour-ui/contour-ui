@@ -1,0 +1,100 @@
+.contour-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-panel-inset);
+  box-sizing: border-box;
+  min-inline-size: 0;
+  margin: 0;
+  padding: var(--ct-space-panel-inset);
+  /* Every variant has this border (transparent in `subtle`), so all of them are the same size. */
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-surface);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  text-align: start;
+  overflow-wrap: break-word;
+}
+
+.contour-card[data-variant='subtle'] {
+  border-color: transparent;
+}
+
+/* The shadow is decoration: the raised background and the border set the card apart without it. */
+.contour-card[data-variant='elevated'] {
+  background: var(--ct-color-bg-raised);
+  box-shadow: var(--ct-shadow-raised);
+}
+
+.contour-card[data-size='sm'] {
+  gap: var(--ct-space-group-gap);
+  padding: var(--ct-space-group-gap);
+}
+
+.contour-card[data-size='lg'] {
+  gap: var(--ct-space-section-gap);
+  padding: var(--ct-space-section-gap);
+}
+
+/* A link or a button as the root: the whole card is one target. */
+.contour-card:is(a[href], button) {
+  text-decoration: none;
+  transition:
+    background-color var(--ct-motion-feedback),
+    border-color var(--ct-motion-feedback);
+}
+
+/* A button is as wide as its content; a card fills its container. */
+button.contour-card {
+  inline-size: 100%;
+}
+
+.contour-card:is(a[href], button:enabled) {
+  cursor: pointer;
+}
+
+.contour-card:is(a[href], button:enabled):hover {
+  border-color: var(--ct-color-border-strong);
+  background: var(--ct-color-bg-hover);
+}
+
+.contour-card:is(a[href], button):focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
+
+.contour-card__header,
+.contour-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+}
+
+/* The body takes the free height, so the footers of cards stretched to one row height line up. */
+.contour-card__body {
+  flex-grow: 1;
+}
+
+.contour-card__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+  margin: 0;
+}
+
+.contour-card__title {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.contour-card__description {
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}

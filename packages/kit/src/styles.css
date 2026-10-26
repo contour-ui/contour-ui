@@ -11,5 +11,6 @@
 @layer contour.kit;
 
 @import './alert/alert.css' layer(contour.kit);
+@import './card/card.css' layer(contour.kit);
 @import './icon/icon.css' layer(contour.kit);
 @import './placeholder/placeholder.css' layer(contour.kit);
