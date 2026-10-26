@@ -116,7 +116,9 @@ Tab order is left as it is.
 
 - **In.** Opening moves focus into the content: to `initialFocusEl()`, else its first element that
   takes focus, else the content itself. `autoFocus={false}` leaves focus where it is. A popover
-  open on its first render (`defaultOpen`) does not take focus.
+  open on its first render (`defaultOpen`) does not take focus. Focus moves without scrolling, as
+  the content is not in place yet; once it has its first position, and so its size, a content
+  that scrolls is scrolled to the focused element, and nothing outside the content moves.
 - **Back.** Closing moves focus back to where it was before the popover opened, as a rule the
   trigger, or to `finalFocusEl()`. Focus that has moved on to something outside the popover, such
   as a field pressed outside it, stays there. `restoreFocus={false}` leaves focus alone.

@@ -1,5 +1,5 @@
 import type { toc } from '@contour-ui/core';
-import type { ReactElement } from 'react';
+import type { CSSProperties, ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test';
 import { userEvent } from 'vite-plus/test/browser';
@@ -253,6 +253,57 @@ describe('Toc', () => {
       .toBe(`${top(itemAt(root, 3))}px`);
   });
 
+  it('hides the indicator while the list is not laid out, then shows it in place, not sliding', async () => {
+    // As a kit styles it: the indicator slides to the active items.
+    const sliding: CSSProperties = {
+      position: 'absolute',
+      insetBlockStart: 0,
+      inlineSize: 2,
+      blockSize: 'var(--height)',
+      translate: '0 var(--top)',
+      transition: 'translate 1s linear, block-size 1s linear',
+    };
+    await render(
+      <>
+        <div id="closed" style={{ display: 'none' }}>
+          <Toc.Root
+            items={items}
+            scrollEl={() => document.querySelector<HTMLElement>('#article')}
+            style={{ position: 'relative' }}
+          >
+            <Toc.Indicator style={sliding} />
+            <Toc.List>
+              {sections.map(({ value, depth, title }) => (
+                <Toc.Item key={value} item={{ value, depth }}>
+                  <Toc.Link>{title}</Toc.Link>
+                </Toc.Item>
+              ))}
+            </Toc.List>
+          </Toc.Root>
+        </div>
+        <Article />
+      </>,
+    );
+    const closed = byId('closed');
+    const indicator = part(closed, 'indicator');
+    const usage = itemAt(closed, 3);
+
+    scrollArticle(1300);
+    await expect.poll(() => usage.dataset['active']).toBe('');
+    // Active, but its item has no box to measure.
+    expect(indicator).toHaveAttribute('hidden');
+
+    closed.style.display = 'block';
+    await expect.poll(() => indicator.hidden).toBe(false);
+    // In place at once: no transition from an earlier box.
+    expect(indicator.getAnimations()).toHaveLength(0);
+    expect(indicator.getBoundingClientRect().top).toBe(usage.getBoundingClientRect().top);
+
+    // Then it slides to the next active items, as before.
+    scrollArticle(1900);
+    await expect.poll(() => indicator.getAnimations().length).toBeGreaterThan(0);
+  });
+
   it('scrolls to the heading of a clicked link, focuses it and puts its id in the address', async () => {
     const screen = await render(<Page />);
     const entries = history.length;
@@ -353,6 +404,36 @@ describe('Toc', () => {
       .element(screen.getByRole('link', { name: 'API' }))
       .toHaveAttribute('aria-current', 'true');
     expect(panel.scrollTop).toBe(0);
+  });
+
+  it('scrolls its own scroll container to the first active item, at once, when the list is laid out', async () => {
+    const scrollTo = vi.spyOn(Element.prototype, 'scrollTo');
+    await render(
+      <>
+        <Article />
+        {/* Far below the fold: scrolling every ancestor would scroll the page to it. */}
+        <div style={{ height: 2000 }} />
+        <div id="contents" style={{ display: 'none', height: 60, overflow: 'auto' }}>
+          <Contents scrollBehavior="smooth" />
+        </div>
+      </>,
+    );
+    const contents = byId('contents');
+    const api = itemAt(contents, 4);
+
+    scrollArticle(1900);
+    await expect.poll(() => api.dataset['active']).toBe('');
+    expect(contents.scrollTop).toBe(0);
+
+    contents.style.display = 'block';
+    await expect.poll(() => contents.scrollTop).toBeGreaterThan(0);
+    // Not smoothly, as when the active items change: nobody saw the list before.
+    expect(scrollTo).toHaveBeenLastCalledWith({ top: contents.scrollTop, behavior: 'instant' });
+    const item = api.getBoundingClientRect();
+    const box = contents.getBoundingClientRect();
+    expect(item.top).toBeGreaterThanOrEqual(box.top);
+    expect(item.bottom).toBeLessThanOrEqual(box.bottom);
+    expect(window.scrollY).toBe(0);
   });
 
   it('observes headings that scroll with the page', async () => {

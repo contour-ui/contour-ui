@@ -79,11 +79,23 @@ function distance(start: number, end: number, min: number, max: number): number 
 }
 
 /**
+ * How much larger an element is drawn than laid out along one axis, from its size on screen and
+ * its layout size: below 1 under a `scale` or `transform` that shrinks it or an ancestor, as an
+ * overlay that grows in as it opens. `1` within a pixel of the layout size, which is rounded.
+ */
+function drawnScale(drawn: number, laidOut: number): number {
+  return laidOut > 0 && Math.abs(drawn - laidOut) >= 1 ? drawn / laidOut : 1;
+}
+
+/**
  * Scroll a container of `element` by as little as it takes to show the element whole, or its
  * start when it is larger than the container, within the `scroll-padding` of the container.
  * Nothing scrolls when the element is in view already, or when there is no container. Only the
  * axes the container lets the user scroll (`overflow` `auto` or `scroll`) move. Unlike
  * `element.scrollIntoView()`, which scrolls every ancestor, it never scrolls the page.
+ *
+ * Distances are taken in the container's layout pixels, so a container drawn scaled, as an
+ * overlay that is still growing in, scrolls as far as it will when the animation ends.
  *
  * @example
  * // The highlighted option of a listbox, in its list.
@@ -102,23 +114,28 @@ export function scrollIntoContainer(
   const style = getComputedStyle(scroller);
   const box = scroller.getBoundingClientRect();
   const rect = element.getBoundingClientRect();
-  // The room inside the borders, without the scroll bars, less the scroll padding.
-  const top = box.top + scroller.clientTop;
-  const left = box.left + scroller.clientLeft;
+  const scaleY = drawnScale(box.height, scroller.offsetHeight);
+  const scaleX = drawnScale(box.width, scroller.offsetWidth);
+  // The edges of the element from the start of the room inside the borders, in layout pixels.
+  const top = (rect.top - box.top) / scaleY - scroller.clientTop;
+  const bottom = (rect.bottom - box.top) / scaleY - scroller.clientTop;
+  const left = (rect.left - box.left) / scaleX - scroller.clientLeft;
+  const right = (rect.right - box.left) / scaleX - scroller.clientLeft;
+  // The room: without the scroll bars, less the scroll padding.
   const down = scrollable(style.overflowY)
     ? distance(
-        rect.top,
-        rect.bottom,
-        top + computedPixels(style.scrollPaddingTop),
-        top + scroller.clientHeight - computedPixels(style.scrollPaddingBottom),
+        top,
+        bottom,
+        computedPixels(style.scrollPaddingTop),
+        scroller.clientHeight - computedPixels(style.scrollPaddingBottom),
       )
     : 0;
   const across = scrollable(style.overflowX)
     ? distance(
-        rect.left,
-        rect.right,
-        left + computedPixels(style.scrollPaddingLeft),
-        left + scroller.clientWidth - computedPixels(style.scrollPaddingRight),
+        left,
+        right,
+        computedPixels(style.scrollPaddingLeft),
+        scroller.clientWidth - computedPixels(style.scrollPaddingRight),
       )
     : 0;
   if (down === 0 && across === 0) {

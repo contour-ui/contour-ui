@@ -103,6 +103,16 @@ describe('scrollIntoContainer', () => {
     expect(container.scrollTop).toBe(30);
   });
 
+  it('scrolls by layout distances in a container drawn scaled, as an overlay growing in is', () => {
+    const container = list('scale: 0.5; transform-origin: 0 0; border-top: 4px solid');
+
+    // As in an unscaled list: row 7 ends at 160px, below the 100px room.
+    scrollIntoContainer(byId('row-7'), { container });
+    expect(container.scrollTop).toBe(60);
+    scrollIntoContainer(byId('row-1'), { container });
+    expect(container.scrollTop).toBe(20);
+  });
+
   it('shows the start of an element larger than the container', () => {
     mount(`
       <div id="box" style="height: 100px; overflow: auto">

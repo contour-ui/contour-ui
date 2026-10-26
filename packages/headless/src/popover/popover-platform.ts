@@ -36,7 +36,9 @@ export interface PopoverDomPlatform {
  * `useMachine` reads the platform once.
  *
  * - `position`: tracks the positioner next to the anchor, or the trigger, once it is rendered,
- *   and writes the placement it finds to the machine's context.
+ *   and writes the placement it finds to the machine's context. With the first position, the
+ *   content has its size: the element focus moved to as the popover opened is scrolled into view
+ *   inside it (see `PopoverFocus.reveal`).
  * - `dismiss`: a layer on the content, the trigger excluded, with `--layer-index` on the
  *   positioner. Escape sends `ESCAPE` (and is marked as used when `closeOnEscape` is set), a
  *   press or focus outside sends `INTERACT_OUTSIDE`, a layer around it that closes sends `CLOSE`.
@@ -81,10 +83,17 @@ export function createDomPlatform(initial: PopoverDomOptions): PopoverDomPlatfor
           if (reference === null) {
             return () => undefined;
           }
+          let placed = false;
           return trackPosition(reference, positioner, {
             ...prop('positioning'),
             onPlacementChange: (placement) => {
               context.set('placement', placement);
+              // The first position gives the content its size: focus, moved in on the frame
+              // before, can be shown in it now.
+              if (!placed) {
+                placed = true;
+                focus.reveal();
+              }
             },
           });
         }),

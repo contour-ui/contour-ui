@@ -173,8 +173,10 @@ indicator with the values, as in the example above:
 }
 ```
 
-It is `hidden` while no item is active: give it no `display` of its own, or hide it yourself with
-`[hidden]`.
+It is `hidden` while no item is active, and while the list is not laid out (`display: none` on it
+or around it, as in a closed popover): give it no `display` of its own, or hide it yourself with
+`[hidden]`. When the list is laid out again, the indicator shows already in place, so its
+transition does not run.
 
 ## Active headings
 
@@ -229,8 +231,9 @@ the focus.
 A long table of contents often sits in a panel that scrolls, such as a sticky column. As the
 active headings change, the root scrolls the nearest such ancestor of the first active item, the
 least distance that shows the item. It never scrolls the page, nor the scroll container of the
-headings or anything that holds it: `scrollIntoView` would scroll them all. `autoScroll={false}`
-turns this off.
+headings or anything that holds it: `scrollIntoView` would scroll them all. A list laid out later,
+as in a popover or a disclosure that opens, is scrolled to the item as it shows, at once rather
+than smoothly. `autoScroll={false}` turns this off.
 
 ## Controlled
 

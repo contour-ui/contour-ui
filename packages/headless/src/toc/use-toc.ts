@@ -23,7 +23,8 @@ export interface UseTocProps extends toc.Input {
   readonly scrollEl?: (() => HTMLElement | null) | undefined;
   /**
    * Whether to scroll the table of contents' own scroll container, when it is in one, so that
-   * the first active item stays in view. The page never scrolls for it.
+   * the first active item stays in view: as the active items change, and at once when the list
+   * is laid out after it was not, as in a popover that opens. The page never scrolls for it.
    *
    * @defaultValue true
    */
@@ -77,8 +78,8 @@ export type TocIndicatorStyle = Readonly<
 
 /**
  * Props of the indicator: hidden from assistive technology, and from sight while no item is
- * active. `--top`, `--left`, `--width` and `--height` hold the box around the active items, in
- * pixels, relative to the padding box of the root.
+ * active or the list is not laid out. `--top`, `--left`, `--width` and `--height` hold the box
+ * around the active items, in pixels, relative to the padding box of the root.
  */
 export interface TocIndicatorAttributes extends TocPartAttributes<'indicator'> {
   readonly 'aria-hidden': true;
@@ -233,11 +234,21 @@ function findItem(root: HTMLElement, value: string): HTMLElement | null {
   return null;
 }
 
-/** The box around the items of `first` and `last`, relative to the padding box of the root. */
+/**
+ * Whether an element is laid out: not inside `display: none`, such as the list of a closed
+ * popover or of a collapsed disclosure.
+ */
+const isLaidOut = (element: Element | null): element is Element =>
+  element !== null && element.getClientRects().length > 0;
+
+/**
+ * The box around the items of `first` and `last`, relative to the padding box of the root;
+ * `null` while they are not laid out, as there is nothing to measure.
+ */
 function measureIndicator(root: HTMLElement, first: string, last: string): IndicatorRect | null {
   const firstItem = findItem(root, first);
   const lastItem = findItem(root, last) ?? firstItem;
-  if (firstItem === null || lastItem === null) {
+  if (!isLaidOut(firstItem) || !isLaidOut(lastItem)) {
     return null;
   }
   const box = root.getBoundingClientRect();
@@ -347,7 +358,9 @@ export function useToc(props: UseTocProps): UseTocReturn {
     };
     measure();
     // Items move when the list changes, and grow or shrink with the width of the root and with
-    // fonts that load later.
+    // fonts that load later. A list that is not laid out has no box to measure: the indicator
+    // hides until it is, then shows and is placed in one render, so it starts in place rather
+    // than transitioning from where it was.
     const observer = new ResizeObserver(measure);
     const list = root.querySelector('[data-scope="toc"][data-part="list"]');
     for (const element of [root, list, findItem(root, first), findItem(root, last)]) {
@@ -363,16 +376,38 @@ export function useToc(props: UseTocProps): UseTocReturn {
   useLayoutEffect(() => {
     const root = rootRef.current;
     if (!autoScroll || root === null || first === undefined) {
-      return;
+      return undefined;
     }
-    const item = findItem(root, first);
-    if (item !== null) {
-      scrollIntoContainer(item, {
-        behavior: scrollBehaviorOf(service.prop('scrollBehavior')),
-        // The headings' scroll container never scrolls for the table of contents.
-        boundary: dom.scrollContainer(),
-      });
+    const scroll = (behavior: ScrollBehavior): void => {
+      const item = findItem(root, first);
+      if (isLaidOut(item)) {
+        scrollIntoContainer(item, {
+          behavior,
+          // The headings' scroll container never scrolls for the table of contents.
+          boundary: dom.scrollContainer(),
+        });
+      }
+    };
+    scroll(scrollBehaviorOf(service.prop('scrollBehavior')));
+    // A list laid out later, as in a popover or a disclosure that opens, scrolls to the item
+    // then, at once: nobody saw it before. The root and the list grow from nothing as it does.
+    let laidOut = isLaidOut(findItem(root, first));
+    const observer = new ResizeObserver(() => {
+      const now = isLaidOut(findItem(root, first));
+      if (now && !laidOut) {
+        scroll('instant');
+      }
+      laidOut = now;
+    });
+    const list = root.querySelector('[data-scope="toc"][data-part="list"]');
+    for (const element of [root, list]) {
+      if (element !== null) {
+        observer.observe(element);
+      }
     }
+    return () => {
+      observer.disconnect();
+    };
   }, [service, dom, first, autoScroll]);
 
   return {

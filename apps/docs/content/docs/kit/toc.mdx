@@ -179,7 +179,8 @@ the example above, return it from `scrollEl`:
 
 A long table of contents often sits in a panel that scrolls on its own, such as a sticky column.
 As the active links change, Toc scrolls that panel to keep the first one in view, and never the
-page; `autoScroll={false}` turns this off.
+page. A list that shows later, as in a popover that opens, shows with that link in view.
+`autoScroll={false}` turns this off.
 
 ## Anatomy
 
@@ -194,8 +195,9 @@ page; `autoScroll={false}` turns this off.
 
 The list draws a line along its start, and the indicator, an accent bar, runs over it: the root
 places it from `--top` and `--height`, the box around the active items, and it slides there when
-they change. It is hidden while no item is active. Each level below `depth` 2 (an `h2`) indents an
-item one step, down to 6.
+they change. It is hidden while no item is active or the list is hidden, and a list that shows, as
+in a popover, shows it in place, without the slide. Each level below `depth` 2 (an `h2`) indents
+an item one step, down to 6.
 
 `data-active` is present, and empty, on the item and the link of every active heading;
 `aria-current="true"` marks the link of the first one.

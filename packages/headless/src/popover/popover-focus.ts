@@ -1,5 +1,6 @@
 import { containsComposed, getActiveElement } from '../platform/dom.ts';
 import { moveFocusIn, returnFocus, trapFocus } from '../platform/focus-trap.ts';
+import { scrollContainerOf, scrollIntoContainer } from '../platform/scroll.ts';
 import {
   getFirstTabbable,
   getLastTabbable,
@@ -35,6 +36,13 @@ export interface PopoverFocus {
    * content.
    */
   readonly start: (initialFocus: FocusTarget, trap: boolean) => () => void;
+  /**
+   * Once the open popover has its first position (the `position` effect), which gives the
+   * content its size: scroll the element focus moved to as the popover opened into view, in a
+   * scroll container inside the content and nowhere else. Focus moved in without scrolling, on
+   * the frame before, while the content was not in place yet.
+   */
+  readonly reveal: () => void;
   /**
    * As the popover closes (`restoreFocus`), once its effects have stopped: when `restoreFocus` is
    * set, move focus back on the next frame (see `returnFocus`) to the first of `finalFocus()`, the
@@ -80,6 +88,22 @@ export function createPopoverFocus(elements: PopoverFocusElements): PopoverFocus
           stop();
         }
       };
+    },
+    reveal: () => {
+      const content = elements.content();
+      if (!focusPending || content === null) {
+        return;
+      }
+      const active = getActiveElement(content.ownerDocument);
+      if (active === null || active === content || !containsComposed(content, active)) {
+        return;
+      }
+      // Only a container inside the content scrolls: never the page, nor the parents of a
+      // popover rendered in place.
+      const container = scrollContainerOf(active);
+      if (container !== null && containsComposed(content, container)) {
+        scrollIntoContainer(active, { container });
+      }
     },
     close: (restoreFocus, finalFocus) => {
       const before = focusedBefore;

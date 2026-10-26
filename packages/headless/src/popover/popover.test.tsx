@@ -471,6 +471,49 @@ describe('Popover', () => {
     await expect.element(without.getByRole('button', { name: 'Share' })).not.toHaveFocus();
   });
 
+  it('scrolls the content to the element it focuses as it opens, once the content is placed', async () => {
+    const screen = await render(
+      <>
+        <Popover.Root initialFocusEl={() => document.querySelector<HTMLElement>('#option-99')}>
+          <Popover.Trigger>Choose</Popover.Trigger>
+          <Portal>
+            <Popover.Positioner>
+              {/* As high as the room it has: a height that only comes with its position. */}
+              <Popover.Content
+                aria-label="Options"
+                style={{ maxBlockSize: 'var(--available-height)', overflowY: 'auto' }}
+              >
+                {Array.from({ length: 100 }, (_, index) => (
+                  <button
+                    key={index}
+                    id={`option-${index}`}
+                    type="button"
+                    style={{ display: 'block' }}
+                  >
+                    Option {index}
+                  </button>
+                ))}
+              </Popover.Content>
+            </Popover.Positioner>
+          </Portal>
+        </Popover.Root>
+        {/* Scrolling every ancestor would scroll the page too. */}
+        <div style={{ height: 3000 }} />
+      </>,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Choose' }));
+    const last = screen.getByRole('button', { name: 'Option 99' });
+    await expect.element(last).toHaveFocus();
+
+    const content = part('content');
+    await expect.poll(() => content.scrollTop).toBeGreaterThan(0);
+    const box = content.getBoundingClientRect();
+    const rect = last.element().getBoundingClientRect();
+    expect(rect.top).toBeGreaterThanOrEqual(box.top);
+    expect(rect.bottom).toBeLessThanOrEqual(box.bottom);
+    expect(window.scrollY).toBe(0);
+  });
+
   it('places the content next to the anchor, and in place without portalled', async () => {
     const screen = await render(
       <Popover.Root defaultOpen portalled={false} positioning={{ placement: 'top-end' }}>
