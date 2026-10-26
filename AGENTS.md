@@ -155,8 +155,9 @@ See [`packages/tokens/README.md`](packages/tokens/README.md).
 `packages/icons` compiles [Lucide](https://lucide.dev) icons (`lucide-static`) and brand logos from
 Simple Icons into `src/generated/icons.ts` (committed): paths with only absolute `M`, `L`, `C`,
 `Q`, `Z`, as `d` strings for SVG and numeric `commands` for Canvas 2D, one `<camelName>Icon` export
-each, plus `drawIcon` (a structural canvas context, no `Path2D`). No React here: the kits render
-the data as `<svg>`.
+each, plus `drawIcon` (a structural canvas context, no `Path2D`). No React here: kit's `Icon`
+renders the data as `<svg>` (`1em`, `currentColor`); components that hold icons size them in their
+CSS with `--ct-size-icon-*`.
 
 - To add an icon, list it in `scripts/icon-list.ts`, then run
   `vp run --filter @contour-ui/icons icons`. `vp test` fails when the generated file is stale.
@@ -176,21 +177,43 @@ version of these rules.
   `Card.Title`.
 - **Parts.** Each part renders one element through `Primitive.<element>` from `headless`, so it
   supports `asChild`, and passes its element's props through. A part combines its own props with
-  the user's as `mergeProps(ownProps, props)` and refs with `useComposedRefs`. Headless parts carry
-  `data-scope` (component) and `data-part` (part), and their state as `data-state` and the like.
+  the user's as `mergeProps(ownProps, props)` and refs with `useComposedRefs`. Every part, in
+  headless and in the kits, carries `data-scope` (component) and `data-part` (part; `root` for a
+  single-element component), and its state as `data-state` and the like. `Icon` is the exception
+  to `Primitive`: it renders its `<svg>` directly.
 - **Kit styles.** Classes `contour-<component>` on the root or the single element and
   `contour-<component>__<part>` on the other parts, joined with the user's `className` by `cx`
   (`packages/kit/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
-  `data-size`, so selectors read `.contour-button[data-variant='solid']`. CSS: one file per
-  component (see "Layers").
+  `data-size`, always rendered with the resolved value (defaults included), so selectors read
+  `.contour-button[data-variant='solid']`. CSS: one file per component (see "Layers"); it relies
+  on no reset (Storybook has none, the docs site has Tailwind's Preflight), so parts set their own
+  font and colors and reset the default margins of their elements (`p`, `h3`). A root sets no
+  margin (unless its element has a default one, as `<button>` may), so its container spaces it,
+  even from a lower cascade layer, as the docs site's Prose does.
 
 ## Docs
 
 `apps/docs` (Fumadocs) documents what ships: a **Guide** (how the packages fit together,
 installation, themes, styling with tokens) and one section per shipped package — **Kit**,
 **Audio**, **Headless** — as root folders under `content/docs/`. When a component lands, add
-`content/docs/<package>/<component>.mdx` (live example in `<Preview>`, anatomy, tokens) and list
-it in that section's `meta.json`; register the live component in `app/components/mdx.tsx`.
+`content/docs/<package>/<component>.mdx` (live example in `<Preview>`, anatomy, props, tokens) and
+list it in that section's `meta.json` and on the section's index page. Live examples import the
+component at the top of the page (`import { Button } from '@contour-ui/kit';`); MDX imports
+resolve to package sources like the rest of the app.
+
+- Page content is wrapped in `Prose` (`app/components/prose.tsx`), in the `prose` cascade layer
+  between Tailwind's `base` and `contour`: it styles headings, paragraphs, lists and inline code
+  and spaces blocks, while components inside keep their own styles. `docs-not-prose` opts a
+  subtree out; `<Preview>` uses it.
+- `app/components/mdx.tsx` draws Markdown links and tables with Kit's `Link` and `Table`, renders
+  `<Callout>` and `<Card>` (Fumadocs props) with `Alert` and `Card`, and registers `Kbd`. A
+  lowercase JSX tag in MDX (`<kbd>`, `<a>`) is a literal element and skips that map: write
+  `<Kbd>`.
+- Oxfmt formats MDX like JSX: the text of an element with several attributes goes on a line of its
+  own, where MDX turns it into a paragraph. Write inline examples as an expression
+  (`{<p>…</p>}`).
+- Docs-only components are named `docs-<name>`, use plain CSS with semantic tokens, and get their
+  cascade layer where `app/app.css` imports their CSS.
 
 ## Adding a package
 
