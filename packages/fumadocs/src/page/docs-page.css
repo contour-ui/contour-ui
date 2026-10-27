@@ -1,0 +1,98 @@
+/*
+ * A docs page: the bar of the table of contents (`TocPopover`), sticky below the header until
+ * 80rem, then the article centered in the column, with the column of the table of contents
+ * (`TocPanel`) beside it from 80rem, sticky too. The bar and the column hold the components of
+ * toc-panel.tsx; their containers are here.
+ */
+.contour-docs-page {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+}
+
+.contour-docs-page__toc-bar {
+  position: sticky;
+  inset-block-start: var(--contour-docs-header-height);
+  z-index: var(--ct-layer-sticky);
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  block-size: var(--contour-docs-toc-bar-height);
+  padding-inline: var(--contour-docs-page-inset);
+  border-block-end: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+  background: var(--ct-color-bg-canvas);
+}
+
+.contour-docs-page__body {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: minmax(0, var(--contour-docs-article-width));
+  justify-content: center;
+  column-gap: 3rem;
+  padding: 2rem var(--contour-docs-page-inset) 4rem;
+}
+
+/*
+ * The article stacks the content and the footer, the content stacks the header of the page and
+ * its MDX: the gaps space them, so their roots set no margin. The content takes the free height.
+ */
+.contour-docs-page__article {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  min-inline-size: 0;
+  /* Below the sticky bars when the skip link scrolls to it. */
+  scroll-margin-block-start: calc(
+    var(--contour-docs-header-height) + var(--contour-docs-toc-bar-height)
+  );
+  /* It takes focus from the skip link only to start the Tab order there: no ring around it. */
+  outline: none;
+}
+
+.contour-docs-page__content {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.contour-docs-page__toc {
+  display: none;
+}
+
+/*
+ * The toolbar of a collapsed sidebar floats at the top start of the viewport (`sidebar.css`):
+ * the page keeps clear of it on both sides, so the article stays centered.
+ */
+@media (min-width: 48rem) {
+  :root[data-contour-docs-sidebar='collapsed'] .contour-docs-page__body {
+    padding-inline: max(var(--contour-docs-page-inset), var(--contour-docs-toolbar-clearance));
+  }
+}
+
+@media (min-width: 80rem) {
+  .contour-docs-page__toc-bar {
+    display: none;
+  }
+
+  .contour-docs-page__body:has(> .contour-docs-page__toc) {
+    grid-template-columns: minmax(0, var(--contour-docs-article-width)) var(
+        --contour-docs-toc-width
+      );
+  }
+
+  /*
+   * As high as the viewport less the page's padding, scrolling on its own when longer. Kit Toc
+   * scrolls it to keep the current link in view, a section gap from its edges.
+   */
+  .contour-docs-page__toc {
+    position: sticky;
+    inset-block-start: 2rem;
+    display: block;
+    align-self: start;
+    max-block-size: calc(100dvh - 4rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-padding-block: var(--ct-space-section-gap);
+  }
+}

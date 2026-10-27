@@ -9,7 +9,8 @@
       "@contour-ui/core",
       "@contour-ui/headless",
       "@contour-ui/kit",
-      "@contour-ui/audio"
+      "@contour-ui/audio",
+      "@contour-ui/fumadocs"
     ]
   ],
   "linked": [],
@@ -17,6 +18,9 @@
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
   "ignore": [],
-  "privatePackages": { "version": false, "tag": false },
+  "privatePackages": {
+    "version": false,
+    "tag": false
+  },
   "format": false
 }

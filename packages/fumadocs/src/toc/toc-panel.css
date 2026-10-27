@@ -1,0 +1,110 @@
+/*
+ * The table of contents of a page (toc-panel.tsx): the column on wide screens, the bar with its
+ * popover on narrow ones. Both are Kit's Toc; the page gives them their sticky containers.
+ */
+
+/*
+ * The height of the layout's sticky header and bar, which cover the top of the page, for the area
+ * the tables of contents observe. Registered as a length, so that it computes to px for the
+ * components to read; set on the elements they read it from, inside the layout.
+ */
+@property --contour-docs-toc-sticky-height {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0px;
+}
+
+.contour-docs-toc-panel,
+.contour-docs-toc-trigger {
+  --contour-docs-toc-sticky-height: calc(
+    var(--contour-docs-header-height, 0px) + var(--contour-docs-toc-bar-height, 0px)
+  );
+}
+
+/* The title of the column, after its icon. */
+.contour-docs-toc-panel > .contour-toc__title {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+}
+
+.contour-docs-toc-panel > .contour-toc__title > .contour-icon {
+  flex-shrink: 0;
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+/*
+ * The trigger of the bar: a ghost Button as wide as the bar, so that most of it takes a tap. Its
+ * text lines up with the article: the button reaches past it by the inset and the border of a
+ * large button, which only its hover background shows. "On this page", then the current heading,
+ * cut short when it is long, and the chevron at the end, turned over while open.
+ */
+.contour-docs-toc-trigger {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin-inline: calc(-1 * (var(--ct-space-control-inset-lg) + var(--ct-border-width-default)));
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+/* Inside the trigger: the bar is not much higher, and its border would cut a ring around it. */
+.contour-docs-toc-trigger:focus-visible {
+  outline-offset: calc(-1 * var(--ct-border-width-focus));
+}
+
+/* The text, as high as the button: the popover opens below its start. */
+.contour-docs-toc-trigger__text {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  align-self: stretch;
+  gap: var(--ct-space-control-gap);
+  min-inline-size: 0;
+}
+
+.contour-docs-toc-trigger__text > .contour-icon {
+  flex-shrink: 0;
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+.contour-docs-toc-trigger__current {
+  min-inline-size: 0;
+  overflow: hidden;
+  color: var(--ct-color-fg-default);
+  text-overflow: ellipsis;
+}
+
+.contour-docs-toc-trigger__text > .contour-docs-toc-trigger__chevron {
+  margin-inline-start: auto;
+  transition: rotate var(--ct-motion-feedback);
+}
+
+.contour-docs-toc-trigger[data-state='open'] .contour-docs-toc-trigger__chevron {
+  rotate: 180deg;
+}
+
+/* No turn: the chevron flips at once. */
+@media (prefers-reduced-motion: reduce) {
+  .contour-docs-toc-trigger__text > .contour-docs-toc-trigger__chevron {
+    transition: none;
+  }
+}
+
+/*
+ * The popover of the bar: the list under the trigger, as wide as a popover while the screen has
+ * room. On a short screen it scrolls, and opens with the current link in view, clear of the edges
+ * by the scroll padding.
+ */
+.contour-docs-toc-popover {
+  inline-size: min(var(--ct-size-popover), var(--available-width));
+  scroll-padding-block: var(--ct-space-panel-inset);
+}
+
+/* Inline code in the title of a heading: the code font, at the size of the text around it. */
+:is(.contour-docs-toc-panel, .contour-docs-toc-trigger, .contour-docs-toc-popover) code {
+  font-family: var(--ct-text-code-font-family);
+  font-variant-ligatures: none;
+}

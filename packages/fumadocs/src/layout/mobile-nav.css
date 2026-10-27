@@ -1,0 +1,12 @@
+/*
+ * The footer of the menu drawer, as in the sidebar: the links of the site at the start, the theme
+ * toggle at the end, also alone.
+ */
+.contour-docs-mobile-nav__footer {
+  padding-block-start: var(--ct-space-group-gap);
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+}
+
+.contour-docs-mobile-nav__footer > .contour-docs-theme-toggle {
+  margin-inline-start: auto;
+}

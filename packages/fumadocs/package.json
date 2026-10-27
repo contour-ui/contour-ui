@@ -1,0 +1,93 @@
+{
+  "name": "@contour-ui/fumadocs",
+  "version": "0.0.0",
+  "description": "contour-ui for Fumadocs: a documentation layout built from Kit, in place of fumadocs-ui.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contour-ui/contour-ui.git",
+    "directory": "packages/fumadocs"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/styles.css",
+    "./src/**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "@contour-ui/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./mdx": {
+      "@contour-ui/source": "./src/mdx/index.ts",
+      "types": "./dist/mdx.d.ts",
+      "default": "./dist/mdx.js"
+    },
+    "./styles.css": {
+      "@contour-ui/source": "./src/styles.css",
+      "default": "./dist/styles.css"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./mdx": {
+        "types": "./dist/mdx.d.ts",
+        "default": "./dist/mdx.js"
+      },
+      "./styles.css": "./dist/styles.css",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "storybook": "storybook dev --port 6105 --no-open",
+    "build-storybook": "storybook build --output-dir storybook-static"
+  },
+  "dependencies": {
+    "@contour-ui/headless": "workspace:*",
+    "@contour-ui/icons": "workspace:*",
+    "@contour-ui/kit": "workspace:*",
+    "@contour-ui/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@contour-ui/vite-config": "workspace:*",
+    "@storybook/addon-a11y": "catalog:",
+    "@storybook/addon-docs": "catalog:",
+    "@storybook/addon-vitest": "catalog:",
+    "@storybook/react-vite": "catalog:",
+    "@types/mdx": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "fumadocs-core": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "storybook": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest-browser-react": "catalog:"
+  },
+  "peerDependencies": {
+    "@types/mdx": "*",
+    "fumadocs-core": "^16.17.8",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@types/mdx": {
+      "optional": true
+    }
+  }
+}

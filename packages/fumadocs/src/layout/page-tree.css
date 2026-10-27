@@ -1,0 +1,86 @@
+/*
+ * The page tree: lists of links, a section gap between the groups. A link fills its row: muted
+ * text, the hover fill under the pointer, and the accent colors for the page itself. The focus
+ * ring is drawn inside the link, so the scroll area of the sidebar never cuts it.
+ */
+.contour-docs-page-tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-section-gap);
+}
+
+.contour-docs-page-tree__group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+}
+
+.contour-docs-page-tree__label {
+  padding-inline: var(--ct-space-group-gap);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  font-weight: var(--ct-text-heading-font-weight);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.contour-docs-page-tree__list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The pages of a folder, indented under its name along a line. */
+.contour-docs-page-tree__folder {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-section-gap);
+  margin-inline-start: var(--ct-space-group-gap);
+  padding-inline-start: var(--ct-space-control-gap);
+  border-inline-start: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+}
+
+.contour-docs-page-tree__link {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  box-sizing: border-box;
+  min-block-size: var(--ct-size-control-lg);
+  padding: var(--ct-space-control-gap) var(--ct-space-group-gap);
+  border-radius: var(--ct-radius-control);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  text-decoration: none;
+  transition:
+    background-color var(--ct-motion-feedback),
+    color var(--ct-motion-feedback);
+}
+
+/* Touch screens would keep the hover look after a tap. */
+@media (hover: hover) {
+  .contour-docs-page-tree__link:hover {
+    background-color: var(--ct-color-bg-hover);
+    color: var(--ct-color-fg-default);
+  }
+}
+
+/* After the hover rule: the page keeps its colors under the pointer. */
+.contour-docs-page-tree__link[aria-current='page'] {
+  background-color: var(--ct-color-accent-bg);
+  color: var(--ct-color-accent-fg);
+  font-weight: var(--ct-text-label-font-weight);
+}
+
+.contour-docs-page-tree__link:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: calc(-1 * var(--ct-border-width-focus));
+}
+
+/* The arrow of a link to another site. */
+.contour-docs-page-tree__link > .contour-icon {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}

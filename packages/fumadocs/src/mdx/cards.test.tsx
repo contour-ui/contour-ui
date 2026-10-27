@@ -1,0 +1,109 @@
+import { describe, expect, it, vi } from 'vite-plus/test';
+import { page, userEvent } from 'vite-plus/test/browser';
+import { render } from 'vitest-browser-react';
+
+import { MemoryFramework } from '../test-utils/framework.tsx';
+import { Card, Cards } from './cards.tsx';
+
+import '@contour-ui/tokens/tokens.css';
+import '../styles.css';
+import '@contour-ui/kit/styles.css';
+
+describe('Cards', () => {
+  it('lays its cards out on a grid', async () => {
+    const screen = await render(
+      <Cards className="custom" data-testid="cards">
+        <Card title="Kit" />
+        <Card title="Audio" />
+      </Cards>,
+    );
+    const grid = screen.getByTestId('cards');
+
+    await expect.element(grid).toHaveClass('contour-docs-cards custom', { exact: true });
+    await expect.element(grid).toHaveStyle({ display: 'grid' });
+  });
+});
+
+describe('Card', () => {
+  it("renders Kit's card, size `lg`, with the title and the description", async () => {
+    const screen = await render(
+      <Card title="Kit" description="Styled general-purpose components." data-testid="card" />,
+    );
+    const card = screen.getByTestId('card');
+
+    await expect.element(card).toHaveClass('contour-card contour-docs-card', { exact: true });
+    expect(card.element().tagName).toBe('DIV');
+    await expect.element(card).toHaveAttribute('data-size', 'lg');
+    // The title is Kit's but no heading, so cards keep the outline of the page.
+    expect(screen.getByText('Kit').element()).toHaveClass('contour-card__title', { exact: true });
+    expect(screen.getByText('Kit').element().tagName).toBe('SPAN');
+    expect(card.element().querySelector('h1, h2, h3, h4, h5, h6')).toBeNull();
+    expect(screen.getByText('Styled general-purpose components.').element().tagName).toBe('P');
+    expect(card.element().querySelector('.contour-card__header')).toBeNull();
+  });
+
+  it('wraps its children, which MDX puts in paragraphs, in the description', async () => {
+    const screen = await render(
+      <Card title="Kit" data-testid="card">
+        <p>First.</p>
+        <p>Second.</p>
+      </Card>,
+    );
+    const first = screen.getByText('First.').element();
+
+    // A `div`: paragraphs cannot nest in the description's own `p`.
+    expect(first.parentElement?.tagName).toBe('DIV');
+    expect(first.parentElement).toHaveClass('contour-card__description');
+    expect(first.parentElement?.children).toHaveLength(2);
+  });
+
+  it('shows its icon in the header, above the title', async () => {
+    const screen = await render(
+      <Card title="Kit" icon={<svg data-testid="icon" />} data-testid="card" />,
+    );
+    const icon = screen.getByTestId('icon');
+    await expect.element(icon).toBeInTheDocument();
+    const header = icon.element().parentElement;
+
+    expect(header).toHaveClass('contour-card__header contour-docs-card__icon', { exact: true });
+    expect(header?.nextElementSibling).toHaveClass('contour-card__body');
+  });
+
+  it('is one link to a page of the site, through the framework link', async () => {
+    const onNavigate = vi.fn<(url: string) => void>();
+    await render(
+      <MemoryFramework pathname="/docs" onNavigate={onNavigate}>
+        <Card title="Kit" description="Styled components." href="/docs/kit" />
+      </MemoryFramework>,
+    );
+    const link = page.getByRole('link', { name: 'Kit Styled components.' });
+
+    await expect.element(link).toHaveClass('contour-card contour-docs-card', { exact: true });
+    await expect.element(link).toHaveAttribute('href', '/docs/kit');
+    await expect.element(link).toHaveAttribute('data-framework-link');
+    await expect.element(link).not.toHaveAttribute('target');
+
+    await userEvent.click(link);
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit');
+  });
+
+  it('opens another site in a new tab, and a path too when it is `external`', async () => {
+    await render(
+      <MemoryFramework>
+        <Card title="Fumadocs" href="https://fumadocs.dev/" />
+        <Card title="Changelog" href="/changelog.html" external />
+        <Card title="Guide" href="/docs/guide" external={false} />
+      </MemoryFramework>,
+    );
+
+    for (const name of ['Fumadocs', 'Changelog']) {
+      const link = page.getByRole('link', { name }).element();
+      expect(link).toHaveAttribute('target', '_blank');
+      expect(link).toHaveAttribute('rel', 'noreferrer noopener');
+      expect(link).not.toHaveAttribute('data-framework-link');
+    }
+    const guide = page.getByRole('link', { name: 'Guide' }).element();
+    expect(guide).not.toHaveAttribute('target');
+    expect(guide).toHaveAttribute('data-framework-link');
+  });
+});

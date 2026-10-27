@@ -1,0 +1,18 @@
+/* The grid of MDX `<Cards>`: one column on phones, two from 40rem. Prose spaces the grid. */
+.contour-docs-cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ct-space-group-gap);
+}
+
+@media (min-width: 40rem) {
+  .contour-docs-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* The icon of an MDX `<Card>`, in its header. */
+.contour-docs-card__icon svg {
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}

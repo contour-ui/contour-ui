@@ -1,0 +1,82 @@
+/*
+ * The section switcher: an outline Button as wide as its container that reads like a field, the
+ * section in the heading style and the up-down chevrons at the end, and a popover as wide as the
+ * button that lists the sections like a menu.
+ */
+.contour-docs-section-switcher {
+  inline-size: 100%;
+  justify-content: space-between;
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.contour-docs-section-switcher__value {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contour-docs-section-switcher > .contour-icon {
+  color: var(--ct-color-fg-muted);
+}
+
+/* The items fill the panel, as in a menu: a gap of the items' own inset around them. */
+.contour-docs-section-switcher__content {
+  padding: var(--ct-space-control-gap);
+}
+
+.contour-docs-section-switcher__list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* The name over the description, the check of the current section at the end. */
+.contour-docs-section-switcher__link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--ct-space-group-gap);
+  padding: var(--ct-space-group-gap) var(--ct-space-control-inset);
+  border-radius: var(--ct-radius-control);
+  color: var(--ct-color-fg-default);
+  text-decoration: none;
+  transition: background-color var(--ct-motion-feedback);
+}
+
+@media (hover: hover) {
+  .contour-docs-section-switcher__link:hover {
+    background-color: var(--ct-color-bg-hover);
+  }
+}
+
+.contour-docs-section-switcher__link:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: calc(-1 * var(--ct-border-width-focus));
+}
+
+.contour-docs-section-switcher__name {
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.contour-docs-section-switcher__link[aria-current='true'] .contour-docs-section-switcher__name {
+  color: var(--ct-color-accent-fg);
+}
+
+.contour-docs-section-switcher__description {
+  grid-column: 1;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.contour-docs-section-switcher__check {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+  color: var(--ct-color-accent-fg);
+}

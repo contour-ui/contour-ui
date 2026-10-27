@@ -40,10 +40,12 @@ interface ThemedProps {
   readonly options: ThemeOptions;
   readonly selected: string;
   readonly inDocs: boolean;
+  /** Pad the canvas, unless the story draws to its edges (`parameters.canvasPadding: false`). */
+  readonly padded: boolean;
   readonly story: ReactElement;
 }
 
-function Themed({ options, selected, inDocs, story }: ThemedProps): ReactElement {
+function Themed({ options, selected, inDocs, padded, story }: ThemedProps): ReactElement {
   const { themes, defaultTheme, attribute, canvas } = options;
   const sideBySide = selected === SIDE_BY_SIDE;
   const main = sideBySide ? defaultTheme : selected;
@@ -57,7 +59,7 @@ function Themed({ options, selected, inDocs, story }: ThemedProps): ReactElement
     <div
       key={theme}
       {...{ [attribute]: theme }}
-      style={{ boxSizing: 'border-box', padding: '1rem', ...canvas, ...style }}
+      style={{ boxSizing: 'border-box', padding: padded ? '1rem' : 0, ...canvas, ...style }}
     >
       {story}
     </div>
@@ -109,10 +111,11 @@ function Themed({ options, selected, inDocs, story }: ThemedProps): ReactElement
 /**
  * Add a "Theme" toolbar menu (every theme, plus all of them side by side) to a
  * package's preview annotations, and a decorator that draws each story on a
- * themed canvas. Story tests run in the default theme.
+ * themed canvas, padded by 1rem unless the story sets `parameters.canvasPadding: false`, as a
+ * page layout that reaches the edges of the viewport does. Story tests run in the default theme.
  */
 export function withThemes(preview: Preview, options: ThemeOptions): Preview {
-  const decorator: Decorator = (Story, { globals, viewMode }) => {
+  const decorator: Decorator = (Story, { globals, viewMode, parameters }) => {
     const value: unknown = globals[GLOBAL];
     const selected =
       typeof value === 'string' && (value === SIDE_BY_SIDE || options.themes.includes(value))
@@ -123,6 +126,7 @@ export function withThemes(preview: Preview, options: ThemeOptions): Preview {
         options={options}
         selected={selected}
         inDocs={viewMode === 'docs'}
+        padded={parameters['canvasPadding'] !== false}
         story={<Story />}
       />
     );

@@ -1,0 +1,55 @@
+/*
+ * The docs layout: the header above the page below 48rem, the sidebar beside it from 48rem.
+ *
+ * Its root sets, for every component inside:
+ * - `--contour-docs-header-height`: the height of the sticky header, `0px` from 48rem, where it
+ *   goes;
+ * - `--contour-docs-toc-bar-height`: the height of the sticky bar of the table of contents
+ *   (`docs-page.css`), `0px` from 80rem, where the column of the table of contents replaces it,
+ *   and on a page without one.
+ * Content below both bars, such as a heading a link scrolls to, keeps their sum free at the top
+ * with `scroll-margin-block-start`.
+ *
+ * And for the layout: `--contour-docs-sidebar-width`, `--contour-docs-page-inset` (the inline
+ * padding of the page and the header), `--contour-docs-article-width` (the widest the article
+ * gets: a readable line of prose, room for code) and `--contour-docs-toc-width`.
+ */
+.contour-docs-layout {
+  --contour-docs-header-height: 3rem;
+  --contour-docs-toc-bar-height: 2.5rem;
+  --contour-docs-sidebar-width: 16rem;
+  --contour-docs-page-inset: 1rem;
+  --contour-docs-article-width: 44rem;
+  --contour-docs-toc-width: 13rem;
+
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100dvh;
+}
+
+@media (min-width: 48rem) {
+  .contour-docs-layout {
+    --contour-docs-header-height: 0px;
+    --contour-docs-page-inset: 2rem;
+
+    flex-direction: row;
+  }
+}
+
+@media (min-width: 80rem) {
+  .contour-docs-layout {
+    --contour-docs-toc-bar-height: 0px;
+  }
+}
+
+.contour-docs-layout:not(:has(.contour-docs-page__toc-bar)) {
+  --contour-docs-toc-bar-height: 0px;
+}
+
+/* The column of the page: what the sidebar leaves, at least the rest of the viewport. */
+.contour-docs-layout__main {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-inline-size: 0;
+}

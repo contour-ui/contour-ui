@@ -28,7 +28,7 @@ export type ReactPolicy =
 export interface LayerPackage {
   /** Directory under `packages/` and the unscoped npm name. */
   readonly name: string;
-  readonly layer: 0 | 1 | 2 | 3;
+  readonly layer: 0 | 1 | 2 | 3 | 4;
   readonly purpose: string;
   /** Internal packages (unscoped names) this package may depend on. */
   readonly allowed: readonly string[];
@@ -76,6 +76,13 @@ export const LAYERS: readonly LayerPackage[] = [
     layer: 3,
     purpose: 'styled audio components',
     allowed: ['headless', 'tokens', 'icons', 'kit'],
+    react: 'peer',
+  },
+  {
+    name: 'fumadocs',
+    layer: 4,
+    purpose: 'documentation layout for fumadocs-core sites, built from Kit',
+    allowed: ['kit', 'headless', 'tokens', 'icons'],
     react: 'peer',
   },
 ];

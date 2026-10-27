@@ -1,0 +1,384 @@
+/*
+ * The search: its trigger, a field-like button (or an icon button in the phone header), and its
+ * dialog, a field above the results and a line of key hints. styles.css imports this file into
+ * the `contour.fumadocs` layer, above Kit's, so these rules adjust the Kit parts they are set on.
+ */
+
+/* Text only screen readers read: the title of the dialog, the count of results. */
+.contour-docs-search__visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/*
+ * The trigger looks like a search field: the icon and "Search" at the start, in the color of a
+ * placeholder, and the shortcut at the end. It fills the width of its container.
+ */
+.contour-docs-search-trigger {
+  inline-size: 100%;
+  justify-content: flex-start;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+/*
+ * The keys of both platforms in one grid cell: the cell is as wide as the wider set before and
+ * after hydration, so nothing moves when the keys of the platform show.
+ */
+.contour-docs-search-trigger__shortcut {
+  display: grid;
+  margin-inline-start: auto;
+}
+
+.contour-docs-search-trigger__keys {
+  display: flex;
+  grid-area: 1 / 1;
+  justify-content: flex-end;
+  gap: var(--ct-space-control-gap);
+  visibility: hidden;
+}
+
+.contour-docs-search-trigger__shortcut[data-platform='apple'] > [data-keys='apple'],
+.contour-docs-search-trigger__shortcut[data-platform='other'] > [data-keys='other'] {
+  visibility: visible;
+}
+
+/* A touch screen without a keyboard has no use for a shortcut (nor for the key hints, below). */
+@media (hover: none) and (pointer: coarse) {
+  .contour-docs-search-trigger__shortcut {
+    display: none;
+  }
+}
+
+/* On phones, the dialog starts near the top: the on-screen keyboard leaves the most room. */
+@media (width < 48rem) {
+  .contour-docs-search-positioner {
+    padding-block-start: var(--ct-space-section-gap);
+  }
+}
+
+/* Its parts space themselves: the list and the messages show only now and then. */
+.contour-docs-search__listbox {
+  min-block-size: 0;
+  gap: 0;
+}
+
+/* The field, and the button that closes the dialog after it. */
+.contour-docs-search__bar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+}
+
+/* The field: a text field with the search icon inside its border. */
+.contour-docs-search__field {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-inline-size: 0;
+  gap: var(--ct-space-control-gap-lg);
+  box-sizing: border-box;
+  block-size: var(--ct-size-control-lg);
+  padding-inline: var(--ct-space-control-inset-lg);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-control);
+  color: var(--ct-color-fg-muted);
+}
+
+.contour-docs-search__field > .contour-icon {
+  flex-shrink: 0;
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}
+
+/* The ring of the field, where Kit draws the ring of its text fields: on the border. */
+.contour-docs-search__field:has(> .contour-docs-search__input:focus-visible) {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: calc(-1 * var(--ct-border-width-default));
+}
+
+.contour-docs-search__input {
+  flex: 1;
+  block-size: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: none;
+  font: var(--ct-text-prose);
+  letter-spacing: var(--ct-text-prose-letter-spacing);
+}
+
+/* iOS zooms the page into a focused field whose text is smaller than 16px. */
+@media (pointer: coarse) {
+  .contour-docs-search__input {
+    font-size: max(16px, var(--ct-text-prose-font-size));
+  }
+}
+
+/*
+ * The results scroll from edge to edge of the dialog, their scrollbar too, and stop growing at a
+ * height that leaves the page in view. Too little room, and they give it up first.
+ */
+.contour-docs-search__results {
+  flex: 0 1 auto;
+  min-block-size: 0;
+  max-block-size: 28rem;
+  margin-block-start: var(--ct-space-panel-inset);
+  margin-inline: calc(-1 * var(--ct-space-panel-inset));
+  padding-inline: var(--ct-space-panel-inset);
+  scroll-padding-block: var(--ct-space-control-gap);
+  container-type: inline-size;
+}
+
+.contour-docs-search__group + .contour-docs-search__group {
+  margin-block-start: var(--ct-space-group-gap);
+}
+
+/* An option: the icon of its kind on the first line of its text, which wraps. */
+.contour-docs-search__option {
+  align-items: flex-start;
+}
+
+.contour-docs-search__icon {
+  flex-shrink: 0;
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+  margin-block: calc((1lh - var(--ct-size-icon-md)) / 2);
+  color: var(--ct-color-fg-muted);
+}
+
+.contour-docs-search__text {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.contour-docs-search__option[data-kind='page'] {
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.contour-docs-search__option[data-kind='text'] > .contour-docs-search__text {
+  color: var(--ct-color-fg-muted);
+}
+
+/* The section of the page, at the end of its row. */
+.contour-docs-search__breadcrumbs {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  min-block-size: 1lh;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+.contour-docs-search__breadcrumbs > .contour-icon {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+/*
+ * The matches of a page hang from a line under the icon of the page, which runs down through
+ * them to the next page.
+ */
+.contour-docs-search__option:is([data-kind='heading'], [data-kind='text']),
+.contour-docs-search__table {
+  margin-inline-start: calc(var(--ct-space-control-inset) + var(--ct-size-icon-md) / 2);
+  border-inline-start: var(--ct-border-width-default) solid var(--ct-color-border-default);
+}
+
+.contour-docs-search__option:is([data-kind='heading'], [data-kind='text']) {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+/*
+ * Inline code in the code font, without the box it has in the pages: results are dense, and
+ * table cells hold little else. Ligatures are off: `-<` would turn into an arrow.
+ */
+.contour-docs-search__results code {
+  font: var(--ct-text-code);
+  font-variant-ligatures: none;
+  letter-spacing: var(--ct-text-code-letter-spacing);
+}
+
+/*
+ * The rows of a table that match: a grid whose columns the header and every row share, so the
+ * cells line up. The first column holds the icon of a table, which shows in the header only; the
+ * others, set inline by their number, the cells.
+ */
+.contour-docs-search__table {
+  display: grid;
+  column-gap: var(--ct-space-group-gap);
+}
+
+.contour-docs-search__table-header,
+.contour-docs-search__table-row {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  column-gap: var(--ct-space-group-gap);
+}
+
+.contour-docs-search__table-header {
+  align-items: center;
+  padding-block: var(--ct-space-control-gap);
+  padding-inline: var(--ct-space-control-inset);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-caption);
+  letter-spacing: var(--ct-text-caption-letter-spacing);
+}
+
+.contour-docs-search__table-row {
+  align-items: baseline;
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+/* As far from the first cell as the icon of an option is from its text. */
+:is(.contour-docs-search__table-header, .contour-docs-search__table-row)
+  > .contour-docs-search__icon {
+  margin-block: 0;
+  margin-inline-end: calc(var(--ct-space-control-gap) - var(--ct-space-group-gap));
+}
+
+.contour-docs-search__table-row > .contour-docs-search__icon {
+  visibility: hidden;
+}
+
+/* The cells of a row are cells of the grid. */
+.contour-docs-search__cells {
+  display: contents;
+}
+
+.contour-docs-search__cell {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The name of the column of a cell: for screen readers while the header row shows. */
+.contour-docs-search__cell-label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/*
+ * In a narrow dialog, the header row goes, and each row is an option like the others: the icon
+ * of a table, then its cells one under the other, each after the name of its column.
+ */
+@container (width < 26rem) {
+  .contour-docs-search__table {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .contour-docs-search__table-header {
+    display: none;
+  }
+
+  .contour-docs-search__table-row {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .contour-docs-search__table-row > .contour-docs-search__icon {
+    margin-block: calc((1lh - var(--ct-size-icon-md)) / 2);
+    margin-inline-end: 0;
+    visibility: visible;
+  }
+
+  .contour-docs-search__cells {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-inline-size: 0;
+  }
+
+  .contour-docs-search__cell-label {
+    position: static;
+    inline-size: auto;
+    block-size: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    white-space: normal;
+    color: var(--ct-color-fg-muted);
+  }
+}
+
+/* The live region of the state of the search (an `<output>`, inline by default). */
+.contour-docs-search__status {
+  display: block;
+}
+
+/* What the search says instead of results: searching, no results, an index that did not load. */
+.contour-docs-search__message {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  margin: var(--ct-space-panel-inset) 0 0;
+  padding-block: var(--ct-space-control-gap);
+  padding-inline: var(--ct-space-control-inset);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.contour-docs-search__message[data-tone='danger'] {
+  color: var(--ct-color-danger-fg);
+}
+
+.contour-docs-search__message > .contour-icon {
+  flex-shrink: 0;
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}
+
+/* The keys of the dialog, under a line across it. */
+.contour-docs-search__footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ct-space-group-gap) var(--ct-space-section-gap);
+  margin-inline: calc(-1 * var(--ct-space-panel-inset));
+  margin-block-end: calc(-1 * var(--ct-space-panel-inset));
+  padding-block: var(--ct-space-group-gap);
+  padding-inline: var(--ct-space-panel-inset);
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+.contour-docs-search__footer > span {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .contour-docs-search__footer {
+    display: none;
+  }
+}
+
+/* The query in the results, with the CSS Custom Highlight API (`useHighlightQuery`). */
+::highlight(fd-search) {
+  color: var(--ct-color-accent-fg);
+  text-decoration: underline;
+}

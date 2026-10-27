@@ -1,0 +1,24 @@
+/*
+ * The frame of a live example. Its content is outside Prose (`contour-docs-not-prose`), so
+ * components render with their own styles; several examples sit side by side and wrap. Prose
+ * spaces the frame, so it sets no margin.
+ */
+.contour-docs-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ct-space-section-gap);
+  /* Twice a panel's inset: room around the examples. */
+  padding: calc(2 * var(--ct-space-panel-inset));
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-canvas);
+}
+
+/*
+ * The gap spaces the examples, so they lose the browser's default margins, such as those of the
+ * `figure` of a code block, which Kit leaves to the container.
+ */
+.contour-docs-preview > * {
+  margin-block: 0;
+}
