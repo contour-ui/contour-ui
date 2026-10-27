@@ -129,6 +129,14 @@ const themeOptions = {
 The source is the same for the same options and version of Kit, so a Content Security Policy can
 allow the script by its hash, or by a nonce on the `<script>` element.
 
+`themeScript` also comes from `@contour-ui/kit/theme-script`, an entry point without React: import
+it from there where the code runs before React does, such as the root layout of Next.js, a React
+Server Component, which must not load the components.
+
+```tsx
+import { themeScript } from '@contour-ui/kit/theme-script';
+```
+
 An app rendered only in the browser hydrates nothing, so it needs no `suppressHydrationWarning`,
 and ThemeProvider applies the theme before the first paint of the app. While the app's code
 loads, though, the page shows the default theme: to theme it from the start, put the output of

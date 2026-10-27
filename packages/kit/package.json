@@ -22,6 +22,11 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./theme-script": {
+      "@contour-ui/source": "./src/theme-provider/theme-script.ts",
+      "types": "./dist/theme-script.d.ts",
+      "default": "./dist/theme-script.js"
+    },
     "./styles.css": {
       "@contour-ui/source": "./src/styles.css",
       "default": "./dist/styles.css"
@@ -33,6 +38,10 @@
       ".": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
+      },
+      "./theme-script": {
+        "types": "./dist/theme-script.d.ts",
+        "default": "./dist/theme-script.js"
       },
       "./styles.css": "./dist/styles.css",
       "./package.json": "./package.json"
