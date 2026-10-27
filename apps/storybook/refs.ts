@@ -14,4 +14,5 @@ export const PACKAGE_STORYBOOKS: readonly PackageStorybook[] = [
   { name: 'headless', title: 'Headless', port: 6102 },
   { name: 'kit', title: 'Kit', port: 6103 },
   { name: 'audio', title: 'Audio', port: 6104 },
+  { name: 'fumadocs', title: 'Fumadocs', port: 6105 },
 ];

@@ -10,7 +10,7 @@ export default defineConfig({
   run: {
     tasks: {
       // Builds every package Storybook, then the host, into one deployable folder:
-      // storybook-static/{index.html, tokens/, headless/, kit/, audio/}.
+      // storybook-static/{index.html, tokens/, headless/, kit/, audio/, fumadocs/}.
       'build-storybook': {
         command: ['storybook build --output-dir storybook-static', 'node scripts/compose.ts'],
         // Storybook wipes and rewrites its output directory, so results are not cacheable.
@@ -20,6 +20,7 @@ export default defineConfig({
           '@contour-ui/headless#build-storybook',
           '@contour-ui/kit#build-storybook',
           '@contour-ui/audio#build-storybook',
+          '@contour-ui/fumadocs#build-storybook',
         ],
       },
       // Screenshot tests (playwright.config.ts) in the pinned Playwright Linux image, via Docker.

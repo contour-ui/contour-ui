@@ -1,7 +1,8 @@
 /**
  * Visual regression for the package Storybooks: every story tagged `visual`
  * (the styled packages tag all their stories; `tags: ['!visual']` opts one out),
- * screenshotted in each theme from the composed static build.
+ * screenshotted in each theme from the composed static build, at 1280×720, or at
+ * the width of a phone for a story tagged `phone`.
  *
  * Screenshots are only comparable where they were made: in the pinned Playwright
  * Linux image (`vp run visual` locally, the `visual` job in CI).
@@ -17,10 +18,18 @@ import { STATIC_DIR } from './site.ts';
 
 const SNAPSHOT_DIR = path.join(import.meta.dirname, '__snapshots__');
 
+/**
+ * The viewport of a story tagged `phone`: the `phone` viewport of its Storybook, which story
+ * tests take from the story's globals. `index.json` has the tags of a story, not its globals.
+ */
+const PHONE_VIEWPORT = { width: 390, height: 844 } as const;
+
 interface VisualStory {
   readonly id: string;
   readonly title: string;
   readonly name: string;
+  /** Whether it shows at the width of a phone (`tags: ['phone']`). */
+  readonly phone: boolean;
 }
 
 const isRecord = (value: unknown): value is Readonly<Record<string, unknown>> =>
@@ -44,7 +53,7 @@ function visualStories(storybook: string): VisualStory[] {
       typeof name === 'string' &&
       Array.isArray(tags) &&
       tags.includes('visual')
-      ? [{ id, title, name }]
+      ? [{ id, title, name, phone: tags.includes('phone') }]
       : [];
   });
 }
@@ -58,6 +67,9 @@ for (const { name: storybook } of PACKAGE_STORYBOOKS) {
       for (const theme of themes) {
         expected.add(`${storybook}/${story.id}.${theme}.png`);
         test(theme, async ({ page }) => {
+          if (story.phone) {
+            await page.setViewportSize(PHONE_VIEWPORT);
+          }
           await page.goto(
             `${storybook}/iframe.html?id=${story.id}&viewMode=story&globals=theme:${theme}`,
           );
