@@ -20,7 +20,7 @@ export interface CardProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
   description?: ReactNode;
   /**
    * A page of this site goes through the framework's link (`fumadocs-core/framework`); another
-   * site opens in a new tab.
+   * site opens in a new tab, and the name of the card says so.
    */
   href?: string | undefined;
   /** Opens `href` in a new tab even when it is a path. */
@@ -79,6 +79,8 @@ export function Card({
       <KitCard.Root {...rootProps} size="lg" asChild>
         <a href={href} target="_blank" rel="noreferrer noopener">
           {content}
+          {/* The end of its name, as for the site's other links to another site (`cards.css`). */}
+          <span className="contour-docs-card__new-tab">{' (opens in a new tab)'}</span>
         </a>
       </KitCard.Root>
     );

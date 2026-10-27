@@ -130,6 +130,9 @@ export const { staticGET: GET } = createFromSource(source);
   server component of your own, re-export it from a module that starts with `'use client'`
   (`'use client'; export { Button } from '@contour-ui/kit';`) and import it from there. Kit's
   `themeScript` comes without React from `@contour-ui/kit/theme-script`.
+- A component of parts, such as Kit's `Card`, is a namespace: a server component cannot read
+  inside an export of a client module (`Card.Root` is `undefined` there). Write the code that uses
+  it in the client module, or export its parts by name (`export const CardRoot = Card.Root;`).
 - `output: 'export'` works: the search index is prerendered at `/api/search`.
 
 ## MDX
@@ -143,6 +146,12 @@ export const { staticGET: GET } = createFromSource(source);
   class opts its subtree out. `Preview`: the frame of live examples.
 - `Callout`, `Card`, `Cards`: Kit's `Alert` and `Card` with the MDX props of Fumadocs.
 - TypeScript users install `@types/mdx` (an optional peer).
+- Highlight code with Shiki's css-variables theme, which Kit's `CodeBlock` maps to the syntax
+  tokens: `rehypeCodeOptions: { themes: { tokens: createCssVariablesTheme() }, defaultColor:
+  'tokens', tabindex: false }` in the options of fumadocs-mdx (see the docs site's
+  `vite.config.ts`).
+- Fumadocs' code block tabs (the `tab` meta, `npm` blocks) are not supported yet: they render
+  components the map does not hold.
 
 ## Styles
 

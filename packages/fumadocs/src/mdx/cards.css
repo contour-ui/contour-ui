@@ -16,3 +16,19 @@
   inline-size: var(--ct-size-icon-md);
   block-size: var(--ct-size-icon-md);
 }
+
+/*
+ * The end of the name of a card to another site, " (opens in a new tab)": screen readers read it,
+ * and it takes no room, so the card looks like the others.
+ */
+.contour-docs-card__new-tab {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

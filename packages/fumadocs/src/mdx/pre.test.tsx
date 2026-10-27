@@ -72,6 +72,19 @@ describe('MdxPre', () => {
     expect(pre?.style.counterReset).toBe('contour-code-block-line 11');
   });
 
+  it('drops the language icon of `rehypeCode`: the header shows the title only', async () => {
+    const screen = await render(
+      <MdxPre title="gain.ts" icon={'<svg viewBox="0 0 32 32"><path d="M1 2L3 4" /></svg>'}>
+        {CODE}
+      </MdxPre>,
+    );
+    const figure = screen.getByRole('figure', { name: 'gain.ts' });
+    await expect.element(figure).toBeInTheDocument();
+
+    expect(figure.element().querySelector('pre')).not.toHaveAttribute('icon');
+    expect(figure.element().innerHTML).not.toContain('M1 2L3 4');
+  });
+
   it('leaves the counter alone without a first line number', async () => {
     const screen = await render(<MdxPre data-line-numbers>{CODE}</MdxPre>);
     const pre = screen.getByRole('figure').element().querySelector('pre');

@@ -10,6 +10,12 @@ import type { ComponentProps, ReactElement } from 'react';
  */
 interface MdxPreProps extends ComponentProps<'pre'> {
   allowCopy?: string | undefined;
+  /**
+   * The icon of the code's language, an SVG as HTML, which `rehypeCode` adds unless its options
+   * say `icon: false`. The header shows the title only, so the icon is dropped, not left on the
+   * `pre` as an attribute.
+   */
+  icon?: string | undefined;
   'data-line-numbers'?: boolean | undefined;
   'data-line-numbers-start'?: number | string | undefined;
 }
@@ -19,7 +25,13 @@ interface MdxPreProps extends ComponentProps<'pre'> {
  * highlighted `pre` in the scroll area, and a copy button unless the meta says `noCopy`, in the
  * header or, without a title, at the top end of the block.
  */
-export function MdxPre({ title, allowCopy, style, ...props }: MdxPreProps): ReactElement {
+export function MdxPre({
+  title,
+  allowCopy,
+  icon: _icon,
+  style,
+  ...props
+}: MdxPreProps): ReactElement {
   const start = Number(props['data-line-numbers-start']);
   // Kit numbers the lines with this counter: reset to one less than the first number.
   const numbering = Number.isInteger(start)

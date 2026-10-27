@@ -96,8 +96,9 @@ describe('Card', () => {
       </MemoryFramework>,
     );
 
-    for (const name of ['Fumadocs', 'Changelog']) {
-      const link = page.getByRole('link', { name }).element();
+    for (const title of ['Fumadocs', 'Changelog']) {
+      // Its name says so, as the names of the site's other links to another site do.
+      const link = page.getByRole('link', { name: `${title} (opens in a new tab)` }).element();
       expect(link).toHaveAttribute('target', '_blank');
       expect(link).toHaveAttribute('rel', 'noreferrer noopener');
       expect(link).not.toHaveAttribute('data-framework-link');
@@ -105,5 +106,26 @@ describe('Card', () => {
     const guide = page.getByRole('link', { name: 'Guide' }).element();
     expect(guide).not.toHaveAttribute('target');
     expect(guide).toHaveAttribute('data-framework-link');
+  });
+
+  it('says that it opens a new tab without showing it', async () => {
+    await render(
+      <MemoryFramework>
+        <Card title="Fumadocs" description="Docs framework." href="https://fumadocs.dev/" />
+      </MemoryFramework>,
+    );
+    const card = page.getByRole('link', { name: /^Fumadocs/u }).element();
+    const note = page.getByText('(opens in a new tab)').element();
+    const box = note.getBoundingClientRect();
+    const height = card.getBoundingClientRect().height;
+
+    expect(note.closest('a')).toBe(card);
+    expect(note).toHaveClass('contour-docs-card__new-tab', { exact: true });
+    expect(note.textContent).toBe(' (opens in a new tab)');
+    expect([box.width, box.height]).toStrictEqual([1, 1]);
+    expect(getComputedStyle(note).clipPath).toBe('inset(50%)');
+    // It takes no room: without it, the card is as high.
+    note.style.display = 'none';
+    expect(card.getBoundingClientRect().height).toBe(height);
   });
 });
