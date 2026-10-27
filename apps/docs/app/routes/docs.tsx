@@ -1,14 +1,12 @@
-import type { Root } from 'fumadocs-core/page-tree';
+import { DocsLayout, DocsPage } from '@contour-ui/fumadocs';
+import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
 import { useFumadocsLoader } from 'fumadocs-core/source/client';
 import { use } from 'react';
 import type { ReactElement } from 'react';
 import { isRouteErrorResponse, useLoaderData } from 'react-router';
 import type { ClientLoaderFunctionArgs, LoaderFunctionArgs } from 'react-router';
 
-import { DocsPage } from '../components/layout/docs-page.tsx';
-import { DocsShell } from '../components/layout/docs-shell.tsx';
-import { getMdxComponents } from '../components/mdx.tsx';
-import { Prose } from '../components/prose.tsx';
+import { mdxPlaceholderComponents } from '../components/mdx-placeholders.ts';
 import { docs, source } from '../lib/source.ts';
 import { NotFound } from './not-found.tsx';
 
@@ -22,7 +20,6 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
   return {
     path: page.path,
-    url: page.url,
     title: page.data.title,
     description: page.data.description,
     pageTree: await source.serializePageTree(source.getPageTree()),
@@ -43,14 +40,12 @@ export function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 interface ContentProps {
   /** The path of the page's file, as the collection knows it (`kit/button.mdx`). */
   readonly path: string;
-  readonly url: string;
   readonly title: string;
   readonly description: string | undefined;
-  readonly tree: Root;
 }
 
 /** The page itself, once its MDX and its table of contents have loaded. */
-function Content({ path, url, title, description, tree }: ContentProps): ReactElement {
+function Content({ path, title, description }: ContentProps): ReactElement {
   const page = docs.getPage(path);
   if (page === undefined) {
     throw new Error(`Unknown page: ${path}`);
@@ -59,25 +54,26 @@ function Content({ path, url, title, description, tree }: ContentProps): ReactEl
   const Mdx = page.body;
 
   return (
-    <DocsPage title={title} description={description} toc={toc} tree={tree} url={url}>
+    <DocsPage title={title} description={description} toc={toc}>
       <Prose>
-        <Mdx components={getMdxComponents()} />
+        <Mdx components={getMdxComponents(mdxPlaceholderComponents)} />
       </Prose>
     </DocsPage>
   );
 }
 
 export default function Page(): ReactElement {
-  const { path, url, title, description, pageTree } =
+  const { path, title, description, pageTree } =
     useFumadocsLoader(useLoaderData<typeof clientLoader>());
 
   return (
     <>
       <title>{title}</title>
       {description === undefined ? null : <meta name="description" content={description} />}
-      <DocsShell tree={pageTree} url={url}>
-        <Content path={path} url={url} title={title} description={description} tree={pageTree} />
-      </DocsShell>
+      {/* The layout and the page find the page in the tree by the pathname. */}
+      <DocsLayout tree={pageTree}>
+        <Content path={path} title={title} description={description} />
+      </DocsLayout>
     </>
   );
 }

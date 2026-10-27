@@ -1,9 +1,13 @@
+import { HomeLayout } from '@contour-ui/fumadocs';
 import { Button, Card } from '@contour-ui/kit';
 import type { ReactElement } from 'react';
 import { Link as RouterLink } from 'react-router';
 
-import { SiteLayout } from '../components/layout/site-layout.tsx';
-import { SITE_DESCRIPTION, SITE_NAME } from '../lib/site.ts';
+/** The name of the site, the title of the home page. */
+const TITLE = 'contour-ui';
+
+/** What contour-ui is, in one line: the tagline of the home page and its description. */
+const DESCRIPTION = 'Design system for audio-plugin UIs and general web UI.';
 
 /** The shipped packages; each has its own docs section. */
 const PACKAGES = [
@@ -21,17 +25,17 @@ const PACKAGES = [
 ] as const;
 
 export function meta(): Array<Record<string, string>> {
-  return [{ title: SITE_NAME }, { name: 'description', content: SITE_DESCRIPTION }];
+  return [{ title: TITLE }, { name: 'description', content: DESCRIPTION }];
 }
 
 /** The home page (`home.css`): what contour-ui is, the way into the guide, and a card per package. */
 export default function Home(): ReactElement {
   return (
-    <SiteLayout>
+    <HomeLayout>
       <div className="docs-home">
         <div className="docs-home__hero">
-          <h1 className="docs-home__title">{SITE_NAME}</h1>
-          <p className="docs-home__description">{SITE_DESCRIPTION}</p>
+          <h1 className="docs-home__title">{TITLE}</h1>
+          <p className="docs-home__description">{DESCRIPTION}</p>
           <Button asChild size="lg">
             <RouterLink to="/docs/guide">How it works</RouterLink>
           </Button>
@@ -53,6 +57,6 @@ export default function Home(): ReactElement {
           ))}
         </ul>
       </div>
-    </SiteLayout>
+    </HomeLayout>
   );
 }

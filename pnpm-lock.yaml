@@ -173,6 +173,9 @@ importers:
       '@contour-ui/audio':
         specifier: workspace:*
         version: link:../../packages/audio
+      '@contour-ui/fumadocs':
+        specifier: workspace:*
+        version: link:../../packages/fumadocs
       '@contour-ui/headless':
         specifier: workspace:*
         version: link:../../packages/headless

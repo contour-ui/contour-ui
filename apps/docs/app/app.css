@@ -1,36 +1,7 @@
 /*
- * Cascade layer order. `base` is the page itself (base.css). `prose`, the typography of the
- * page content, beats it, and every Kit and Audio component (`contour`) inside the content beats
- * Prose. The docs components and the layout (`docs`) rank above contour-ui's styles, which they
- * adjust where they use them.
+ * The app's own pages: the home page and the message of the 404 and error pages. Unlayered, so
+ * they rank above every style of contour-ui, which sits in the `contour` layers
+ * (`@contour-ui/fumadocs/styles.css` sets their order).
  */
-@layer base, prose, contour, docs;
-
-@import './base.css' layer(base);
-
-/*
- * Docs components. Their files hold plain rules and get their layer here, next to the order
- * above, as Kit's styles.css does for its components: imported from the components instead,
- * they would land in the route's stylesheet, and the layers would hold only while that one
- * loads after this file.
- */
-@import './components/prose.css' layer(prose);
-@import './components/preview.css' layer(docs);
-@import './components/cards.css' layer(docs);
-@import './components/mdx-heading.css' layer(docs);
-@import './components/page-header.css' layer(docs);
-@import './components/page-footer.css' layer(docs);
-@import './components/toc-panel.css' layer(docs);
-@import './components/search/search.css' layer(docs);
-@import './components/theme-toggle.css' layer(docs);
-@import './components/layout/docs-shell.css' layer(docs);
-@import './components/layout/docs-page.css' layer(docs);
-@import './components/layout/header.css' layer(docs);
-@import './components/layout/mobile-nav.css' layer(docs);
-@import './components/layout/page-tree.css' layer(docs);
-@import './components/layout/section-switcher.css' layer(docs);
-@import './components/layout/sidebar.css' layer(docs);
-@import './components/layout/site-layout.css' layer(docs);
-@import './components/layout/site-links.css' layer(docs);
-@import './components/layout/skip-link.css' layer(docs);
-@import './routes/home.css' layer(docs);
+@import './routes/home.css';
+@import './routes/not-found.css';
