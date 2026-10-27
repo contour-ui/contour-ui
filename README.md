@@ -1,7 +1,7 @@
 # contour-ui
 
 Design system for audio-plugin UIs and general web UI, built in layers
-(tokens/icons → core → headless → kit/audio).
+(tokens/icons → core → headless → kit/audio → fumadocs, a docs layout for fumadocs-core sites).
 
 ```bash
 vp install

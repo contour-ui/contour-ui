@@ -17,6 +17,7 @@ point **down** the table only — never up, never sideways — with one exceptio
 | 2 headless   | `headless` | unstyled React DOM components + hooks (Ark UI–like)                                                                            | `core`                               |
 | 3 kit        | `kit`      | styled general-purpose components                                                                                              | `headless`, `tokens`, `icons`        |
 | 3 kit        | `audio`    | styled audio components                                                                                                        | `headless`, `tokens`, `icons`, `kit` |
+| 4 docs       | `fumadocs` | documentation layout for fumadocs-core sites, built from Kit, in place of `fumadocs-ui`                                        | `kit`, `headless`, `tokens`, `icons` |
 
 Rules:
 
@@ -31,13 +32,14 @@ Rules:
 - Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`,
   `collection/` and `positioning/`.
 - `headless` must not depend on `tokens`, `icons`, `kit`, `audio`. Peers: `react`, `react-dom`.
-- Kits (`kit`, `audio`) are styled with plain CSS + token CSS variables. **No Tailwind in packages.**
+- Kits (`kit`, `audio`) and `fumadocs` are styled with plain CSS + token CSS variables. **No Tailwind in packages.**
   Use semantic roles only (`--ct-color-*`, `--ct-space-*`, `--ct-text-*`…), never `--ct-base-*`.
 - Kit CSS is one file per component (`src/<component>/<component>.css`) with plain rules, added to
   `src/styles.css` as `@import './<component>/<component>.css' layer(contour.kit);` (audio:
   `layer(contour.audio)`; its entry declares `@layer contour.kit, contour.audio;` so audio always
   ranks above kit). Unlayered app CSS overrides both.
-- `react` / `react-dom` are never regular `dependencies`; in `headless` and kits they are required peers.
+- `react` / `react-dom` are never regular `dependencies`; in `headless`, the kits and `fumadocs` they are required
+  peers. `fumadocs` also takes `fumadocs-core` as a peer (`@types/mdx` as an optional one).
 
 **Enforcement.** The table lives as data in [`scripts/layers.ts`](scripts/layers.ts) — edit it there only.
 
@@ -53,6 +55,8 @@ Rules:
 `@contour-ui/{layer}[-{target}]`. The default target is React DOM, so `headless`,
 `kit`, `audio` are the React DOM packages. Reserved for the Soundor plugin UI
 runtime adapters (**do not create yet**): `headless-soundor`, `kit-soundor`, `audio-soundor`.
+An integration with another ecosystem is named after it, outside that scheme:
+`@contour-ui/fumadocs` is the docs layout for sites on fumadocs-core.
 
 Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `configs/`
 (`@contour-ui/typescript-config`, `@contour-ui/vite-config`). Neither is ever published.
@@ -71,7 +75,7 @@ built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` tas
 | `vp -C packages/kit test`                | one package's tests                                                                                                             |
 | `vp run -r build`                        | build everything (`vp pack` + publint + attw for packages, apps)                                                                |
 | `vp run storybook`                       | every package Storybook + the composition host on http://localhost:6100                                                         |
-| `vp -C packages/kit run storybook`       | one package Storybook (tokens 6101, headless 6102, kit 6103, audio 6104)                                                        |
+| `vp -C packages/kit run storybook`       | one package Storybook (tokens 6101, headless 6102, kit 6103, audio 6104, fumadocs 6105)                                         |
 | `vp run build-storybook`                 | all Storybooks → one deployable folder `apps/storybook/storybook-static`                                                        |
 | `vp run visual` / `vp run visual:update` | screenshot tests of the styled Storybooks in the pinned Playwright Linux image (Docker); `:update` rewrites changed screenshots |
 | `vp -C apps/docs run dev` / `run build`  | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                    |
@@ -84,8 +88,11 @@ Run checks **one task at a time** (`vp check`, then `vp test`, then `vp run -r b
 narrow with `vp -C <dir>` or `--filter` for focused changes. First time on a machine:
 `vp exec playwright install chromium` for browser-mode tests.
 
-**Visual tests.** Every story of the `tokens`, `kit` and `audio` Storybooks is screenshotted in each
-theme (Playwright, `apps/storybook/visual/`, screenshots in `visual/__snapshots__/`). They run
+**Visual tests.** Every story of the `tokens`, `kit`, `audio` and `fumadocs` Storybooks is screenshotted in
+each theme (Playwright, `apps/storybook/visual/`, screenshots in `visual/__snapshots__/`), at
+1280×720; a story tagged `phone` at 390×844 (write `tags: ['phone']` and
+`globals: { viewport: { value: 'phone' } }` in the story's own literal: the indexer reads tags
+statically). They run
 against the static build, in Docker locally and in the same image in CI, because rendering differs
 between machines: never commit screenshots made outside that image. After an intended visual
 change, run `vp run visual:update`, review the changed PNGs, and commit them. A story opts out with
@@ -240,46 +247,78 @@ version of these rules.
 
 ## Docs
 
-`apps/docs` documents what ships: a **Guide** (how the packages fit together, installation,
-themes, styling with tokens) and one section per shipped package — **Kit**, **Audio**,
-**Headless** — as root folders under `content/docs/`. It runs on React Router (prerendered) with
-`fumadocs-core` (page tree, search index, neighbours, TOC data) and `fumadocs-mdx` (content), and
-its layout is its own, built from Kit: no Fumadocs UI, no Tailwind. When a component lands, add
+The docs site (`apps/docs`) documents what ships: a **Guide** (how the packages fit together,
+installation, themes, styling with tokens) and one section per shipped package — **Kit**,
+**Audio**, **Headless**, **Fumadocs** — as root folders under `content/docs/`. It runs on React
+Router (prerendered) with `fumadocs-core` (page tree, search index, neighbours, TOC data) and
+`fumadocs-mdx` (content); its layout is the package `@contour-ui/fumadocs` (`packages/fumadocs/`),
+of which it is the first consumer. When a component lands, add
 `content/docs/<package>/<component>.mdx` (live example in `<Preview>`, anatomy, props, tokens) and
 list it in that section's `meta.json` and on the section's index page. Live examples import the
 component at the top of the page (`import { Button } from '@contour-ui/kit';`); MDX imports
 resolve to package sources like the rest of the app.
 
-- **Layout** (`app/components/layout/`): `DocsShell` (a sidebar from 48rem with the section
+**The layout package** (`@contour-ui/fumadocs`):
+
+- **Layouts** (`src/layout/`, `src/page/`): `DocsLayout` (a sidebar from 48rem with the section
   switcher and the page tree, collapsible; below 48rem a sticky header whose menu opens a Drawer)
   around `DocsPage` (`main#content`, the "On this page" bar until 80rem and the column from 80rem),
-  and `SiteLayout` for the home and 404 pages. The shell root sets `--docs-header-height` and
-  `--docs-toc-bar-height` (`0px` where a bar is gone): headings keep their sum free with
-  `scroll-margin-block-start`, and the TOC (`toc-panel.tsx`, Kit's `Toc`) observes the area below.
-- **Before hydration.** What only the browser knows is keyed on attributes of `<html>` that inline
-  scripts set before the first paint: `data-theme` (Kit's `themeScript()`, key `contour-theme`)
-  and `data-sidebar="collapsed"` (key `contour-docs-sidebar`). Components render both states and
-  CSS shows one, as the theme toggle and the shortcut of the search button do.
-- **Search** (`app/components/search/`): Kit's Dialog with a Kit Listbox whose Input is the field,
-  on fumadocs-core's static index (`/api/search`, prerendered by `routes/search.ts`).
-- **Pages**: `PageHeader` (the title, the page's only `h1`, and the description), the MDX in
-  `Prose`, and `PageFooter` (the previous and next page of the section, from `findNeighbour`).
-- **Styles.** Cascade layers `base, prose, contour, docs` (`app/app.css`): `base.css` styles the
-  page only, with no reset, so Kit renders as in Storybook; Prose styles the MDX content and
-  relies on no reset either (it sets the margins, list markers and fonts of what it styles), and
-  every docs stylesheet goes in `docs`. `docs-not-prose` opts a subtree out of Prose; `<Preview>`
-  uses it and drops the block margins of its direct children.
-- `app/components/mdx.tsx` draws Markdown headings as links to themselves (`mdx-heading.tsx`),
-  links, tables and code blocks with Kit's `Link`, `Table` and `CodeBlock`, renders `<Callout>`
-  and `<Card>` (Fumadocs props) with `Alert` and `Card`, and registers `Kbd`; images stay plain
-  `img`. Code is highlighted at build time with Shiki's css-variables theme (`rehypeCodeOptions`
-  in `vite.config.ts`); `CodeBlock` maps its variables to the syntax tokens. A lowercase JSX tag
-  in MDX (`<kbd>`, `<a>`) is a literal element and skips that map: write `<Kbd>`.
+  and `HomeLayout`, all inside `DocsProvider` (site, search, theme) under the app's framework
+  adapter. Links, the pathname and navigation come only from `fumadocs-core/framework`: the
+  package never imports `react-router`. The layout root sets `--contour-docs-header-height` and
+  `--contour-docs-toc-bar-height` (`0px` where a bar is gone): headings keep their sum free with
+  `scroll-margin-block-start`, and the TOC (`src/toc/`, Kit's `Toc`) observes the area below.
+  Classes are `contour-docs-<part>`, variables `--contour-docs-*`.
+- **Before hydration.** `docsScript()` (Kit's `themeScript()` from `@contour-ui/kit/theme-script`,
+  plus the sidebar) sets `data-theme` (key `contour-theme`) and
+  `data-contour-docs-sidebar="collapsed"` (key `contour-docs-sidebar`) on `<html>` before the
+  first paint. Components render both states and CSS shows one, as the theme toggle and the
+  shortcut of the search button do.
+- **Search** (`src/search/`): Kit's Dialog with a Kit Listbox whose Input is the field, on
+  fumadocs-core's static index (`search.from`, `/api/search` by default). A result opens with
+  `useRouter().push`; one at the current address only scrolls.
+- **MDX** (`@contour-ui/fumadocs/mdx`, `src/mdx/`): `getMdxComponents(overrides?)` draws headings
+  as links to themselves; links (a page of the site through the framework's `Link`, a `#fragment`
+  as is, another site in a new tab); tables and code blocks with Kit's `Table` and `CodeBlock`;
+  `<Callout>`, `<Card>` and `<Cards>` (Fumadocs props) with `Alert` and `Card` (a card's title is
+  no heading); and registers `Kbd` and `<Preview>`. Images stay plain `img`.
+- **Styles.** `@contour-ui/fumadocs/styles.css` loads before Kit's: it starts with the layer order
+  `contour.fumadocs-base, contour.fumadocs-prose, contour.kit, contour.audio, contour.fumadocs`.
+  The page base (no reset, so Kit renders as in Storybook) and Prose rank below the components, so
+  components inside the content keep their styles; the layout and the docs components rank above
+  the Kit parts they adjust. Prose relies on no reset either (it sets the margins, list markers and
+  fonts of what it styles); `contour-docs-not-prose` opts a subtree out, and `<Preview>` uses it.
+- **React Server Components.** The package builds with `libraryPack({ unbundle: true })`, one file
+  per module, so each keeps its `'use client'` (a bundle drops directives). A module starts with
+  `'use client'` when it calls a hook, creates or provides a context, attaches an event handler,
+  or imports a runtime value from `@contour-ui/kit` or `@contour-ui/headless` (their bundles create
+  contexts as they load, which fails on a server). `docsScript()`, `getMdxComponents()`, `Prose`,
+  `Preview`, `HomeLayout` and the entry barrels stay server modules, and they take client
+  components by name: on the server, an object exported by a client module is a client
+  reference, and spreading it yields nothing. The public layouts take serializable props only.
+  `src/client-boundary.test.ts` (Vitest project `fumadocs:node`) checks this, and that no module
+  imports `react-router`. Kit and headless ship no directives yet.
+- **Tests and stories** render the package as a docs site from `src/test-utils/`:
+  `MemoryFramework` (fumadocs-core's `FrameworkProvider` with an in-memory pathname; `push`
+  changes it in a transition, as routers do; `Link` is a plain `<a data-framework-link>`),
+  `renderDocs()` for tests, and the decorator `withDocs` for stories (search on a real static
+  index built in the browser). Page stories set `parameters: { canvasPadding: false }`.
+  testing-library takes a `<header>` inside `<main>` for a banner: find landmarks by name.
+
+**The site** (`apps/docs`) keeps its routes (`docs.tsx` with its loader, `clientLoader` and error
+boundary, `home.tsx`, `not-found.tsx`), `lib/source.ts`, the search index route
+(`routes/search.ts`), `app/components/mdx-placeholders.ts` (passed to `getMdxComponents()`), and
+its own CSS (`app/app.css`, unlayered, loaded after every package stylesheet).
+
+- Code is highlighted at build time with Shiki's css-variables theme (`rehypeCodeOptions` in
+  `vite.config.ts`); `CodeBlock` maps its variables to the syntax tokens. A lowercase JSX tag in
+  MDX (`<kbd>`, `<a>`) is a literal element and skips the MDX map: write `<Kbd>`.
 - Oxfmt formats MDX like JSX: the text of an element with several attributes goes on a line of its
   own, where MDX turns it into a paragraph, even inside a `<button>`. Write inline examples as an
   expression (`{<p>…</p>}`).
-- Docs-only components are named `docs-<name>`, use plain CSS with semantic tokens, and get their
-  cascade layer where `app/app.css` imports their CSS.
+- App-only components are named `docs-<name>` and use plain CSS with semantic tokens.
+- A new page under `content/docs` shows "Not found" on the dev server until it restarts: in SPA mode
+  it serves loader data only for the paths `prerender()` returned at startup.
 - **End-to-end tests** (`apps/docs/e2e/`, `vp -C apps/docs run e2e`): Playwright against the
   static build served as a static host serves it, and axe on key pages in both themes. Find
   elements by role and name, scoped to the banner or the sidebar where page examples share a
