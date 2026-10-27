@@ -2,6 +2,7 @@ import { FrameworkProvider } from 'fumadocs-core/framework';
 import type { Framework, Router } from 'fumadocs-core/framework';
 import {
   createContext,
+  startTransition,
   use,
   useCallback,
   useInsertionEffect,
@@ -115,8 +116,8 @@ export interface MemoryFrameworkProps {
 /**
  * The framework of fumadocs-core (`fumadocs-core/framework`) for stories and tests, in place of an
  * app's adapter (`ReactRouterProvider`…): the pathname lives in memory, `useRouter().push` changes
- * it (`#fragment` and query left out), and `Link` is {@link MemoryLink}. The page never leaves
- * the Storybook canvas or the test.
+ * it (`#fragment` and query left out) in a transition, as a router does, and `Link` is
+ * {@link MemoryLink}. The page never leaves the Storybook canvas or the test.
  */
 export function MemoryFramework({
   pathname: initialPathname = '/docs',
@@ -131,7 +132,11 @@ export function MemoryFramework({
   }, [onNavigate]);
   const push = useCallback((url: string) => {
     latestOnNavigate.current?.(url);
-    setPathname((current) => resolvePathname(url, current));
+    // As routers do (React Router, Next.js), the next page renders in a transition: after the
+    // commit of the event that asked for it, so a click first closes the overlays it is in.
+    startTransition(() => {
+      setPathname((current) => resolvePathname(url, current));
+    });
   }, []);
   const memory = useMemo<Memory>(() => ({ pathname, push }), [pathname, push]);
 

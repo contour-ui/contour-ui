@@ -63,7 +63,7 @@ describe('the section switcher', () => {
       .toHaveAttribute('aria-current', 'page');
   });
 
-  it('closes the menu around it on a phone as well', async () => {
+  it('closes the menu around it on a phone as well, and the focus goes to the menu button', async () => {
     await page.viewport(390, 844);
     const onNavigate = vi.fn<(url: string) => void>();
     await renderDocs(<DocsSite />, { pathname: '/docs/guide', onNavigate });
@@ -76,7 +76,8 @@ describe('the section switcher', () => {
       page.getByRole('dialog', { name: 'Sections' }).getByRole('link', { name: 'Kit' }),
     );
     expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit');
+    // The popover closes with the click, the menu as the next page renders.
     await expect.element(menu).not.toBeInTheDocument();
-    await expect.element(open).toHaveAttribute('aria-expanded', 'false');
+    await expect.element(open).toHaveFocus();
   });
 });
