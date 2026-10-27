@@ -1,0 +1,102 @@
+---
+title: Search
+description: Static search on the index of fumadocs-core, in a dialog that opens from the layouts or with a shortcut, and leads to the heading of a result.
+---
+
+The search runs in the browser, on the static index that the search server of `fumadocs-core`
+exports: no search service, no request per query. `DocsProvider` renders its dialog once, the
+layouts open it from their search buttons, and <Kbd>⌘</Kbd> <Kbd>K</Kbd> opens it from anywhere.
+Try it here.
+
+## The index
+
+A route of the site serves the index: `createFromSource()` builds it from the pages of the source,
+their headings, paragraphs and tables, and `staticGET()` returns it as one file.
+
+```ts title="app/routes/search.ts"
+import { createFromSource } from 'fumadocs-core/search/server';
+
+import { source } from '../lib/source';
+
+const server = createFromSource(source, { language: 'english' });
+
+export function loader() {
+  return server.staticGET();
+}
+```
+
+- **The address.** The dialog fetches the index from `/api/search`, the default of
+  `fumadocs-core`: React Router serves it from the route above, at `api/search` in `app/routes.ts`,
+  and Next.js from `app/api/search/route.ts` ([Setup](/docs/fumadocs/setup#nextjs)).
+- **A static site** prerenders the route as a file, as it does the pages.
+- **The language** of `createFromSource()` sets how Orama, the search engine of `fumadocs-core`,
+  splits and stems the words of the index.
+
+## Options
+
+`search` on `DocsProvider` sets where the index is, or turns the search off:
+
+```tsx
+// A site under a base path
+<DocsProvider site={site} search={{ from: '/my-docs/api/search' }}>
+  {children}
+</DocsProvider>;
+
+// No search: no buttons, no shortcut, no dialog
+<DocsProvider site={site} search={false}>
+  {children}
+</DocsProvider>;
+```
+
+| Option | Type     | Default         |
+| ------ | -------- | --------------- |
+| `from` | `string` | `'/api/search'` |
+
+The index loads as the dialog first opens, and stays for the rest of the visit.
+
+## Opening the search
+
+- **The buttons.** The sidebar holds a search field and the header of a phone an icon; a collapsed
+  sidebar keeps an icon in its toolbar. `HomeLayout` shows a field from 48rem and an icon below.
+  A layout of your own renders `SearchTrigger` ([Layouts](/docs/fumadocs/layouts#a-layout-of-your-own)).
+- **The shortcut.** <Kbd>⌘</Kbd> <Kbd>K</Kbd> on macOS, iOS and iPadOS, <Kbd>Ctrl</Kbd> <Kbd>K</Kbd>
+  elsewhere, opens the dialog, and closes it again. Once the page has hydrated, the search
+  buttons name the keys of the platform in `aria-keyshortcuts`, and the wide ones show them, except
+  on touch screens.
+- **In a text field** on Apple platforms, <Kbd>Ctrl</Kbd> <Kbd>K</Kbd> deletes to the end of the
+  line: the shortcut leaves it to the field there. A keyboard layout without Latin letters, such
+  as Russian, takes the key in the place of K.
+- **The page comes first.** A shortcut that the page handles itself, calling `preventDefault()`,
+  as a live example may, does not open the search.
+
+## Results
+
+The results come as the user types, grouped by page: the page, with its section, then the
+headings, paragraphs and rows of tables of that page that match, indented under it. The words of
+the query are highlighted.
+
+- **Ranking.** A page whose title is the query comes first: `button` finds the Button page before
+  the pages that mention buttons. The other pages keep the order of the search.
+- **Keys.** <Kbd>↑</Kbd> and <Kbd>↓</Kbd> move through the results, <Kbd>Enter</Kbd> opens the
+  one highlighted, and <Kbd>Esc</Kbd> closes the dialog, giving the focus back to where it was.
+  The keys are listed under the results, except on touch screens.
+- **Status.** Under the field, the dialog says that it is searching, that nothing matches the
+  query, or that the index did not load; screen readers hear how many results there are.
+- **Opened again**, the dialog keeps the query and its results, and selects the query, so typing
+  replaces it.
+
+## Where a result leads
+
+Opening a result closes the dialog and goes to its address through the router of the framework:
+its page, at its heading. The focus moves there once the page shows it: to the heading, or to the
+article for a page, so a screen reader reads on from there, and the next Tab goes on in the
+content. A result on the page already shown only scrolls there, without a new entry in the
+history.
+
+## Accessibility
+
+- The dialog is named "Search". Its field is a combobox, "Search the docs", whose results are the
+  options of a listbox: the field keeps the focus while the keys move through them.
+- Each group of results is named after its page and its section.
+- A cell of a table row starts with the name of its column, for screen readers, and for everyone
+  once the dialog is too narrow for the columns.

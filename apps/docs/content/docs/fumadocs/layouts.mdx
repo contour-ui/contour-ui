@@ -1,0 +1,285 @@
+---
+title: Layouts
+description: DocsProvider at the root, DocsLayout and DocsPage for the docs, HomeLayout for the other pages, and the parts for a layout of your own.
+---
+
+import { SearchTrigger, ThemeToggle } from '@contour-ui/fumadocs';
+
+The layouts come from `@contour-ui/fumadocs`, inside one `DocsProvider` at the root of the app.
+`DocsLayout` holds the navigation of the docs and `DocsPage` one page of them; `HomeLayout` holds
+the other pages of the site, such as the home page and the 404 page. They read the page tree of
+`fumadocs-core`, and the current path from the adapter of the framework.
+
+```tsx
+import { DocsLayout, DocsPage, HomeLayout } from '@contour-ui/fumadocs';
+import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
+
+// A page of the docs
+<DocsLayout tree={source.getPageTree()}>
+  <DocsPage title={page.data.title} description={page.data.description} toc={page.data.toc}>
+    <Prose>
+      <Mdx components={getMdxComponents()} />
+    </Prose>
+  </DocsPage>
+</DocsLayout>;
+
+// Any other page
+<HomeLayout>
+  <h1>My docs</h1>
+</HomeLayout>;
+```
+
+## DocsProvider
+
+`DocsProvider` holds what every layout needs: the site, the search, and Kit's
+[ThemeProvider](/docs/kit/theme-provider). Render it once, around the whole app, inside the
+adapter of the framework ([Setup](/docs/fumadocs/setup)); the layouts throw outside it.
+
+```tsx
+import { DocsProvider } from '@contour-ui/fumadocs';
+import type { DocsSite } from '@contour-ui/fumadocs';
+import { githubIcon } from '@contour-ui/icons';
+
+const site: DocsSite = {
+  name: 'My docs',
+  nav: [{ label: 'Docs', href: '/docs' }],
+  links: [{ label: 'GitHub', href: 'https://github.com/me/my-docs', icon: githubIcon }],
+};
+
+<DocsProvider site={site}>{children}</DocsProvider>;
+```
+
+| Prop                | Type                                                                                                       | Default                    |
+| ------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------- |
+| `site`              | `DocsSite`: the name and the links of the site                                                             | required                   |
+| `search`            | `DocsSearchOptions`, `{ from?: string }`: the URL of the index; or `false` for a site without search       | the index at `/api/search` |
+| `theme`             | the props of Kit's `ThemeProvider`: `defaultTheme`, `storageKey`, `attribute`, `disableTransitionOnChange` | Kit's defaults             |
+| `sidebarStorageKey` | `string`: the `localStorage` key that remembers a collapsed sidebar                                        | `'contour-docs-sidebar'`   |
+
+`search` is on the [Search](/docs/fumadocs/search#options) page, and the options of the theme on
+the [ThemeProvider](/docs/kit/theme-provider#props) page: until the user picks a theme, the site
+follows the operating system.
+
+### The site
+
+| Field   | Type                                                                                                                              | Default  |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `name`  | `ReactNode`: the brand, a link home at the start of the headers and the sidebar                                                   | required |
+| `url`   | `string`: where the brand leads                                                                                                   | `'/'`    |
+| `nav`   | `DocsNavLink[]`, `{ label, href }`: text links next to the brand, in the header of `HomeLayout`                                   | —        |
+| `links` | `DocsLink[]`, `{ label, href, icon }`: icon buttons in the header of `HomeLayout`, and at the foot of the sidebar and of the menu | —        |
+
+A `DocsLink` is named by its `label` and shows its `icon`, one of the `<camelName>Icon` exports of
+`@contour-ui/icons`, such as `githubIcon`. A link to another site, an `href` with a scheme such as
+`https:`, opens in a new tab, and its name says so: "GitHub (opens in a new tab)". A path of the
+site goes through the `Link` of the framework, as the `nav` links do.
+
+### The script
+
+What only the browser knows, the theme the user chose and a sidebar they collapsed, would show
+only after hydration, and a page rendered on the server would flash. `docsScript()` returns the
+source of an inline script that sets both on `<html>` before the first paint: `data-theme`, as
+Kit's `themeScript()` does, and `data-contour-docs-sidebar="collapsed"`. The layouts render every
+state, and CSS shows the one the attributes ask for, so the page neither flashes nor hydrates
+differently.
+
+Render it at the top of `<head>`, put `suppressHydrationWarning` on `<html>`, and give the script
+the options of `DocsProvider`, so both read the same keys:
+
+```tsx
+import { DocsProvider, docsScript } from '@contour-ui/fumadocs';
+import type { DocsScriptOptions } from '@contour-ui/fumadocs';
+
+const options = {
+  theme: { defaultTheme: 'light', storageKey: 'my-docs-theme' },
+  sidebarStorageKey: 'my-docs-sidebar',
+} satisfies DocsScriptOptions;
+
+<html lang="en" suppressHydrationWarning>
+  <head>
+    <script dangerouslySetInnerHTML={{ __html: docsScript(options) }} />
+  </head>
+  <body>
+    <DocsProvider site={site} {...options}>
+      {children}
+    </DocsProvider>
+  </body>
+</html>;
+```
+
+`docsScript(options)` takes `theme` (`defaultTheme`, `storageKey`, `attribute`) and
+`sidebarStorageKey`, with the defaults of `DocsProvider`. The source is the same for the same
+options, so a Content Security Policy can allow the script by its hash.
+
+## DocsLayout
+
+| Prop       | Type                                                             | Default  |
+| ---------- | ---------------------------------------------------------------- | -------- |
+| `tree`     | `Root`: the page tree of `fumadocs-core`, `source.getPageTree()` | required |
+| `children` | `ReactNode`: the page, a `DocsPage`                              | required |
+
+`DocsLayout` renders the skip link, then the navigation of the docs next to the page: a sidebar
+from 48rem, a header with a menu below.
+
+### Sections
+
+The layout splits the docs into sections: the root folders of the page tree, whose `meta.json`
+says `"root": true`, such as a section per package on this site. The navigation lists the pages
+of the current section only, and the section switcher at its top goes to another one: its button
+shows the section of the page, and its list every section with its `description`, the current
+one checked. A section starts at its index page, or else at its first page.
+
+```json title="content/docs/kit/meta.json"
+{
+  "title": "Kit",
+  "description": "Styled general-purpose components",
+  "root": true,
+  "pages": ["index", "---Components---", "alert", "button", "card"]
+}
+```
+
+- **Groups.** A separator in `pages`, `---Components---`, starts a group of the navigation,
+  labeled with its name. The pages before the first separator come first, without a label.
+- **Folders** inside a section list their pages under their name, indented.
+- **Links** in `pages`, `[GitHub](https://github.com/me/my-docs)`, open another site in a new tab,
+  with an arrow that says so; `external:[Name](/path)` does that for a path too.
+- **The current page** is marked, as `aria-current="page"`.
+- **Outside the sections**, as on the root page of the docs, the switcher reads "Sections", and
+  the navigation lists the whole tree, each section as a link to where it starts.
+
+### The sidebar and the header
+
+| Width          | Navigation                                                                                   | Table of contents                               |
+| -------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| below 48rem    | the header, sticky, with the search and the button of the menu, a drawer from the start edge | the "On this page" bar, sticky below the header |
+| 48rem to 80rem | the sidebar, beside the page, as high as the viewport                                        | the bar, sticky at the top                      |
+| from 80rem     | the sidebar                                                                                  | a column beside the article                     |
+
+The sidebar holds the brand and the button that collapses it, the search, the section switcher,
+the pages of the section, which scroll on their own, and at its foot the links of the site and the
+theme toggle. The menu holds the switcher, the pages, the links and the toggle.
+
+- **Collapse.** The collapse button hides the sidebar, and a small toolbar at the top start of the
+  viewport holds the buttons that expand it and open the search; the article stays in the middle,
+  clear of the toolbar. Focus moves to the button that undoes the change, since the one pressed
+  goes away.
+- **Remembered.** A collapsed sidebar is `data-contour-docs-sidebar="collapsed"` on `<html>`, and
+  `collapsed` in `localStorage` under `sidebarStorageKey`; [the script](#the-script) restores it
+  before the first paint. Where the browser blocks the storage, the choice lasts as long as the
+  page.
+- **The menu** closes as a link inside it is followed, a link to the page itself too, as the page
+  changes in any other way, and when the viewport grows wide enough for the sidebar. Escape and its
+  close button close it, and focus goes back to the menu button.
+
+## DocsPage
+
+| Prop          | Type                                                                         | Default  |
+| ------------- | ---------------------------------------------------------------------------- | -------- |
+| `title`       | `string`: the title of the page, its `h1`                                    | required |
+| `description` | `string`: the description, under the title                                   | —        |
+| `toc`         | `TableOfContents`: the table of contents of `fumadocs-core`, `page.data.toc` | required |
+| `children`    | `ReactNode`: the content of the page, its MDX in `Prose`                     | required |
+
+The article is `main#content`, the target of the skip link, as wide as a readable line: the title
+as the only `h1` of the page and the description, then the content, then links to the previous
+and the next page of the section, in the order of the navigation. The first page of a section has
+no previous one and the last no next one. The content takes the height of a short page, so the
+links stay at the bottom.
+
+`DocsPage` finds the page in the tree of its `DocsLayout` by the current path, and throws outside
+one.
+
+### Table of contents
+
+The table of contents lists the `h2` and `h3` headings of the page; a deeper heading belongs to
+the `h3` above it. A page without these headings shows none.
+
+- **From 80rem**, the column "On this page" beside the article: Kit's
+  [Toc](/docs/kit/toc), which marks the headings in view. It stays in view as the page scrolls,
+  and scrolls on its own when it is taller than the viewport.
+- **Below 80rem**, a bar above the article, sticky below the header. Its button shows the heading
+  being read, "On this page › Props", and opens the list in a popover, with the focus on the
+  link of that heading. Following a link scrolls to its heading and closes the popover.
+- A heading that a link scrolls to stops below the sticky header and bar.
+
+## HomeLayout
+
+| Prop       | Type                                        | Default  |
+| ---------- | ------------------------------------------- | -------- |
+| `children` | `ReactNode`: the content, in `main#content` | required |
+
+`HomeLayout` renders the skip link, the header of the site, then its children in `main#content`,
+which fills the rest of the viewport. The header holds the brand, the `nav` links, the search (a
+field from 48rem, an icon below), the theme toggle and the `links` of the site. `HomeLayout`
+renders on the server too: the home page can be a React Server Component.
+
+## A layout of your own
+
+The layouts are made of parts, three of which the package exports for a layout of your own: the
+button of the search, the theme toggle and the skip link. This site runs on them, so the ones
+below open its search and switch its theme:
+
+<Preview>
+  <div style={{ inlineSize: '16rem' }}>
+    <SearchTrigger />
+  </div>
+  <SearchTrigger variant="icon" />
+  <ThemeToggle />
+</Preview>
+
+```tsx title="app-layout.tsx"
+import { SearchTrigger, SkipLink, ThemeToggle } from '@contour-ui/fumadocs';
+import type { ReactNode } from 'react';
+
+export function AppLayout({ children }: { children: ReactNode }) {
+  return (
+    <>
+      <SkipLink />
+      <header className="app-header">
+        <a href="/">My docs</a>
+        <SearchTrigger variant="icon" />
+        <ThemeToggle />
+      </header>
+      <main id="content" tabIndex={-1}>
+        {children}
+      </main>
+    </>
+  );
+}
+```
+
+- **`SearchTrigger`** opens the search dialog of `DocsProvider`, and is named "Search" in both
+  variants: `field`, the default, a wide button with the label and the shortcut, as wide as its
+  container lets it; `icon`, an icon button. Both have the `lg` size of the buttons around them,
+  and the shortcut as `aria-keyshortcuts` once the page has hydrated. On a site without search, it
+  renders nothing.
+- **`ThemeToggle`** switches between the light and the dark theme. It shows the icon of the theme
+  it switches to, and its name says so: "Switch to the light theme". Both choices are in the HTML,
+  and CSS shows the one that fits the `data-theme` of `<html>`, so no wrong icon shows before
+  hydration.
+- **`SkipLink`**, "Skip to content", is the first stop of the Tab order, out of sight until it has
+  the focus. Render it first, and give the main content `id="content"` and `tabIndex={-1}`.
+
+| Part            | Props                                                   |
+| --------------- | ------------------------------------------------------- |
+| `SearchTrigger` | `variant`: `'field'` (default) or `'icon'`; `className` |
+| `ThemeToggle`   | none                                                    |
+| `SkipLink`      | none                                                    |
+
+`SearchTrigger` and `ThemeToggle` read `DocsProvider`: render them inside it, as the layouts are.
+
+## Accessibility
+
+- **Landmarks.** The sidebar from 48rem, the header below, is the banner of a docs page. The
+  pages of the section are the navigation "Docs", the table of contents the navigation "On this
+  page", and the links to the previous and the next page the navigation "Previous and next page".
+  The article is the `main`, and the title of the page its only `h1`.
+- **The skip link** is the first stop of the Tab order, and leads past the navigation to the
+  article; the next Tab goes on in the content.
+- **Focus.** Collapsing and expanding the sidebar move the focus to the other button. Escape
+  closes the menu, the section switcher and the popover of the table of contents, and gives the
+  focus back to their button. A result of the search moves the focus to its heading, or to the
+  article for a page, so reading and the Tab order go on from there.
+- **Names.** The current page is `aria-current="page"` in the navigation; the switcher reads a
+  section's description after its name; links to another site say that they open in a new tab.
+- **Motion.** Under `prefers-reduced-motion: reduce`, the overlays fade without moving.

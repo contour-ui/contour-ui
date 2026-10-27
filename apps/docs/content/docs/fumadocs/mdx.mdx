@@ -1,0 +1,182 @@
+---
+title: MDX components
+description: What each Markdown element of a page becomes, Prose for the typography of the content, and Callout, Cards, Kbd and Preview on every page.
+---
+
+`@contour-ui/fumadocs/mdx` draws the MDX of a page with Kit. `getMdxComponents()` returns the
+components that the Markdown elements render with, and `Prose` gives the text around them its
+typography:
+
+```tsx
+import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
+
+<Prose>
+  <Mdx components={getMdxComponents()} />
+</Prose>;
+```
+
+## The components
+
+| In the MDX                   | Renders as                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------ |
+| headings, `#` to `######`    | the heading, whose text links to its own `#id`, with a hash that shows on hover and focus  |
+| a link to a page of the site | Kit's [Link](/docs/kit/link), underlined, through the `Link` of the framework              |
+| a link to a `#heading`       | Kit's `Link`, as a plain link                                                              |
+| a link to another site       | Kit's `Link`, which opens in a new tab, with an arrow named "opens in a new tab"           |
+| tables                       | Kit's [Table](/docs/kit/table), outlined, scrolling sideways when wider than the column    |
+| fenced code                  | Kit's [CodeBlock](/docs/kit/code-block): the title, the highlighted code and a copy button |
+| `<Callout>`                  | Kit's [Alert](/docs/kit/alert), see [Callout](#callout)                                    |
+| `<Cards>`, `<Card>`          | a grid of Kit's [Card](/docs/kit/card), see [Cards](#cards)                                |
+| `<Kbd>`                      | Kit's [Kbd](/docs/kit/kbd): <Kbd>⌘</Kbd> <Kbd>K</Kbd>                                      |
+| `<Preview>`                  | the frame of a live example, see [Preview](#preview)                                       |
+
+The components in angle brackets need no import in a page. Other elements, such as lists, quotes
+and images, render as they are, and Prose styles them. A lowercase tag in MDX, such as `<kbd>`, is
+a plain HTML element and skips the map: write `<Kbd>`.
+
+## Code blocks
+
+Fumadocs highlights fenced code as it compiles the page, with Shiki: give it the css-variables
+theme, as [Setup](/docs/fumadocs/setup#highlight-the-code) shows, and the code takes the syntax
+colors of the theme it is shown in. The meta of a block, after its language, sets the rest:
+
+| Meta             | Effect                                             |
+| ---------------- | -------------------------------------------------- |
+| `title="app.ts"` | a header with the title, and the copy button in it |
+| `noCopy`         | no copy button                                     |
+| `lineNumbers`    | a number before each line                          |
+| `lineNumbers=10` | numbers from 10                                    |
+
+````mdx title="page.mdx"
+```tsx title="app.tsx" lineNumbers
+export function App() {
+  return <Button>Save</Button>;
+}
+```
+````
+
+The notation comments of Shiki, such as `// [!code highlight]` and `// [!code ++]`, mark lines as
+Kit's [CodeBlock](/docs/kit/code-block#notations) shows.
+
+<Callout type="warn" title="No code block tabs yet">
+  The code block tabs of Fumadocs, from the `tab` meta and from `npm` blocks, render components that
+  the map does not hold: a page that uses them fails to render. Write one block per command instead.
+</Callout>
+
+## Your own components
+
+`getMdxComponents(overrides)` adds your components to the map, so every page can use them
+without an import, or replaces the ones above. The overrides come last:
+
+```tsx
+import { getMdxComponents } from '@contour-ui/fumadocs/mdx';
+
+import { Figure } from './figure';
+import { Tabs } from './tabs';
+
+<Mdx components={getMdxComponents({ Tabs, img: Figure })} />;
+```
+
+`getMdxComponents()`, `Prose` and `Preview` are server modules, and the components of the map that
+need the browser are client modules (`'use client'`): the MDX of a page renders as a React Server
+Component too, as on Next.js. There, overrides are server components, or named exports of client
+modules: a map built on the server cannot read inside an export of a client module
+([Kit in server components](/docs/fumadocs/setup#kit-in-server-components)).
+
+## Prose
+
+`Prose` gives the MDX content its typography and its rhythm: the fonts of the headings, the text
+and the code, the space between blocks, the markers of lists. It relies on no reset: it sets the
+margins, paddings and fonts of the elements it styles over the defaults of the browser.
+
+- **Components keep their styles.** Every rule of Prose has zero specificity (`:where()`) and sits
+  in a cascade layer below Kit's, so a Kit or Audio component in the content keeps its own look, and
+  any rule of yours overrides Prose.
+- **Fonts** are set on the root, the headings, inline code and captions only: text inside a
+  component keeps the component's font.
+- **Opting out.** Prose leaves alone whatever is inside an element with the
+  `contour-docs-not-prose` class, and still spaces that element as a block. `Preview` uses it.
+
+```tsx
+<Prose>
+  <p>Typography from Prose.</p>
+  <div className="contour-docs-not-prose">
+    <p>Only its own styles.</p>
+  </div>
+</Prose>
+```
+
+`Prose` renders a `div` and takes its props; your `className` joins `contour-docs-prose`. It
+imports nothing from Kit, so it renders on the server and adds nothing to the code of the browser.
+
+## Preview
+
+`Preview` frames live examples: a bordered panel on the canvas color, its children side by side,
+wrapping when the row is full. Its content is outside Prose (`contour-docs-not-prose`), so
+components render with their own styles only. A page imports the components it shows at its top:
+
+```mdx title="button.mdx"
+import { Button } from '@contour-ui/kit';
+
+<Preview>
+  <Button>Save</Button>
+  <Button variant="outline">Cancel</Button>
+</Preview>
+```
+
+`Preview` renders a `div` and takes its props, and renders on the server too. On Next.js, the
+examples inside come from client modules ([Setup](/docs/fumadocs/setup#kit-in-server-components)).
+
+## Callout
+
+```mdx
+<Callout type="warn" title="Before Kit's styles">
+  Load the stylesheet of this package first.
+</Callout>
+```
+
+`Callout` is Kit's [Alert](/docs/kit/alert): the icon of its status, the title, then the content,
+which may hold paragraphs. Its props are those of the callout of Fumadocs, so pages written for
+`fumadocs-ui` render as they are:
+
+| Prop    | Type                                                              | Default  |
+| ------- | ----------------------------------------------------------------- | -------- |
+| `type`  | `'info'`, `'warn'`, `'warning'`, `'error'`, `'success'`, `'idea'` | `'info'` |
+| `title` | `ReactNode`                                                       | —        |
+| `icon`  | `ReactNode`: replaces the icon of the status                      | —        |
+
+| `type`            | Status of the alert |
+| ----------------- | ------------------- |
+| `info`            | `info`              |
+| `warn`, `warning` | `warning`           |
+| `error`           | `danger`            |
+| `success`         | `success`           |
+| `idea`            | `neutral`           |
+
+Other props go to the root of the alert, a `div`.
+
+## Cards
+
+```mdx
+<Cards>
+  <Card title="Setup" href="/docs/fumadocs/setup">
+    Install the package and wire it into your framework.
+  </Card>
+  <Card title="Fumadocs" href="https://fumadocs.dev" description="The framework of the content." />
+</Cards>
+```
+
+`Cards` lays its cards out in a grid: one column on phones, two from 40rem. `Card` is Kit's
+[Card](/docs/kit/card), with the props of the card of Fumadocs:
+
+| Prop          | Type                                                   | Default                                |
+| ------------- | ------------------------------------------------------ | -------------------------------------- |
+| `title`       | `ReactNode`                                            | required                               |
+| `description` | `ReactNode`: the text under the title; or the children | —                                      |
+| `href`        | `string`: makes the whole card one link                | —                                      |
+| `external`    | `boolean`: opens `href` in a new tab, a path too       | a URL with a scheme opens in a new tab |
+| `icon`        | `ReactNode`: shown above the title                     | —                                      |
+
+A path goes through the `Link` of the framework. The title looks like the title of Kit's card but
+is no heading: cards follow a heading of the page, and a level of their own would break the outline
+of the page.

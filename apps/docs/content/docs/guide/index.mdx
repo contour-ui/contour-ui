@@ -4,22 +4,24 @@ description: What ships, which package to pick, and how the packages fit togethe
 ---
 
 <Callout title="Pre-release">
-  The packages are not on npm yet. Kit and Headless have their first components; Audio still shows a
-  placeholder, and more components arrive section by section.
+  The packages are not on npm yet. Kit and Headless have their first components and Fumadocs runs
+  this site; Audio still shows a placeholder, and more components arrive section by section.
 </Callout>
 
 ## Pick a package
 
-contour-ui ships three React packages. Pick by how much of the look you want to own:
+contour-ui ships four React packages. Pick by what you build and how much of the look you want to
+own:
 
-| Package                | What you get                                       | Use it when                                     |
-| ---------------------- | -------------------------------------------------- | ----------------------------------------------- |
-| `@contour-ui/kit`      | Styled general-purpose components                  | you build an app in the contour-ui look         |
-| `@contour-ui/audio`    | Styled controls for audio-plugin UIs, built on Kit | you build an audio-plugin UI                    |
-| `@contour-ui/headless` | Unstyled components: structure and behavior        | you want contour-ui behavior with your own look |
+| Package                | What you get                                        | Use it when                                     |
+| ---------------------- | --------------------------------------------------- | ----------------------------------------------- |
+| `@contour-ui/kit`      | Styled general-purpose components                   | you build an app in the contour-ui look         |
+| `@contour-ui/audio`    | Styled controls for audio-plugin UIs, built on Kit  | you build an audio-plugin UI                    |
+| `@contour-ui/headless` | Unstyled components: structure and behavior         | you want contour-ui behavior with your own look |
+| `@contour-ui/fumadocs` | A documentation layout for Fumadocs, built from Kit | you build a docs site on Fumadocs               |
 
 You can use more than one: an audio plugin uses Audio for its controls and Kit for everything
-else.
+else, and a docs site on Fumadocs shows Kit and Audio components in its pages.
 
 ## How the packages fit together
 
@@ -31,6 +33,9 @@ else.
   cards and alerts, exist only in Kit.
 - **Audio** builds on Kit: its controls reuse Kit parts and add audio-specific styles, such as
   monospace numeric readouts whose digits do not shift while the value changes.
+- **Fumadocs** builds a documentation site from Kit on [Fumadocs](https://fumadocs.dev): the
+  layout, the search and the components of MDX pages, in place of `fumadocs-ui`. This site runs on
+  it, see [Fumadocs](/docs/fumadocs).
 - **Tokens** (`@contour-ui/tokens`) are the design decisions as CSS custom properties: colors,
   spacing, sizes, radii, type and motion, for every theme. Kit and Audio styles read them. You load
   `tokens.css` once and can use the same variables in your own CSS, see

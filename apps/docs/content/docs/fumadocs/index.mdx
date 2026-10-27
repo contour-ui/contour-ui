@@ -1,0 +1,93 @@
+---
+title: Fumadocs
+description: A documentation layout for sites on fumadocs-core, built from Kit and installed in place of fumadocs-ui.
+---
+
+`@contour-ui/fumadocs` is the interface of a documentation site on [Fumadocs](https://fumadocs.dev),
+built from [Kit](/docs/kit): the sidebar and the header, the search, the table of contents, the
+parts of a page and the components of its MDX. It takes the place of `fumadocs-ui`, the interface
+Fumadocs ships: install one or the other, not both. This site runs on it.
+
+## What comes from where
+
+- **`fumadocs-core`** gives the data: the page tree of the content (`loader()`), the table of
+  contents of each page, the search index and the client that searches it. Its adapters
+  (`fumadocs-core/framework/*`) give the links, the current path and the router of your framework,
+  so the package works in any framework they cover, such as React Router, Next.js, TanStack Start
+  and Waku.
+- **`fumadocs-mdx`** compiles the pages: their frontmatter, ids for their headings, code
+  highlighted by Shiki, and the text the search indexes. Another content source of `fumadocs-core`
+  works too: the layouts need its page tree and the table of contents of each page.
+- **`@contour-ui/fumadocs`** draws it with Kit's components and the [tokens](/docs/guide/styling):
+  the provider and the layouts from `@contour-ui/fumadocs`, the MDX components from
+  `@contour-ui/fumadocs/mdx`, and one stylesheet, `@contour-ui/fumadocs/styles.css`.
+
+## What you get
+
+- **A docs layout.** From 48rem, a sidebar with the sections of the docs, the pages of the current
+  one and a button that collapses it; below, a header whose menu holds the same. Each page shows
+  its title and description, the previous and the next page of its section, and its table of
+  contents: a column beside the text from 80rem, a bar above it below. See
+  [Layouts](/docs/fumadocs/layouts).
+- **Search** in a dialog, on the static index of `fumadocs-core`: results grouped by page, the
+  query highlighted, <Kbd>⌘</Kbd> <Kbd>K</Kbd> or <Kbd>Ctrl</Kbd> <Kbd>K</Kbd> from anywhere. See
+  [Search](/docs/fumadocs/search).
+- **MDX components.** Headings that link to themselves; links, tables and code blocks drawn by
+  Kit; `Callout`, `Cards`, `Kbd` and `Preview` on every page without an import; and `Prose` for
+  the text. See [MDX components](/docs/fumadocs/mdx).
+- **Themes.** Dark and light from the tokens, a toggle in the layouts, the user's choice
+  remembered and in place before the first paint. See [Styling](/docs/fumadocs/styling).
+- **Accessibility.** Landmarks, a skip link, every control within reach of the keyboard, and
+  focus where the reader is after a search or a menu.
+- **Server rendering.** Pages prerender, render on a server, or render as React Server
+  Components (Next.js App Router), and hydrate without a flash of the wrong theme or sidebar.
+
+## Install
+
+```bash
+pnpm add @contour-ui/fumadocs @contour-ui/kit @contour-ui/tokens fumadocs-core fumadocs-mdx
+```
+
+React 19, React DOM 19 and `fumadocs-core` are peer dependencies. [Setup](/docs/fumadocs/setup)
+wires the package into React Router or Next.js.
+
+## Load the stylesheets
+
+Import them once, at the root of the app, in this order:
+
+```tsx title="root.tsx"
+import '@contour-ui/tokens/tokens.css';
+import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fumadocs/styles.css';
+import '@contour-ui/kit/styles.css';
+import '@contour-ui/audio/styles.css'; // only for Audio components in your pages
+```
+
+<Callout type="warn" title="Before Kit's styles">
+  `@contour-ui/fumadocs/styles.css` starts with the order of every cascade layer of contour-ui, and
+  a layer ranks where it first appears. Loaded after Kit's styles, the base of the page and the
+  typography of the content would rank above Kit, and restyle the components in your pages.
+</Callout>
+
+Your own CSS comes last, outside any layer: it overrides every style of contour-ui. The layers,
+the classes and the variables you can override are on the [Styling](/docs/fumadocs/styling) page.
+
+## In this section
+
+<Cards>
+  <Card title="Setup" href="/docs/fumadocs/setup">
+    React Router and Next.js: the provider, the inline script, the docs route and the search route.
+  </Card>
+  <Card title="Layouts" href="/docs/fumadocs/layouts">
+    DocsProvider, DocsLayout, DocsPage and HomeLayout, and the parts for a layout of your own.
+  </Card>
+  <Card title="MDX components" href="/docs/fumadocs/mdx">
+    What each Markdown element becomes, Prose, and Callout, Card and Preview.
+  </Card>
+  <Card title="Search" href="/docs/fumadocs/search">
+    The static index, the dialog, its shortcut, and where a result leads.
+  </Card>
+  <Card title="Styling" href="/docs/fumadocs/styling">
+    The cascade layers, the public classes, the layout variables and the attributes of the page.
+  </Card>
+</Cards>

@@ -1,0 +1,167 @@
+---
+title: Styling
+description: The cascade layers of the stylesheet, the classes and the layout variables you can override, and the attributes of the html element that the layouts read.
+---
+
+`@contour-ui/fumadocs/styles.css` holds every style of the package: the base of the page, Prose,
+the MDX components and the layout. Like Kit's, it is plain CSS that reads the
+[tokens](/docs/guide/styling), so it follows the [theme](/docs/guide/themes), and it relies on no
+reset.
+
+## Cascade layers
+
+The stylesheet starts with the order of every cascade layer of contour-ui:
+
+```css
+@layer contour.fumadocs-base, contour.fumadocs-prose, contour.kit, contour.audio, contour.fumadocs;
+```
+
+| Layer                          | Holds                                                  | Ranks                                                    |
+| ------------------------------ | ------------------------------------------------------ | -------------------------------------------------------- |
+| `contour.fumadocs-base`        | the page itself: the background and the text of `body` | lowest                                                   |
+| `contour.fumadocs-prose`       | the typography of the content, `Prose`                 | above the page                                           |
+| `contour.kit`, `contour.audio` | the components of Kit and Audio                        | above Prose: components in the content keep their styles |
+| `contour.fumadocs`             | the MDX components and the layout                      | above Kit: they adjust the Kit parts they are made of    |
+
+A layer ranks where it first appears, so this order holds only when the stylesheet loads after the
+tokens and **before** Kit's and Audio's styles ([Load the stylesheets](/docs/fumadocs#load-the-stylesheets)).
+
+Every layer sits inside `contour`, so your CSS outside any layer overrides them all, whatever its
+selectors:
+
+```css title="app.css"
+/* Wins over the rule of the layout: same selector, but not in a layer. */
+.contour-docs-sidebar__panel {
+  background: var(--ct-color-bg-canvas);
+}
+```
+
+What [Installation](/docs/guide/installation#cascade-layers) says about resets and Tailwind CSS
+holds here too: a reset goes in a layer declared before `contour`, and with Tailwind,
+`@layer theme, base, contour, components, utilities;` places the whole `contour` layer, inside
+which the layers keep the order of this stylesheet.
+
+## The page
+
+The base styles the page and nothing more: `body` gets the background, the color and the font of
+the tokens, is at least as high as the viewport, and loses its margin. Every other element keeps the
+defaults of the browser, as in Storybook, so Kit and Audio components look the same in your pages
+as there; Prose styles the content.
+
+## Classes
+
+Each part of the layouts has a class, `contour-docs-<part>`, and its elements
+`contour-docs-<part>__<element>`. They are public: style them from your CSS. Kit components inside
+the parts keep their own classes, such as `contour-button`, next to these.
+
+| Class                                     | Element                                                                                             |
+| ----------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `contour-docs-layout`                     | the root of `DocsLayout`, which sets the layout variables                                           |
+| `contour-docs-sidebar`                    | the sidebar: `__panel`, `__header`, `__search`, `__body`, `__footer`, `__toolbar`                   |
+| `contour-docs-header`                     | the header, `data-variant="docs"` or `"site"`: `__actions`, `__link`                                |
+| `contour-docs-mobile-nav__footer`         | the foot of the menu                                                                                |
+| `contour-docs-section-switcher`           | the button of the switcher; its popover: `__content`, `__list`, `__link`, `__name`, `__description` |
+| `contour-docs-page-tree`                  | the navigation of the pages: `__list`, `__group`, `__label`, `__folder`, `__link`                   |
+| `contour-docs-page`                       | the root of `DocsPage`: `__toc-bar`, `__body`, `__article`, `__content`, `__toc`                    |
+| `contour-docs-page-header`                | the title and the description: `__title`, `__description`                                           |
+| `contour-docs-page-footer`                | the previous and the next page: `__link`, `__label`                                                 |
+| `contour-docs-toc-panel`                  | the column of the table of contents                                                                 |
+| `contour-docs-toc-trigger`                | the button of the bar of the table of contents                                                      |
+| `contour-docs-toc-popover`                | the popover of that button                                                                          |
+| `contour-docs-home-layout`                | the root of `HomeLayout`: `__main`                                                                  |
+| `contour-docs-brand`                      | the name of the site, a link home                                                                   |
+| `contour-docs-site-links`                 | the icon links of the site                                                                          |
+| `contour-docs-search-trigger`             | `SearchTrigger` in the `field` variant                                                              |
+| `contour-docs-search`                     | the content of the search dialog                                                                    |
+| `contour-docs-theme-toggle`               | `ThemeToggle`                                                                                       |
+| `contour-docs-skip-link`                  | `SkipLink`                                                                                          |
+| `contour-docs-prose`                      | `Prose`                                                                                             |
+| `contour-docs-not-prose`                  | the opt-out of Prose, on any element                                                                |
+| `contour-docs-preview`                    | `Preview`                                                                                           |
+| `contour-docs-cards`, `contour-docs-card` | `Cards`, `Card`                                                                                     |
+| `contour-docs-heading`                    | a heading of the content: `__link`, `__hash`                                                        |
+
+## Layout variables
+
+The roots of the layouts set custom properties that their parts read. Set them on the root from
+your CSS:
+
+```css title="app.css"
+.contour-docs-layout {
+  --contour-docs-sidebar-width: 18rem;
+  --contour-docs-article-width: 48rem;
+}
+```
+
+| Variable                           | Default                                              | Sets                                                         |
+| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
+| `--contour-docs-sidebar-width`     | `16rem`                                              | the width of the sidebar                                     |
+| `--contour-docs-article-width`     | `44rem`                                              | the widest the article gets: a readable line of prose        |
+| `--contour-docs-toc-width`         | `13rem`                                              | the width of the column of the table of contents             |
+| `--contour-docs-page-inset`        | `1rem`, `2rem` from 48rem                            | the side padding of the page and the header                  |
+| `--contour-docs-header-height`     | `3rem`, `0px` from 48rem                             | the height of the sticky header                              |
+| `--contour-docs-toc-bar-height`    | `2.5rem`, `0px` from 80rem and on a page without one | the height of the bar of the table of contents               |
+| `--contour-docs-toolbar-clearance` | the width of the toolbar and a gap                   | the room a collapsed sidebar leaves at the start of the page |
+
+`HomeLayout` sets `--contour-docs-header-height` and `--contour-docs-page-inset` as well. A value
+you set holds at every width: set the ones the layout changes at a breakpoint in a media query of
+your own.
+
+The heights of the sticky bars are for content that a link scrolls to: headings keep their sum
+free at the top, and an element of yours can do the same.
+
+```css title="app.css"
+.release-note {
+  scroll-margin-block-start: calc(
+    var(--contour-docs-header-height) + var(--contour-docs-toc-bar-height)
+  );
+}
+```
+
+## The attributes of the page
+
+What the user chose is on `<html>`, as attributes that `docsScript()` sets before the first paint
+and the layouts keep from then on:
+
+| Attribute                               | Means                               | Stored in `localStorage` under                  |
+| --------------------------------------- | ----------------------------------- | ----------------------------------------------- |
+| `data-theme`                            | the theme in use, `light` or `dark` | `contour-theme`, the `storageKey` of `theme`    |
+| `data-contour-docs-sidebar="collapsed"` | the sidebar is collapsed            | `contour-docs-sidebar`, the `sidebarStorageKey` |
+
+The layouts render every state and CSS shows the one the attributes ask for. Your CSS can read
+them too, so it is right from the first paint:
+
+```css title="app.css"
+/* A wider article while the sidebar is collapsed. */
+@media (min-width: 48rem) {
+  :root[data-contour-docs-sidebar='collapsed'] .contour-docs-layout {
+    --contour-docs-article-width: 52rem;
+  }
+}
+
+/* A logo for each theme. */
+:root[data-theme='light'] .logo-on-dark,
+:root:not([data-theme='light']) .logo-on-light {
+  display: none;
+}
+```
+
+## Themes
+
+The styles of the package read semantic tokens only, so the layouts follow the theme of the
+tokens: dark by default, light with `data-theme="light"` ([Themes](/docs/guide/themes)). The theme
+toggle of the layouts switches it through Kit's [ThemeProvider](/docs/kit/theme-provider), which
+`DocsProvider` renders; give `DocsProvider` and `docsScript()` the same `theme` to start in another
+one:
+
+```tsx
+const options = { theme: { defaultTheme: 'dark' } } satisfies DocsScriptOptions;
+
+<script dangerouslySetInnerHTML={{ __html: docsScript(options) }} />;
+<DocsProvider site={site} {...options}>
+  {children}
+</DocsProvider>;
+```
+
+Style your own pages with the same tokens, and they match the layouts in every theme:
+[Styling with tokens](/docs/guide/styling).

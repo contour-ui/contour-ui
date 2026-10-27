@@ -24,7 +24,13 @@ pnpm add @contour-ui/audio @contour-ui/kit @contour-ui/tokens
 
 # Headless: no styles, no tokens
 pnpm add @contour-ui/headless
+
+# Fumadocs: a docs site on fumadocs-core, set up as /docs/fumadocs/setup shows
+pnpm add @contour-ui/fumadocs @contour-ui/kit @contour-ui/tokens fumadocs-core fumadocs-mdx
 ```
+
+A docs site on Fumadocs takes a few more steps: [Setup](/docs/fumadocs/setup) wires it into React
+Router or Next.js.
 
 ## Load the stylesheets
 
@@ -44,7 +50,9 @@ load once even when you use Kit and Audio together.
 `fonts.css` declares the font faces the type tokens refer to (SIL Open Font License). Skip it if
 your app already provides these fonts; the token font stacks fall back to system fonts.
 
-Headless needs no stylesheet.
+Headless needs no stylesheet. A docs site on Fumadocs loads `@contour-ui/fumadocs/styles.css`
+after the tokens and before Kit's stylesheet, since its first rule sets the order of the cascade
+layers ([Fumadocs](/docs/fumadocs#load-the-stylesheets)).
 
 ### Cascade layers
 

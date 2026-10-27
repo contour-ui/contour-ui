@@ -1,0 +1,6 @@
+{
+  "title": "Fumadocs",
+  "description": "Documentation sites on Fumadocs, built from Kit",
+  "root": true,
+  "pages": ["index", "setup", "---Reference---", "layouts", "mdx", "search", "styling"]
+}

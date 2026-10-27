@@ -22,6 +22,11 @@ const PACKAGES = [
     href: '/docs/headless',
     description: 'Unstyled components for your own look.',
   },
+  {
+    title: 'Fumadocs',
+    href: '/docs/fumadocs',
+    description: 'A documentation layout for Fumadocs sites, built from Kit.',
+  },
 ] as const;
 
 export function meta(): Array<Record<string, string>> {

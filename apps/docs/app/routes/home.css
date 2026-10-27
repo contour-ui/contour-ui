@@ -1,6 +1,6 @@
 /*
  * The home page: the hero, then the cards of the packages, centered in the free space. One
- * column of cards on phones, three from 40rem, all as high as the highest.
+ * column of cards on phones, two from 40rem, all as high as the highest.
  */
 .docs-home {
   display: flex;
@@ -59,6 +59,6 @@
 
 @media (min-width: 40rem) {
   .docs-home__packages {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

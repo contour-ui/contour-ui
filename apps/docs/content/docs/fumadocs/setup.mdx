@@ -1,0 +1,480 @@
+---
+title: Setup
+description: Install the package and wire it into a React Router or Next.js site, with the code highlighting, the search route and the stylesheets in order.
+---
+
+A site on `@contour-ui/fumadocs` is a Fumadocs site without `fumadocs-ui`: `fumadocs-core` and
+`fumadocs-mdx` read and compile the content as [their docs](https://fumadocs.dev/docs) describe,
+and the components of this package draw it. This page sets up a site on React Router, as this one
+is, and on the Next.js App Router.
+
+## Requirements
+
+- React 19, React DOM 19 and `fumadocs-core` 16.17.8 or a later 16: peer dependencies.
+- A content source for the `loader()` of `fumadocs-core`: `fumadocs-mdx` in the examples here.
+- With TypeScript, `@types/mdx`, an optional peer dependency: the types of `getMdxComponents`.
+
+## Install
+
+```bash
+pnpm add @contour-ui/fumadocs @contour-ui/kit @contour-ui/tokens @contour-ui/icons
+pnpm add fumadocs-core fumadocs-mdx
+pnpm add -D @types/mdx shiki
+```
+
+- **Kit and Tokens** are dependencies of your own: your app imports their stylesheets itself
+  ([Installation](/docs/guide/installation#install) says why).
+- **Icons** gives the icons of the site's links, such as GitHub's. **Shiki** gives the theme of
+  the code blocks, below: take the major version `fumadocs-core` depends on.
+- **Coming from `fumadocs-ui`**, uninstall it, and drop its stylesheet, its `RootProvider`, its
+  layouts and its MDX components: those of this package take their place.
+
+## Highlight the code
+
+Kit's [CodeBlock](/docs/kit/code-block#highlight-with-shiki) colors code from Shiki's
+css-variables theme, so one theme serves the dark and the light theme. `rehypeCode`, the
+highlighter of Fumadocs, takes it in the MDX options of `fumadocs-mdx`, with two more settings for
+the `pre` that CodeBlock renders:
+
+```ts
+import { createCssVariablesTheme } from 'shiki';
+
+const rehypeCodeOptions = {
+  // One theme, as a one-entry map whose key is the default color: rehypeCode merges its light
+  // and dark pair into the options, and Shiki takes `themes` over `theme`.
+  themes: { tokens: createCssVariablesTheme() },
+  defaultColor: 'tokens',
+  // CodeBlock's scroll area takes the focus: the `pre` stays out of the Tab order.
+  tabindex: false,
+  // No language icon: the header of a code block shows its title.
+  icon: false,
+};
+```
+
+The options go into the Vite plugin of `fumadocs-mdx` or into `source.config.ts`, as the two
+setups below show.
+
+## React Router
+
+React Router in framework mode, prerendered to static files, as this site is.
+
+### The content
+
+```ts title="vite.config.ts"
+import { reactRouter } from '@react-router/dev/vite';
+import { fumadocsMdx } from 'fumadocs-mdx/vite';
+import { createCssVariablesTheme } from 'shiki';
+import { defineConfig } from 'vite';
+
+export default defineConfig({
+  plugins: [
+    fumadocsMdx({
+      globalOptions: {
+        mdxOptions: {
+          rehypeCodeOptions: {
+            themes: { tokens: createCssVariablesTheme() },
+            defaultColor: 'tokens',
+            tabindex: false,
+            icon: false,
+          },
+        },
+      },
+    }),
+    reactRouter(),
+  ],
+});
+```
+
+```ts title="app/lib/source.ts"
+import { loader } from 'fumadocs-core/source';
+import { defineDocs } from 'fumadocs-mdx/macro';
+
+export const docs = defineDocs({
+  dir: 'content/docs',
+  // The MDX of a page loads when the page opens, not with the app.
+  docs: { async: true },
+});
+
+export const source = loader({
+  source: docs.toFumadocsSource(),
+  baseUrl: '/docs',
+});
+```
+
+### The routes
+
+```ts title="app/routes.ts"
+import { index, route } from '@react-router/dev/routes';
+import type { RouteConfig } from '@react-router/dev/routes';
+
+export default [
+  index('routes/home.tsx'),
+  route('docs/*', 'routes/docs.tsx'),
+  route('api/search', 'routes/search.ts'),
+] satisfies RouteConfig;
+```
+
+### The root
+
+```tsx title="app/root.tsx"
+import { DocsProvider, docsScript } from '@contour-ui/fumadocs';
+import type { DocsSite } from '@contour-ui/fumadocs';
+import { githubIcon } from '@contour-ui/icons';
+import { ReactRouterProvider } from 'fumadocs-core/framework/react-router';
+import type { ReactNode } from 'react';
+import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+
+import '@contour-ui/tokens/tokens.css';
+import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fumadocs/styles.css';
+import '@contour-ui/kit/styles.css';
+
+const site: DocsSite = {
+  name: 'My docs',
+  nav: [{ label: 'Docs', href: '/docs' }],
+  links: [{ label: 'GitHub', href: 'https://github.com/me/my-docs', icon: githubIcon }],
+};
+
+export function Layout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta charSet="utf-8" />
+        <script dangerouslySetInnerHTML={{ __html: docsScript() }} />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        <ReactRouterProvider>
+          <DocsProvider site={site}>{children}</DocsProvider>
+        </ReactRouterProvider>
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+export default function App() {
+  return <Outlet />;
+}
+```
+
+- **`ReactRouterProvider`** gives the layouts the links, the path and the router of React Router.
+- **`DocsProvider`** holds the site, the theme and the search: its props are in
+  [Layouts](/docs/fumadocs/layouts#docsprovider).
+- **`docsScript()`** returns an inline script that sets the theme and a collapsed sidebar on
+  `<html>` before the first paint. `suppressHydrationWarning` lets React accept the attributes it
+  adds. Give the script the options you give `DocsProvider`
+  ([The script](/docs/fumadocs/layouts#the-script)).
+
+### A docs page
+
+The loader finds the page and sends the page tree; the component renders the page in
+`DocsLayout`, once its MDX has loaded:
+
+```tsx title="app/routes/docs.tsx"
+import { DocsLayout, DocsPage } from '@contour-ui/fumadocs';
+import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
+import { useFumadocsLoader } from 'fumadocs-core/source/client';
+import { use } from 'react';
+import { useLoaderData } from 'react-router';
+import type { LoaderFunctionArgs } from 'react-router';
+
+import { docs, source } from '../lib/source';
+
+export async function loader({ params }: LoaderFunctionArgs) {
+  const page = source.getPage((params['*'] ?? '').split('/').filter(Boolean));
+  if (page === undefined) {
+    throw new Response('Not found', { status: 404 });
+  }
+  return {
+    path: page.path,
+    title: page.data.title,
+    description: page.data.description,
+    pageTree: await source.serializePageTree(source.getPageTree()),
+  };
+}
+
+interface ContentProps {
+  path: string;
+  title: string;
+  description: string | undefined;
+}
+
+function Content({ path, title, description }: ContentProps) {
+  const page = docs.getPage(path);
+  if (page === undefined) {
+    throw new Error(`Unknown page: ${path}`);
+  }
+  const { toc } = use(page.load());
+  const Mdx = page.body;
+
+  return (
+    <DocsPage title={title} description={description} toc={toc}>
+      <Prose>
+        <Mdx components={getMdxComponents()} />
+      </Prose>
+    </DocsPage>
+  );
+}
+
+export default function Page() {
+  const { path, title, description, pageTree } = useFumadocsLoader(useLoaderData<typeof loader>());
+
+  return (
+    <>
+      <title>{title}</title>
+      <DocsLayout tree={pageTree}>
+        <Content path={path} title={title} description={description} />
+      </DocsLayout>
+    </>
+  );
+}
+```
+
+The layout and the page find the current page in the tree by the path of the router. A page of
+your own site, such as the home page, goes in `HomeLayout`:
+
+```tsx title="app/routes/home.tsx"
+import { HomeLayout } from '@contour-ui/fumadocs';
+
+export default function Home() {
+  return (
+    <HomeLayout>
+      <h1>My docs</h1>
+    </HomeLayout>
+  );
+}
+```
+
+### The search route
+
+```ts title="app/routes/search.ts"
+import { createFromSource } from 'fumadocs-core/search/server';
+
+import { source } from '../lib/source';
+
+const server = createFromSource(source, { language: 'english' });
+
+export function loader() {
+  return server.staticGET();
+}
+```
+
+`staticGET()` serves the whole index as one file, which the search downloads as it first opens
+([Search](/docs/fumadocs/search)).
+
+### Prerender
+
+```ts title="react-router.config.ts"
+import { glob } from 'node:fs/promises';
+
+import type { Config } from '@react-router/dev/config';
+import { createGetUrl, getSlugs } from 'fumadocs-core/source';
+
+const getUrl = createGetUrl('/docs');
+
+export default {
+  ssr: false,
+  async prerender({ getStaticPaths }) {
+    // The routes without parameters, the search index among them, then a path per page.
+    const paths = [...getStaticPaths()];
+    for await (const entry of glob('**/*.mdx', { cwd: 'content/docs' })) {
+      paths.push(getUrl(getSlugs(entry)));
+    }
+    return paths;
+  },
+} satisfies Config;
+```
+
+A static host answers a path that was not prerendered, such as a page that does not exist, with
+the app and no data for its route: give the docs route a `clientLoader` that returns
+`serverLoader()`, so React Router asks the host for the data of that page, gets a 404, and renders
+your error boundary. With a server instead (`ssr: true`), leave `prerender` out; the rest stays the
+same.
+
+## Next.js
+
+The App Router renders pages as React Server Components. The parts of this package that need the
+browser are client modules (`'use client'`), and the ones a server calls, `docsScript()`,
+`HomeLayout`, `getMdxComponents()`, `Prose` and `Preview`, are server modules: the files below
+stay server components.
+
+### The content
+
+```js title="next.config.mjs"
+import { createMDX } from 'fumadocs-mdx/next';
+
+const withMDX = createMDX();
+
+/** @type {import('next').NextConfig} */
+const config = {};
+
+export default withMDX(config);
+```
+
+```ts title="source.config.ts"
+import { defineConfig } from 'fumadocs-mdx/config';
+import { createCssVariablesTheme } from 'shiki';
+
+export default defineConfig({
+  mdxOptions: {
+    rehypeCodeOptions: {
+      themes: { tokens: createCssVariablesTheme() },
+      defaultColor: 'tokens',
+      tabindex: false,
+      icon: false,
+    },
+  },
+});
+```
+
+```ts title="lib/source.ts"
+import { loader } from 'fumadocs-core/source';
+import { defineDocs } from 'fumadocs-mdx/macro';
+
+const docs = defineDocs({ dir: 'content/docs' });
+
+export const source = loader({
+  source: docs.toFumadocsSource(),
+  baseUrl: '/docs',
+});
+```
+
+### The root layout
+
+```tsx title="app/layout.tsx"
+import { DocsProvider, docsScript } from '@contour-ui/fumadocs';
+import type { DocsSite } from '@contour-ui/fumadocs';
+import { githubIcon } from '@contour-ui/icons';
+import { NextProvider } from 'fumadocs-core/framework/next';
+import type { ReactNode } from 'react';
+
+import '@contour-ui/tokens/tokens.css';
+import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fumadocs/styles.css';
+import '@contour-ui/kit/styles.css';
+
+const site: DocsSite = {
+  name: 'My docs',
+  nav: [{ label: 'Docs', href: '/docs' }],
+  links: [{ label: 'GitHub', href: 'https://github.com/me/my-docs', icon: githubIcon }],
+};
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: docsScript() }} />
+      </head>
+      <body>
+        <NextProvider>
+          <DocsProvider site={site}>{children}</DocsProvider>
+        </NextProvider>
+      </body>
+    </html>
+  );
+}
+```
+
+### The docs
+
+```tsx title="app/docs/layout.tsx"
+import { DocsLayout } from '@contour-ui/fumadocs';
+import type { ReactNode } from 'react';
+
+import { source } from '@/lib/source';
+
+export default function Layout({ children }: { children: ReactNode }) {
+  return <DocsLayout tree={source.getPageTree()}>{children}</DocsLayout>;
+}
+```
+
+```tsx title="app/docs/[[...slug]]/page.tsx"
+import { DocsPage } from '@contour-ui/fumadocs';
+import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+
+import { source } from '@/lib/source';
+
+interface Props {
+  params: Promise<{ slug?: string[] }>;
+}
+
+export default async function Page({ params }: Props) {
+  const page = source.getPage((await params).slug);
+  if (page === undefined) notFound();
+  const Mdx = page.data.body;
+
+  return (
+    <DocsPage title={page.data.title} description={page.data.description} toc={page.data.toc}>
+      <Prose>
+        <Mdx components={getMdxComponents()} />
+      </Prose>
+    </DocsPage>
+  );
+}
+
+export function generateStaticParams() {
+  return source.generateParams();
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const page = source.getPage((await params).slug);
+  if (page === undefined) notFound();
+  return { title: page.data.title, description: page.data.description };
+}
+```
+
+The home page and the other pages of the site go in `HomeLayout`, as with React Router.
+
+### The search route
+
+```ts title="app/api/search/route.ts"
+import { createFromSource } from 'fumadocs-core/search/server';
+
+import { source } from '@/lib/source';
+
+// Built once: the index is a static file, also with `output: 'export'`.
+export const revalidate = false;
+export const { staticGET: GET } = createFromSource(source, { language: 'english' });
+```
+
+### Kit in server components
+
+Props that go from a server component to a client one must be serializable: data, React nodes
+and components of client modules, never functions. `DocsSite` is: its `name` is a string or an
+element, and its icons are plain data.
+
+Kit does not mark its components as client modules yet, and it creates React contexts as it
+loads, which React does not allow on a server. Importing `@contour-ui/kit` in a server component,
+an MDX page included, fails. Import Kit in a module of your own that starts with `'use client'`,
+and import that module instead:
+
+```tsx title="components/kit.ts"
+'use client';
+
+import { Card } from '@contour-ui/kit';
+
+export { Button, Kbd } from '@contour-ui/kit';
+
+// A server component cannot read inside an export of a client module (`Card.Root`):
+// export the parts of a component by name.
+export const CardRoot = Card.Root;
+export const CardTitle = Card.Title;
+```
+
+A component of your own that uses Kit is simpler still: write it in a client module, and import
+it into the page or the MDX. Kit's `themeScript()` comes without React from
+`@contour-ui/kit/theme-script`, for a server component; `docsScript()` holds it already.
+
+## Other frameworks
+
+`fumadocs-core` has an adapter for each framework it supports: wrap `DocsProvider` in the one of
+yours, as above, such as `TanstackProvider` (`fumadocs-core/framework/tanstack`) for TanStack
+Router and Start, or `WakuProvider` (`fumadocs-core/framework/waku`) for Waku. For another router,
+`FrameworkProvider` from `fumadocs-core/framework` takes its `usePathname`, `useParams`,
+`useRouter` and `Link`.
