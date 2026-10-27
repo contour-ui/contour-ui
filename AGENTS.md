@@ -91,12 +91,6 @@ between machines: never commit screenshots made outside that image. After an int
 change, run `vp run visual:update`, review the changed PNGs, and commit them. A story opts out with
 `tags: ['!visual']`.
 
-**Paused for now.** While the first kit components land, their look changes on almost every
-commit, so CI runs the visual job only when the workflow is started by hand (`workflow_dispatch`)
-and the committed screenshots are not kept in sync. Do not run `visual:update` per change: the
-baselines are refreshed in one pass once the docs site runs on contour-ui's own components, and
-then the job runs on every push again.
-
 Lint and format config lives **only** in the root `vite.config.ts` (per-package
 rules via `lint.overrides`). Package `vite.config.ts` files hold Vite, Vitest and
 `pack` settings only. CI runs `vp check --deny-warnings`: warnings are errors.
