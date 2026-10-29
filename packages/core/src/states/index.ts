@@ -4,4 +4,5 @@
  */
 export * as clipboard from './clipboard/index.ts';
 export * as collapsible from './collapsible/index.ts';
+export * as segmentGroup from './segment-group/index.ts';
 export * as tabs from './tabs/index.ts';
