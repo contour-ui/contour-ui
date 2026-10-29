@@ -66,23 +66,23 @@ Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `confi
 Vite+ wraps everything; there is no Turborepo, ESLint or Prettier. `vp <cmd>` runs a
 built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` task.
 
-| Command                                  | What it does                                                                                                                    |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| `vp install`                             | install (pnpm 12, pinned via `packageManager`)                                                                                  |
-| `vp check` / `vp check --fix`            | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                  |
-| `vp run boundaries`                      | layer boundary check for `package.json` / CSS                                                                                   |
-| `vp test`                                | all Vitest projects: node (core, tokens, icons), Chromium (core's React hooks, UI packages), stories-as-tests (UI packages)     |
-| `vp -C packages/kit test`                | one package's tests                                                                                                             |
-| `vp run -r build`                        | build everything (`vp pack` + publint + attw for packages, apps)                                                                |
-| `vp run storybook`                       | every package Storybook + the composition host on http://localhost:6100                                                         |
-| `vp -C packages/kit run storybook`       | one package Storybook (tokens 6101, headless 6102, kit 6103, audio 6104, fumadocs 6105)                                         |
-| `vp run build-storybook`                 | all Storybooks → one deployable folder `apps/storybook/storybook-static`                                                        |
-| `vp run visual` / `vp run visual:update` | screenshot tests of the styled Storybooks in the pinned Playwright Linux image (Docker); `:update` rewrites changed screenshots |
-| `vp -C apps/docs run dev` / `run build`  | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                    |
-| `vp -C apps/docs run e2e`                | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                  |
-| `vp -C apps/playground dev`              | Vite + React sandbox on http://localhost:5173                                                                                   |
-| `vp run changeset`                       | record a changeset (all published packages are versioned together)                                                              |
-| `vp run ready`                           | everything CI's first three jobs run                                                                                            |
+| Command                                  | What it does                                                                                                                     |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `vp install`                             | install (pnpm 12, pinned via `packageManager`)                                                                                   |
+| `vp check` / `vp check --fix`            | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                   |
+| `vp run boundaries`                      | layer boundary check for `package.json` / CSS                                                                                    |
+| `vp test`                                | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages), stories-as-tests |
+| `vp -C packages/kit test`                | one package's tests                                                                                                              |
+| `vp run -r build`                        | build everything (`vp pack` + publint + attw for packages, apps)                                                                 |
+| `vp run storybook`                       | every package Storybook + the composition host on http://localhost:6100                                                          |
+| `vp -C packages/kit run storybook`       | one package Storybook (tokens 6101, headless 6102, kit 6103, audio 6104, fumadocs 6105)                                          |
+| `vp run build-storybook`                 | all Storybooks → one deployable folder `apps/storybook/storybook-static`                                                         |
+| `vp run visual` / `vp run visual:update` | screenshot tests of the styled Storybooks in the pinned Playwright Linux image (Docker); `:update` rewrites changed screenshots  |
+| `vp -C apps/docs run dev` / `run build`  | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                     |
+| `vp -C apps/docs run e2e`                | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                   |
+| `vp -C apps/playground dev`              | Vite + React sandbox on http://localhost:5173                                                                                    |
+| `vp run changeset`                       | record a changeset (all published packages are versioned together)                                                               |
+| `vp run ready`                           | everything CI's first three jobs run                                                                                             |
 
 Run checks **one task at a time** (`vp check`, then `vp test`, then `vp run -r build`);
 narrow with `vp -C <dir>` or `--filter` for focused changes. First time on a machine:
@@ -220,13 +220,36 @@ version of these rules.
   for: the clock, positioning (`trackPosition`), the overlay layer stack (`trackLayer`: Escape and
   presses outside reach the top layer only; nested layers close with their parent), the focus
   trap and focus moves, scroll lock, `inert` outside a modal layer, scrolling inside a container,
-  tabbable elements. They are internal, not exported, and each waits for its element itself:
-  effects start as the machine enters a state, often before React has rendered it.
+  tabbable elements, the indicator of a selected element. They are internal, not exported, and
+  each waits for its element itself: effects start as the machine enters a state, often before
+  React has rendered it.
+  - `trackIndicator` (`indicator.ts`, for Tabs and SegmentGroup) writes `--left`, `--top`,
+    `--width` and `--height` (px, relative to the padding box of the indicator's parent, in its
+    scrolled content) and owns the indicator's `hidden`: a part renders `hidden` and never these
+    variables in `style`. The offsets are physical, in right-to-left text too.
+  - Restoring focus counts focus left in a layer opened above the closing one, which closed with
+    it and still animates out, as inside it. An overlay that has its size as it renders reveals its
+    initial focus inside its own scroll container (`moveFocusIn(…, { reveal: true })`, Dialog); a
+    popover does it after its first position. The page never scrolls.
+- **React Server Components.** Kit, headless and fumadocs build with
+  `libraryPack({ unbundle: true })`, one file per module, so each module keeps its `'use client'`
+  (a bundle drops directives). A module starts with `'use client'` when it imports from `react`
+  what its server build lacks (state and effect hooks, `createContext`, `use`) or anything from
+  `react-dom`, passes an event handler in JSX, provides a context, renders a client component with
+  `asChild` (its child must be made on the client, where it can be cloned), or takes a value other
+  than a component (a hook, a function, an object) from a module that needs the browser, in its
+  own package or another one. Everything else stays a server module: entry points, namespaces
+  (`export * as Card`), `Primitive`, `mergeProps`, pure utils and parts that only render markup,
+  so a server component imports `@contour-ui/kit` and renders `Card.Root`.
+  `describeClientBoundary()` (`@contour-ui/vite-config/client-boundary`) fails on missing and on
+  needless directives, in each package's `<package>:node` Vitest project. `core` carries none:
+  `core/react` holds hooks only, which run in client modules.
 - **Overlays.** Users compose `Portal` around the positioner, as in Ark (Kit re-exports it). One
   `usePresence` in Root drives Positioner and Content, its ref on the animated Content; Backdrop
   has its own. The layer stack writes `--layer-index` inline on the content, the positioner and
   the backdrop, so parts never render it in `style`; kits stack them with
-  `z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0))`.
+  `z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0))`. The x of Kit's Dialog and
+  Drawer (`CloseTrigger`) is a `CloseButton` of size `md`: the 24px target of WCAG 2.2 (2.5.8).
 - **A field over a list** (`Listbox.Input`) is a combobox: `role="combobox"`, `aria-expanded`,
   `aria-controls` and `aria-activedescendant` on the field. Screen readers announce its options,
   and axe does not ask the list, which scrolls while the field keeps the focus, to take focus.
@@ -243,7 +266,10 @@ version of these rules.
 - **Kit motion.** An overlay's closed state runs `@keyframes` of its own: Presence waits for it,
   and a reversed open animation keeps its name and does not run again. A part that sets `display`
   restores `[hidden] { display: none }`. Under `prefers-reduced-motion: reduce`, CSS drops
-  movement (translate, scale, slides) and keeps opacity and color changes.
+  movement (translate, scale, slides) and keeps opacity and color changes. Content that animates
+  its height (Collapsible) runs `@keyframes` to and from `var(--height)`, which headless measures,
+  with `overflow: hidden` inside the keyframes, so it clips only while it animates; content open on
+  the first render carries `animation-name: none` until it first closes.
 
 ## Docs
 
@@ -288,16 +314,13 @@ resolve to package sources like the rest of the app.
   components inside the content keep their styles; the layout and the docs components rank above
   the Kit parts they adjust. Prose relies on no reset either (it sets the margins, list markers and
   fonts of what it styles); `contour-docs-not-prose` opts a subtree out, and `<Preview>` uses it.
-- **React Server Components.** The package builds with `libraryPack({ unbundle: true })`, one file
-  per module, so each keeps its `'use client'` (a bundle drops directives). A module starts with
-  `'use client'` when it calls a hook, creates or provides a context, attaches an event handler,
-  or imports a runtime value from `@contour-ui/kit` or `@contour-ui/headless` (their bundles create
-  contexts as they load, which fails on a server). `docsScript()`, `getMdxComponents()`, `Prose`,
-  `Preview`, `HomeLayout` and the entry barrels stay server modules, and they take client
-  components by name: on the server, an object exported by a client module is a client
-  reference, and spreading it yields nothing. The public layouts take serializable props only.
-  `src/client-boundary.test.ts` (Vitest project `fumadocs:node`) checks this, and that no module
-  imports `react-router`. Kit and headless ship no directives yet.
+- **React Server Components** (the rule is under Components). `docsScript()`,
+  `getMdxComponents()`, `Prose`, `Preview`, `HomeLayout` and the entry barrels stay server
+  modules: they read Kit's parts from its namespaces and take the package's own client components
+  by name (on a server, an object exported by a client module is a client reference, and
+  spreading it yields nothing). The public layouts take serializable props only.
+  `src/client-boundary.test.ts` (`fumadocs:node`) runs the shared check with those server modules,
+  and checks that no module imports `react-router`.
 - **Tests and stories** render the package as a docs site from `src/test-utils/`:
   `MemoryFramework` (fumadocs-core's `FrameworkProvider` with an in-memory pathname; `push`
   changes it in a transition, as routers do; `Link` is a plain `<a data-framework-link>`),
@@ -336,7 +359,10 @@ its own CSS (`app/app.css`, unlayered, loaded after every package stylesheet).
 3. UI packages: add `.storybook/` (`storybookConfig()` from `@contour-ui/vite-config/storybook`),
    a fixed dev port in the `storybook` script, and an entry in `apps/storybook/refs.ts`. Styled
    packages wrap their preview in `withThemes()` (`@contour-ui/vite-config/storybook-preview`) for
-   the Theme toolbar menu; story tests run in the default theme.
+   the Theme toolbar menu; story tests run in the default theme. React packages build with
+   `libraryPack({ unbundle: true })` and call `describeClientBoundary()` in
+   `src/client-boundary.test.ts`, run by a `<package>:node` Vitest project (environment `node`,
+   excluded from the browser project).
 4. New external dependencies go into the `catalog` in `pnpm-workspace.yaml` first (`catalogMode: strict`).
 5. `vp install && vp check && vp run boundaries && vp test && vp run -r build`.
 
