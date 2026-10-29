@@ -30,6 +30,9 @@ vp -C apps/docs run e2e     # build, then the end-to-end and axe tests
   shows the 404 page on a static host) and renders it in `DocsLayout` and `DocsPage`, the MDX in
   `Prose` with `getMdxComponents(mdxPlaceholderComponents)`; `home.tsx` and `not-found.tsx` use
   `HomeLayout`; `routes/search.ts` prerenders the search index at `/api/search`.
+- The brand in the headers and the sidebar is the Contour logo (`app/components/contour-logo.tsx`,
+  in `currentColor`; the mark alone below 30rem, where the header also holds the site's links).
+  The favicons in `public/` come from the same logo package.
 - The home page (`app/components/home/`) is built from Kit and the tokens only: the hero, a
   sequencer whose tracks are the parts of contour-ui and whose clips are their components (Kit's
   `Placeholder` for those that do not ship yet), the docs index and the footer.

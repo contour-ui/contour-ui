@@ -1,0 +1,24 @@
+/*
+ * The Contour logo in the brand link of the headers and the sidebar: as tall as a medium icon,
+ * its width from its proportions. The lockup, or the mark alone on narrow screens, where the
+ * header holds the links of the site too.
+ */
+.docs-logo {
+  display: block;
+  block-size: var(--ct-size-icon-md);
+  inline-size: auto;
+}
+
+.docs-logo[data-variant='mark'] {
+  display: none;
+}
+
+@media (width < 30rem) {
+  .docs-logo[data-variant='lockup'] {
+    display: none;
+  }
+
+  .docs-logo[data-variant='mark'] {
+    display: block;
+  }
+}

@@ -12,6 +12,7 @@ import {
   ScrollRestoration,
 } from 'react-router';
 
+import { ContourLogo } from './components/contour-logo.tsx';
 import { NotFound, PageMessage } from './routes/not-found.tsx';
 
 // The stylesheet of @contour-ui/fumadocs before Kit's: its first rule is the order of every
@@ -23,9 +24,9 @@ import '@contour-ui/kit/styles.css';
 import '@contour-ui/audio/styles.css';
 import './app.css';
 
-/** The site: the brand in the headers and the sidebar, the ways into the docs, the repository. */
+/** The site: the logo in the headers and the sidebar, the ways into the docs, the repository. */
 const SITE: DocsSite = {
-  name: 'contour-ui',
+  name: <ContourLogo />,
   nav: [
     { label: 'Docs', href: '/docs' },
     { label: 'Kit', href: '/docs/kit' },
@@ -44,7 +45,10 @@ export function Layout({ children }: { readonly children: ReactNode }): ReactEle
         {/* Before the stylesheets, so the first paint has the theme and the sidebar state. */}
         <script dangerouslySetInnerHTML={{ __html: docsScript() }} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        {/* The mark, dark or light with the color scheme; a dark tile where SVG icons are not read. */}
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+        <link rel="apple-touch-icon" href="/app-icon-180.png" />
         <Meta />
         <Links />
       </head>

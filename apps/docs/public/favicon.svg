@@ -1,4 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="8" fill="#186dcb"/>
-  <path d="M21.5 10.5a8 8 0 1 0 0 11" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" role="img">
+  <title>Contour</title>
+  <style>.m{fill:#16191C}@media (prefers-color-scheme: dark){.m{fill:#F2F5FB}}</style>
+  <rect x="12.000" y="6.500" width="32.000" height="9.000" class="m"/>
+  <rect x="4.000" y="19.500" width="32.000" height="9.000" class="m"/>
+  <rect x="12.000" y="32.500" width="32.000" height="9.000" class="m"/>
 </svg>

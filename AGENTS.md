@@ -345,9 +345,10 @@ resolve to package sources like the rest of the app.
 **The site** (`apps/docs`) keeps its routes (`docs.tsx` with its loader, `clientLoader` and error
 boundary, `home.tsx`, `not-found.tsx`), `lib/source.ts`, the search index route
 (`routes/search.ts`), `app/components/mdx-placeholders.ts` (passed to `getMdxComponents()`), the
-parts of the home page (`app/components/home/`: the hero, the sequencer of the parts of
-contour-ui, the docs index), and its own CSS (`app/app.css`, unlayered, loaded after every package
-stylesheet).
+Contour logo (`app/components/contour-logo.tsx`, the site's brand: the lockup, the mark alone below
+30rem; its favicons are in `public/`), the parts of the home page (`app/components/home/`: the
+hero, the sequencer of the parts of contour-ui, the docs index), and its own CSS (`app/app.css`,
+unlayered, loaded after every package stylesheet).
 
 - The home page is built from Kit and the tokens only. A component that does not ship yet is Kit's
   `Placeholder` in its clip of the sequencer; swap in the real one as it lands.
