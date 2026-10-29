@@ -148,7 +148,19 @@ export const { staticGET: GET } = createFromSource(source);
   themselves; links as Kit's `Link` (a page of the site through `fumadocs-core/framework`'s `Link`,
   a `#fragment` as is, another site in a new tab); tables as Kit's `Table`; code blocks as Kit's
   `CodeBlock`, from the props of Fumadocs' `rehypeCode` (`title="…"`, `noCopy`, `lineNumbers[=N]`);
-  `Callout`, `Card`, `Cards`, `Kbd` and `Preview`. Your `overrides` win.
+  `Callout`, `Card`, `Cards`, `Kbd`, `Preview`, `Tabs` and `Tab`; and what Fumadocs' remark
+  plugins write into a page: `CodeBlockTabs` and its parts, and the parts of `Tabs`
+  (`TabsList`, `TabsTrigger`, `TabsContent`). Your `overrides` win.
+- Code block tabs: consecutive code blocks with a `tab` meta (`remarkCodeTab`), and ` ```npm ` or
+  ` ```package-install ` blocks, the command of each package manager (`remarkNpm`); `fumadocs-mdx`
+  runs both by default. One frame, the triggers where the header of a code block is, the copy
+  button of the code shown at the end of their row.
+- `Tabs` takes the props of Fumadocs' `Tabs`: `items`, `defaultIndex`, `defaultValue`, `label`,
+  `groupId`, `persist`, `updateAnchor`; a `Tab` without `value` takes the item of its place. Tabs
+  of one `groupId` (and `tab-group`) select the same tab, remembered in `sessionStorage`, or in
+  `localStorage` with `persist`, under the group id; the address (`#id` of a `Tab`, or an element
+  inside one) opens a tab, and `updateAnchor` writes the `id` of the selected one. Values are the
+  items as written. `remarkNpmOptions: { persist: { id } }` makes every install command one group.
 - `Prose`: typography and spacing for MDX content; an element with the `contour-docs-not-prose`
   class opts its subtree out. `Preview`: the frame of live examples.
 - `Callout`, `Card`, `Cards`: Kit's `Alert` and `Card` with the MDX props of Fumadocs.
@@ -157,8 +169,6 @@ export const { staticGET: GET } = createFromSource(source);
   tokens: `rehypeCodeOptions: { themes: { tokens: createCssVariablesTheme() }, defaultColor:
   'tokens', tabindex: false }` in the options of fumadocs-mdx (see the docs site's
   `vite.config.ts`).
-- Fumadocs' code block tabs (the `tab` meta, `npm` blocks) are not supported yet: they render
-  components the map does not hold.
 
 ## Styles
 

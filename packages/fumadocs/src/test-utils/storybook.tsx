@@ -14,6 +14,9 @@ const DEFAULT_PATHNAME = '/docs/kit/button';
 /** The `localStorage` keys `DocsProvider` keeps the theme and the sidebar under, by default. */
 const STORAGE_KEYS = ['contour-theme', 'contour-docs-sidebar'] as const;
 
+/** The groups of tabs of the stories, which remember a tab in both storages under their id. */
+const TAB_GROUPS = ['language', 'framework'] as const;
+
 /** The attribute of `<html>` that collapses the sidebar (`docsScript()`). */
 const SIDEBAR_ATTRIBUTE = 'data-contour-docs-sidebar';
 
@@ -38,6 +41,10 @@ export const docsAnnotations: Pick<Preview, 'beforeEach' | 'loaders'> = {
   beforeEach: () => {
     for (const key of STORAGE_KEYS) {
       localStorage.removeItem(key);
+    }
+    for (const group of TAB_GROUPS) {
+      localStorage.removeItem(group);
+      sessionStorage.removeItem(group);
     }
     document.documentElement.removeAttribute(SIDEBAR_ATTRIBUTE);
   },

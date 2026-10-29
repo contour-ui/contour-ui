@@ -1,0 +1,69 @@
+/*
+ * Code block tabs (code-block-tabs.tsx): one frame with the look of Kit's code block. Kit's
+ * `line` tabs stand where a code block has its header, on the rule of the list, and the code
+ * of the selected tab fills the rest, its own border and corners given to the frame. The copy
+ * button of a block without a title moves up to the end of the row of triggers.
+ */
+.contour-docs-code-tabs {
+  /* The containing block of the copy button moved up into the row of triggers. */
+  position: relative;
+  box-sizing: border-box;
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  /* In the dark theme `bg-inset` equals the canvas: the border is the block's edge there. */
+  background: var(--ct-color-bg-inset);
+  color: var(--ct-color-fg-default);
+  /* A link to a tab stops below the sticky header and the "On this page" bar, as headings do. */
+  scroll-margin-block-start: calc(
+    var(--contour-docs-header-height, 0px) + var(--contour-docs-toc-bar-height, 0px) +
+      var(--ct-space-section-gap)
+  );
+}
+
+/*
+ * The row of triggers, as high as the header of a code block: the text of the first trigger
+ * lines up with the code.
+ */
+.contour-docs-code-tabs__list {
+  padding-block-start: var(--ct-space-control-gap);
+  padding-inline: calc(var(--ct-space-panel-inset) - var(--ct-space-control-inset));
+}
+
+/* It leaves room for the copy button of the code shown. */
+.contour-docs-code-tabs:has(
+    > .contour-docs-code-tabs__content:not([hidden])
+      > .contour-code-block
+      > .contour-code-block__copy-trigger
+  )
+  > .contour-docs-code-tabs__list {
+  padding-inline-end: calc(var(--ct-size-control-sm) + 2 * var(--ct-space-group-gap));
+}
+
+.contour-docs-code-tabs__content {
+  padding: 0;
+}
+
+/* Not positioned: a copy button without a header takes the frame as its containing block. */
+.contour-docs-code-tabs__content > .contour-code-block {
+  position: static;
+  border: none;
+  border-radius: 0 0 calc(var(--ct-radius-panel) - var(--ct-border-width-default))
+    calc(var(--ct-radius-panel) - var(--ct-border-width-default));
+}
+
+.contour-docs-code-tabs__content > .contour-code-block > .contour-code-block__content {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+/* The copy button, at the end of the row of triggers, centered on their labels… */
+.contour-docs-code-tabs__content > .contour-code-block > .contour-code-block__copy-trigger {
+  inset-block-start: calc(
+    var(--ct-space-control-gap) + (var(--ct-size-control-md) - var(--ct-size-control-sm)) / 2
+  );
+}
+
+/* …so the code needs no room for it. */
+.contour-docs-code-tabs__content > .contour-code-block > .contour-code-block__content pre {
+  padding-block-start: var(--ct-space-panel-inset);
+}

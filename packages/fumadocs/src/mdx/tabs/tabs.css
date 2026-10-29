@@ -1,0 +1,114 @@
+/*
+ * Tabs of the MDX content (tabs.tsx): a frame around Kit's `line` tabs, the row of triggers at the
+ * top, on the rule of the list, and the selected panel below it, with a panel's inset. A code
+ * block alone in a panel fills it: the frame is its border, and its copy button moves up to the
+ * end of the row of triggers. Prose spaces the frame, which sets no margin.
+ */
+.contour-docs-tabs {
+  /* The containing block of a copy button moved up into the row of triggers. */
+  position: relative;
+  box-sizing: border-box;
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  /* A link to a tab stops below the sticky header and the "On this page" bar, as headings do. */
+  scroll-margin-block-start: calc(
+    var(--contour-docs-header-height, 0px) + var(--contour-docs-toc-bar-height, 0px) +
+      var(--ct-space-section-gap)
+  );
+}
+
+/*
+ * The row of triggers: the text of the first one lines up with the inset of the panel, and a
+ * control's gap above them makes the row as high as the header of a code block.
+ */
+.contour-docs-tabs__list {
+  padding-block-start: var(--ct-space-control-gap);
+  padding-inline: calc(var(--ct-space-panel-inset) - var(--ct-space-control-inset));
+}
+
+/* With a label: the label, then the list, in one row over one rule. */
+.contour-docs-tabs__header {
+  display: flex;
+  min-inline-size: 0;
+  box-shadow: inset 0 calc(-1 * var(--ct-border-width-default)) 0 var(--ct-color-border-default);
+}
+
+/* A caption, not a tab: muted, and a divider between it and the triggers. */
+.contour-docs-tabs__label {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+  padding-block-start: var(--ct-space-control-gap);
+  padding-inline-start: var(--ct-space-panel-inset);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  white-space: nowrap;
+}
+
+.contour-docs-tabs__label::after {
+  inline-size: var(--ct-border-width-default);
+  block-size: var(--ct-size-icon-sm);
+  background: var(--ct-color-border-default);
+  content: '';
+}
+
+.contour-docs-tabs__header > .contour-docs-tabs__list {
+  flex: 1;
+  box-shadow: none;
+}
+
+/* The panel keeps the text of the page, not Kit's body text. */
+.contour-docs-tabs__content {
+  padding: var(--ct-space-panel-inset);
+  font: inherit;
+  letter-spacing: inherit;
+}
+
+/* Inside the frame, which would cover a ring around the panel. */
+.contour-docs-tabs__content:focus-visible {
+  outline-offset: calc(-1 * var(--ct-border-width-focus));
+  border-radius: 0 0 calc(var(--ct-radius-panel) - var(--ct-border-width-default))
+    calc(var(--ct-radius-panel) - var(--ct-border-width-default));
+}
+
+/* A code block alone in a panel fills it. */
+.contour-docs-tabs__content:has(> .contour-code-block:only-child) {
+  padding: 0;
+}
+
+/* Not positioned: a copy button without a header takes the frame as its containing block. */
+.contour-docs-tabs__content > .contour-code-block:only-child {
+  position: static;
+  border: none;
+  border-radius: 0 0 calc(var(--ct-radius-panel) - var(--ct-border-width-default))
+    calc(var(--ct-radius-panel) - var(--ct-border-width-default));
+}
+
+.contour-docs-tabs__content > .contour-code-block:only-child > .contour-code-block__content {
+  border-start-start-radius: 0;
+  border-start-end-radius: 0;
+}
+
+/* The copy button, at the end of the row of triggers, centered on their labels… */
+.contour-docs-tabs__content > .contour-code-block:only-child > .contour-code-block__copy-trigger {
+  inset-block-start: calc(
+    var(--ct-space-control-gap) + (var(--ct-size-control-md) - var(--ct-size-control-sm)) / 2
+  );
+}
+
+/* …so the code needs no room for it. */
+.contour-docs-tabs__content > .contour-code-block:only-child > .contour-code-block__content pre {
+  padding-block-start: var(--ct-space-panel-inset);
+}
+
+/* The row of triggers leaves room for the copy button of the panel shown. */
+.contour-docs-tabs:has(
+    > .contour-docs-tabs__content:not([hidden])
+      > .contour-code-block:only-child
+      > .contour-code-block__copy-trigger
+  )
+  > :is(.contour-docs-tabs__list, .contour-docs-tabs__header) {
+  padding-inline-end: calc(var(--ct-size-control-sm) + 2 * var(--ct-space-group-gap));
+}

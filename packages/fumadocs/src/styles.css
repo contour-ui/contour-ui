@@ -23,6 +23,8 @@
 @import './mdx/heading.css' layer(contour.fumadocs);
 @import './mdx/preview.css' layer(contour.fumadocs);
 @import './mdx/cards.css' layer(contour.fumadocs);
+@import './mdx/tabs/tabs.css' layer(contour.fumadocs);
+@import './mdx/tabs/code-block-tabs.css' layer(contour.fumadocs);
 @import './page/page-header.css' layer(contour.fumadocs);
 @import './page/page-footer.css' layer(contour.fumadocs);
 @import './toc/toc-panel.css' layer(contour.fumadocs);
