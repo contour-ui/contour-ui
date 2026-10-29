@@ -170,6 +170,12 @@ Storybook token tables read it, it is not published). The generated files are co
   `space.control-gap`. Overlays take component roles on the `base.size` scale:
   `size.dialog-sm|md|lg`, `size.drawer-sm|md|lg` and `size.popover`. Kit CSS has no px literals:
   a new size is a token first.
+- Text styles come in three sets: dense plugin UI (`heading`, `body`, `label`, `label-lg`,
+  `value`, `caption`), docs pages (`display`, `title`, `subtitle`, `prose`, `code`) and site pages
+  (`hero`, `lead`, `nav`: the title of a home page, the paragraph under it, the links of a site
+  header). A size, line height or letter spacing a style needs is a base step first
+  (`base.font-size.*`, `base.line-height.*`, `base.letter-spacing.*`). `letter-spacing` is not part
+  of the `font` shorthand: set `--ct-text-<style>-letter-spacing` beside it.
 - Every token stays expressible in Soundor (`packages/tokens/src/soundor.test.ts`): colors inside
   sRGB, lengths in px, a named easing for every `cubicBezier`, no `calc()` / `color-mix()` in values.
 
@@ -253,6 +259,10 @@ version of these rules.
 - **A field over a list** (`Listbox.Input`) is a combobox: `role="combobox"`, `aria-expanded`,
   `aria-controls` and `aria-activedescendant` on the field. Screen readers announce its options,
   and axe does not ask the list, which scrolls while the field keeps the focus, to take focus.
+- **A button that keeps its name** (an `aria-label` that stays while its state changes, as copy
+  buttons do) keeps its visible text too: a state swaps an icon, not the text. axe's
+  `label-content-name-mismatch` (WCAG 2.5.3) reads the text on screen, `aria-hidden` included, so
+  Kit Clipboard's trigger stays "Copy" while its icon turns into a check mark.
 - **Kit styles.** Classes `contour-<component>` on the root or the single element and
   `contour-<component>__<part>` on the other parts, joined with the user's `className` by `cx`
   (`packages/kit/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
@@ -300,6 +310,15 @@ resolve to package sources like the rest of the app.
   `"collapsible": false` keeps the static list. `ThemeToggle` takes `mode` (`light-dark`, a
   button, by default; `light-dark-system`, Kit's SegmentGroup), by default the `themeToggle` of
   `DocsProvider`.
+- **HomeLayout** (`src/layout/home-layout.*`, the `site` header): its root sets
+  `--contour-docs-home-width` (80rem), `--contour-docs-page-inset` and
+  `--contour-docs-header-height` (3rem on phones, as the docs header there; 4.5rem from 48rem). The
+  header has no divider and centers its content in that column with
+  `padding-inline: max(inset, (100% - width) / 2)`; a column of a page lines up with
+  `box-sizing: border-box`, `margin-inline: auto`, the inset as padding and
+  `max-inline-size: calc(width + 2 * inset)`. Its links are the navigation "Main", Kit's neutral
+  links in `text.nav` set to `fg-default` and underlined on hover; out of room, they scroll in
+  their own box. `search={false}` drops only the search triggers: the shortcut stays.
 - **Before hydration.** `docsScript()` (Kit's `themeScript()` from `@contour-ui/kit/theme-script`,
   plus the sidebar) sets `data-theme` (key `contour-theme`) and
   `data-contour-docs-sidebar="collapsed"` (key `contour-docs-sidebar`) on `<html>` before the
