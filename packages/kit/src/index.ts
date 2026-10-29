@@ -25,6 +25,7 @@ export type {
 } from '@contour-ui/headless';
 export * as Placeholder from './placeholder/index.ts';
 export * as Popover from './popover/index.ts';
+export * as SegmentGroup from './segment-group/index.ts';
 export * as Table from './table/index.ts';
 export * as Tabs from './tabs/index.ts';
 export { ThemeProvider, themeScript, useTheme } from './theme-provider/index.ts';

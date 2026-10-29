@@ -1,0 +1,188 @@
+/*
+ * A segment group: options side by side on an inset track. The checked one sits on the
+ * indicator, a raised surface with a border and a shadow, so the choice reads without color.
+ * Headless gives the indicator the box of the checked item as `--left`, `--top`, `--width` and
+ * `--height`, in the padding box of the root.
+ */
+.contour-segment-group {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: stretch;
+  block-size: var(--ct-size-control-md);
+  margin: 0;
+  padding: 0;
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-control);
+  background-color: var(--ct-color-bg-inset);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  vertical-align: middle;
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-segment-group[hidden] {
+  display: none;
+}
+
+.contour-segment-group[data-size='sm'] {
+  block-size: var(--ct-size-control-sm);
+}
+
+.contour-segment-group[data-size='lg'] {
+  block-size: var(--ct-size-control-lg);
+  font: var(--ct-text-label-lg);
+  letter-spacing: var(--ct-text-label-lg-letter-spacing);
+}
+
+/* Vertical: a column of items, each as high as a control of its size. */
+.contour-segment-group[data-orientation='vertical'] {
+  flex-direction: column;
+  block-size: auto;
+}
+
+.contour-segment-group[data-orientation='vertical'] > .contour-segment-group__item {
+  block-size: var(--ct-size-control-md);
+}
+
+.contour-segment-group[data-orientation='vertical'][data-size='sm'] > .contour-segment-group__item {
+  block-size: var(--ct-size-control-sm);
+}
+
+.contour-segment-group[data-orientation='vertical'][data-size='lg'] > .contour-segment-group__item {
+  block-size: var(--ct-size-control-lg);
+}
+
+.contour-segment-group__label {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--ct-space-control-inset);
+  color: var(--ct-color-fg-muted);
+  white-space: nowrap;
+}
+
+.contour-segment-group[data-size='lg'] > .contour-segment-group__label {
+  padding-inline: var(--ct-space-control-inset-lg);
+}
+
+.contour-segment-group__label[hidden] {
+  display: none;
+}
+
+/* Above the indicator, which comes first in the root. */
+.contour-segment-group__item {
+  position: relative;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--ct-space-control-inset);
+  border-radius: var(--ct-radius-control);
+  color: var(--ct-color-fg-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition: color var(--ct-motion-feedback);
+}
+
+.contour-segment-group__item[hidden] {
+  display: none;
+}
+
+.contour-segment-group[data-size='lg'] > .contour-segment-group__item {
+  gap: var(--ct-space-control-gap-lg);
+  padding-inline: var(--ct-space-control-inset-lg);
+}
+
+/* An item with an icon and no text is square, at every size. */
+.contour-segment-group > .contour-segment-group__item:not(:has(.contour-segment-group__item-text)) {
+  aspect-ratio: 1;
+  padding-inline: 0;
+}
+
+.contour-segment-group__item > .contour-icon {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+.contour-segment-group[data-size='lg'] > .contour-segment-group__item > .contour-icon {
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}
+
+.contour-segment-group__item[data-state='checked'] {
+  color: var(--ct-color-fg-default);
+}
+
+/* Touch screens would keep the hover look after a tap. */
+@media (hover: hover) {
+  .contour-segment-group__item:not([data-disabled], [data-state='checked']):hover {
+    color: var(--ct-color-fg-default);
+  }
+}
+
+/* Inside the item, so the ring stays clear of its neighbours and of the track's edge. */
+.contour-segment-group__item[data-focus-visible] {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: calc(var(--ct-border-width-focus) * -1);
+}
+
+.contour-segment-group__item[data-disabled] {
+  color: var(--ct-color-fg-disabled);
+  cursor: not-allowed;
+}
+
+.contour-segment-group[data-readonly] > .contour-segment-group__item {
+  cursor: default;
+}
+
+.contour-segment-group__item-text {
+  display: inline-flex;
+  align-items: center;
+}
+
+.contour-segment-group__item-control {
+  display: inline-flex;
+  align-items: center;
+}
+
+.contour-segment-group__item-text[hidden],
+.contour-segment-group__item-control[hidden] {
+  display: none;
+}
+
+/* `hidden` while no item is checked: no `display` here, so the attribute keeps working. */
+.contour-segment-group__indicator {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  box-sizing: border-box;
+  inline-size: var(--width);
+  block-size: var(--height);
+  translate: var(--left) var(--top);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-strong);
+  border-radius: var(--ct-radius-control);
+  background-color: var(--ct-color-bg-raised);
+  box-shadow: var(--ct-shadow-raised);
+  transition:
+    translate var(--ct-motion-feedback),
+    inline-size var(--ct-motion-feedback),
+    block-size var(--ct-motion-feedback);
+}
+
+.contour-segment-group[data-disabled] > .contour-segment-group__indicator {
+  border-color: var(--ct-color-border-default);
+  box-shadow: none;
+}
+
+/* No slide: the indicator jumps to the checked item. */
+@media (prefers-reduced-motion: reduce) {
+  .contour-segment-group__indicator {
+    transition: none;
+  }
+}
