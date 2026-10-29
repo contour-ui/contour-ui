@@ -180,7 +180,7 @@ export const { staticGET: GET } = createFromSource(source);
 
 - Load `styles.css` after `@contour-ui/tokens/tokens.css` and **before** Kit's and Audio's styles:
   it starts with the cascade layer order `contour.fumadocs-base, contour.fumadocs-prose,
-  contour.kit, contour.audio, contour.fumadocs`. The page base (no reset) and Prose rank below the
+  contour.kit, contour.fumadocs`. The page base (no reset) and Prose rank below the
   components, so components inside the content keep their styles; the layout ranks above them.
   Every layer is inside `contour`, so your unlayered CSS overrides them all.
 - Public class names are `contour-docs-<part>` (the layout root is `contour-docs-layout`). The

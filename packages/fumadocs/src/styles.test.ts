@@ -12,7 +12,6 @@ const LAYERS = [
   'contour.fumadocs-base',
   'contour.fumadocs-prose',
   'contour.kit',
-  'contour.audio',
   'contour.fumadocs',
 ] as const;
 

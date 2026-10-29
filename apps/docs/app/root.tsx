@@ -21,7 +21,6 @@ import '@contour-ui/tokens/tokens.css';
 import '@contour-ui/tokens/fonts.css';
 import '@contour-ui/fumadocs/styles.css';
 import '@contour-ui/kit/styles.css';
-import '@contour-ui/audio/styles.css';
 import './app.css';
 
 /** The site: the logo in the headers and the sidebar, the ways into the docs, the repository. */

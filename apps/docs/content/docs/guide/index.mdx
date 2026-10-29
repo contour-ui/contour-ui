@@ -5,23 +5,23 @@ description: What ships, which package to pick, and how the packages fit togethe
 
 <Callout title="Pre-release">
   The packages are not on npm yet. Kit and Headless have their first components and Fumadocs runs
-  this site; Audio still shows a placeholder, and more components arrive section by section.
+  this site; the Audio controls come next, and more components arrive section by section.
 </Callout>
 
 ## Pick a package
 
-contour-ui ships four React packages. Pick by what you build and how much of the look you want to
+contour-ui ships three React packages. Pick by what you build and how much of the look you want to
 own:
 
 | Package                      | What you get                                        | Use it when                                     |
 | ---------------------------- | --------------------------------------------------- | ----------------------------------------------- |
 | `@contour-ui/kit`            | Styled general-purpose components                   | you build an app in the contour-ui look         |
-| `@contour-ui/audio`          | Styled controls for audio-plugin UIs, built on Kit  | you build an audio-plugin UI                    |
 | `@contour-ui/headless-react` | Unstyled components: structure and behavior         | you want contour-ui behavior with your own look |
 | `@contour-ui/fumadocs`       | A documentation layout for Fumadocs, built from Kit | you build a docs site on Fumadocs               |
 
-You can use more than one: an audio plugin uses Audio for its controls and Kit for everything
-else, and a docs site on Fumadocs shows Kit and Audio components in its pages.
+Kit holds both the everyday components and the controls of audio-plugin UIs (the Audio section),
+so a plugin needs one package for its whole window. A docs site on Fumadocs shows Kit components
+in its pages.
 
 ## How the packages fit together
 

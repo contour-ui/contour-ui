@@ -9,7 +9,6 @@
       "@contour-ui/core",
       "@contour-ui/headless-react",
       "@contour-ui/kit",
-      "@contour-ui/audio",
       "@contour-ui/fumadocs"
     ]
   ],

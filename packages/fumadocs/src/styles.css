@@ -1,22 +1,22 @@
 /*
  * Every style of @contour-ui/fumadocs: the page base, Prose, the MDX components and the layout.
  * They consume semantic token custom properties only. Load this file after
- * `@contour-ui/tokens/tokens.css` and BEFORE `@contour-ui/kit/styles.css` and
- * `@contour-ui/audio/styles.css`: its first rule is the full cascade layer order, and a layer
+ * `@contour-ui/tokens/tokens.css` and BEFORE `@contour-ui/kit/styles.css`: its first rule is
+ * the full cascade layer order, and a layer
  * ranks where it first appears, so loaded after Kit's styles, `contour.kit` would rank below the
  * page base and Prose.
  *
  * - `contour.fumadocs-base`: the page itself (base.css), below everything else.
- * - `contour.fumadocs-prose`: the typography of the MDX content (Prose). A Kit or Audio component
- *   inside the content beats it, so it keeps its own styles.
- * - `contour.kit`, `contour.audio`: the components of `@contour-ui/kit` and `@contour-ui/audio`.
+ * - `contour.fumadocs-prose`: the typography of the MDX content (Prose). A Kit component inside
+ *   the content beats it, so it keeps its own styles.
+ * - `contour.kit`: the components of `@contour-ui/kit`.
  * - `contour.fumadocs`: the MDX components and the layout, above the Kit components they adjust.
  *
  * All of them are inside `contour`, so the app's unlayered CSS overrides every one. The files hold
  * plain rules and get their layer here, by `layer()` on each import, as in Kit's styles.css;
  * `vp pack` (Lightning CSS) and Vite (postcss-import) both turn it into `@layer` blocks.
  */
-@layer contour.fumadocs-base, contour.fumadocs-prose, contour.kit, contour.audio, contour.fumadocs;
+@layer contour.fumadocs-base, contour.fumadocs-prose, contour.kit, contour.fumadocs;
 
 @import './base.css' layer(contour.fumadocs-base);
 @import './mdx/prose.css' layer(contour.fumadocs-prose);

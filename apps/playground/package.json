@@ -10,7 +10,6 @@
     "preview": "vp preview"
   },
   "dependencies": {
-    "@contour-ui/audio": "workspace:*",
     "@contour-ui/headless-react": "workspace:*",
     "@contour-ui/kit": "workspace:*",
     "@contour-ui/tokens": "workspace:*",

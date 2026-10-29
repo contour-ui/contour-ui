@@ -1,6 +1,6 @@
 {
   "title": "Audio",
-  "description": "Styled controls for audio-plugin UIs",
+  "description": "Controls for audio-plugin UIs",
   "root": true,
-  "pages": ["index", "---Components---", "placeholder"]
+  "pages": ["index"]
 }

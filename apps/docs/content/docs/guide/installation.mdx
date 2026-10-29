@@ -22,12 +22,6 @@ others follow, and the site remembers it.
 @contour-ui/kit @contour-ui/tokens
 ```
 
-**Audio**, with Kit for the rest of the UI:
-
-```package-install
-@contour-ui/audio @contour-ui/kit @contour-ui/tokens
-```
-
 **Headless**, no styles and no tokens:
 
 ```package-install
@@ -45,18 +39,17 @@ Router or Next.js.
 
 ## Load the stylesheets
 
-Kit and Audio style their components with plain CSS that reads token variables. Import the
+Kit styles its components with plain CSS that reads token variables. Import the
 stylesheets once, in your app entry, in this order:
 
 ```tsx title="main.tsx"
 import '@contour-ui/tokens/tokens.css'; // tokens: --ct-* custom properties for every theme
 import '@contour-ui/tokens/fonts.css'; // IBM Plex Sans and JetBrains Mono
 import '@contour-ui/kit/styles.css';
-import '@contour-ui/audio/styles.css'; // Audio only, after Kit
 ```
 
 The stylesheets do not import each other, so your app decides what loads and when, and tokens
-load once even when you use Kit and Audio together.
+load once.
 
 `fonts.css` declares the font faces the type tokens refer to (SIL Open Font License). Skip it if
 your app already provides these fonts; the token font stacks fall back to system fonts.
@@ -67,9 +60,9 @@ layers ([Fumadocs](/docs/fumadocs#load-the-stylesheets)).
 
 ### Cascade layers
 
-Every Kit and Audio rule sits in a
-[cascade layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer): `contour.kit` and
-`contour.audio`, both inside the `contour` layer. CSS outside any layer wins over layered CSS
+Every Kit rule sits in a
+[cascade layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer): `contour.kit`, inside
+the `contour` layer. CSS outside any layer wins over layered CSS
 whatever its selectors, so your own stylesheet overrides a component without heavier selectors or
 `!important`:
 
@@ -80,8 +73,6 @@ whatever its selectors, so your own stylesheet overrides a component without hea
 }
 ```
 
-- **Audio over Kit.** Where both style the same element, Audio wins. The Audio stylesheet declares
-  `contour.kit` before `contour.audio`, so this holds whichever of the two loads first.
 - **Tokens.** `tokens.css` only defines custom properties on `:root`, outside any layer, so the
   layers do not affect it.
 

@@ -221,7 +221,7 @@ export const BesideAButton: Story = {
       <Button size="lg">Get started</Button>
       <InstallCommand
         {...args}
-        value="pnpm add @contour-ui/audio"
+        value="pnpm add @contour-ui/kit"
         size="lg"
         timeout={1500}
         aria-label="Install"

@@ -142,7 +142,6 @@ export default defineConfig({
           'packages/core/src/react/**',
           'packages/headless-react/**',
           'packages/kit/**',
-          'packages/audio/**',
           'apps/**',
           '**/*.tsx',
           '**/.storybook/**',

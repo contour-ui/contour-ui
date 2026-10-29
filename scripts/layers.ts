@@ -72,13 +72,6 @@ export const LAYERS: readonly LayerPackage[] = [
     react: 'peer',
   },
   {
-    name: 'audio',
-    layer: 3,
-    purpose: 'styled audio components',
-    allowed: ['headless-react', 'tokens', 'icons', 'kit'],
-    react: 'peer',
-  },
-  {
     name: 'fumadocs',
     layer: 4,
     purpose: 'documentation layout for fumadocs-core sites, built from Kit',

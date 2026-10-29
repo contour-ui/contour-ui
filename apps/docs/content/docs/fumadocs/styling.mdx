@@ -13,18 +13,18 @@ reset.
 The stylesheet starts with the order of every cascade layer of contour-ui:
 
 ```css
-@layer contour.fumadocs-base, contour.fumadocs-prose, contour.kit, contour.audio, contour.fumadocs;
+@layer contour.fumadocs-base, contour.fumadocs-prose, contour.kit, contour.fumadocs;
 ```
 
-| Layer                          | Holds                                                  | Ranks                                                    |
-| ------------------------------ | ------------------------------------------------------ | -------------------------------------------------------- |
-| `contour.fumadocs-base`        | the page itself: the background and the text of `body` | lowest                                                   |
-| `contour.fumadocs-prose`       | the typography of the content, `Prose`                 | above the page                                           |
-| `contour.kit`, `contour.audio` | the components of Kit and Audio                        | above Prose: components in the content keep their styles |
-| `contour.fumadocs`             | the MDX components and the layout                      | above Kit: they adjust the Kit parts they are made of    |
+| Layer                    | Holds                                                  | Ranks                                                    |
+| ------------------------ | ------------------------------------------------------ | -------------------------------------------------------- |
+| `contour.fumadocs-base`  | the page itself: the background and the text of `body` | lowest                                                   |
+| `contour.fumadocs-prose` | the typography of the content, `Prose`                 | above the page                                           |
+| `contour.kit`            | the components of Kit                                  | above Prose: components in the content keep their styles |
+| `contour.fumadocs`       | the MDX components and the layout                      | above Kit: they adjust the Kit parts they are made of    |
 
 A layer ranks where it first appears, so this order holds only when the stylesheet loads after the
-tokens and **before** Kit's and Audio's styles ([Load the stylesheets](/docs/fumadocs#load-the-stylesheets)).
+tokens and **before** Kit's styles ([Load the stylesheets](/docs/fumadocs#load-the-stylesheets)).
 
 Every layer sits inside `contour`, so your CSS outside any layer overrides them all, whatever its
 selectors:

@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { Link as RouterLink } from 'react-router';
 
 /** The command of the install box. */
-const INSTALL = 'pnpm add @contour-ui/audio';
+const INSTALL = 'pnpm add @contour-ui/kit';
 
 /** How long the check mark of the install box shows after a copy, in milliseconds. */
 const COPIED_MS = 1500;
