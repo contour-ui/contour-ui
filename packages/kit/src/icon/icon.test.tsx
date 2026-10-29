@@ -90,6 +90,33 @@ describe('Icon', () => {
     expect(getComputedStyle(svg).display).toBe('inline-block');
   });
 
+  test('joins the name of a link as a separate word', async () => {
+    const screen = await render(
+      <a href="https://example.com/">
+        Example
+        <Icon icon={searchIcon} label="opens in a new tab" />
+      </a>,
+    );
+
+    await expect
+      .element(screen.getByRole('link'))
+      .toHaveAccessibleName('Example opens in a new tab');
+  });
+
+  test('is an inline block without the stylesheet, and CSS still wins', async () => {
+    const screen = await render(
+      <>
+        <Icon icon={searchIcon} />
+        <Icon icon={searchIcon} style={{ display: 'none' }} />
+      </>,
+    );
+    const [plain, styled] = screen.container.querySelectorAll('svg');
+
+    // A presentation attribute: the name keeps its spaces where Kit's CSS is not loaded.
+    expect(plain).toHaveAttribute('display', 'inline-block');
+    expect(getComputedStyle(present(styled)).display).toBe('none');
+  });
+
   test('uses the icon stroke width unless one is given', async () => {
     const screen = await render(
       <>

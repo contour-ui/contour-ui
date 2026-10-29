@@ -74,6 +74,15 @@ describe('DocsLayout', () => {
     await expect.element(page.getByRole('button', { name: 'Sections' })).toBeVisible();
   });
 
+  it('names a page on another site with the label of its arrow, as a separate word', async () => {
+    await renderDocs(<Docs />, { pathname: '/docs/kit' });
+    const docs = page.getByRole('navigation', { name: 'Docs' });
+
+    await expect
+      .element(docs.getByRole('link', { name: 'Changelog opens in a new tab', exact: true }))
+      .toHaveAttribute('target', '_blank');
+  });
+
   it('marks the page of a pathname with a trailing slash', async () => {
     await renderDocs(<Docs />, { pathname: '/docs/guide/installation/' });
 

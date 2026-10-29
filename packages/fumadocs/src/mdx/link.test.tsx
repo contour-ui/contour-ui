@@ -48,10 +48,11 @@ describe('MdxLink', () => {
         <MdxLink href="https://fumadocs.dev/">Fumadocs</MdxLink>
       </MemoryFramework>,
     );
-    const link = page.getByRole('link', { name: /^Fumadocs/u });
+    // The label of the arrow joins the name of the link as a separate word, even here, where
+    // Kit's stylesheet is not loaded.
+    const link = page.getByRole('link', { name: 'Fumadocs opens in a new tab', exact: true });
 
-    // The label of the arrow joins the name of the link.
-    await expect.element(link).toHaveAccessibleName(/opens in a new tab$/u);
+    await expect.element(link).toHaveAccessibleName('Fumadocs opens in a new tab');
     await expect.element(link.getByRole('img', { name: 'opens in a new tab' })).toBeVisible();
     await expect.element(link).toHaveAttribute('href', 'https://fumadocs.dev/');
     await expect.element(link).toHaveAttribute('target', '_blank');

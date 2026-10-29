@@ -47,6 +47,11 @@ export function Icon({
   const named = label !== undefined && label !== '';
   const ownProps = {
     viewBox: `0 0 ${icon.size} ${icon.size}`,
+    // An inline-block box even without Kit's CSS, so the label of an icon in a link or a button
+    // joins the name as a separate word ("Fumadocs opens in a new tab"): name computations put a
+    // space around a child whose `display` is not `inline`. A presentation attribute ranks below
+    // every CSS rule, so a stylesheet still sets `display` (`none` included).
+    display: 'inline-block',
     width: size,
     height: size,
     fill: 'none',

@@ -54,11 +54,16 @@ it becomes an image with that name.
 An icon inside a button or a link names nothing: name the button or the link instead, for example
 with `IconButton`'s `label`.
 
+A labeled icon after the text of a link adds its label to the link's name as a separate word:
+`<a>Fumadocs<Icon icon={arrowUpRightIcon} label="opens in a new tab" /></a>` is named "Fumadocs
+opens in a new tab". The `svg` carries `display="inline-block"`, which keeps it a box of its own
+even where Kit's stylesheet is not loaded; any CSS rule overrides it.
+
 ## Anatomy
 
-| Part   | Element | Class          | Attributes                                                                                   |
-| ------ | ------- | -------------- | -------------------------------------------------------------------------------------------- |
-| `Icon` | `svg`   | `contour-icon` | `data-scope="icon" data-part="root"`; `aria-hidden="true"`, or `role="img"` and `aria-label` |
+| Part   | Element | Class          | Attributes                                                                                                          |
+| ------ | ------- | -------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `Icon` | `svg`   | `contour-icon` | `data-scope="icon" data-part="root" display="inline-block"`; `aria-hidden="true"`, or `role="img"` and `aria-label` |
 
 ## Props
 
