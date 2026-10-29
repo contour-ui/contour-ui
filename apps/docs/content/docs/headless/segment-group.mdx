@@ -1,0 +1,166 @@
+---
+title: SegmentGroup
+description: A set of options of which one is checked, on native radio buttons, with an indicator that follows the checked one.
+---
+
+import { SegmentGroup } from '@contour-ui/headless';
+
+<Preview>
+  <SegmentGroup.Root
+    defaultValue="week"
+    style={{ position: 'relative', display: 'inline-flex', gap: '0.25rem' }}
+  >
+    <SegmentGroup.Label style={{ paddingInlineEnd: '0.5rem' }}>Range</SegmentGroup.Label>
+    <SegmentGroup.Indicator
+      style={{
+        position: 'absolute',
+        insetBlockStart: 0,
+        insetInlineStart: 0,
+        translate: 'var(--left) var(--top)',
+        width: 'var(--width)',
+        height: 'var(--height)',
+        borderBlockEnd: '2px solid currentColor',
+        transition: 'translate 150ms, width 150ms',
+      }}
+    />
+    <SegmentGroup.Item value="day" style={{ padding: '0.25rem 0.5rem' }}>
+      <SegmentGroup.ItemText>Day</SegmentGroup.ItemText>
+      <SegmentGroup.ItemHiddenInput />
+    </SegmentGroup.Item>
+    <SegmentGroup.Item value="week" style={{ padding: '0.25rem 0.5rem' }}>
+      <SegmentGroup.ItemText>Week</SegmentGroup.ItemText>
+      <SegmentGroup.ItemHiddenInput />
+    </SegmentGroup.Item>
+    <SegmentGroup.Item value="month" style={{ padding: '0.25rem 0.5rem' }}>
+      <SegmentGroup.ItemText>Month</SegmentGroup.ItemText>
+      <SegmentGroup.ItemHiddenInput />
+    </SegmentGroup.Item>
+  </SegmentGroup.Root>
+</Preview>
+
+```tsx
+import { SegmentGroup } from '@contour-ui/headless';
+
+<SegmentGroup.Root defaultValue="week">
+  <SegmentGroup.Label>Range</SegmentGroup.Label>
+  <SegmentGroup.Indicator />
+  <SegmentGroup.Item value="day">
+    <SegmentGroup.ItemText>Day</SegmentGroup.ItemText>
+    <SegmentGroup.ItemHiddenInput />
+  </SegmentGroup.Item>
+  <SegmentGroup.Item value="week">
+    <SegmentGroup.ItemText>Week</SegmentGroup.ItemText>
+    <SegmentGroup.ItemHiddenInput />
+  </SegmentGroup.Item>
+</SegmentGroup.Root>;
+```
+
+A segment group has radio group semantics: one item at most is checked. Each item is a `label`
+around a native radio button, `SegmentGroup.ItemHiddenInput`, which is out of sight but in the
+accessibility tree. The browser gives the rest: Tab, the arrow keys, a click anywhere on the item,
+and the value in a form. [Kit](/docs/kit/segment-group) styles it as a segmented control.
+
+## The value
+
+`defaultValue` in a group that keeps its value, or `value` and `onValueChange` to keep it
+yourself; `null` checks none. `onValueChange` receives `{ value }` on each check by the user.
+`readOnly` keeps the value as it is, and `disabled` disables every item; `useSegmentGroupContext()`
+gives parts of your own `setValue`, which changes the value whatever these say.
+
+## The indicator
+
+`SegmentGroup.Indicator` follows the checked item. It carries the box of that item as `--left`,
+`--top`, `--width` and `--height`, in pixels, relative to the padding box of the root, and is
+`hidden` while no item is checked. Put it directly in the root, position the root
+(`position: relative`) and the indicator (`position: absolute`), and move it with the values:
+
+```css
+[data-scope='segment-group'][data-part='root'] {
+  position: relative;
+}
+
+[data-scope='segment-group'][data-part='indicator'] {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  translate: var(--left) var(--top);
+  width: var(--width);
+  height: var(--height);
+  transition:
+    translate 150ms,
+    width 150ms;
+}
+
+[data-scope='segment-group'][data-part='item'] {
+  position: relative; /* above the indicator */
+}
+```
+
+When it shows after it was hidden, it shows already in place, so the transition does not run.
+
+## Icon-only items
+
+An item that shows only an icon has no text to name its radio button: give the radio button an
+`aria-label`, and hide the icon from assistive technology.
+
+```tsx
+<SegmentGroup.Root aria-label="Theme" defaultValue="system">
+  <SegmentGroup.Item value="light">
+    <SunIcon aria-hidden />
+    <SegmentGroup.ItemHiddenInput aria-label="Light" />
+  </SegmentGroup.Item>
+  …
+</SegmentGroup.Root>
+```
+
+## Forms
+
+The radio buttons share a `name`: the one you pass, under which a form submits the value, or a
+generated one, which the browser needs to move between them with the arrow keys. `form` names the
+id of a form the group is outside of.
+
+## Anatomy
+
+| Part                           | Element | Attributes                                                                                                                                                                                        |
+| ------------------------------ | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SegmentGroup.Root`            | `div`   | `data-scope="segment-group" data-part="root"`, `role="radiogroup"`, `aria-labelledby`, `aria-orientation`, `aria-disabled`, `aria-readonly`, `data-orientation`, `data-disabled`, `data-readonly` |
+| `SegmentGroup.Label`           | `span`  | `data-part="label"`, `id`                                                                                                                                                                         |
+| `SegmentGroup.Item`            | `label` | `data-part="item"`, `data-value`, `data-state` (`checked`, `unchecked`), `data-disabled`, `data-focus`, `data-focus-visible`                                                                      |
+| `SegmentGroup.ItemText`        | `span`  | `data-part="item-text"`, the state of the item                                                                                                                                                    |
+| `SegmentGroup.ItemControl`     | `span`  | `data-part="item-control"`, `aria-hidden="true"`, the state of the item                                                                                                                           |
+| `SegmentGroup.ItemHiddenInput` | `input` | `data-part="item-hidden-input"`, `type="radio"`, `name`, `value`, `checked`, `disabled`, `form`, a visually hidden `style`                                                                        |
+| `SegmentGroup.Indicator`       | `div`   | `data-part="indicator"`, `aria-hidden="true"`, `hidden`; `--left`, `--top`, `--width`, `--height`                                                                                                 |
+
+Every part carries `data-scope="segment-group"` and `data-orientation`. The state attributes are
+present, and empty, while the state holds. Give the label an `id` of your own, and the root
+follows it. `useSegmentGroup()` returns the same props as `get*Props()` functions, to build the
+parts from your own elements; `useSegmentGroupItemContext()` gives parts inside an item its state.
+
+## Props
+
+`SegmentGroup.Root`:
+
+| Prop            | Type                                           | Default         |
+| --------------- | ---------------------------------------------- | --------------- |
+| `value`         | `string \| null`: the checked item             | —               |
+| `defaultValue`  | `string \| null`                               | `null`          |
+| `onValueChange` | `(details: { value: string \| null }) => void` | —               |
+| `name`          | `string`: the name of the radio buttons        | a generated one |
+| `form`          | `string`: the id of their form                 | —               |
+| `disabled`      | `boolean`                                      | `false`         |
+| `readOnly`      | `boolean`                                      | `false`         |
+| `orientation`   | `'horizontal'`, `'vertical'`                   | `'horizontal'`  |
+
+`SegmentGroup.Item` takes `value` (required) and `disabled`. Every part takes `asChild` and the
+props of its element, such as `className`, `style` and `ref`.
+
+## Keyboard
+
+| Key     | Action                                                                  |
+| ------- | ----------------------------------------------------------------------- |
+| `Tab`   | Moves focus to the checked item, or the first one, and out of the group |
+| `→` `↓` | Checks the next enabled item, wrapping around                           |
+| `←` `↑` | Checks the previous enabled item, wrapping around                       |
+| `Space` | Checks the focused item                                                 |
+
+The arrow keys of both axes move the check in either orientation, as with native radio buttons.

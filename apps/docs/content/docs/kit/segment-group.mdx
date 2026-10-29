@@ -1,0 +1,211 @@
+---
+title: SegmentGroup
+description: A row of mutually exclusive options on a track, the checked one raised, for a view switch or a theme picker.
+---
+
+import { monitorIcon, moonIcon, sunIcon } from '@contour-ui/icons';
+import { Icon, SegmentGroup } from '@contour-ui/kit';
+
+<Preview>
+  <SegmentGroup.Root defaultValue="week" aria-label="Range">
+    <SegmentGroup.Indicator />
+    <SegmentGroup.Item value="day">
+      <SegmentGroup.ItemText>Day</SegmentGroup.ItemText>
+      <SegmentGroup.ItemHiddenInput />
+    </SegmentGroup.Item>
+    <SegmentGroup.Item value="week">
+      <SegmentGroup.ItemText>Week</SegmentGroup.ItemText>
+      <SegmentGroup.ItemHiddenInput />
+    </SegmentGroup.Item>
+    <SegmentGroup.Item value="month">
+      <SegmentGroup.ItemText>Month</SegmentGroup.ItemText>
+      <SegmentGroup.ItemHiddenInput />
+    </SegmentGroup.Item>
+  </SegmentGroup.Root>
+</Preview>
+
+```tsx
+import { SegmentGroup } from '@contour-ui/kit';
+
+<SegmentGroup.Root defaultValue="week" aria-label="Range">
+  <SegmentGroup.Indicator />
+  <SegmentGroup.Item value="day">
+    <SegmentGroup.ItemText>Day</SegmentGroup.ItemText>
+    <SegmentGroup.ItemHiddenInput />
+  </SegmentGroup.Item>
+  <SegmentGroup.Item value="week">
+    <SegmentGroup.ItemText>Week</SegmentGroup.ItemText>
+    <SegmentGroup.ItemHiddenInput />
+  </SegmentGroup.Item>
+  <SegmentGroup.Item value="month">
+    <SegmentGroup.ItemText>Month</SegmentGroup.ItemText>
+    <SegmentGroup.ItemHiddenInput />
+  </SegmentGroup.Item>
+</SegmentGroup.Root>;
+```
+
+SegmentGroup is a set of options of which one is checked, as a group of radio buttons drawn as one
+control. It is the [Headless SegmentGroup](/docs/headless/segment-group) with the look of Kit: the
+options sit on an inset track, and the indicator, a raised surface with a border and a shadow,
+slides under the checked one. The checked text takes the default color and the others are muted,
+but the raised surface marks the choice without relying on color.
+
+Every item holds a native radio button (`SegmentGroup.ItemHiddenInput`), out of sight: it takes
+the focus and the keys, and a form submits its value. Put the indicator first in the root.
+
+## The value
+
+The value is the value of the checked item, or `null` when none is: `defaultValue` in a group
+that keeps it, or `value` and `onValueChange` to keep it yourself. `onValueChange` receives
+`{ value }`.
+
+```tsx
+const [range, setRange] = useState<string | null>('week');
+
+<SegmentGroup.Root value={range} onValueChange={(details) => setRange(details.value)}>
+  …
+</SegmentGroup.Root>;
+```
+
+## Icons
+
+An item with an `Icon` and no `ItemText` is square. It has no text to name its radio button, so
+give the radio button an `aria-label`, as in this theme picker:
+
+<Preview>
+  <SegmentGroup.Root defaultValue="system" aria-label="Theme">
+    <SegmentGroup.Indicator />
+    <SegmentGroup.Item value="light">
+      <Icon icon={sunIcon} />
+      <SegmentGroup.ItemHiddenInput aria-label="Light" />
+    </SegmentGroup.Item>
+    <SegmentGroup.Item value="dark">
+      <Icon icon={moonIcon} />
+      <SegmentGroup.ItemHiddenInput aria-label="Dark" />
+    </SegmentGroup.Item>
+    <SegmentGroup.Item value="system">
+      <Icon icon={monitorIcon} />
+      <SegmentGroup.ItemHiddenInput aria-label="System" />
+    </SegmentGroup.Item>
+  </SegmentGroup.Root>
+</Preview>
+
+```tsx
+import { monitorIcon, moonIcon, sunIcon } from '@contour-ui/icons';
+import { Icon, SegmentGroup } from '@contour-ui/kit';
+
+<SegmentGroup.Root defaultValue="system" aria-label="Theme">
+  <SegmentGroup.Indicator />
+  <SegmentGroup.Item value="light">
+    <Icon icon={sunIcon} />
+    <SegmentGroup.ItemHiddenInput aria-label="Light" />
+  </SegmentGroup.Item>
+  …
+</SegmentGroup.Root>;
+```
+
+An icon next to a text takes the same `Icon`; the item then keeps its padding.
+
+## Sizes
+
+`size` is `sm`, `md` (the default) or `lg`: the height of the control tokens, as for
+[Button](/docs/kit/button). In `lg`, the labels are larger and the sides wider.
+
+<Preview>
+  {
+    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}>
+      {['sm', 'md', 'lg'].map((size) => (
+        <SegmentGroup.Root key={size} size={size} defaultValue="dark" aria-label={`Theme ${size}`}>
+          <SegmentGroup.Indicator />
+          <SegmentGroup.Item value="light">
+            <Icon icon={sunIcon} />
+            <SegmentGroup.ItemHiddenInput aria-label="Light" />
+          </SegmentGroup.Item>
+          <SegmentGroup.Item value="dark">
+            <Icon icon={moonIcon} />
+            <SegmentGroup.ItemHiddenInput aria-label="Dark" />
+          </SegmentGroup.Item>
+        </SegmentGroup.Root>
+      ))}
+    </div>
+  }
+</Preview>
+
+## Label, states and forms
+
+- `SegmentGroup.Label` names the group with a muted caption at the start of the track. Without
+  it, give the root an `aria-label`.
+- `disabled` on the root disables every item; `disabled` on an item disables that one. Disabled
+  items take the disabled text color and are skipped by the keys.
+- `readOnly` shows the value, and the items still take focus, but a click or a key does not
+  change it.
+- `name` is the name a form submits the value under; `form` the id of a form the group is outside
+  of.
+- `orientation="vertical"` stacks the items.
+
+## Anatomy
+
+| Part                           | Element | Class                                      | Attributes                                                                                                                                                                   |
+| ------------------------------ | ------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SegmentGroup.Root`            | `div`   | `contour-segment-group`                    | `data-scope="segment-group" data-part="root"`, `role="radiogroup"`, `aria-labelledby`, `aria-orientation`, `data-size`, `data-orientation`, `data-disabled`, `data-readonly` |
+| `SegmentGroup.Label`           | `span`  | `contour-segment-group__label`             | `data-part="label"`, `id`                                                                                                                                                    |
+| `SegmentGroup.Indicator`       | `div`   | `contour-segment-group__indicator`         | `data-part="indicator"`, `aria-hidden="true"`, `hidden` while no item is checked; `--left`, `--top`, `--width`, `--height`                                                   |
+| `SegmentGroup.Item`            | `label` | `contour-segment-group__item`              | `data-part="item"`, `data-value`, `data-state` (`checked`, `unchecked`), `data-disabled`, `data-focus`, `data-focus-visible`                                                 |
+| `SegmentGroup.ItemText`        | `span`  | `contour-segment-group__item-text`         | `data-part="item-text"`, the state of the item                                                                                                                               |
+| `SegmentGroup.ItemControl`     | `span`  | `contour-segment-group__item-control`      | `data-part="item-control"`, `aria-hidden="true"`, the state of the item                                                                                                      |
+| `SegmentGroup.ItemHiddenInput` | `input` | `contour-segment-group__item-hidden-input` | `data-part="item-hidden-input"`, `type="radio"`, `name`, `value`, `checked`, `disabled`, `form`, visually hidden                                                             |
+
+`ItemControl` is a slot for a mark of your own next to the text; Kit gives it no look.
+
+## Props
+
+`SegmentGroup.Root`:
+
+| Prop            | Type                                           | Default         |
+| --------------- | ---------------------------------------------- | --------------- |
+| `value`         | `string \| null`: the checked item             | —               |
+| `defaultValue`  | `string \| null`                               | `null`          |
+| `onValueChange` | `(details: { value: string \| null }) => void` | —               |
+| `name`          | `string`: the name of the radio buttons        | a generated one |
+| `form`          | `string`: the id of their form                 | —               |
+| `disabled`      | `boolean`                                      | `false`         |
+| `readOnly`      | `boolean`                                      | `false`         |
+| `orientation`   | `'horizontal'`, `'vertical'`                   | `'horizontal'`  |
+| `size`          | `'sm'`, `'md'`, `'lg'`                         | `'md'`          |
+
+`SegmentGroup.Item` takes `value` (required) and `disabled`. Every part takes `asChild` and the
+props of its element; `className` is merged with the part's class.
+
+## Keyboard
+
+The keys are those of native radio buttons:
+
+| Key     | Action                                                                  |
+| ------- | ----------------------------------------------------------------------- |
+| `Tab`   | Moves focus to the checked item, or the first one, and out of the group |
+| `→` `↓` | Checks the next enabled item, wrapping around                           |
+| `←` `↑` | Checks the previous enabled item, wrapping around                       |
+| `Space` | Checks the focused item                                                 |
+
+## Accessibility
+
+- The root is a `radiogroup`, named by `SegmentGroup.Label` or `aria-label`; each item is a
+  native radio button, so screen readers announce "2 of 3, checked".
+- An item named only by an icon needs `aria-label` on its `ItemHiddenInput`; icons are hidden from
+  assistive technology.
+- A keyboard focus shows a ring inside the item (`data-focus-visible`); a click does not.
+
+## Tokens
+
+| Token                                                                                                            | Used for                                   |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `--ct-size-control-sm`, `--ct-size-control-md`, `--ct-size-control-lg`                                           | the height of the track                    |
+| `--ct-color-bg-inset`, `--ct-color-border-default`, `--ct-border-width-default`                                  | the track                                  |
+| `--ct-color-bg-raised`, `--ct-color-border-strong`, `--ct-shadow-raised`                                         | the indicator                              |
+| `--ct-radius-control`                                                                                            | the corners of the track, items, indicator |
+| `--ct-color-fg-default`, `--ct-color-fg-muted`, `--ct-color-fg-disabled`                                         | checked, unchecked and disabled items      |
+| `--ct-text-label`, `--ct-text-label-lg`                                                                          | the labels                                 |
+| `--ct-space-control-inset`, `--ct-space-control-inset-lg`, `--ct-space-control-gap`, `--ct-space-control-gap-lg` | the padding and gaps of the items          |
+| `--ct-size-icon-sm`, `--ct-size-icon-md`                                                                         | icons (`md` in `lg`)                       |
+| `--ct-color-border-focus`, `--ct-border-width-focus`                                                             | the focus ring                             |
+| `--ct-motion-feedback`                                                                                           | the slide of the indicator                 |
