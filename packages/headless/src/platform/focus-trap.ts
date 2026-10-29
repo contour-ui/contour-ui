@@ -1,5 +1,10 @@
 import { containsComposed, eventTarget, getActiveElement } from './dom.ts';
-import { isInLayerAbove, reserveOrder } from './layer-stack.ts';
+import {
+  getLayerOrder,
+  isInClosedLayerAbove,
+  isInLayerAbove,
+  reserveOrder,
+} from './layer-stack.ts';
 import { getFirstTabbable, getTabbables, isFocusable } from './tabbable.ts';
 import type { FocusableElement } from './tabbable.ts';
 import { resolveElement, whenRendered } from './when-rendered.ts';
@@ -19,7 +24,9 @@ export interface MoveFocusInOptions {
 export interface ReturnFocusOptions {
   /**
    * The overlay that focus leaves. Focus still inside it, or nowhere, goes back; focus on any
-   * other element stays there. Without it, only focus that is nowhere goes back.
+   * other element stays there. When it is the element of a layer (see `trackLayer`), focus inside
+   * a layer opened above it that has closed too counts as inside: a popover portalled out of a
+   * dialog that closed with it. Without it, only focus that is nowhere goes back.
    */
   readonly from?: ElementSource<Element> | undefined;
 }
@@ -113,11 +120,24 @@ export function moveFocusIn(
 }
 
 /**
+ * Whether `active` leaves with `from`: it is inside it, or inside a layer opened above it that
+ * has closed too, as a nested layer does with its parent (see `onParentClose`).
+ */
+function isLeaving(from: Element, active: Element): boolean {
+  if (containsComposed(from, active)) {
+    return true;
+  }
+  const order = getLayerOrder(from);
+  return order !== undefined && isInClosedLayerAbove(order, active);
+}
+
+/**
  * Move focus back to `target` (as a rule, the trigger) on the next frame, unless it has moved on
- * by then: focus still inside `from`, or nowhere, goes back; focus on another element stays,
- * such as a field the user pressed outside a popover, which closed it. The frame lets that
- * press finish moving focus first. Nothing happens when `target` cannot take focus then (it is
- * gone, or still inert). The page does not scroll. Returns the function that cancels it.
+ * by then: focus still inside `from` (or a layer above it that closed with it), or nowhere, goes
+ * back; focus on another element stays, such as a field the user pressed outside a popover,
+ * which closed it. The frame lets that press finish moving focus first. Nothing happens when
+ * `target` cannot take focus then (it is gone, or still inert). The page does not scroll.
+ * Returns the function that cancels it.
  *
  * `target` may be a getter: it is read on that frame.
  *
@@ -137,7 +157,7 @@ export function returnFocus(
     }
     const active = getActiveElement(element.ownerDocument);
     const from = resolveElement(options.from);
-    if (active === null || (from !== null && containsComposed(from, active))) {
+    if (active === null || (from !== null && isLeaving(from, active))) {
       element.focus({ preventScroll: true });
     }
   });

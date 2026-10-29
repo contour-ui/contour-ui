@@ -1,4 +1,10 @@
-import { containsComposed, eventTarget, getActiveElement, isPresent } from './dom.ts';
+import {
+  composedParent,
+  containsComposed,
+  eventTarget,
+  getActiveElement,
+  isPresent,
+} from './dom.ts';
 import { isFocusable } from './tabbable.ts';
 import { whenRendered } from './when-rendered.ts';
 import type { ElementSource } from './when-rendered.ts';
@@ -83,6 +89,12 @@ interface PendingTouch {
 
 /** Every open layer, in opening order: the top-most one is the last. */
 const layers: Layer[] = [];
+/**
+ * The place in the opening order of every element that has been the element of a layer, the
+ * latest one for an element that came back. A closed layer keeps it: its element may stay in the
+ * DOM a while, as it animates out, and hold focus.
+ */
+const layerOrders = new WeakMap<Element, number>();
 const subscribers = new Set<() => void>();
 /** The documents with layers, and how many layers each has. */
 const listening = new Map<Document, { count: number; readonly remove: () => void }>();
@@ -116,6 +128,32 @@ export function getLayersAbove(order: number): HTMLElement[] {
 /** Whether `node` is inside a rendered layer opened after `order` (see {@link getLayersAbove}). */
 export function isInLayerAbove(order: number, node: Node | null): boolean {
   return getLayersAbove(order).some((element) => containsComposed(element, node));
+}
+
+/**
+ * The place in the opening order of the layer whose element is `element`, open or closed;
+ * `undefined` for an element that has never been one.
+ */
+export function getLayerOrder(element: Element): number | undefined {
+  return layerOrders.get(element);
+}
+
+/**
+ * Whether `node` is inside the element of a layer opened after `order` that has closed since,
+ * such as a popover portalled out of a dialog that closed with the dialog and is still in the
+ * DOM while it animates out. A layer above that is still open does not count.
+ */
+export function isInClosedLayerAbove(order: number, node: Node | null): boolean {
+  const open = new Set<Element | null>(layers.map((layer) => layer.element));
+  for (let current = node; current !== null; current = composedParent(current)) {
+    if (current instanceof Element && !open.has(current)) {
+      const closed = layerOrders.get(current);
+      if (closed !== undefined && closed > order) {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 /**
@@ -359,6 +397,7 @@ export function trackLayer(element: ElementSource, options: LayerOptions = {}): 
   layers.push(layer);
   const stop = whenRendered(element, 'layer', (rendered) => {
     layer.element = rendered;
+    layerOrders.set(rendered, layer.order);
     const stopListening = listenTo(rendered.ownerDocument);
     changed();
     return stopListening;

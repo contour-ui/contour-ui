@@ -389,6 +389,45 @@ describe('returnFocus', () => {
     expect(focusedId()).toBe('first');
   });
 
+  it('moves focus back from a layer above `from` that closed with it', async () => {
+    mountDialog();
+    // Portalled out of the dialog, opened from its first button.
+    mount('<div id="popover"><button id="in-popover">In the popover</button></div>');
+    const stopDialog = cleanups.add(trackLayer(() => byId('dialog')));
+    const stopPopover = cleanups.add(
+      trackLayer(() => byId('popover'), {
+        exclude: () => [byId('first')],
+        onParentClose: () => {
+          stopPopover();
+        },
+      }),
+    );
+    await nextFrame();
+    byId('in-popover').focus();
+
+    // The dialog closes, and the popover with it, in the same commit; both stay in the DOM while
+    // they animate out, the popover holding focus.
+    stopDialog();
+    cleanups.add(returnFocus(byId('trigger'), { from: () => byId('dialog') }));
+    await nextFrame();
+    expect(focusedId()).toBe('trigger');
+  });
+
+  it('leaves focus in a layer above `from` that is still open', async () => {
+    mountDialog();
+    mount('<div id="popover"><button id="in-popover">In the popover</button></div>');
+    const stopDialog = cleanups.add(trackLayer(() => byId('dialog')));
+    cleanups.add(trackLayer(() => byId('popover')));
+    await nextFrame();
+    byId('in-popover').focus();
+
+    // Opened from elsewhere, so not nested: it stays open, and focus stays in it.
+    stopDialog();
+    cleanups.add(returnFocus(byId('trigger'), { from: () => byId('dialog') }));
+    await nextFrame();
+    expect(focusedId()).toBe('in-popover');
+  });
+
   it('does nothing when the target cannot take focus', async () => {
     mountDialog();
     byId('first').focus();

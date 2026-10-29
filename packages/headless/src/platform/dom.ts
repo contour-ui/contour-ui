@@ -17,7 +17,7 @@ export function getActiveElement(doc: Document): Element | null {
  * The parent of a node across shadow boundaries: the host of a shadow root, the parent node
  * otherwise.
  */
-function composedParent(node: Node): Node | null {
+export function composedParent(node: Node): Node | null {
   return node instanceof ShadowRoot ? node.host : node.parentNode;
 }
 
