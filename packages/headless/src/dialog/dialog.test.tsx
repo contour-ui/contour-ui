@@ -409,6 +409,43 @@ describe('Dialog', () => {
     await expect.element(screen.getByRole('button', { name: 'After' })).toHaveFocus();
   });
 
+  it('scrolls a body inside the content to the element it focuses as it opens, not the page', async () => {
+    const screen = await render(
+      <>
+        <Settings
+          initialFocusEl={() => document.querySelector<HTMLElement>('#option-49')}
+          extra={
+            <div data-testid="body" style={{ maxBlockSize: 120, overflowY: 'auto' }}>
+              {Array.from({ length: 50 }, (_, index) => (
+                <button
+                  key={index}
+                  id={`option-${index}`}
+                  type="button"
+                  style={{ display: 'block' }}
+                >
+                  Option {index}
+                </button>
+              ))}
+            </div>
+          }
+        />
+        {/* Scrolling every ancestor would scroll the page too. */}
+        <div style={{ height: 3000 }} />
+      </>,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Open settings' }));
+    const last = screen.getByRole('button', { name: 'Option 49' });
+    await expect.element(last).toHaveFocus();
+
+    const body = screen.getByTestId('body').element();
+    expect(body.scrollTop).toBeGreaterThan(0);
+    const box = body.getBoundingClientRect();
+    const rect = last.element().getBoundingClientRect();
+    expect(rect.top).toBeGreaterThanOrEqual(box.top);
+    expect(rect.bottom).toBeLessThanOrEqual(box.bottom);
+    expect(window.scrollY).toBe(0);
+  });
+
   it('leaves focus where it is on close with restoreFocus off', async () => {
     const screen = await render(<Settings restoreFocus={false} />);
     await openSettings(screen);

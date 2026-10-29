@@ -312,6 +312,30 @@ describe('Dialog', () => {
     );
   });
 
+  it('scrolls the body to the element it focuses as it opens, below the fold', async () => {
+    const options = Array.from({ length: 80 }, (_, index) => (
+      <Button key={index} id={`option-${index}`} style={{ display: 'flex' }}>
+        {`Option ${index}`}
+      </Button>
+    ));
+    const screen = await render(
+      <Export
+        body={options}
+        initialFocusEl={() => document.querySelector<HTMLElement>('#option-79')}
+      />,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Export' }).first());
+    const last = screen.getByRole('button', { name: 'Option 79' });
+    await expect.element(last).toHaveFocus();
+    // Measured while the content still grows in; the scroll holds once it is at rest.
+    finishAnimations(part('content'));
+
+    const body = part('body').getBoundingClientRect();
+    const rect = last.element().getBoundingClientRect();
+    expect(rect.top).toBeGreaterThanOrEqual(body.top);
+    expect(rect.bottom).toBeLessThanOrEqual(body.bottom);
+  });
+
   it('grows in and fades out, and only fades when the user prefers reduced motion', async () => {
     const screen = await render(<Export />);
     await open(screen);

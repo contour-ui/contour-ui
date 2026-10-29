@@ -158,7 +158,8 @@ dialog focuses its first close trigger, and a press on the scrim does not close 
 ## Scrolling
 
 The dialog is never taller than the viewport: a long `Dialog.Body` scrolls, from edge to edge of
-the dialog, while the header and the footer stay in view. A body that holds only text takes no
+the dialog, while the header and the footer stay in view. It opens scrolled to the element focus
+moves to, such as `initialFocusEl()` below the fold. A body that holds only text takes no
 focus by itself, so give it `tabIndex={0}`: keyboard users can then focus it and scroll it with
 the arrow keys.
 

@@ -5,6 +5,7 @@ import {
   isInLayerAbove,
   reserveOrder,
 } from './layer-stack.ts';
+import { revealIn } from './scroll.ts';
 import { getFirstTabbable, getTabbables, isFocusable } from './tabbable.ts';
 import type { FocusableElement } from './tabbable.ts';
 import { resolveElement, whenRendered } from './when-rendered.ts';
@@ -18,6 +19,15 @@ export interface MoveFocusInOptions {
    * or to the container itself.
    */
   readonly initialFocus?: (() => Element | null | undefined) | undefined;
+  /**
+   * Once focus has moved, scroll the element it went to into view inside a scroll container of
+   * the container (see `revealIn`), never the page: for content that has its size as it renders,
+   * such as a dialog with a scrolling body. A popover has it only with its first position, and
+   * reveals focus then.
+   *
+   * @defaultValue false
+   */
+  readonly reveal?: boolean | undefined;
 }
 
 /** Options of {@link returnFocus}. */
@@ -76,30 +86,29 @@ function canFocus(element: Element | null | undefined): element is FocusableElem
 
 /**
  * Focus `container` the way a dialog that opens does: `initialFocus()`, focus already inside,
- * the first tabbable element, then the container itself. No scrolling: content that opens may
- * not be in place in its first frame.
+ * the first tabbable element, then the container itself. The page does not scroll: content that
+ * opens may not be in place in its first frame. With `reveal`, a scroll container inside it does.
  */
-function focusInitial(
-  container: HTMLElement,
-  initialFocus: MoveFocusInOptions['initialFocus'],
-): void {
-  const preferred = initialFocus?.();
+function focusInitial(container: HTMLElement, options: MoveFocusInOptions): void {
+  const preferred = options.initialFocus?.();
   if (canFocus(preferred)) {
     preferred.focus({ preventScroll: true });
-    return;
+  } else if (!containsComposed(container, getActiveElement(container.ownerDocument))) {
+    const first = getFirstTabbable(container) ?? container;
+    first.focus({ preventScroll: true });
   }
-  if (containsComposed(container, getActiveElement(container.ownerDocument))) {
-    return;
+  const active = getActiveElement(container.ownerDocument);
+  if (options.reveal === true && active !== null && active !== container) {
+    revealIn(container, active);
   }
-  const first = getFirstTabbable(container) ?? container;
-  first.focus({ preventScroll: true });
 }
 
 /**
  * Move focus into `container` once it is rendered (see `whenRendered`): to `initialFocus()`,
  * else the first tabbable element, else the container itself, which then needs
  * `tabIndex={-1}`. Focus already inside the container, such as on a field React focused for
- * `autoFocus`, stays there unless `initialFocus` names an element. The page does not scroll.
+ * `autoFocus`, stays there unless `initialFocus` names an element. The page does not scroll;
+ * with `reveal`, a scroll container inside the container shows the focused element.
  * Returns the function that cancels it before it happens.
  *
  * For a popover that is not modal, which moves focus in without trapping it.
@@ -114,7 +123,7 @@ export function moveFocusIn(
   options: MoveFocusInOptions = {},
 ): () => void {
   return whenRendered(container, 'focus', (rendered) => {
-    focusInitial(rendered, options.initialFocus);
+    focusInitial(rendered, options);
     return () => undefined;
   });
 }
@@ -298,7 +307,7 @@ export function trapFocus(container: ElementSource, options: FocusTrapOptions = 
     traps.sort((a, b) => a.order - b.order);
     syncTraps();
     if (autoFocus) {
-      focusInitial(rendered, options.initialFocus);
+      focusInitial(rendered, options);
     }
     return () => {
       traps.splice(traps.indexOf(trap), 1);

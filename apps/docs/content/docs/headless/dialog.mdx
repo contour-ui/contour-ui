@@ -128,6 +128,9 @@ When the dialog opens, focus moves into it, on the next frame:
 4. else to the first element that Tab reaches, or else to the content itself, which has
    `tabindex="-1"`.
 
+The page does not scroll as focus moves in. When the focused element sits in a container inside
+the content that scrolls, such as a long body, that container scrolls it into view.
+
 When it closes, with `restoreFocus` (on by default), focus goes back to `finalFocusEl()`, or the
 element that had focus when it opened, or the trigger. Focus that moved on to something outside
 the dialog, such as a field pressed outside a non-modal one, stays there.

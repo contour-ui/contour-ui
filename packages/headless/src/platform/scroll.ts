@@ -1,3 +1,5 @@
+import { containsComposed } from './dom.ts';
+
 /** A length of computed style in pixels, such as `'8px'`; `0` for `auto` and other keywords. */
 export function computedPixels(value: string): number {
   return value.endsWith('px') ? Number(value.slice(0, -2)) : 0;
@@ -150,4 +152,20 @@ export function scrollIntoContainer(
     options.left = scroller.scrollLeft + across;
   }
   scroller.scrollTo(options);
+}
+
+/**
+ * Scroll `element` into view (see {@link scrollIntoContainer}) in the scroll container nearest to
+ * it, when `content` holds that container: never the page, nor anything around the content, such
+ * as the parents of an overlay rendered in place. For the element focus moved to, without
+ * scrolling, as an overlay opened, once the overlay has its size.
+ *
+ * @example
+ * revealIn(dialogContent, document.activeElement); // the field below the fold of a dialog body
+ */
+export function revealIn(content: Element, element: Element): void {
+  const container = scrollContainerOf(element);
+  if (container !== null && containsComposed(content, container)) {
+    scrollIntoContainer(element, { container });
+  }
 }

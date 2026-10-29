@@ -246,6 +246,49 @@ describe('Drawer', () => {
     await expect.poll(() => part('content').hidden).toBe(true);
   });
 
+  it('scrolls the body to the element it focuses as it opens, below the fold', async () => {
+    const screen = await render(
+      <Drawer.Root initialFocusEl={() => document.querySelector<HTMLElement>('#link-79')}>
+        <Drawer.Trigger asChild>
+          <Button variant="ghost">Menu</Button>
+        </Drawer.Trigger>
+        <Portal>
+          <Drawer.Backdrop />
+          <Drawer.Positioner>
+            <Drawer.Content>
+              <Drawer.CloseTrigger />
+              <Drawer.Header>
+                <Drawer.Title>Menu</Drawer.Title>
+              </Drawer.Header>
+              <Drawer.Body>
+                {Array.from({ length: 80 }, (_, index) => (
+                  <a
+                    key={index}
+                    id={`link-${index}`}
+                    href={`#page-${index}`}
+                    style={{ display: 'block' }}
+                  >
+                    {`Page ${index}`}
+                  </a>
+                ))}
+              </Drawer.Body>
+            </Drawer.Content>
+          </Drawer.Positioner>
+        </Portal>
+      </Drawer.Root>,
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Menu' }));
+    const last = screen.getByRole('link', { name: 'Page 79' });
+    await expect.element(last).toHaveFocus();
+    // Measured while the content still slides in; the scroll holds once it is at rest.
+    restingContent();
+
+    const body = part('body').getBoundingClientRect();
+    const rect = last.element().getBoundingClientRect();
+    expect(rect.top).toBeGreaterThanOrEqual(body.top);
+    expect(rect.bottom).toBeLessThanOrEqual(body.bottom);
+  });
+
   it('slides in from its edge, and only fades when the user prefers reduced motion', async () => {
     const screen = await render(<Navigation />);
     await userEvent.click(screen.getByRole('button', { name: 'Menu' }));

@@ -170,7 +170,8 @@ function firstFocusable(
  *   `ESCAPE` and `INTERACT_OUTSIDE`; the triggers count as inside, and the positioner and the
  *   backdrop get `--layer-index`.
  * - `trapFocus`: moves focus in once the content is rendered, if the dialog has just opened,
- *   and traps it there while `trapFocus` is set.
+ *   scrolling it into view inside the content (never the page), and traps it there while
+ *   `trapFocus` is set.
  * - `preventScroll`: `lockScroll` while `preventScroll` is set. `hideOutside`: everything but
  *   the content and the backdrop inert while `modal` is set.
  * - `setInitialFocus` remembers where focus was and leaves the move to the `trapFocus` effect,
@@ -249,6 +250,9 @@ function createDomPlatform(initial: DialogDomOptions): DialogDomPlatform {
             moveFocusIn(getContent, {
               initialFocus: () =>
                 options.initialFocusEl?.() ?? (alert ? firstInDocument(closeTriggers) : null),
+              // The content has its size once rendered: a field below the fold of a scrolling
+              // body comes into view, though the page does not move.
+              reveal: true,
             }),
           );
         }

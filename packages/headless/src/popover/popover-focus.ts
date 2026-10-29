@@ -1,6 +1,6 @@
 import { containsComposed, getActiveElement } from '../platform/dom.ts';
 import { moveFocusIn, returnFocus, trapFocus } from '../platform/focus-trap.ts';
-import { scrollContainerOf, scrollIntoContainer } from '../platform/scroll.ts';
+import { revealIn } from '../platform/scroll.ts';
 import {
   getFirstTabbable,
   getLastTabbable,
@@ -100,10 +100,7 @@ export function createPopoverFocus(elements: PopoverFocusElements): PopoverFocus
       }
       // Only a container inside the content scrolls: never the page, nor the parents of a
       // popover rendered in place.
-      const container = scrollContainerOf(active);
-      if (container !== null && containsComposed(content, container)) {
-        scrollIntoContainer(active, { container });
-      }
+      revealIn(content, active);
     },
     close: (restoreFocus, finalFocus) => {
       const before = focusedBefore;
