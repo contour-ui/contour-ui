@@ -81,6 +81,26 @@ export type {
   UsePopoverProps,
   UsePopoverReturn,
 } from './popover/use-popover.ts';
+export * as SegmentGroup from './segment-group/index.ts';
+export {
+  useSegmentGroupContext,
+  useSegmentGroupItemContext,
+} from './segment-group/segment-group-context.ts';
+export type { SegmentGroupItemContextValue } from './segment-group/segment-group-context.ts';
+export { useSegmentGroup } from './segment-group/use-segment-group.ts';
+export type {
+  SegmentGroupIndicatorAttributes,
+  SegmentGroupItemAttributes,
+  SegmentGroupItemControlAttributes,
+  SegmentGroupItemDataState,
+  SegmentGroupItemHiddenInputAttributes,
+  SegmentGroupItemStateAttributes,
+  SegmentGroupLabelAttributes,
+  SegmentGroupPartAttributes,
+  SegmentGroupRootAttributes,
+  UseSegmentGroupProps,
+  UseSegmentGroupReturn,
+} from './segment-group/use-segment-group.ts';
 export * as Tabs from './tabs/index.ts';
 export { useTabsContext } from './tabs/tabs-context.ts';
 export { useTabs } from './tabs/use-tabs.ts';
