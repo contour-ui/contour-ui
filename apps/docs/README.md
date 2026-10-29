@@ -30,6 +30,9 @@ vp -C apps/docs run e2e     # build, then the end-to-end and axe tests
   shows the 404 page on a static host) and renders it in `DocsLayout` and `DocsPage`, the MDX in
   `Prose` with `getMdxComponents(mdxPlaceholderComponents)`; `home.tsx` and `not-found.tsx` use
   `HomeLayout`; `routes/search.ts` prerenders the search index at `/api/search`.
+- The home page (`app/components/home/`) is built from Kit and the tokens only: the hero, a
+  sequencer whose tracks are the parts of contour-ui and whose clips are their components (Kit's
+  `Placeholder` for those that do not ship yet), the docs index and the footer.
 - Live examples import contour-ui components at the top of the page
   (`import { Button } from '@contour-ui/kit';`) and render them inside `<Preview>`, the frame for
   live examples; imports resolve to package sources (`@contour-ui/source` condition), so the dev

@@ -1,0 +1,220 @@
+/*
+ * The sequencer of the home page: a framed panel of rows, each a header column and a lane on the
+ * timeline of eight bars, the first row the ruler. Clips sit in the columns of their lane, and
+ * the playhead runs over every lane at the fraction of the loop in `--docs-playhead`, which the
+ * page writes on the grid. Below the width of its content, the panel scrolls sideways.
+ */
+.docs-tracks {
+  --docs-tracks-head: 12.5rem;
+}
+
+.docs-tracks__frame {
+  overflow-x: auto;
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-surface);
+}
+
+.docs-tracks__grid {
+  position: relative;
+  min-inline-size: 66.25rem;
+}
+
+.docs-tracks__row {
+  display: grid;
+  grid-template-columns: var(--docs-tracks-head) minmax(0, 1fr);
+}
+
+.docs-tracks__row + .docs-tracks__row {
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-default);
+}
+
+/* The name of a track at the top of its header, the link to its docs at the bottom. */
+.docs-tracks__head {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--ct-space-group-gap);
+  box-sizing: border-box;
+  padding: var(--ct-space-panel-inset) var(--ct-space-section-gap);
+  border-inline-end: var(--ct-border-width-default) solid var(--ct-color-border-default);
+}
+
+/* The ruler's header: the play button and the position, on one line. */
+.docs-tracks__ruler > .docs-tracks__head {
+  flex-direction: row;
+  align-items: center;
+  padding: var(--ct-space-control-inset) var(--ct-space-group-gap);
+}
+
+.docs-tracks__position {
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-value);
+  letter-spacing: var(--ct-text-value-letter-spacing);
+}
+
+.docs-tracks__bars {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-caption);
+  font-family: var(--ct-text-value-font-family);
+  letter-spacing: var(--ct-text-caption-letter-spacing);
+}
+
+.docs-tracks__bars > span {
+  padding: var(--ct-space-group-gap) 0 0 var(--ct-space-control-inset);
+  border-inline-start: var(--ct-border-width-default) solid var(--ct-color-border-default);
+}
+
+.docs-tracks__about {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+}
+
+.docs-tracks__name {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-heading);
+  letter-spacing: var(--ct-text-heading-letter-spacing);
+}
+
+.docs-tracks__package {
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-value);
+  letter-spacing: var(--ct-text-value-letter-spacing);
+}
+
+.docs-tracks__description {
+  margin: var(--ct-space-control-inset) 0 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.docs-tracks__browse {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--ct-space-control-gap);
+  font: var(--ct-text-label-lg);
+  letter-spacing: var(--ct-text-label-lg-letter-spacing);
+}
+
+.docs-tracks__browse > .contour-icon {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+/* A faint line at the start of every bar behind the clips. */
+.docs-tracks__lane {
+  display: grid;
+  padding-block: var(--ct-space-group-gap);
+  background-image: linear-gradient(
+    90deg,
+    var(--ct-color-border-subtle) var(--ct-border-width-default),
+    transparent var(--ct-border-width-default)
+  );
+  background-size: calc(100% / 8) 100%;
+}
+
+.docs-clip {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-surface);
+  transition: border-color var(--ct-motion-feedback);
+}
+
+/* The clip the playhead is crossing. */
+.docs-clip[data-active] {
+  border-color: var(--ct-color-fg-default);
+}
+
+/* Headless has no styles: a dashed frame, solid while the playhead crosses it. */
+.docs-clip[data-track='headless'] {
+  border-style: dashed;
+}
+
+.docs-clip[data-track='headless'][data-active] {
+  border-style: solid;
+}
+
+.docs-clip__header {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  block-size: var(--ct-size-control-md);
+  padding-inline: var(--ct-space-panel-inset);
+  border-block-end: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+/* The color of the Audio track. */
+.docs-clip[data-track='audio'] > .docs-clip__header {
+  border-block-end-color: transparent;
+  background: var(--ct-color-accent-bg);
+  color: var(--ct-color-accent-fg);
+}
+
+.docs-clip__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: center;
+  min-block-size: 0;
+  padding: var(--ct-space-group-gap) var(--ct-space-panel-inset) var(--ct-space-panel-inset);
+}
+
+/* A component that does not ship yet fills its clip. */
+.docs-clip__placeholder {
+  display: grid;
+  flex: 1 1 auto;
+  place-items: center;
+  min-block-size: calc(2 * var(--ct-size-control-lg));
+}
+
+.docs-clip__stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-group-gap);
+}
+
+.docs-clip__row {
+  display: flex;
+  gap: var(--ct-space-control-inset);
+}
+
+.docs-clip__detail {
+  padding-block-start: var(--ct-space-group-gap);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-value);
+  letter-spacing: var(--ct-text-value-letter-spacing);
+}
+
+/* A line over every lane, with a head at the top, from the start of the timeline. */
+.docs-tracks__playhead {
+  position: absolute;
+  inset-block: 0;
+  left: calc(var(--docs-tracks-head) + (100% - var(--docs-tracks-head)) * var(--docs-playhead, 0));
+  z-index: 1;
+  inline-size: 0;
+  border-inline-start: var(--ct-border-width-focus) solid var(--ct-color-fg-default);
+  pointer-events: none;
+}
+
+.docs-tracks__playhead::before {
+  position: absolute;
+  inset-block-start: 0;
+  left: calc(-1 * var(--ct-space-control-inset) - var(--ct-border-width-focus) / 2);
+  border-block-start: var(--ct-space-group-gap) solid var(--ct-color-fg-default);
+  border-inline: var(--ct-space-control-inset) solid transparent;
+  content: '';
+}

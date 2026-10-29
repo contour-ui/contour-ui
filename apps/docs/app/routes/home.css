@@ -1,64 +1,161 @@
 /*
- * The home page: the hero, then the cards of the packages, centered in the free space. One
- * column of cards on phones, two from 40rem, all as high as the highest.
+ * The home page: the hero, the sequencer (`home-tracks.css`), the docs index and the foot of the
+ * page, in a column as wide as the header's content allows. Every color, type style, radius,
+ * border and space is a token of contour-ui; the larger gaps of the page are multiples of the
+ * section gap.
  */
 .docs-home {
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
-  justify-content: center;
-  gap: 2.5rem;
   box-sizing: border-box;
   inline-size: 100%;
-  max-inline-size: 52rem;
+  max-inline-size: 80rem;
   margin-inline: auto;
-  padding: 4rem var(--contour-docs-page-inset);
+  padding-inline: var(--contour-docs-page-inset);
 }
 
+/* The title on the left, the lead on the right, as high as each other; they wrap when narrow. */
 .docs-home__hero {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--ct-space-group-gap);
-  text-align: center;
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: calc(1.5 * var(--ct-space-section-gap)) calc(4 * var(--ct-space-section-gap));
+  padding-block: calc(3 * var(--ct-space-section-gap)) calc(2.5 * var(--ct-space-section-gap));
 }
 
 .docs-home__title {
+  flex: 1 1 35rem;
+  min-inline-size: 0;
   margin: 0;
   color: var(--ct-color-fg-default);
   font: var(--ct-text-display);
   letter-spacing: var(--ct-text-display-letter-spacing);
 }
 
-/* The section gap below it sets the button apart from the text. */
+/* The description at the top, the actions at the bottom. */
+.docs-home__lead {
+  display: flex;
+  flex: 0 1 28.75rem;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--ct-space-section-gap);
+  min-inline-size: 0;
+}
+
 .docs-home__description {
-  margin: 0 0 var(--ct-space-section-gap);
+  margin: 0;
   color: var(--ct-color-fg-muted);
   font: var(--ct-text-prose);
   letter-spacing: var(--ct-text-prose-letter-spacing);
 }
 
-.docs-home__packages {
+/* The way into the guide and the install command, on one row while it fits. */
+.docs-home__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+}
+
+.docs-home__install {
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  margin: 0;
+}
+
+/* The prompt is no part of the command, which the copy button copies from the root's value. */
+.docs-home__prompt {
+  color: var(--ct-color-fg-muted);
+  user-select: none;
+}
+
+/* A column per part of the docs, as many on a row as fit. */
+.docs-home__index {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--ct-space-section-gap);
+  grid-template-columns: repeat(auto-fit, minmax(14.375rem, 1fr));
+  gap: calc(2 * var(--ct-space-section-gap)) calc(2.25 * var(--ct-space-section-gap));
+  margin-block-start: calc(4 * var(--ct-space-section-gap));
+  padding-block: calc(2.25 * var(--ct-space-section-gap)) calc(3 * var(--ct-space-section-gap));
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-default);
+}
+
+.docs-home__column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-panel-inset);
+}
+
+.docs-home__column-head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-gap);
+}
+
+.docs-home__column-title {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-subtitle);
+  letter-spacing: var(--ct-text-subtitle-letter-spacing);
+}
+
+.docs-home__column-subtitle {
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.docs-home__entries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ct-space-control-inset);
   margin: 0;
   padding: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-prose);
+  letter-spacing: var(--ct-text-prose-letter-spacing);
   list-style: none;
 }
 
-/* The card fills its cell, so the cards of a row are as high as each other. */
-.docs-home__packages > li {
+/* A part that does not ship yet, with its tag at the end of the line. */
+.docs-home__entry {
   display: flex;
-  flex-direction: column;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ct-space-group-gap);
 }
 
-.docs-home__packages > li > * {
-  flex: 1 1 auto;
+.docs-home__tag {
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-caption);
+  font-family: var(--ct-text-value-font-family);
+  letter-spacing: var(--ct-text-caption-letter-spacing);
 }
 
-@media (min-width: 40rem) {
-  .docs-home__packages {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+/* The divider spans the page; the content keeps to the column of the page. */
+.docs-home__footer {
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-default);
+}
+
+.docs-home__footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ct-space-panel-inset);
+  box-sizing: border-box;
+  max-inline-size: 80rem;
+  margin-inline: auto;
+  padding: calc(1.25 * var(--ct-space-section-gap)) var(--contour-docs-page-inset);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.docs-home__status {
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-value);
+  letter-spacing: var(--ct-text-value-letter-spacing);
 }

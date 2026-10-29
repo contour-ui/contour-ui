@@ -2,26 +2,39 @@ import { expect, openPage, reloadPage, test } from './fixtures.ts';
 
 test.use({ viewport: { width: 1280, height: 800 } });
 
-test('the home page leads to the guide and to each package', async ({ page }) => {
+test('the home page leads to the guide and to each part of contour-ui', async ({ page }) => {
   await openPage(page, '/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('contour-ui');
-  const packages = [
-    ['Kit', '/docs/kit'],
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'A design system for audio interfaces',
+  );
+  const parts = [
     ['Audio', '/docs/audio'],
+    ['Kit', '/docs/kit'],
     ['Headless', '/docs/headless'],
   ] as const;
   await Promise.all(
-    packages.map(([name, href]) =>
-      expect(page.getByRole('link', { name: new RegExp(`^${name}`, 'u') })).toHaveAttribute(
-        'href',
-        href,
-      ),
+    parts.map(([name, href]) =>
+      expect(page.getByRole('link', { name: `Browse ${name}` })).toHaveAttribute('href', href),
     ),
   );
 
-  await page.getByRole('link', { name: 'How it works' }).click();
+  await page.getByRole('link', { name: 'Get started' }).click();
   await expect(page).toHaveURL('/docs/guide');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('How contour-ui works');
+});
+
+test('the playhead of the home page waits for a reader who prefers reduced motion', async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await openPage(page, '/');
+  const tracks = page.getByRole('region', { name: 'What contour-ui is made of' });
+  const position = tracks.getByText(/^\d{3}\.\d$/u);
+  await expect(position).toHaveText('001.3');
+
+  await tracks.getByRole('button', { name: 'Play' }).click();
+  await expect(tracks.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await expect(position).not.toHaveText('001.3');
 });
 
 test('the skip link is the first Tab stop and moves on to the content', async ({ page }) => {

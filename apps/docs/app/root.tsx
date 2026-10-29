@@ -23,10 +23,14 @@ import '@contour-ui/kit/styles.css';
 import '@contour-ui/audio/styles.css';
 import './app.css';
 
-/** The site: the brand in the headers and the sidebar, the way into the docs, the repository. */
+/** The site: the brand in the headers and the sidebar, the ways into the docs, the repository. */
 const SITE: DocsSite = {
   name: 'contour-ui',
-  nav: [{ label: 'Docs', href: '/docs' }],
+  nav: [
+    { label: 'Docs', href: '/docs' },
+    { label: 'Kit', href: '/docs/kit' },
+    { label: 'Audio', href: '/docs/audio' },
+  ],
   links: [{ label: 'GitHub', href: 'https://github.com/contour-ui/contour-ui', icon: githubIcon }],
 };
 

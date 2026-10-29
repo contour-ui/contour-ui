@@ -1,67 +1,28 @@
 import { HomeLayout } from '@contour-ui/fumadocs';
-import { Button, Card } from '@contour-ui/kit';
 import type { ReactElement } from 'react';
-import { Link as RouterLink } from 'react-router';
 
-/** The name of the site, the title of the home page. */
-const TITLE = 'contour-ui';
-
-/** What contour-ui is, in one line: the tagline of the home page and its description. */
-const DESCRIPTION = 'Design system for audio-plugin UIs and general web UI.';
-
-/** The shipped packages; each has its own docs section. */
-const PACKAGES = [
-  { title: 'Kit', href: '/docs/kit', description: 'Styled general-purpose components.' },
-  {
-    title: 'Audio',
-    href: '/docs/audio',
-    description: 'Styled controls for audio-plugin UIs, built on Kit.',
-  },
-  {
-    title: 'Headless',
-    href: '/docs/headless',
-    description: 'Unstyled components for your own look.',
-  },
-  {
-    title: 'Fumadocs',
-    href: '/docs/fumadocs',
-    description: 'A documentation layout for Fumadocs sites, built from Kit.',
-  },
-] as const;
+import { HomeFooter } from '../components/home/home-footer.tsx';
+import { HOME_DESCRIPTION, HomeHero } from '../components/home/home-hero.tsx';
+import { HomeIndex } from '../components/home/home-index.tsx';
+import { HomeTracks } from '../components/home/home-tracks.tsx';
 
 export function meta(): Array<Record<string, string>> {
-  return [{ title: TITLE }, { name: 'description', content: DESCRIPTION }];
+  return [{ title: 'contour-ui' }, { name: 'description', content: HOME_DESCRIPTION }];
 }
 
-/** The home page (`home.css`): what contour-ui is, the way into the guide, and a card per package. */
+/**
+ * The home page (`home.css`, `home-tracks.css`), built from Kit and the tokens only: the hero,
+ * the sequencer of the parts of contour-ui, the docs index and the foot of the page.
+ */
 export default function Home(): ReactElement {
   return (
     <HomeLayout>
       <div className="docs-home">
-        <div className="docs-home__hero">
-          <h1 className="docs-home__title">{TITLE}</h1>
-          <p className="docs-home__description">{DESCRIPTION}</p>
-          <Button asChild size="lg">
-            <RouterLink to="/docs/guide">How it works</RouterLink>
-          </Button>
-        </div>
-        <ul className="docs-home__packages">
-          {PACKAGES.map(({ title, href, description }) => (
-            <li key={href}>
-              <Card.Root asChild size="lg">
-                <RouterLink to={href}>
-                  <Card.Body>
-                    <Card.Title asChild>
-                      <h2>{title}</h2>
-                    </Card.Title>
-                    <Card.Description>{description}</Card.Description>
-                  </Card.Body>
-                </RouterLink>
-              </Card.Root>
-            </li>
-          ))}
-        </ul>
+        <HomeHero />
+        <HomeTracks />
+        <HomeIndex />
       </div>
+      <HomeFooter />
     </HomeLayout>
   );
 }

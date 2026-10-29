@@ -4,4 +4,5 @@
  * (`@contour-ui/fumadocs/styles.css` sets their order).
  */
 @import './routes/home.css';
+@import './components/home/home-tracks.css';
 @import './routes/not-found.css';
