@@ -15,7 +15,7 @@
     },
     "font-size": {
       "$type": "dimension",
-      "$description": "Plugin UI text is 10-14 px; long-form reading and page headings start at 15 px.",
+      "$description": "Plugin UI text is 10-14 px; long-form reading, page headings and site pages start at 15 px.",
       "10": { "$value": { "value": 10, "unit": "px" } },
       "11": { "$value": { "value": 11, "unit": "px" } },
       "12": { "$value": { "value": 12, "unit": "px" } },
@@ -26,16 +26,21 @@
       "18": { "$value": { "value": 18, "unit": "px" } },
       "20": { "$value": { "value": 20, "unit": "px" } },
       "24": { "$value": { "value": 24, "unit": "px" } },
-      "30": { "$value": { "value": 30, "unit": "px" } }
+      "30": { "$value": { "value": 30, "unit": "px" } },
+      "60": { "$value": { "value": 60, "unit": "px" } }
     },
     "line-height": {
       "$type": "number",
-      "tight":  { "$value": 1.2 },
-      "normal": { "$value": 1.4 },
-      "loose":  { "$value": 1.6 }
+      "$description": "Multiples of the font size; tighter is for display type such as hero titles.",
+      "tighter": { "$value": 1.05 },
+      "tight":   { "$value": 1.2 },
+      "normal":  { "$value": 1.4 },
+      "loose":   { "$value": 1.6 }
     },
     "letter-spacing": {
       "$type": "dimension",
+      "$description": "tight closes up display type such as hero titles; wide opens up small labels.",
+      "tight":  { "$value": { "value": -1, "unit": "px" } },
       "normal": { "$value": { "value": 0, "unit": "px" } },
       "wide":   { "$value": { "value": 0.5, "unit": "px" } }
     }

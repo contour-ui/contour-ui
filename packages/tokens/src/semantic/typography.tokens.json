@@ -109,6 +109,36 @@
         "lineHeight": "{base.line-height.normal}",
         "letterSpacing": "{base.letter-spacing.normal}"
       }
+    },
+    "hero": {
+      "$description": "Hero title of a site page such as a home page (h1): larger than display, with tighter lines and letter spacing.",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.60}",
+        "fontWeight": "{base.font-weight.semibold}",
+        "lineHeight": "{base.line-height.tighter}",
+        "letterSpacing": "{base.letter-spacing.tight}"
+      }
+    },
+    "lead": {
+      "$description": "Lead paragraph under a hero title.",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.16}",
+        "fontWeight": "{base.font-weight.regular}",
+        "lineHeight": "{base.line-height.loose}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
+    },
+    "nav": {
+      "$description": "Navigation links in a site header.",
+      "$value": {
+        "fontFamily": "{base.font-family.ui}",
+        "fontSize": "{base.font-size.15}",
+        "fontWeight": "{base.font-weight.medium}",
+        "lineHeight": "{base.line-height.tight}",
+        "letterSpacing": "{base.letter-spacing.normal}"
+      }
     }
   }
 }

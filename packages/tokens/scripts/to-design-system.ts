@@ -233,6 +233,15 @@ const tokens = {
         family: 'mono',
         styles: [textStyle('code', "import { vars } from '@contour-ui/tokens';")],
       },
+      {
+        name: 'Site',
+        family: 'ui',
+        styles: [
+          textStyle('hero', 'A design system for audio interfaces'),
+          textStyle('lead', 'Tokens, headless logic and components.'),
+          textStyle('nav', 'Docs'),
+        ],
+      },
     ],
   },
   spacing: {

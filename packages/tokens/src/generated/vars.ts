@@ -153,6 +153,33 @@ export const vars = {
       lineHeight: 'var(--ct-text-code-line-height)',
       letterSpacing: 'var(--ct-text-code-letter-spacing)',
     },
+    /** Hero title of a site page such as a home page (h1): larger than display, with tighter lines and letter spacing. */
+    hero: {
+      font: 'var(--ct-text-hero)',
+      fontFamily: 'var(--ct-text-hero-font-family)',
+      fontSize: 'var(--ct-text-hero-font-size)',
+      fontWeight: 'var(--ct-text-hero-font-weight)',
+      lineHeight: 'var(--ct-text-hero-line-height)',
+      letterSpacing: 'var(--ct-text-hero-letter-spacing)',
+    },
+    /** Lead paragraph under a hero title. */
+    lead: {
+      font: 'var(--ct-text-lead)',
+      fontFamily: 'var(--ct-text-lead-font-family)',
+      fontSize: 'var(--ct-text-lead-font-size)',
+      fontWeight: 'var(--ct-text-lead-font-weight)',
+      lineHeight: 'var(--ct-text-lead-line-height)',
+      letterSpacing: 'var(--ct-text-lead-letter-spacing)',
+    },
+    /** Navigation links in a site header. */
+    nav: {
+      font: 'var(--ct-text-nav)',
+      fontFamily: 'var(--ct-text-nav-font-family)',
+      fontSize: 'var(--ct-text-nav-font-size)',
+      fontWeight: 'var(--ct-text-nav-font-weight)',
+      lineHeight: 'var(--ct-text-nav-line-height)',
+      letterSpacing: 'var(--ct-text-nav-letter-spacing)',
+    },
   },
   motion: {
     /** Hover, press, toggle state. Never used for value changes driven by drag or automation — those render immediately. */

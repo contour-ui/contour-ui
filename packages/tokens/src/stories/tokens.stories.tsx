@@ -158,12 +158,13 @@ export const Typography: Story = {
       columns={[
         {
           title: 'Sample',
+          // Samples may wrap: the large styles (hero) then show their line height, and the
+          // other columns keep their room.
           render: (doc) => (
             <span
               style={{
                 font: `var(${doc.name})`,
                 letterSpacing: `var(${partOf(doc.token, 'letterSpacing')?.name ?? ''})`,
-                whiteSpace: 'nowrap',
               }}
             >
               Gain −6.0 dB 1.20 kHz

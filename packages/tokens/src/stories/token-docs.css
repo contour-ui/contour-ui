@@ -80,6 +80,7 @@
 
 .token-parts dt {
   color: var(--ct-color-fg-muted);
+  white-space: nowrap;
 }
 
 .token-parts dd {

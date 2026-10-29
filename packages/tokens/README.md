@@ -40,7 +40,9 @@ vars.color.bg.surface; // 'var(--ct-color-bg-surface)'
 - **Typography:** each text style is `--ct-text-<style>` (`font` shorthand) plus
   `--ct-text-<style>-font-family | -font-size | -font-weight | -line-height | -letter-spacing`.
   The dense plugin styles (`heading`, `body`, `label`, `label-lg`, `value`, `caption`) have
-  long-form companions for docs pages: `display`, `title`, `subtitle` (h1–h3), `prose` and `code`.
+  long-form companions for docs pages: `display`, `title`, `subtitle` (h1–h3), `prose` and `code`;
+  site pages such as a home page add `hero` (the 60 px title), `lead` (the paragraph under it) and
+  `nav` (the links of the site header).
 - **Control sizes:** `--ct-size-control-sm | -md | -lg` are the heights of controls. `sm` and `md`
   share the label (`--ct-text-label`), the side padding (`--ct-space-control-inset`) and the gap
   between icon and label (`--ct-space-control-gap`); `lg` has its own: `--ct-text-label-lg`,
