@@ -1,0 +1,290 @@
+/*
+ * Tabs. Every part carries the `data-variant` and `data-size` of the root, and the
+ * `data-orientation` of the tabs, so a nested Tabs never takes the look of its parent.
+ *
+ * The mark of the selected trigger (the bar of `line`, the box of `enclosed` and `subtle`) is not
+ * color alone. The trigger draws it itself; once a `Tabs.Indicator` in the list is measured and
+ * shown (Headless places it by `--left`, `--top`, `--width` and `--height`, in the padding box of
+ * the list), the indicator draws it instead and slides between the triggers.
+ */
+.contour-tabs {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  color: var(--ct-color-fg-default);
+}
+
+.contour-tabs[data-orientation='vertical'] {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ct-space-group-gap);
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-tabs[hidden] {
+  display: none;
+}
+
+/* List */
+
+.contour-tabs__list {
+  /* The containing block of the indicator. */
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  min-inline-size: 0;
+  /* Triggers that do not fit scroll, and the indicator scrolls with them. */
+  overflow: auto hidden;
+}
+
+.contour-tabs__list[data-orientation='vertical'] {
+  flex-direction: column;
+  flex-shrink: 0;
+  overflow: hidden auto;
+}
+
+.contour-tabs__list[hidden] {
+  display: none;
+}
+
+/* The rule under the triggers, inside the padding box so the bar can cover it. */
+.contour-tabs__list[data-variant='line'] {
+  box-shadow: inset 0 calc(-1 * var(--ct-border-width-default)) 0 var(--ct-color-border-default);
+}
+
+.contour-tabs__list[data-variant='line'][data-orientation='vertical'] {
+  box-shadow: inset calc(-1 * var(--ct-border-width-default)) 0 0 var(--ct-color-border-default);
+}
+
+.contour-tabs__list[data-variant='line'][data-orientation='vertical']:dir(rtl) {
+  box-shadow: inset var(--ct-border-width-default) 0 0 var(--ct-color-border-default);
+}
+
+/* A sunken strip: the selected trigger is raised out of it. */
+.contour-tabs__list[data-variant='enclosed'] {
+  gap: var(--ct-space-control-gap);
+  padding: var(--ct-space-control-gap);
+  /*
+   * In the dark theme `bg-inset` equals the canvas, so the border is the strip's edge there, as
+   * on a code block.
+   */
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-inset);
+}
+
+.contour-tabs__list[data-variant='subtle'] {
+  gap: var(--ct-space-control-gap);
+}
+
+/* Trigger */
+
+.contour-tabs__trigger {
+  /* Above the indicator, and the box of its own mark. */
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ct-space-control-gap);
+  block-size: var(--ct-size-control-md);
+  margin: 0;
+  padding-block: 0;
+  padding-inline: var(--ct-space-control-inset);
+  /* Transparent unless selected in `enclosed`: every trigger has the same size. */
+  border: var(--ct-border-width-default) solid transparent;
+  border-radius: var(--ct-radius-control);
+  background-color: transparent;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  text-align: center;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  appearance: none;
+  transition:
+    background-color var(--ct-motion-feedback),
+    border-color var(--ct-motion-feedback),
+    color var(--ct-motion-feedback);
+}
+
+.contour-tabs__trigger[hidden] {
+  display: none;
+}
+
+.contour-tabs__trigger[data-orientation='vertical'] {
+  justify-content: flex-start;
+  text-align: start;
+}
+
+.contour-tabs__trigger[data-size='sm'] {
+  block-size: var(--ct-size-control-sm);
+}
+
+/* A larger label, inset and icon gap to suit the height; `sm` and `md` share the base ones. */
+.contour-tabs__trigger[data-size='lg'] {
+  block-size: var(--ct-size-control-lg);
+  gap: var(--ct-space-control-gap-lg);
+  padding-inline: var(--ct-space-control-inset-lg);
+  font: var(--ct-text-label-lg);
+  letter-spacing: var(--ct-text-label-lg-letter-spacing);
+}
+
+/* Icons next to the label. CSS sizes win over the `<svg>` width and height attributes. */
+.contour-tabs__trigger > .contour-icon {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+.contour-tabs__trigger[data-size='lg'] > .contour-icon {
+  inline-size: var(--ct-size-icon-md);
+  block-size: var(--ct-size-icon-md);
+}
+
+.contour-tabs__trigger[data-selected] {
+  color: var(--ct-color-fg-default);
+}
+
+/* Touch screens would keep the hover look after a tap. */
+@media (hover: hover) {
+  .contour-tabs__trigger:not([data-disabled], [data-selected]):hover {
+    color: var(--ct-color-fg-default);
+  }
+}
+
+/* Inside the trigger: the list clips what goes past its edges. */
+.contour-tabs__trigger:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: calc(-1 * var(--ct-border-width-focus));
+}
+
+.contour-tabs__trigger[data-disabled] {
+  color: var(--ct-color-fg-disabled);
+  cursor: not-allowed;
+}
+
+/* The mark of the selected trigger, by variant. */
+
+.contour-tabs__trigger[data-variant='line'][data-selected]::after {
+  position: absolute;
+  inset-inline: 0;
+  /* Over the rule of the list, past the transparent border. */
+  inset-block-end: calc(-1 * var(--ct-border-width-default));
+  block-size: var(--ct-border-width-focus);
+  border-radius: var(--ct-radius-round);
+  background: var(--ct-color-accent-fill);
+  content: '';
+}
+
+.contour-tabs__trigger[data-variant='line'][data-orientation='vertical'][data-selected]::after {
+  inset-block: 0;
+  inset-inline: auto calc(-1 * var(--ct-border-width-default));
+  inline-size: var(--ct-border-width-focus);
+  block-size: auto;
+}
+
+.contour-tabs__trigger[data-variant='enclosed'][data-selected] {
+  border-color: var(--ct-color-border-default);
+  background-color: var(--ct-color-bg-raised);
+}
+
+.contour-tabs__trigger[data-variant='subtle'][data-selected] {
+  background-color: var(--ct-color-bg-hover);
+}
+
+/* A shown indicator draws the mark: the triggers leave theirs. */
+.contour-tabs__list:has(> .contour-tabs__indicator:not([hidden]))
+  > .contour-tabs__trigger[data-selected] {
+  border-color: transparent;
+  background-color: transparent;
+}
+
+.contour-tabs__list:has(> .contour-tabs__indicator:not([hidden]))
+  > .contour-tabs__trigger[data-selected]::after {
+  display: none;
+}
+
+/* Indicator: placed by physical offsets, as Headless measures them. */
+
+.contour-tabs__indicator {
+  position: absolute;
+  inset-block-start: 0;
+  left: 0;
+  box-sizing: border-box;
+  inline-size: var(--width);
+  block-size: var(--height);
+  translate: var(--left) var(--top);
+  pointer-events: none;
+  transition:
+    translate var(--ct-motion-enter),
+    inline-size var(--ct-motion-enter),
+    block-size var(--ct-motion-enter);
+}
+
+.contour-tabs__indicator[hidden] {
+  display: none;
+}
+
+.contour-tabs__indicator[data-variant='line'] {
+  inset-block: auto 0;
+  block-size: var(--ct-border-width-focus);
+  translate: var(--left) 0;
+  border-radius: var(--ct-radius-round);
+  background: var(--ct-color-accent-fill);
+}
+
+.contour-tabs__indicator[data-variant='line'][data-orientation='vertical'] {
+  inset-block: 0 auto;
+  left: auto;
+  right: 0;
+  inline-size: var(--ct-border-width-focus);
+  block-size: var(--height);
+  translate: 0 var(--top);
+}
+
+.contour-tabs__indicator[data-variant='line'][data-orientation='vertical']:dir(rtl) {
+  left: 0;
+  right: auto;
+}
+
+.contour-tabs__indicator[data-variant='enclosed'] {
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-bg-raised);
+}
+
+.contour-tabs__indicator[data-variant='subtle'] {
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-bg-hover);
+}
+
+/* Content */
+
+.contour-tabs__content {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  padding-block-start: var(--ct-space-group-gap);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.contour-tabs__content[data-orientation='vertical'] {
+  flex: 1;
+  padding-block-start: 0;
+}
+
+.contour-tabs__content:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+  border-radius: var(--ct-radius-control);
+}
+
+/* No slide: the indicator jumps to the selected trigger. */
+@media (prefers-reduced-motion: reduce) {
+  .contour-tabs__indicator {
+    transition: none;
+  }
+}

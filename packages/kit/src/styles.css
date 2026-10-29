@@ -24,4 +24,5 @@
 @import './placeholder/placeholder.css' layer(contour.kit);
 @import './popover/popover.css' layer(contour.kit);
 @import './table/table.css' layer(contour.kit);
+@import './tabs/tabs.css' layer(contour.kit);
 @import './toc/toc.css' layer(contour.kit);
