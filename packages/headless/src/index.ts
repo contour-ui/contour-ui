@@ -14,6 +14,19 @@ export * as Clipboard from './clipboard/index.ts';
 export { useClipboardContext } from './clipboard/clipboard-context.ts';
 export { useClipboard } from './clipboard/use-clipboard.ts';
 export type { UseClipboardProps, UseClipboardReturn } from './clipboard/use-clipboard.ts';
+export * as Collapsible from './collapsible/index.ts';
+export { useCollapsibleContext } from './collapsible/collapsible-context.ts';
+export type { CollapsibleContextValue } from './collapsible/collapsible-context.ts';
+export { useCollapsible } from './collapsible/use-collapsible.ts';
+export type {
+  CollapsibleContentAttributes,
+  CollapsibleDataState,
+  CollapsibleIndicatorAttributes,
+  CollapsiblePartAttributes,
+  CollapsibleTriggerAttributes,
+  UseCollapsibleProps,
+  UseCollapsibleReturn,
+} from './collapsible/use-collapsible.ts';
 export * as Dialog from './dialog/index.ts';
 export { useDialogContext } from './dialog/dialog-context.ts';
 export type { DialogContextValue } from './dialog/dialog-context.ts';
