@@ -1,6 +1,6 @@
 'use client';
 
-import { Tabs as Headless } from '@contour-ui/headless';
+import { Tabs as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';
@@ -25,7 +25,7 @@ export interface TabsRootProps extends Headless.RootProps {
 }
 
 /**
- * Tabs root: runs the tabs of `@contour-ui/headless` and gives every part its `variant` and
+ * Tabs root: runs the tabs of `@contour-ui/headless-react` and gives every part its `variant` and
  * `size`, as `data-variant` and `data-size`. A vertical root (`orientation="vertical"`) puts the
  * list beside the contents.
  *

@@ -1,4 +1,4 @@
-import { mergeProps } from '@contour-ui/headless';
+import { mergeProps } from '@contour-ui/headless-react';
 import type { IconData } from '@contour-ui/icons';
 import { cloneElement, isValidElement } from 'react';
 import type { ReactElement, ReactNode } from 'react';

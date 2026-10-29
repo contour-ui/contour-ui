@@ -1,7 +1,7 @@
 'use client';
 
-import { mergeProps, useClipboard } from '@contour-ui/headless';
-import type { UseClipboardProps } from '@contour-ui/headless';
+import { mergeProps, useClipboard } from '@contour-ui/headless-react';
+import type { UseClipboardProps } from '@contour-ui/headless-react';
 import { checkIcon, copyIcon } from '@contour-ui/icons';
 import { use } from 'react';
 import type { MouseEvent, ReactElement } from 'react';
@@ -47,7 +47,7 @@ export interface CodeBlockCopyTriggerProps extends Omit<
 
 /**
  * A small ghost icon button that copies the code, on the clipboard of
- * `@contour-ui/headless`. Its copy icon turns into a check mark once the browser
+ * `@contour-ui/headless-react`. Its copy icon turns into a check mark once the browser
  * has written the code, and a visually hidden `role="status"` element next to
  * it announces the copy; the button keeps its name meanwhile.
  *

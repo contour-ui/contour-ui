@@ -383,20 +383,20 @@ describe('Clipboard label, control and value text', () => {
   it('shows its children in place of the value, or renders its child with asChild', async () => {
     acceptingClipboard();
     const screen = await render(
-      <Clipboard.Root value="pnpm add @contour-ui/headless">
+      <Clipboard.Root value="pnpm add @contour-ui/headless-react">
         <Clipboard.ValueText>
-          pnpm add <b>@contour-ui/headless</b>
+          pnpm add <b>@contour-ui/headless-react</b>
         </Clipboard.ValueText>
         <Clipboard.ValueText asChild>
-          <code>pnpm add @contour-ui/headless</code>
+          <code>pnpm add @contour-ui/headless-react</code>
         </Clipboard.ValueText>
       </Clipboard.Root>,
     );
     const [marked, code] = screen.container.querySelectorAll('[data-part="value-text"]');
 
-    expect(marked?.querySelector('b')).toHaveTextContent('@contour-ui/headless');
+    expect(marked?.querySelector('b')).toHaveTextContent('@contour-ui/headless-react');
     expect(code?.tagName).toBe('CODE');
-    expect(code?.textContent).toBe('pnpm add @contour-ui/headless');
+    expect(code?.textContent).toBe('pnpm add @contour-ui/headless-react');
   });
 
   it('gives the label, the control and the value text the copied state', async () => {

@@ -4,7 +4,7 @@ description: Shows and hides an element with the state of its owner, and keeps i
 ---
 
 ```tsx
-import { Presence } from '@contour-ui/headless';
+import { Presence } from '@contour-ui/headless-react';
 
 <Presence present={open} className="details">
   Ships in two days.
@@ -135,7 +135,7 @@ returns:
 The part renders `data-state` from its own state, and combines the ref with its own:
 
 ```tsx
-import { mergeProps, Primitive, useComposedRefs, usePresence } from '@contour-ui/headless';
+import { mergeProps, Primitive, useComposedRefs, usePresence } from '@contour-ui/headless-react';
 
 function Panel({ open, ref, ...props }: PanelProps) {
   const presence = usePresence({ present: open, unmountOnExit: true });

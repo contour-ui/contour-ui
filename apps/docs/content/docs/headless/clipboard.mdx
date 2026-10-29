@@ -3,10 +3,10 @@ title: Clipboard
 description: A value to copy with its label, a button that copies it, an indicator of the copied state, and an announcement for screen readers.
 ---
 
-import { Clipboard } from '@contour-ui/headless';
+import { Clipboard } from '@contour-ui/headless-react';
 
 <Preview>
-  <Clipboard.Root value="pnpm add @contour-ui/headless">
+  <Clipboard.Root value="pnpm add @contour-ui/headless-react">
     <Clipboard.Label>Install</Clipboard.Label>
     <Clipboard.Control
       style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}
@@ -19,9 +19,9 @@ import { Clipboard } from '@contour-ui/headless';
 </Preview>
 
 ```tsx
-import { Clipboard } from '@contour-ui/headless';
+import { Clipboard } from '@contour-ui/headless-react';
 
-<Clipboard.Root value="pnpm add @contour-ui/headless">
+<Clipboard.Root value="pnpm add @contour-ui/headless-react">
   <Clipboard.Label>Install</Clipboard.Label>
   <Clipboard.Control>
     <Clipboard.ValueText />
@@ -52,7 +52,7 @@ starts over once that write is done.
 
   ```tsx
   <Clipboard.ValueText asChild>
-    <code>pnpm add @contour-ui/headless</code>
+    <code>pnpm add @contour-ui/headless-react</code>
   </Clipboard.ValueText>
   ```
 
@@ -96,7 +96,7 @@ from your state, and the trigger copies the current one:
 ```tsx
 const [manager, setManager] = useState('pnpm');
 
-<Clipboard.Root value={`${manager} add @contour-ui/headless`}>…</Clipboard.Root>;
+<Clipboard.Root value={`${manager} add @contour-ui/headless-react`}>…</Clipboard.Root>;
 ```
 
 `onValueChange` reports the values set with `setValue` (see [Hooks](#hooks)) as `{ value }`. A
@@ -244,7 +244,7 @@ itself has no DOM: a renderer other than React DOM runs it with a platform of it
 yours. Render the status element yourself, empty until a copy:
 
 ```tsx
-import { useClipboard } from '@contour-ui/headless';
+import { useClipboard } from '@contour-ui/headless-react';
 
 function CopyLink({ url }: { url: string }) {
   const clipboard = useClipboard({ value: url });
@@ -262,7 +262,7 @@ function CopyLink({ url }: { url: string }) {
 Inside `Clipboard.Root`, `useClipboardContext()` returns the same API, for parts of your own:
 
 ```tsx
-import { useClipboardContext } from '@contour-ui/headless';
+import { useClipboardContext } from '@contour-ui/headless-react';
 
 function PasteHint() {
   const { copied } = useClipboardContext();

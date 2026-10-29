@@ -1,12 +1,12 @@
 {
-  "name": "@contour-ui/headless",
+  "name": "@contour-ui/headless-react",
   "version": "0.0.0",
-  "description": "contour-ui headless: unstyled React DOM components and hooks.",
+  "description": "contour-ui headless for React: unstyled React DOM components and hooks.",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/contour-ui/contour-ui.git",
-    "directory": "packages/headless"
+    "directory": "packages/headless-react"
   },
   "files": [
     "dist"

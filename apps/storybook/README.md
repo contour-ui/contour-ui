@@ -3,13 +3,13 @@
 Private. Storybook **composition host**: one site that references
 each package Storybook via [Storybook refs](https://storybook.js.org/docs/sharing/storybook-composition).
 
-| Package  | Dev port | Production path |
-| -------- | -------- | --------------- |
-| tokens   | 6101     | `/tokens`       |
-| headless | 6102     | `/headless`     |
-| kit      | 6103     | `/kit`          |
-| audio    | 6104     | `/audio`        |
-| fumadocs | 6105     | `/fumadocs`     |
+| Package        | Dev port | Production path   |
+| -------------- | -------- | ----------------- |
+| tokens         | 6101     | `/tokens`         |
+| headless-react | 6102     | `/headless-react` |
+| kit            | 6103     | `/kit`            |
+| audio          | 6104     | `/audio`          |
+| fumadocs       | 6105     | `/fumadocs`       |
 
 - `vp run storybook` (repo root) — starts every package Storybook plus this host (port 6100).
   The host waits for the package Storybooks first (`scripts/wait-for-refs.ts`): Storybook checks

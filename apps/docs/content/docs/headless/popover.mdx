@@ -3,7 +3,7 @@ title: Popover
 description: A dialog that opens next to its trigger, with placement that flips to stay in view, dismissal by Escape or a press outside, and focus that moves in and back.
 ---
 
-import { Popover, Portal } from '@contour-ui/headless';
+import { Popover, Portal } from '@contour-ui/headless-react';
 
 <Preview>
   {
@@ -38,7 +38,7 @@ import { Popover, Portal } from '@contour-ui/headless';
 </Preview>
 
 ```tsx
-import { Popover, Portal } from '@contour-ui/headless';
+import { Popover, Portal } from '@contour-ui/headless-react';
 
 <Popover.Root>
   <Popover.Trigger>Share</Popover.Trigger>
@@ -293,7 +293,7 @@ content is yours: with `hidden`, or with [`usePresence`](/docs/headless/presence
 animation, as `Popover.Root` does.
 
 ```tsx
-import { Portal, usePopover } from '@contour-ui/headless';
+import { Portal, usePopover } from '@contour-ui/headless-react';
 
 function Share() {
   const popover = usePopover();

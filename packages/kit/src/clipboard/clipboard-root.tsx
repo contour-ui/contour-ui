@@ -1,6 +1,6 @@
 'use client';
 
-import { Clipboard as Headless } from '@contour-ui/headless';
+import { Clipboard as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';
@@ -18,7 +18,7 @@ export interface ClipboardRootProps extends Headless.RootProps {
 }
 
 /**
- * Clipboard root: runs the clipboard of `@contour-ui/headless` and stacks a label above the
+ * Clipboard root: runs the clipboard of `@contour-ui/headless-react` and stacks a label above the
  * control. A click on the trigger writes `value` to the clipboard; the trigger shows the copied
  * state for `timeout` milliseconds, and a visually hidden status element announces
  * `copiedMessage`. While a `Clipboard.Label` is mounted, the root is a `group` named by it.

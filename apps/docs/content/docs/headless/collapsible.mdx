@@ -3,7 +3,7 @@ title: Collapsible
 description: A button that shows and hides a region below it, with the size of the region in CSS variables for a height animation, and an exit that waits for it.
 ---
 
-import { Collapsible } from '@contour-ui/headless';
+import { Collapsible } from '@contour-ui/headless-react';
 
 <Preview>
   {
@@ -34,7 +34,7 @@ import { Collapsible } from '@contour-ui/headless';
 </Preview>
 
 ```tsx
-import { Collapsible } from '@contour-ui/headless';
+import { Collapsible } from '@contour-ui/headless-react';
 
 <Collapsible.Root>
   <Collapsible.Trigger>
@@ -214,7 +214,7 @@ and the props of each element: `getRootProps()`, `getTriggerProps()`, `getConten
 [`usePresence`](/docs/headless/presence) for an exit animation.
 
 ```tsx
-import { useCollapsible } from '@contour-ui/headless';
+import { useCollapsible } from '@contour-ui/headless-react';
 
 function Shipping() {
   const collapsible = useCollapsible();

@@ -53,7 +53,9 @@ test.describe('an install command', () => {
     await expect(
       blocks.getByRole('tab', { name: 'yarn', exact: true, selected: true }),
     ).toHaveCount(4);
-    await expect(page.getByRole('main').getByText('yarn add @contour-ui/headless')).toBeVisible();
+    await expect(
+      page.getByRole('main').getByText('yarn add @contour-ui/headless-react'),
+    ).toBeVisible();
 
     // Remembered across visits, and on another page of the site.
     await reloadPage(page);

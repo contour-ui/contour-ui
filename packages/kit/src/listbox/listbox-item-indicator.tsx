@@ -1,4 +1,4 @@
-import { Listbox as Headless } from '@contour-ui/headless';
+import { Listbox as Headless } from '@contour-ui/headless-react';
 import { checkIcon } from '@contour-ui/icons';
 import type { ReactElement } from 'react';
 

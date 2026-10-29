@@ -1,6 +1,6 @@
 'use client';
 
-import { Tabs as Headless } from '@contour-ui/headless';
+import { Tabs as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';

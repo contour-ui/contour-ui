@@ -7,7 +7,7 @@
       "@contour-ui/tokens",
       "@contour-ui/icons",
       "@contour-ui/core",
-      "@contour-ui/headless",
+      "@contour-ui/headless-react",
       "@contour-ui/kit",
       "@contour-ui/audio",
       "@contour-ui/fumadocs"

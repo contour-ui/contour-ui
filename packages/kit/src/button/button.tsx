@@ -1,5 +1,5 @@
-import { mergeProps, Primitive } from '@contour-ui/headless';
-import type { PrimitiveProps } from '@contour-ui/headless';
+import { mergeProps, Primitive } from '@contour-ui/headless-react';
+import type { PrimitiveProps } from '@contour-ui/headless-react';
 import type { MouseEvent, ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';

@@ -20,7 +20,7 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'headless',
+          name: 'headless-react',
           include: ['src/**/*.test.{ts,tsx}'],
           exclude: [...configDefaults.exclude, ...NODE_TESTS],
           browser: chromium(),
@@ -28,13 +28,13 @@ export default defineConfig({
       },
       {
         extends: true,
-        test: { name: 'headless:node', environment: 'node', include: NODE_TESTS },
+        test: { name: 'headless-react:node', environment: 'node', include: NODE_TESTS },
       },
       {
         extends: true,
         plugins: [storybookTest({ configDir: path.join(import.meta.dirname, '.storybook') })],
         test: {
-          name: 'headless:storybook',
+          name: 'headless-react:storybook',
           browser: chromium(),
         },
       },

@@ -1,4 +1,4 @@
-import { Collapsible as Headless } from '@contour-ui/headless';
+import { Collapsible as Headless } from '@contour-ui/headless-react';
 import { chevronRightIcon } from '@contour-ui/icons';
 import type { ReactElement } from 'react';
 

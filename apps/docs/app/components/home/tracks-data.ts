@@ -57,7 +57,7 @@ export const TRACKS: readonly Track[] = [
   {
     id: 'headless',
     name: 'Headless',
-    pkg: '@contour-ui/headless',
+    pkg: '@contour-ui/headless-react',
     description: 'Behavior, ARIA and host callbacks for both kits. No styles',
     href: '/docs/headless',
     clips: [

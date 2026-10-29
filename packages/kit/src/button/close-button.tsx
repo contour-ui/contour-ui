@@ -1,4 +1,4 @@
-import { mergeProps } from '@contour-ui/headless';
+import { mergeProps } from '@contour-ui/headless-react';
 import { xIcon } from '@contour-ui/icons';
 import type { ReactElement } from 'react';
 

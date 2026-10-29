@@ -6,7 +6,7 @@ top of it. The sidebar, the search, the table of contents, the page parts and th
 come from contour-ui; `fumadocs-core` gives the data (page tree, search index, table of contents),
 and the app's framework adapter (`fumadocs-core/framework`) the links and the navigation.
 
-- **May depend on (internal):** `@contour-ui/kit`, `@contour-ui/headless`, `@contour-ui/tokens`,
+- **May depend on (internal):** `@contour-ui/kit`, `@contour-ui/headless-react`, `@contour-ui/tokens`,
   `@contour-ui/icons`.
 - **Peers:** `react`, `react-dom`, `fumadocs-core`; `@types/mdx` (optional, for TypeScript).
 - **Entry points:** `@contour-ui/fumadocs` (provider and layouts), `@contour-ui/fumadocs/mdx` (MDX

@@ -34,7 +34,7 @@ type Story = StoryObj<typeof meta>;
  * text of the trigger never changes, so it stays in the accessible name.
  */
 export const Default: Story = {
-  args: { value: 'pnpm add @contour-ui/headless', timeout: 1000 },
+  args: { value: 'pnpm add @contour-ui/headless-react', timeout: 1000 },
   render: (args) => (
     <Clipboard.Root {...args}>
       <code>{args.value}</code> <Clipboard.Trigger>Copy</Clipboard.Trigger>{' '}
@@ -45,7 +45,7 @@ export const Default: Story = {
     const trigger = canvas.getByRole('button', { name: 'Copy to clipboard' });
     await userEvent.click(trigger);
 
-    await expect(writeText).toHaveBeenCalledWith('pnpm add @contour-ui/headless');
+    await expect(writeText).toHaveBeenCalledWith('pnpm add @contour-ui/headless-react');
     // Copied once the write is done.
     await waitFor(async () => {
       await expect(trigger).toHaveAttribute('data-copied');
@@ -71,7 +71,7 @@ export const Default: Story = {
  * The story ends in the copied state, so the accessibility check sees it.
  */
 export const Anatomy: Story = {
-  args: { value: 'pnpm add @contour-ui/headless' },
+  args: { value: 'pnpm add @contour-ui/headless-react' },
   render: (args) => (
     <Clipboard.Root {...args}>
       <Clipboard.Label>Install command</Clipboard.Label>
@@ -84,14 +84,14 @@ export const Anatomy: Story = {
   ),
   play: async ({ canvas }) => {
     const group = canvas.getByRole('group', { name: 'Install command' });
-    const valueText = canvas.getByText('pnpm add @contour-ui/headless');
+    const valueText = canvas.getByText('pnpm add @contour-ui/headless-react');
 
     await expect(group).toHaveAttribute('data-part', 'root');
     await expect(valueText).toHaveAttribute('data-part', 'value-text');
     await expect(valueText.parentElement).toHaveAttribute('data-part', 'control');
 
     await userEvent.click(canvas.getByRole('button', { name: 'Copy to clipboard' }));
-    await expect(writeText).toHaveBeenCalledWith('pnpm add @contour-ui/headless');
+    await expect(writeText).toHaveBeenCalledWith('pnpm add @contour-ui/headless-react');
     await waitFor(async () => {
       await expect(group).toHaveAttribute('data-copied');
     });
@@ -136,7 +136,7 @@ function CheckGlyph(): ReactElement {
  * copy. The story ends in the copied state, so the accessibility check sees it.
  */
 export const WithIcons: Story = {
-  args: { value: 'npm install @contour-ui/headless' },
+  args: { value: 'npm install @contour-ui/headless-react' },
   render: (args) => (
     <Clipboard.Root {...args}>
       <code>{args.value}</code>{' '}
@@ -152,7 +152,7 @@ export const WithIcons: Story = {
     await expect(trigger.querySelector('svg')).toHaveAttribute('data-glyph', 'copy');
     await userEvent.click(trigger);
 
-    await expect(writeText).toHaveBeenCalledWith('npm install @contour-ui/headless');
+    await expect(writeText).toHaveBeenCalledWith('npm install @contour-ui/headless-react');
     await waitFor(async () => {
       await expect(trigger.querySelector('svg')).toHaveAttribute('data-glyph', 'check');
     });
@@ -161,10 +161,10 @@ export const WithIcons: Story = {
 };
 
 const commands = new Map([
-  ['npm', 'npm install @contour-ui/headless'],
-  ['pnpm', 'pnpm add @contour-ui/headless'],
-  ['yarn', 'yarn add @contour-ui/headless'],
-  ['bun', 'bun add @contour-ui/headless'],
+  ['npm', 'npm install @contour-ui/headless-react'],
+  ['pnpm', 'pnpm add @contour-ui/headless-react'],
+  ['yarn', 'yarn add @contour-ui/headless-react'],
+  ['bun', 'bun add @contour-ui/headless-react'],
 ]);
 
 /** The owner keeps the command in its state and passes it as `value`. */
@@ -201,6 +201,6 @@ export const Controlled: Story = {
     );
     await userEvent.click(canvas.getByRole('button', { name: 'Copy to clipboard' }));
 
-    await expect(writeText.mock.calls).toStrictEqual([['pnpm add @contour-ui/headless']]);
+    await expect(writeText.mock.calls).toStrictEqual([['pnpm add @contour-ui/headless-react']]);
   },
 };

@@ -7,8 +7,8 @@ export * as CodeBlock from './code-block/index.ts';
 export * as Collapsible from './collapsible/index.ts';
 export * as Dialog from './dialog/index.ts';
 // The portal of the overlays, so that apps need no other package to render them.
-export { Portal } from '@contour-ui/headless';
-export type { PortalContainer, PortalProps } from '@contour-ui/headless';
+export { Portal } from '@contour-ui/headless-react';
+export type { PortalContainer, PortalProps } from '@contour-ui/headless-react';
 export * as Drawer from './drawer/index.ts';
 export { Icon } from './icon/index.ts';
 export type { IconProps } from './icon/index.ts';
@@ -18,12 +18,12 @@ export { Link } from './link/index.ts';
 export type { LinkProps } from './link/index.ts';
 export * as Listbox from './listbox/index.ts';
 // The collections of list components, so that apps need no other package to fill a Listbox.
-export { createListCollection } from '@contour-ui/headless';
+export { createListCollection } from '@contour-ui/headless-react';
 export type {
   ListCollection,
   ListCollectionGroup,
   ListCollectionOptions,
-} from '@contour-ui/headless';
+} from '@contour-ui/headless-react';
 export * as Placeholder from './placeholder/index.ts';
 export * as Popover from './popover/index.ts';
 export * as SegmentGroup from './segment-group/index.ts';

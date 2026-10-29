@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog as Headless } from '@contour-ui/headless';
+import { Dialog as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { DrawerStyleContext } from './drawer-context.ts';
@@ -25,7 +25,7 @@ export interface DrawerRootProps extends Headless.RootProps {
 /**
  * Drawer root: renders no element. A drawer is a dialog that slides in from an edge of the
  * viewport, such as the navigation of a page on a phone: it runs the dialog of
- * `@contour-ui/headless`, with every option of `Dialog.Root`, and gives its parts the state and
+ * `@contour-ui/headless-react`, with every option of `Dialog.Root`, and gives its parts the state and
  * the look (`placement`, `size`). Put the backdrop and the positioner in a `Portal`.
  *
  * @example

@@ -1,5 +1,5 @@
 ---
-'@contour-ui/headless': minor
+'@contour-ui/headless-react': minor
 ---
 
 Work under React Server Components: the package is built one file per module, and the modules that

@@ -3,7 +3,7 @@ title: Toc
 description: A table of contents that watches the headings of a page and marks the sections in view, with a running indicator and links that scroll.
 ---
 
-import { Toc } from '@contour-ui/headless';
+import { Toc } from '@contour-ui/headless-react';
 
 export const manual = [
   {
@@ -106,7 +106,7 @@ export const manual = [
 </Preview>
 
 ```tsx
-import { Toc } from '@contour-ui/headless';
+import { Toc } from '@contour-ui/headless-react';
 
 const items = [
   { value: 'install', depth: 2 },
@@ -383,7 +383,7 @@ props hold the `ref` the hook measures items with, and the title props a `ref` t
 root:
 
 ```tsx
-import { useToc } from '@contour-ui/headless';
+import { useToc } from '@contour-ui/headless-react';
 
 function Contents({ items }: { items: Item[] }) {
   const api = useToc({ items });
@@ -404,7 +404,7 @@ function Contents({ items }: { items: Item[] }) {
 Inside `Toc.Root`, `useTocContext()` returns the same API, for parts of your own:
 
 ```tsx
-import { useTocContext } from '@contour-ui/headless';
+import { useTocContext } from '@contour-ui/headless-react';
 
 function ReadingNow() {
   const { activeItems } = useTocContext();

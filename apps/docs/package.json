@@ -11,7 +11,7 @@
   "dependencies": {
     "@contour-ui/audio": "workspace:*",
     "@contour-ui/fumadocs": "workspace:*",
-    "@contour-ui/headless": "workspace:*",
+    "@contour-ui/headless-react": "workspace:*",
     "@contour-ui/icons": "workspace:*",
     "@contour-ui/kit": "workspace:*",
     "@contour-ui/tokens": "workspace:*",

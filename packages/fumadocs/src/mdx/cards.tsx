@@ -1,4 +1,4 @@
-import { mergeProps } from '@contour-ui/headless';
+import { mergeProps } from '@contour-ui/headless-react';
 import { Card as KitCard } from '@contour-ui/kit';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';
 import type { ComponentProps, HTMLAttributes, ReactElement, ReactNode } from 'react';

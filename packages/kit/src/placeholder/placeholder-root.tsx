@@ -1,4 +1,4 @@
-import { Placeholder as Headless } from '@contour-ui/headless';
+import { Placeholder as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';

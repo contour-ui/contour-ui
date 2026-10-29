@@ -107,7 +107,7 @@ const platform: Platform<clipboard.Schema> = {
  * call it yourself to build the parts from your own elements.
  *
  * @example
- * const api = useClipboard({ value: 'pnpm add @contour-ui/headless' });
+ * const api = useClipboard({ value: 'pnpm add @contour-ui/headless-react' });
  * <div {...api.getRootProps()}>
  *   <span {...api.getValueTextProps()}>{api.value}</span>
  *   <button {...api.getTriggerProps()}>{api.copied ? 'Copied' : 'Copy'}</button>

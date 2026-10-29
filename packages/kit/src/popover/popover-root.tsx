@@ -1,10 +1,10 @@
-import { Popover as Headless } from '@contour-ui/headless';
+import { Popover as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 export type PopoverRootProps = Headless.RootProps;
 
 /**
- * Popover root: renders no element. It runs the popover of `@contour-ui/headless` and gives its
+ * Popover root: renders no element. It runs the popover of `@contour-ui/headless-react` and gives its
  * parts the state. Put the positioner in a `Portal`.
  *
  * @example

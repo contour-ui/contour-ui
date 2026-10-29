@@ -29,7 +29,7 @@ const isSet = (value: string | undefined): boolean => value !== undefined && val
  * `aria-labelledby`, it is a `group` with that name.
  *
  * @example
- * <Clipboard.Root value="pnpm add @contour-ui/headless">
+ * <Clipboard.Root value="pnpm add @contour-ui/headless-react">
  *   <Clipboard.Label>Install</Clipboard.Label>
  *   <Clipboard.Control>
  *     <Clipboard.ValueText />

@@ -1,5 +1,5 @@
 ---
-'@contour-ui/headless': minor
+'@contour-ui/headless-react': minor
 ---
 
 Add `Dialog`: `Root`, `Trigger`, `Backdrop`, `Positioner`, `Content`, `Title`, `Description` and `CloseTrigger` parts on the dialog machine of `@contour-ui/core`. While the dialog is open, it is a layer of the overlay stack: Escape and a press or focus outside close the top one (`closeOnEscape`, `closeOnInteractOutside`), focus moves in (`initialFocusEl`, or the first close trigger of an `alertdialog`) and stays there (`trapFocus`), the page stops scrolling (`preventScroll`) and the rest of it is inert (`modal`); focus goes back to `finalFocusEl`, the element focused before, or the trigger (`restoreFocus`). The backdrop, the positioner and the content show and hide with `data-state` and exit animations, mount as `lazyMount` and `unmountOnExit` say, and get `--layer-index` while open; a dialog opened from another one closes with it. `open`, `defaultOpen` and `onOpenChange` work as elsewhere. `useDialog` and `useDialogContext` give the same API to parts of your own.

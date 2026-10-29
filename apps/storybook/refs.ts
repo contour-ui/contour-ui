@@ -1,7 +1,7 @@
 /**
  * Package Storybooks composed by this host. `port` must match the package's
  * `storybook` script; `name` is the subpath of its static build in the
- * deployed site (`/tokens`, `/headless`, …).
+ * deployed site (`/tokens`, `/headless-react`, …).
  */
 export interface PackageStorybook {
   readonly name: string;
@@ -11,7 +11,7 @@ export interface PackageStorybook {
 
 export const PACKAGE_STORYBOOKS: readonly PackageStorybook[] = [
   { name: 'tokens', title: 'Tokens', port: 6101 },
-  { name: 'headless', title: 'Headless', port: 6102 },
+  { name: 'headless-react', title: 'Headless', port: 6102 },
   { name: 'kit', title: 'Kit', port: 6103 },
   { name: 'audio', title: 'Audio', port: 6104 },
   { name: 'fumadocs', title: 'Fumadocs', port: 6105 },

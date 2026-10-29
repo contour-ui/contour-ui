@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog as Headless } from '@contour-ui/headless';
+import { Dialog as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { DialogStyleContext } from './dialog-context.ts';
@@ -23,7 +23,7 @@ export interface DialogRootProps extends Headless.RootProps {
 }
 
 /**
- * Dialog root: renders no element. It runs the dialog of `@contour-ui/headless` and gives its
+ * Dialog root: renders no element. It runs the dialog of `@contour-ui/headless-react` and gives its
  * parts the state and the look (`placement`, `size`). Put the backdrop and the positioner in a
  * `Portal`.
  *

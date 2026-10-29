@@ -1,6 +1,6 @@
 'use client';
 
-import { Dialog as Headless } from '@contour-ui/headless';
+import { Dialog as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { CloseButton } from '../button/index.ts';

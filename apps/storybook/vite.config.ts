@@ -17,7 +17,7 @@ export default defineConfig({
         cache: false,
         dependsOn: [
           '@contour-ui/tokens#build-storybook',
-          '@contour-ui/headless#build-storybook',
+          '@contour-ui/headless-react#build-storybook',
           '@contour-ui/kit#build-storybook',
           '@contour-ui/audio#build-storybook',
           '@contour-ui/fumadocs#build-storybook',

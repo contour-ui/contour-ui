@@ -1,6 +1,6 @@
 'use client';
 
-import { Clipboard as Headless } from '@contour-ui/headless';
+import { Clipboard as Headless } from '@contour-ui/headless-react';
 import { use } from 'react';
 import type { ReactElement } from 'react';
 

@@ -58,7 +58,7 @@ export const LAYERS: readonly LayerPackage[] = [
     react: 'optional-peer',
   },
   {
-    name: 'headless',
+    name: 'headless-react',
     layer: 2,
     purpose: 'unstyled React DOM components + hooks',
     allowed: ['core'],
@@ -68,21 +68,21 @@ export const LAYERS: readonly LayerPackage[] = [
     name: 'kit',
     layer: 3,
     purpose: 'styled general-purpose components',
-    allowed: ['headless', 'tokens', 'icons'],
+    allowed: ['headless-react', 'tokens', 'icons'],
     react: 'peer',
   },
   {
     name: 'audio',
     layer: 3,
     purpose: 'styled audio components',
-    allowed: ['headless', 'tokens', 'icons', 'kit'],
+    allowed: ['headless-react', 'tokens', 'icons', 'kit'],
     react: 'peer',
   },
   {
     name: 'fumadocs',
     layer: 4,
     purpose: 'documentation layout for fumadocs-core sites, built from Kit',
-    allowed: ['kit', 'headless', 'tokens', 'icons'],
+    allowed: ['kit', 'headless-react', 'tokens', 'icons'],
     react: 'peer',
   },
 ];

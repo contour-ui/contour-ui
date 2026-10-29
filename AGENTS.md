@@ -222,7 +222,7 @@ version of these rules.
   factory during render (see `headless/src/dialog/use-dialog.ts`). `watch` compares props by
   identity: a hook passes arrays that owners rebuild on every render through a value comparison
   first.
-- **Platform modules.** `packages/headless/src/platform/` holds the DOM side of what machines ask
+- **Platform modules.** `packages/headless-react/src/platform/` holds the DOM side of what machines ask
   for: the clock, positioning (`trackPosition`), the overlay layer stack (`trackLayer`: Escape and
   presses outside reach the top layer only; nested layers close with their parent), the focus
   trap and focus moves, scroll lock, `inert` outside a modal layer, scrolling inside a container,

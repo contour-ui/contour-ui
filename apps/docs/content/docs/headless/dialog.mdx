@@ -3,7 +3,7 @@ title: Dialog
 description: A window over the page, modal or not, with a backdrop, focus kept inside, Escape and presses outside that close it, and focus that goes back where it was.
 ---
 
-import { Dialog, Portal } from '@contour-ui/headless';
+import { Dialog, Portal } from '@contour-ui/headless-react';
 
 <Preview>
   {
@@ -44,7 +44,7 @@ import { Dialog, Portal } from '@contour-ui/headless';
 </Preview>
 
 ```tsx
-import { Dialog, Portal } from '@contour-ui/headless';
+import { Dialog, Portal } from '@contour-ui/headless-react';
 
 <Dialog.Root>
   <Dialog.Trigger>Rename the track</Dialog.Trigger>
@@ -348,7 +348,7 @@ element: `getTriggerProps()`, `getBackdropProps()`, `getPositionerProps()`, `get
 yourself, with [`usePresence`](/docs/headless/presence) for an exit animation:
 
 ```tsx
-import { useDialog } from '@contour-ui/headless';
+import { useDialog } from '@contour-ui/headless-react';
 
 function Confirm({ onConfirm }: { onConfirm: () => void }) {
   const dialog = useDialog({ role: 'alertdialog' });
@@ -369,7 +369,7 @@ Inside `Dialog.Root`, `useDialogContext()` returns the same API, with the presen
 overlay, for parts of your own:
 
 ```tsx
-import { useDialogContext } from '@contour-ui/headless';
+import { useDialogContext } from '@contour-ui/headless-react';
 
 function SaveButton({ save }: { save: () => void }) {
   const { setOpen } = useDialogContext();

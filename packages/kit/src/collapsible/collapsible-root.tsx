@@ -1,4 +1,4 @@
-import { Collapsible as Headless } from '@contour-ui/headless';
+import { Collapsible as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';
@@ -6,7 +6,7 @@ import { cx } from '../utils/cx.ts';
 export type CollapsibleRootProps = Headless.RootProps;
 
 /**
- * Collapsible root: a `div` that runs the collapsible of `@contour-ui/headless` and gives its
+ * Collapsible root: a `div` that runs the collapsible of `@contour-ui/headless-react` and gives its
  * parts the state. It has no look of its own: the trigger opens and closes the content, which
  * grows to its height as it opens and shrinks back as it closes.
  *

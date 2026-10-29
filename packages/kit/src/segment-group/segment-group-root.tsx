@@ -1,4 +1,4 @@
-import { SegmentGroup as Headless } from '@contour-ui/headless';
+import { SegmentGroup as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';
@@ -15,7 +15,7 @@ export interface SegmentGroupRootProps extends Headless.RootProps {
 
 /**
  * Segment group root: a row of mutually exclusive options on an inset track, one of them raised
- * by the indicator. Runs the segment group of `@contour-ui/headless`: native radio buttons give
+ * by the indicator. Runs the segment group of `@contour-ui/headless-react`: native radio buttons give
  * the keyboard and the form value. Name it with `SegmentGroup.Label` or `aria-label`.
  *
  * @example

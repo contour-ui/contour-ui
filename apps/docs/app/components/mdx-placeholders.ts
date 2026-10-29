@@ -1,5 +1,5 @@
 import { AudioPlaceholder } from '@contour-ui/audio';
-import { Placeholder as HeadlessPlaceholder } from '@contour-ui/headless';
+import { Placeholder as HeadlessPlaceholder } from '@contour-ui/headless-react';
 import { Placeholder } from '@contour-ui/kit';
 import type { MDXComponents } from 'mdx/types';
 

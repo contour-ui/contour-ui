@@ -1,4 +1,4 @@
-import { Listbox as Headless } from '@contour-ui/headless';
+import { Listbox as Headless } from '@contour-ui/headless-react';
 import type { ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';
@@ -6,7 +6,7 @@ import { cx } from '../utils/cx.ts';
 export type ListboxRootProps<T = unknown> = Headless.RootProps<T>;
 
 /**
- * Listbox root: a `div` that runs the listbox of `@contour-ui/headless` and stacks the label,
+ * Listbox root: a `div` that runs the listbox of `@contour-ui/headless-react` and stacks the label,
  * the input and the list. `collection` is the only prop it needs: the items, from
  * `createListCollection`.
  *

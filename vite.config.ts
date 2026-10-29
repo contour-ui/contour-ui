@@ -140,7 +140,7 @@ export default defineConfig({
       {
         files: [
           'packages/core/src/react/**',
-          'packages/headless/**',
+          'packages/headless-react/**',
           'packages/kit/**',
           'packages/audio/**',
           'apps/**',
