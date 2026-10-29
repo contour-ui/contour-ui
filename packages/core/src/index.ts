@@ -68,6 +68,7 @@ export type {
 } from './positioning/index.ts';
 
 export * as clipboard from './states/clipboard/index.ts';
+export * as collapsible from './states/collapsible/index.ts';
 export * as dialog from './states/dialog/index.ts';
 export * as listbox from './states/listbox/index.ts';
 export * as popover from './states/popover/index.ts';
