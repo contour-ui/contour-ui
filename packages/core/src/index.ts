@@ -72,4 +72,5 @@ export * as collapsible from './states/collapsible/index.ts';
 export * as dialog from './states/dialog/index.ts';
 export * as listbox from './states/listbox/index.ts';
 export * as popover from './states/popover/index.ts';
+export * as tabs from './states/tabs/index.ts';
 export * as toc from './states/toc/index.ts';
