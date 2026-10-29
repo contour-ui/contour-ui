@@ -1,3 +1,5 @@
+'use client';
+
 import { mergeProps, useClipboard } from '@contour-ui/headless';
 import type { UseClipboardProps } from '@contour-ui/headless';
 import { checkIcon, copyIcon } from '@contour-ui/icons';

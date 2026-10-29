@@ -1,3 +1,5 @@
+'use client';
+
 import { Dialog as Headless } from '@contour-ui/headless';
 import type { ReactElement } from 'react';
 

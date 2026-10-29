@@ -1,3 +1,5 @@
+'use client';
+
 import { themeAttribute } from '@contour-ui/tokens';
 import type { Theme } from '@contour-ui/tokens';
 import { use, useLayoutEffect, useMemo, useSyncExternalStore } from 'react';

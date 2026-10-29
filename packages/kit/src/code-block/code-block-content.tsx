@@ -1,3 +1,5 @@
+'use client';
+
 import { mergeProps, Primitive, useComposedRefs } from '@contour-ui/headless';
 import type { PrimitiveProps } from '@contour-ui/headless';
 import { use } from 'react';

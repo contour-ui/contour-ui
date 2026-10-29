@@ -131,7 +131,7 @@ allow the script by its hash, or by a nonce on the `<script>` element.
 
 `themeScript` also comes from `@contour-ui/kit/theme-script`, an entry point without React: import
 it from there where the code runs before React does, such as the root layout of Next.js, a React
-Server Component, which must not load the components.
+Server Component that needs the script and none of the components.
 
 ```tsx
 import { themeScript } from '@contour-ui/kit/theme-script';

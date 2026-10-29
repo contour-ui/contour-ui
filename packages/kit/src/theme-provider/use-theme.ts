@@ -1,3 +1,5 @@
+'use client';
+
 import type { Theme } from '@contour-ui/tokens';
 import { createContext, use } from 'react';
 import type { Context } from 'react';
