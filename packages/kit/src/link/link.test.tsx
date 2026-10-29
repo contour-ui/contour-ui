@@ -101,25 +101,69 @@ describe('Link', () => {
     await expect.element(underline).toHaveStyle({ textDecorationThickness: thick });
   });
 
-  it('shows the focus ring on keyboard focus', async () => {
+  it('is muted as `neutral`, brighter on hover and never underlined', async () => {
     const screen = await render(
-      <>
-        <button type="button">Before</button>
-        <Link href="/docs">Docs</Link>
-      </>,
+      <ul>
+        <li>
+          <Link variant="neutral" href="/docs">
+            Docs
+          </Link>
+        </li>
+        <li>
+          <Link variant="neutral" href="/kit">
+            Kit
+          </Link>
+        </li>
+      </ul>,
     );
-    const link = screen.getByRole('link', { name: 'Docs' });
+    const docs = screen.getByRole('link', { name: 'Docs' });
+    const kit = screen.getByRole('link', { name: 'Kit' });
+    const muted = computed('color', vars.color.fg.muted);
+    const bright = computed('color', vars.color.fg.default);
+    // Off both links first, wherever earlier tests on the page left the pointer.
+    await userEvent.unhover(docs);
 
-    await userEvent.click(screen.getByRole('button', { name: 'Before' }));
-    await userEvent.keyboard('{Tab}');
-
-    await expect.element(link).toHaveFocus();
-    await expect.element(link).toHaveStyle({
-      outlineStyle: 'solid',
-      outlineColor: computed('color', vars.color.border.focus),
-      outlineWidth: computed('padding-top', vars['border-width'].focus),
+    // Both tokens resolve to real, different colors (tokens.css is loaded).
+    expect(muted).toMatch(/^oklch\(/u);
+    expect(bright).toMatch(/^oklch\(/u);
+    expect(bright).not.toBe(muted);
+    await expect.element(docs).toHaveAttribute('class', 'contour-link');
+    await expect.element(docs).toHaveAttribute('data-variant', 'neutral');
+    await expect.element(docs).toHaveStyle({
+      color: muted,
+      textDecorationLine: 'none',
+      transition: computed('transition', `color ${vars.motion.feedback}`),
     });
+
+    await userEvent.hover(docs);
+    await expect.element(docs).toHaveStyle({ color: bright, textDecorationLine: 'none' });
+    await expect.element(kit).toHaveStyle({ color: muted });
   });
+
+  it.each(['plain', 'underline', 'neutral'] as const)(
+    'shows the focus ring on keyboard focus (`%s`)',
+    async (variant) => {
+      const screen = await render(
+        <>
+          <button type="button">Before</button>
+          <Link variant={variant} href="/docs">
+            Docs
+          </Link>
+        </>,
+      );
+      const link = screen.getByRole('link', { name: 'Docs' });
+
+      await userEvent.click(screen.getByRole('button', { name: 'Before' }));
+      await userEvent.keyboard('{Tab}');
+
+      await expect.element(link).toHaveFocus();
+      await expect.element(link).toHaveStyle({
+        outlineStyle: 'solid',
+        outlineColor: computed('color', vars.color.border.focus),
+        outlineWidth: computed('padding-top', vars['border-width'].focus),
+      });
+    },
+  );
 
   it('takes the font of the text around it', async () => {
     const screen = await render(

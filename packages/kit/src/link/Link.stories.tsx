@@ -1,7 +1,7 @@
 import { vars } from '@contour-ui/tokens';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import type { ComponentProps, ReactElement } from 'react';
-import { expect } from 'storybook/test';
+import { expect, within } from 'storybook/test';
 
 import { Link } from '../index.ts';
 
@@ -45,6 +45,9 @@ export const Variants: Story = {
       <Link variant="underline" href="#">
         Underline
       </Link>
+      <Link variant="neutral" href="#">
+        Neutral
+      </Link>
     </div>
   ),
   play: async ({ canvas }) => {
@@ -56,6 +59,49 @@ export const Variants: Story = {
       'data-variant',
       'underline',
     );
+    await expect(canvas.getByRole('link', { name: 'Neutral' })).toHaveAttribute(
+      'data-variant',
+      'neutral',
+    );
+  },
+};
+
+/**
+ * In a list of navigation links, such as a site header, an index or a footer, links are
+ * `neutral`: the list, not the color, tells them from text.
+ */
+export const Navigation: Story = {
+  render: () => (
+    <nav aria-label="Site">
+      <ul
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: vars.space['section-gap'],
+          margin: 0,
+          padding: 0,
+          listStyle: 'none',
+        }}
+      >
+        {['Docs', 'Kit', 'Audio', 'Tokens'].map((label) => (
+          <li key={label}>
+            <Link variant="neutral" href="#">
+              {label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  ),
+  play: async ({ canvas }) => {
+    const links = within(canvas.getByRole('navigation', { name: 'Site' })).getAllByRole('link');
+
+    await expect(links.map((link) => link.dataset['variant'])).toStrictEqual([
+      'neutral',
+      'neutral',
+      'neutral',
+      'neutral',
+    ]);
   },
 };
 

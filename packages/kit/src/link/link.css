@@ -20,6 +20,20 @@
   text-decoration-thickness: calc(2 * var(--ct-border-width-default));
 }
 
+/*
+ * A link of a navigation list, where every item is a link: muted, never underlined, brighter on
+ * hover, as a TOC link. A color change is no movement, so it keeps its transition under
+ * `prefers-reduced-motion: reduce`.
+ */
+.contour-link[data-variant='neutral'] {
+  color: var(--ct-color-fg-muted);
+  transition: color var(--ct-motion-feedback);
+}
+
+.contour-link[data-variant='neutral']:hover {
+  color: var(--ct-color-fg-default);
+}
+
 .contour-link:focus-visible {
   outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
   outline-offset: var(--ct-border-width-focus);

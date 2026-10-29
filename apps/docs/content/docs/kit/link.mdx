@@ -1,6 +1,6 @@
 ---
 title: Link
-description: A link in the accent color, underlined on hover or always.
+description: A link in the accent color, underlined on hover or always, or muted in navigation lists.
 ---
 
 import { Link } from '@contour-ui/kit';
@@ -13,6 +13,9 @@ import { vars } from '@contour-ui/tokens';
       <Link variant="underline" href="/docs/guide">
         Underline
       </Link>
+      <Link variant="neutral" href="/docs/guide">
+        Neutral
+      </Link>
     </div>
   }
 </Preview>
@@ -24,8 +27,8 @@ import { Link } from '@contour-ui/kit';
 ```
 
 A Link takes the font of the text around it. `plain`, the default, is underlined on hover only: use
-it for navigation and standalone links. In running text, use `underline`, so links do not stand
-out by color alone:
+it for standalone links. In running text, use `underline`, so links do not stand out by color
+alone:
 
 <Preview>
   {
@@ -38,6 +41,60 @@ out by color alone:
     </p>
   }
 </Preview>
+
+## Navigation lists
+
+In a list where every item is a link, such as the navigation of a site header, an index or a
+footer, use `neutral`: muted text that turns to the default text color on hover, never underlined.
+The list, not the color, tells these links from text, so keep them out of running text:
+
+<Preview>
+  {
+    <ul
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        gap: vars.space['section-gap'],
+        padding: 0,
+        listStyle: 'none',
+      }}
+    >
+      <li>
+        <Link variant="neutral" href="/docs/guide">
+          Guide
+        </Link>
+      </li>
+      <li>
+        <Link variant="neutral" href="/docs/kit">
+          Kit
+        </Link>
+      </li>
+      <li>
+        <Link variant="neutral" href="/docs/audio">
+          Audio
+        </Link>
+      </li>
+      <li>
+        <Link variant="neutral" href="/docs/headless">
+          Headless
+        </Link>
+      </li>
+    </ul>
+  }
+</Preview>
+
+```tsx
+<nav aria-label="Main">
+  <ul>
+    <li>
+      <Link variant="neutral" href="/docs/guide">
+        Guide
+      </Link>
+    </li>
+    …
+  </ul>
+</nav>
+```
 
 ## Router links
 
@@ -74,10 +131,10 @@ need yourself:
 
 ## Props
 
-| Prop      | Values                   | Default   |
-| --------- | ------------------------ | --------- |
-| `variant` | `'plain'`, `'underline'` | `'plain'` |
-| `asChild` | `boolean`                | `false`   |
+| Prop      | Values                                | Default   |
+| --------- | ------------------------------------- | --------- |
+| `variant` | `'plain'`, `'underline'`, `'neutral'` | `'plain'` |
+| `asChild` | `boolean`                             | `false`   |
 
 ## Keyboard
 
@@ -91,12 +148,17 @@ need yourself:
 - Give every Link an `href`: without one, `<a>` is not a link, so it cannot be focused and is not
   announced as a link. For an action, use a button.
 - In running text, use `variant="underline"`: color alone must not be the only way to tell a link
-  from the text around it.
+  from the text around it (WCAG 1.4.1, Use of Color).
+- Keep `variant="neutral"` to lists of navigation links. In running text, a neutral link differs
+  from the words around it by a shade of gray alone, which fails WCAG 1.4.1.
 - With `target="_blank"`, say that the link opens a new tab, in its text or with a labeled icon.
 
 ## Tokens
 
-Text and underline in `--ct-color-accent-fg`. The underline is `--ct-border-width-default` thick;
-on hover, an `underline` link's underline doubles with a `--ct-motion-feedback` transition. The
-focus ring is `--ct-border-width-focus` wide in `--ct-color-border-focus`, offset by the same width,
-with `--ct-radius-control` corners.
+`plain` and `underline` links are in `--ct-color-accent-fg`, text and underline. The underline is
+`--ct-border-width-default` thick; on hover, an `underline` link's underline doubles with a
+`--ct-motion-feedback` transition. A `neutral` link is in `--ct-color-fg-muted`, and in
+`--ct-color-fg-default` on hover, with a `--ct-motion-feedback` transition that stays under
+`prefers-reduced-motion`, since nothing moves. The focus ring of every variant is
+`--ct-border-width-focus` wide in `--ct-color-border-focus`, offset by the same width, with
+`--ct-radius-control` corners.
