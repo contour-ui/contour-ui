@@ -242,6 +242,11 @@ describe('Dialog', () => {
       pixels(vars.space['group-gap']) + pixels(vars['border-width'].default),
     );
     expect(box.top - content.top).toBeLessThan(pixels(vars.space['panel-inset']));
+    // A target of 24px at least (WCAG 2.2, 2.5.8), as far from the top as from the end.
+    await expect.element(close).toHaveAttribute('data-size', 'md');
+    expect(box.width).toBeGreaterThanOrEqual(24);
+    expect(box.height).toBeGreaterThanOrEqual(24);
+    expect(Math.abs(box.top - content.top - (content.right - box.right))).toBeLessThanOrEqual(1);
     // The header makes room for it: the title, as wide as the header's content, ends before it.
     expect(part('title', header).getBoundingClientRect().right).toBeLessThanOrEqual(box.left);
 

@@ -80,9 +80,10 @@ the other close triggers close it, and focus goes back to the trigger.
   everything else. The positioner holds the content in the middle of the viewport, with a margin
   all round, and lets presses around it through to the backdrop.
 - **The trigger** has no look of its own: pass a `Button` with `asChild`.
-- **The x.** `Dialog.CloseTrigger` is a small ghost x button, named "Close", in the top end corner
-  of the content; the header and a title right in the content make room for it. Pass another
-  `label` to say what closes, such as "Close the export".
+- **The x.** `Dialog.CloseTrigger` is a ghost x button, named "Close", in the top end corner of
+  the content, 24 px square: the smallest target WCAG 2.2 asks for. The header and a title right in
+  the content make room for it. Pass another `label` to say what closes, such as "Close the
+  export".
 - **Header, body, footer.** The header stacks the title and the description. The body takes the
   rest of the height, and scrolls between the header and the footer when the dialog is taller than
   the viewport. The footer lays out its actions in a row, at the end. Every part is optional: a
@@ -197,7 +198,7 @@ among the open overlays, so a dialog opened from another one goes above it. The
 | `size`      | `'sm'`, `'md'`, `'lg'` | `'md'`     |
 
 `Dialog.CloseTrigger` takes the props of [`CloseButton`](/docs/kit/button), `label` (`'Close'`),
-`variant` (`'ghost'`) and `size` (`'sm'`) among them, or, with `asChild`, renders its child. Every
+`variant` (`'ghost'`) and `size` (`'md'`) among them, or, with `asChild`, renders its child. Every
 other part takes `asChild` and the props of its element, such as `className`, `style` and `ref`;
 `className` is merged with the part's class.
 
@@ -234,6 +235,6 @@ other part takes `asChild` and the props of its element, such as `className`, `s
 | `--ct-space-control-gap`, `--ct-space-group-gap`                    | the header, the body and the footer                 |
 | `--ct-text-heading`, `--ct-color-fg-default`                        | the title                                           |
 | `--ct-text-body`, `--ct-color-fg-muted`                             | the description; other content is `fg-default`      |
-| `--ct-size-control-sm`                                              | the x, and the room the header makes for it         |
+| `--ct-size-control-md`                                              | the x, and the room the header makes for it         |
 | `--ct-layer-overlay`                                                | the `z-index` of the overlay, plus `--layer-index`  |
 | `--ct-motion-enter`, `--ct-motion-exit`                             | the animations of the content and the backdrop      |

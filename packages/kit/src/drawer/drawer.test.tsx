@@ -121,6 +121,22 @@ describe('Drawer', () => {
     expect(part('close-trigger')).toHaveClass('contour-drawer__close-trigger');
   });
 
+  it('puts the x, a target of 24px at least, in the top end corner, beside the header', async () => {
+    await render(<Navigation defaultOpen />);
+    const content = restingContent().getBoundingClientRect();
+    const close = part('close-trigger');
+    const box = close.getBoundingClientRect();
+
+    // WCAG 2.2, 2.5.8.
+    expect(close).toHaveAttribute('data-size', 'md');
+    expect(box.width).toBeGreaterThanOrEqual(24);
+    expect(box.height).toBeGreaterThanOrEqual(24);
+    // About as far from the top as from the end, within a pixel: the border is on the end side.
+    expect(Math.abs(box.top - content.top - (content.right - box.right))).toBeLessThanOrEqual(1);
+    // The header makes room for it.
+    expect(part('title').getBoundingClientRect().right).toBeLessThanOrEqual(box.left);
+  });
+
   it('is styled with semantic tokens, with a border on its inner side only', async () => {
     await render(<Navigation defaultOpen />);
     const content = restingContent();

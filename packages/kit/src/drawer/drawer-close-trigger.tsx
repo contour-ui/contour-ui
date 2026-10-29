@@ -21,9 +21,9 @@ export interface DrawerCloseTriggerProps extends Omit<CloseButtonProps, 'asChild
 }
 
 /**
- * Drawer close trigger: a small ghost x button, labeled "Close", in the top end corner of the
- * content; the header makes room for it. With `asChild`, the child closes the drawer instead,
- * such as a "Cancel" button in the footer.
+ * Drawer close trigger: a ghost x button labeled "Close", in the top end corner of the content;
+ * the header makes room for it. Its size, `md`, makes it the 24px target WCAG 2.2 asks for.
+ * With `asChild`, the child closes the drawer instead, such as a "Cancel" button in the footer.
  *
  * @example
  * <Drawer.Content>
@@ -42,7 +42,7 @@ export function DrawerCloseTrigger({
   className,
   label,
   variant,
-  size = 'sm',
+  size = 'md',
   ...props
 }: DrawerCloseTriggerProps): ReactElement {
   if (asChild) {

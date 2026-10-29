@@ -243,14 +243,17 @@
   letter-spacing: var(--ct-text-body-letter-spacing);
 }
 
-/* The x in the top end corner, centered on the first line of the title. */
+/*
+ * The x in the top end corner, centered on the first line of the title: `md`, the 24px target of
+ * WCAG 2.2 (2.5.8), which leaves it as far from the top as from the end.
+ */
 .contour-drawer__content > .contour-drawer__close-trigger {
   position: absolute;
   inset-block-start: calc(
     var(--ct-space-panel-inset) +
       (
         var(--ct-text-heading-font-size) * var(--ct-text-heading-line-height) -
-          var(--ct-size-control-sm)
+          var(--ct-size-control-md)
       ) /
       2
   );
@@ -260,5 +263,5 @@
 /* The title does not run under the x. */
 .contour-drawer__content:has(> .contour-drawer__close-trigger)
   > :is(.contour-drawer__header, .contour-drawer__title) {
-  padding-inline-end: calc(var(--ct-size-control-sm) + var(--ct-space-control-gap));
+  padding-inline-end: calc(var(--ct-size-control-md) + var(--ct-space-control-gap));
 }
