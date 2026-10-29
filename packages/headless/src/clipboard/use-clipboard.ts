@@ -3,7 +3,8 @@
 import { clipboard } from '@contour-ui/core';
 import type { Platform } from '@contour-ui/core';
 import { useMachine } from '@contour-ui/core/react';
-import type { CSSProperties, MouseEvent } from 'react';
+import { useCallback, useId, useState } from 'react';
+import type { CSSProperties, MouseEvent, RefCallback } from 'react';
 
 import { schedule } from '../platform/clock.ts';
 import { visuallyHidden } from '../utils/visually-hidden.ts';
@@ -17,6 +18,24 @@ export interface ClipboardPartAttributes<Part extends string> {
   readonly 'data-part': Part;
   /** Present, empty, while the value is copied. */
   readonly 'data-copied': '' | undefined;
+}
+
+/**
+ * Props of the root. While a label is mounted, the root is a `group` named by it, so screen
+ * readers say what the value is as focus enters the trigger.
+ */
+export interface ClipboardRootAttributes extends ClipboardPartAttributes<'root'> {
+  readonly role: 'group' | undefined;
+  /** The id of the label, while one is mounted. */
+  readonly 'aria-labelledby': string | undefined;
+}
+
+/** Props of the label: an id the root points to while it is mounted. */
+export interface ClipboardLabelAttributes extends ClipboardPartAttributes<'label'> {
+  /** A generated id; pass another one to the element, and the root follows it. */
+  readonly id: string;
+  /** Tells the clipboard the id of the mounted label, which names the root. */
+  readonly ref: RefCallback<HTMLElement>;
 }
 
 /** Props of the trigger: a button that copies the value on click. */
@@ -40,7 +59,12 @@ export interface ClipboardStatusAttributes {
 
 /** What {@link useClipboard} returns: the clipboard API and the props of each element. */
 export interface UseClipboardReturn extends clipboard.Api {
-  readonly getRootProps: () => ClipboardPartAttributes<'root'>;
+  readonly getRootProps: () => ClipboardRootAttributes;
+  readonly getLabelProps: () => ClipboardLabelAttributes;
+  /** Props of the control: the element that holds the value text and the trigger. */
+  readonly getControlProps: () => ClipboardPartAttributes<'control'>;
+  /** Props of the value text: the element that shows the value. */
+  readonly getValueTextProps: () => ClipboardPartAttributes<'value-text'>;
   readonly getTriggerProps: () => ClipboardTriggerAttributes;
   readonly getIndicatorProps: () => ClipboardPartAttributes<'indicator'>;
   readonly getStatusProps: () => ClipboardStatusAttributes;
@@ -78,13 +102,14 @@ const platform: Platform<clipboard.Schema> = {
 
 /**
  * Run the clipboard machine of `@contour-ui/core` in a component, on the DOM platform: its API
- * (`copied`, `value`, `copy()`, `setValue()`) and the props of the root, the trigger, the
- * indicator and the status element. `Clipboard.Root` calls it; call it yourself to build the
- * parts from your own elements.
+ * (`copied`, `value`, `copy()`, `setValue()`) and the props of the root, the label, the control,
+ * the value text, the trigger, the indicator and the status element. `Clipboard.Root` calls it;
+ * call it yourself to build the parts from your own elements.
  *
  * @example
  * const api = useClipboard({ value: 'pnpm add @contour-ui/headless' });
  * <div {...api.getRootProps()}>
+ *   <span {...api.getValueTextProps()}>{api.value}</span>
  *   <button {...api.getTriggerProps()}>{api.copied ? 'Copied' : 'Copy'}</button>
  *   <span {...api.getStatusProps()}>{api.copied ? 'Copied to clipboard' : null}</span>
  * </div>;
@@ -93,13 +118,38 @@ export function useClipboard(props: UseClipboardProps = {}): UseClipboardReturn 
   const service = useMachine(clipboard.machine, props, platform);
   const api = clipboard.connect(service);
   const copied = api.copied ? '' : undefined;
+
+  const baseId = useId();
+  // The id of the mounted label, which may be the generated one or the owner's.
+  const [labelId, setLabelId] = useState<string | undefined>(undefined);
+  const labelRef = useCallback<RefCallback<HTMLElement>>((element) => {
+    if (element === null) {
+      return undefined;
+    }
+    setLabelId(element.id);
+    return () => {
+      setLabelId(undefined);
+    };
+  }, []);
+
+  const part = <Part extends string>(name: Part): ClipboardPartAttributes<Part> => ({
+    'data-scope': 'clipboard',
+    'data-part': name,
+    'data-copied': copied,
+  });
+
   return {
     ...api,
-    getRootProps: () => ({ 'data-scope': 'clipboard', 'data-part': 'root', 'data-copied': copied }),
+    getRootProps: () => ({
+      ...part('root'),
+      role: labelId === undefined ? undefined : 'group',
+      'aria-labelledby': labelId,
+    }),
+    getLabelProps: () => ({ ...part('label'), id: `${baseId}label`, ref: labelRef }),
+    getControlProps: () => part('control'),
+    getValueTextProps: () => part('value-text'),
     getTriggerProps: () => ({
-      'data-scope': 'clipboard',
-      'data-part': 'trigger',
-      'data-copied': copied,
+      ...part('trigger'),
       type: 'button',
       'aria-label': 'Copy to clipboard',
       onClick: (event) => {
@@ -109,11 +159,7 @@ export function useClipboard(props: UseClipboardProps = {}): UseClipboardReturn 
         }
       },
     }),
-    getIndicatorProps: () => ({
-      'data-scope': 'clipboard',
-      'data-part': 'indicator',
-      'data-copied': copied,
-    }),
+    getIndicatorProps: () => part('indicator'),
     getStatusProps: () => ({
       'data-scope': 'clipboard',
       'data-part': 'status',

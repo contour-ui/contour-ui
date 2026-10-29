@@ -1,18 +1,20 @@
 ---
 title: Clipboard
-description: A button that copies a text, an indicator of the copied state, and an announcement for screen readers.
+description: A value to copy with its label, a button that copies it, an indicator of the copied state, and an announcement for screen readers.
 ---
 
 import { Clipboard } from '@contour-ui/headless';
 
 <Preview>
-  <Clipboard.Root
-    value="pnpm add @contour-ui/headless"
-    style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}
-  >
-    <code>pnpm add @contour-ui/headless</code>
-    <Clipboard.Trigger>Copy</Clipboard.Trigger>
-    <Clipboard.Indicator copied="Copied" />
+  <Clipboard.Root value="pnpm add @contour-ui/headless">
+    <Clipboard.Label>Install</Clipboard.Label>
+    <Clipboard.Control
+      style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.75rem' }}
+    >
+      <Clipboard.ValueText style={{ fontFamily: 'monospace' }} />
+      <Clipboard.Trigger>Copy</Clipboard.Trigger>
+      <Clipboard.Indicator copied="Copied" />
+    </Clipboard.Control>
   </Clipboard.Root>
 </Preview>
 
@@ -20,18 +22,41 @@ import { Clipboard } from '@contour-ui/headless';
 import { Clipboard } from '@contour-ui/headless';
 
 <Clipboard.Root value="pnpm add @contour-ui/headless">
-  <code>pnpm add @contour-ui/headless</code>
-  <Clipboard.Trigger>Copy</Clipboard.Trigger>
-  <Clipboard.Indicator copied="Copied" />
+  <Clipboard.Label>Install</Clipboard.Label>
+  <Clipboard.Control>
+    <Clipboard.ValueText />
+    <Clipboard.Trigger>Copy</Clipboard.Trigger>
+    <Clipboard.Indicator copied="Copied" />
+  </Clipboard.Control>
 </Clipboard.Root>;
 ```
 
-A click on `Clipboard.Trigger` writes `value` to the clipboard. Once the browser has written it,
-the clipboard is copied for `timeout` milliseconds (3 seconds by default): its parts carry
-`data-copied`, `Clipboard.Indicator` shows its `copied` content in place of its children (it has
-none here, so "Copied" appears next to the trigger), and screen readers hear "Copied to
-clipboard". Another click in that time copies again, and the time starts over once that write is
-done.
+`Clipboard.ValueText` shows the value, and a click on `Clipboard.Trigger` writes it to the
+clipboard. Once the browser has written it, the clipboard is copied for `timeout` milliseconds (3
+seconds by default): its parts carry `data-copied`, `Clipboard.Indicator` shows its `copied`
+content in place of its children (it has none here, so "Copied" appears next to the trigger), and
+screen readers hear "Copied to clipboard". Another click in that time copies again, and the time
+starts over once that write is done.
+
+## The parts
+
+- **The label.** `Clipboard.Label` says what the value is. While it is mounted, the root is a
+  `group` named by it (`aria-labelledby` with the label's `id`, generated unless you pass one), so
+  screen readers say the name as focus enters the trigger. Without a label, name the root with
+  `aria-label`: it becomes a `group` too.
+- **The control.** `Clipboard.Control` holds the value text and the trigger, to lay them out and
+  frame them as one row. It adds no role.
+- **The value text.** `Clipboard.ValueText` shows the value as it changes. Children show something
+  else in its place, such as the value marked up; with `asChild`, the child element holds the
+  text:
+
+  ```tsx
+  <Clipboard.ValueText asChild>
+    <code>pnpm add @contour-ui/headless</code>
+  </Clipboard.ValueText>
+  ```
+
+Every part is optional but the root: a trigger alone copies the value too.
 
 ## Styling
 
@@ -105,15 +130,19 @@ nothing.
 
 ## Anatomy
 
-| Part                  | Element  | Attributes                                                                                 |
-| --------------------- | -------- | ------------------------------------------------------------------------------------------ |
-| `Clipboard.Root`      | `div`    | `data-scope="clipboard" data-part="root"`, `data-copied`                                   |
-| `Clipboard.Trigger`   | `button` | `data-scope="clipboard" data-part="trigger"`, `data-copied`, `type="button"`, `aria-label` |
-| `Clipboard.Indicator` | `span`   | `data-scope="clipboard" data-part="indicator"`, `data-copied`                              |
-| status, by the root   | `span`   | `data-scope="clipboard" data-part="status"`, `role="status"`, `aria-live="polite"`         |
+| Part                  | Element  | Attributes                                                                                  |
+| --------------------- | -------- | ------------------------------------------------------------------------------------------- |
+| `Clipboard.Root`      | `div`    | `data-scope="clipboard" data-part="root"`, `data-copied`; `role="group"`, `aria-labelledby` |
+| `Clipboard.Label`     | `span`   | `data-scope="clipboard" data-part="label"`, `data-copied`, `id`                             |
+| `Clipboard.Control`   | `div`    | `data-scope="clipboard" data-part="control"`, `data-copied`                                 |
+| `Clipboard.ValueText` | `span`   | `data-scope="clipboard" data-part="value-text"`, `data-copied`; the value as its text       |
+| `Clipboard.Trigger`   | `button` | `data-scope="clipboard" data-part="trigger"`, `data-copied`, `type="button"`, `aria-label`  |
+| `Clipboard.Indicator` | `span`   | `data-scope="clipboard" data-part="indicator"`, `data-copied`                               |
+| status, by the root   | `span`   | `data-scope="clipboard" data-part="status"`, `role="status"`, `aria-live="polite"`          |
 
 `data-copied` is present, and empty, while the clipboard is copied, which starts once the browser
-has written the value. The root renders the status element right after its own element, also with
+has written the value. The root has `role="group"` while a label is mounted, with
+`aria-labelledby` pointing to it, or while you name it with `aria-label` or `aria-labelledby`. The root renders the status element right after its own element, also with
 `asChild`: it is empty until a copy, and inline styles hide it from sight but not from screen
 readers.
 
@@ -132,6 +161,10 @@ readers.
 | `asChild`        | `boolean`                                | `false`                 |
 
 Other `div` props, such as `className` and `ref`, are passed to the element.
+
+`Clipboard.Label` takes the props of `span` and `asChild`; `Clipboard.Control` those of `div`
+and `asChild`. `Clipboard.ValueText` takes the props of `span` and `asChild`; its children replace
+the value, and with `asChild` the child element holds the text.
 
 `Clipboard.Trigger` takes the props of `button` and `asChild`. Its `aria-label` defaults to
 `'Copy to clipboard'`. Your `onClick` runs before the copy: call `event.preventDefault()` in it to
@@ -171,8 +204,12 @@ The trigger is a `<button>`: these are the browser's own keys.
   and again when it changes back.
 - **The indicator is for the eyes.** The label names the trigger and the status element announces
   the copy. Inside the trigger, use icons and hide them from assistive technology. Text there that
-  turns into "Copied" leaves the name behind for the copied moment: put a text indicator next to
-  the trigger, as in the example above, so the visible text of the trigger is always in its name.
+  turns into "Copied" leaves the name behind for the copied moment, and checks such as axe report
+  it then: put a text indicator next to the trigger, as in the example above, so the visible text
+  of the trigger is always in its name.
+- **The group.** `Clipboard.Label` names the root, a `group`, so screen readers say what the value
+  is as focus enters the trigger. The value text is plain text: screen readers read the whole
+  value, however a stylesheet cuts it.
 
 ## How it works
 
@@ -201,9 +238,10 @@ itself has no DOM: a renderer other than React DOM runs it with a platform of it
 
 `useClipboard` runs the machine without the parts. It takes the props of the machine (`value`,
 `defaultValue`, `onValueChange`, `onStatusChange`, `timeout`) and returns `copied`, `value`,
-`copy()`, `setValue()` and the props of each element: `getRootProps()`, `getTriggerProps()`,
-`getIndicatorProps()` and `getStatusProps()`. Render the status element yourself, empty until a
-copy:
+`copy()`, `setValue()` and the props of each element: `getRootProps()`, `getLabelProps()`,
+`getControlProps()`, `getValueTextProps()`, `getTriggerProps()`, `getIndicatorProps()` and
+`getStatusProps()`. The label's props carry a `ref` that tells the root its id: compose it with
+yours. Render the status element yourself, empty until a copy:
 
 ```tsx
 import { useClipboard } from '@contour-ui/headless';

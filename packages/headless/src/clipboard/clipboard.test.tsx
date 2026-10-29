@@ -272,5 +272,141 @@ describe('Clipboard', () => {
     expect(() => renderToStaticMarkup(<Clipboard.Trigger />)).toThrow(
       'Clipboard: render the parts inside <Clipboard.Root>.',
     );
+    expect(() => renderToStaticMarkup(<Clipboard.ValueText />)).toThrow(
+      'Clipboard: render the parts inside <Clipboard.Root>.',
+    );
+  });
+});
+
+/** A labeled value in a control: the anatomy a styled clipboard renders. */
+function InstallBox({
+  label = 'Install',
+  ...props
+}: Clipboard.RootProps & { readonly label?: string | null }): ReactElement {
+  return (
+    <Clipboard.Root {...props}>
+      {label === null ? null : <Clipboard.Label>{label}</Clipboard.Label>}
+      <Clipboard.Control>
+        <Clipboard.ValueText />
+        <Clipboard.Trigger>
+          <Clipboard.Indicator copied="Copied">Copy</Clipboard.Indicator>
+        </Clipboard.Trigger>
+      </Clipboard.Control>
+    </Clipboard.Root>
+  );
+}
+
+describe('Clipboard label, control and value text', () => {
+  it('renders each part as its element, the value in the value text', async () => {
+    acceptingClipboard();
+    const screen = await render(<InstallBox value="npm i" />);
+
+    expect(part(screen.container, 'label').tagName).toBe('SPAN');
+    expect(part(screen.container, 'control').tagName).toBe('DIV');
+    expect(part(screen.container, 'control')).not.toHaveAttribute('role');
+    expect(part(screen.container, 'value-text').tagName).toBe('SPAN');
+    expect(part(screen.container, 'value-text').textContent).toBe('npm i');
+    for (const name of ['label', 'control', 'value-text']) {
+      expect(part(screen.container, name)).not.toHaveAttribute('data-copied');
+    }
+  });
+
+  it('makes the root a group named by the label while one is mounted', async () => {
+    acceptingClipboard();
+    const screen = await render(<InstallBox value="npm i" />);
+    const group = screen.getByRole('group', { name: 'Install' });
+    const label = part(screen.container, 'label');
+
+    await expect.element(group).toHaveAttribute('data-part', 'root');
+    expect(label.id).not.toBe('');
+    await expect.element(group).toHaveAttribute('aria-labelledby', label.id);
+
+    await screen.rerender(<InstallBox value="npm i" label={null} />);
+    const root = part(screen.container, 'root');
+    expect(root).not.toHaveAttribute('role');
+    expect(root).not.toHaveAttribute('aria-labelledby');
+  });
+
+  it('follows an id given to the label', async () => {
+    acceptingClipboard();
+    const screen = await render(
+      <Clipboard.Root value="npm i">
+        <Clipboard.Label id="install-label">Install</Clipboard.Label>
+        <Clipboard.Trigger />
+      </Clipboard.Root>,
+    );
+
+    await expect
+      .element(screen.getByRole('group', { name: 'Install' }))
+      .toHaveAttribute('aria-labelledby', 'install-label');
+  });
+
+  it('makes a root the owner names a group, and leaves an unnamed one without a role', async () => {
+    acceptingClipboard();
+    const screen = await render(
+      <>
+        <Clipboard.Root value="npm i" aria-label="Install">
+          <Clipboard.Trigger />
+        </Clipboard.Root>
+        <Clipboard.Root value="pnpm add" data-testid="unnamed">
+          <Clipboard.Trigger />
+        </Clipboard.Root>
+      </>,
+    );
+
+    await expect
+      .element(screen.getByRole('group', { name: 'Install' }))
+      .toHaveAttribute('data-part', 'root');
+    await expect.element(screen.getByTestId('unnamed')).not.toHaveAttribute('role');
+  });
+
+  it('shows the value as it changes', async () => {
+    acceptingClipboard();
+    const screen = await render(
+      <Clipboard.Root defaultValue="npm i">
+        <Clipboard.ValueText />
+        <SetValue value="pnpm add" />
+      </Clipboard.Root>,
+    );
+    const valueText = part(screen.container, 'value-text');
+
+    expect(valueText.textContent).toBe('npm i');
+    await userEvent.click(screen.getByRole('button', { name: 'Set pnpm add' }));
+    await expect.poll(() => valueText.textContent).toBe('pnpm add');
+
+    await screen.rerender(<InstallBox value="yarn add" />);
+    expect(part(screen.container, 'value-text').textContent).toBe('yarn add');
+    await screen.rerender(<InstallBox value="bun add" />);
+    expect(part(screen.container, 'value-text').textContent).toBe('bun add');
+  });
+
+  it('shows its children in place of the value, or renders its child with asChild', async () => {
+    acceptingClipboard();
+    const screen = await render(
+      <Clipboard.Root value="pnpm add @contour-ui/headless">
+        <Clipboard.ValueText>
+          pnpm add <b>@contour-ui/headless</b>
+        </Clipboard.ValueText>
+        <Clipboard.ValueText asChild>
+          <code>pnpm add @contour-ui/headless</code>
+        </Clipboard.ValueText>
+      </Clipboard.Root>,
+    );
+    const [marked, code] = screen.container.querySelectorAll('[data-part="value-text"]');
+
+    expect(marked?.querySelector('b')).toHaveTextContent('@contour-ui/headless');
+    expect(code?.tagName).toBe('CODE');
+    expect(code?.textContent).toBe('pnpm add @contour-ui/headless');
+  });
+
+  it('gives the label, the control and the value text the copied state', async () => {
+    acceptingClipboard();
+    const screen = await render(<InstallBox value="npm i" />);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+    await expect.element(screen.getByRole('status')).toHaveTextContent('Copied to clipboard');
+    for (const name of ['root', 'label', 'control', 'value-text', 'trigger', 'indicator']) {
+      expect(part(screen.container, name)).toHaveAttribute('data-copied', '');
+    }
   });
 });

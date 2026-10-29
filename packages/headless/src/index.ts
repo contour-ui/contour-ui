@@ -13,7 +13,15 @@ export type {
 export * as Clipboard from './clipboard/index.ts';
 export { useClipboardContext } from './clipboard/clipboard-context.ts';
 export { useClipboard } from './clipboard/use-clipboard.ts';
-export type { UseClipboardProps, UseClipboardReturn } from './clipboard/use-clipboard.ts';
+export type {
+  ClipboardLabelAttributes,
+  ClipboardPartAttributes,
+  ClipboardRootAttributes,
+  ClipboardStatusAttributes,
+  ClipboardTriggerAttributes,
+  UseClipboardProps,
+  UseClipboardReturn,
+} from './clipboard/use-clipboard.ts';
 export * as Collapsible from './collapsible/index.ts';
 export { useCollapsibleContext } from './collapsible/collapsible-context.ts';
 export type { CollapsibleContextValue } from './collapsible/collapsible-context.ts';

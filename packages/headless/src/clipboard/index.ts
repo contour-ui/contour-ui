@@ -1,6 +1,12 @@
-export { ClipboardIndicator as Indicator } from './clipboard-indicator.tsx';
-export type { ClipboardIndicatorProps as IndicatorProps } from './clipboard-indicator.tsx';
 export { ClipboardRoot as Root } from './clipboard-root.tsx';
 export type { ClipboardRootProps as RootProps } from './clipboard-root.tsx';
+export { ClipboardLabel as Label } from './clipboard-label.tsx';
+export type { ClipboardLabelProps as LabelProps } from './clipboard-label.tsx';
+export { ClipboardControl as Control } from './clipboard-control.tsx';
+export type { ClipboardControlProps as ControlProps } from './clipboard-control.tsx';
+export { ClipboardValueText as ValueText } from './clipboard-value-text.tsx';
+export type { ClipboardValueTextProps as ValueTextProps } from './clipboard-value-text.tsx';
 export { ClipboardTrigger as Trigger } from './clipboard-trigger.tsx';
 export type { ClipboardTriggerProps as TriggerProps } from './clipboard-trigger.tsx';
+export { ClipboardIndicator as Indicator } from './clipboard-indicator.tsx';
+export type { ClipboardIndicatorProps as IndicatorProps } from './clipboard-indicator.tsx';

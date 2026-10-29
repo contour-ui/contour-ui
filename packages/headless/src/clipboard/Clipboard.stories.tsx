@@ -65,6 +65,40 @@ export const Default: Story = {
   },
 };
 
+/**
+ * Every part: a label that names the root, which becomes a group, and a control that holds the
+ * value text, the trigger and the indicator. The value text shows the value the trigger copies.
+ * The story ends in the copied state, so the accessibility check sees it.
+ */
+export const Anatomy: Story = {
+  args: { value: 'pnpm add @contour-ui/headless' },
+  render: (args) => (
+    <Clipboard.Root {...args}>
+      <Clipboard.Label>Install command</Clipboard.Label>
+      <Clipboard.Control style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <Clipboard.ValueText style={{ fontFamily: 'monospace' }} />
+        <Clipboard.Trigger>Copy</Clipboard.Trigger>
+        <Clipboard.Indicator copied="Copied" />
+      </Clipboard.Control>
+    </Clipboard.Root>
+  ),
+  play: async ({ canvas }) => {
+    const group = canvas.getByRole('group', { name: 'Install command' });
+    const valueText = canvas.getByText('pnpm add @contour-ui/headless');
+
+    await expect(group).toHaveAttribute('data-part', 'root');
+    await expect(valueText).toHaveAttribute('data-part', 'value-text');
+    await expect(valueText.parentElement).toHaveAttribute('data-part', 'control');
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Copy to clipboard' }));
+    await expect(writeText).toHaveBeenCalledWith('pnpm add @contour-ui/headless');
+    await waitFor(async () => {
+      await expect(group).toHaveAttribute('data-copied');
+    });
+    await expect(canvas.getByText('Copied')).toHaveAttribute('data-part', 'indicator');
+  },
+};
+
 const glyph = {
   'aria-hidden': true,
   width: 16,
