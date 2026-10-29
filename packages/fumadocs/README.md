@@ -126,13 +126,13 @@ export const { staticGET: GET } = createFromSource(source);
 
 - Props go from server components to client components: pass data, React nodes and components,
   never functions.
-- Kit does not mark its components as client modules yet. To use a Kit component in MDX or in a
-  server component of your own, re-export it from a module that starts with `'use client'`
-  (`'use client'; export { Button } from '@contour-ui/kit';`) and import it from there. Kit's
-  `themeScript` comes without React from `@contour-ui/kit/theme-script`.
-- A component of parts, such as Kit's `Card`, is a namespace: a server component cannot read
-  inside an export of a client module (`Card.Root` is `undefined` there). Write the code that uses
-  it in the client module, or export its parts by name (`export const CardRoot = Card.Root;`).
+- Kit and headless carry `'use client'` per module too: a server component, MDX included, imports
+  `@contour-ui/kit` directly and renders `Card.Root` or `Button`. Kit's `themeScript` also comes
+  without React from `@contour-ui/kit/theme-script`.
+- A server component cannot read inside an export of a client module of your own (an object
+  exported from a `'use client'` file is a reference there). Kit's namespaces are server modules,
+  so `Card.Root` works; write your own parts as a namespace barrel without the directive, or export
+  them by name.
 - `output: 'export'` works: the search index is prerendered at `/api/search`.
 
 ## MDX

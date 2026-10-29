@@ -1,5 +1,3 @@
-'use client';
-
 import { mergeProps } from '@contour-ui/headless';
 import { hashIcon } from '@contour-ui/icons';
 import { Icon } from '@contour-ui/kit';

@@ -1,5 +1,3 @@
-'use client';
-
 import { CodeBlock } from '@contour-ui/kit';
 import type { ComponentProps, ReactElement } from 'react';
 

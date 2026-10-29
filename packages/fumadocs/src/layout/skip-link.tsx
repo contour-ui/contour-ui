@@ -1,5 +1,3 @@
-'use client';
-
 import { Button } from '@contour-ui/kit';
 import type { ReactElement } from 'react';
 

@@ -449,27 +449,28 @@ Props that go from a server component to a client one must be serializable: data
 and components of client modules, never functions. `DocsSite` is: its `name` is a string or an
 element, and its icons are plain data.
 
-Kit does not mark its components as client modules yet, and it creates React contexts as it
-loads, which React does not allow on a server. Importing `@contour-ui/kit` in a server component,
-an MDX page included, fails. Import Kit in a module of your own that starts with `'use client'`,
-and import that module instead:
+Kit and headless are built one file per module, and the modules that need the browser start with
+`'use client'`. A server component, an MDX page included, imports `@contour-ui/kit` directly: the
+parts that only render markup (`Button`, `Kbd`, `Card`, `Table`…) render on the server, the others
+are client components it renders by reference, and a namespace such as `Card` is a server module,
+so `Card.Root` works:
 
-```tsx title="components/kit.ts"
-'use client';
+```tsx title="app/docs/[[...slug]]/page.tsx"
+import { Button, Card } from '@contour-ui/kit';
 
-import { Card } from '@contour-ui/kit';
-
-export { Button, Kbd } from '@contour-ui/kit';
-
-// A server component cannot read inside an export of a client module (`Card.Root`):
-// export the parts of a component by name.
-export const CardRoot = Card.Root;
-export const CardTitle = Card.Title;
+<Card.Root>
+  <Card.Title>Kit on the server</Card.Title>
+  <Button asChild>
+    <a href="/docs">Read the docs</a>
+  </Button>
+</Card.Root>;
 ```
 
-A component of your own that uses Kit is simpler still: write it in a client module, and import
-it into the page or the MDX. Kit's `themeScript()` comes without React from
-`@contour-ui/kit/theme-script`, for a server component; `docsScript()` holds it already.
+Code with handlers or state, such as a dialog that opens on `onClick`, goes in a module of your own
+that starts with `'use client'`. Such a module hands a server only references: export its
+components by name, since a server component cannot read inside an object it exports. Kit's
+`themeScript()` also comes without React from `@contour-ui/kit/theme-script`; `docsScript()` holds
+it already.
 
 ## Other frameworks
 

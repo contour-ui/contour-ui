@@ -1,5 +1,3 @@
-'use client';
-
 import { mergeProps } from '@contour-ui/headless';
 import { Card as KitCard } from '@contour-ui/kit';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';

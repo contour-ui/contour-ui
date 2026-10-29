@@ -1,5 +1,3 @@
-'use client';
-
 import { chevronLeftIcon, chevronRightIcon } from '@contour-ui/icons';
 import { Card, Icon } from '@contour-ui/kit';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';

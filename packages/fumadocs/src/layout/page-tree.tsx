@@ -1,5 +1,3 @@
-'use client';
-
 import { arrowUpRightIcon } from '@contour-ui/icons';
 import { Icon } from '@contour-ui/kit';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';

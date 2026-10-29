@@ -1,20 +1,13 @@
+import { Kbd, Table } from '@contour-ui/kit';
 import type { MDXComponents } from 'mdx/types';
 
 import { Callout } from './callout.tsx';
 import { Card, Cards } from './cards.tsx';
 import { MdxHeading } from './heading.tsx';
-import { Kbd } from './kbd.ts';
 import { MdxLink } from './link.tsx';
 import { MdxPre } from './pre.tsx';
 import { Preview } from './preview.tsx';
-import {
-  MdxTable,
-  MdxTableBody,
-  MdxTableCell,
-  MdxTableColumnHeader,
-  MdxTableHeader,
-  MdxTableRow,
-} from './table.tsx';
+import { MdxTable } from './table.tsx';
 
 /** Markdown headings, `#` to `######`, as {@link MdxHeading} of their level. */
 const mdxHeadingComponents = {
@@ -32,9 +25,10 @@ const mdxHeadingComponents = {
  * `Kbd`, `Preview`). `overrides` come last: the app's own components, or replacements for these.
  * Elements without an entry, such as images, render as they are, and `Prose` styles them.
  *
- * It works where MDX renders on the server (React Server Components): this module imports nothing
- * from Kit, and the components that need the browser are client modules (`'use client'`), which
- * the map holds as references.
+ * It works where MDX renders on the server (React Server Components): the components that need
+ * the browser, here and in Kit, are client modules (`'use client'`), which the map holds as
+ * references, and Kit's namespaces such as `Table` are server modules, so the map can read their
+ * parts.
  *
  * @example
  * <Prose>
@@ -47,11 +41,13 @@ export function getMdxComponents(overrides?: MDXComponents): MDXComponents {
     pre: MdxPre,
     a: MdxLink,
     table: MdxTable,
-    thead: MdxTableHeader,
-    tbody: MdxTableBody,
-    tr: MdxTableRow,
-    th: MdxTableColumnHeader,
-    td: MdxTableCell,
+    // The other table elements are Kit's parts. Their props pass through, the inline `text-align`
+    // of an aligned column included.
+    thead: Table.Header,
+    tbody: Table.Body,
+    tr: Table.Row,
+    th: Table.ColumnHeader,
+    td: Table.Cell,
     Callout,
     Card,
     Cards,

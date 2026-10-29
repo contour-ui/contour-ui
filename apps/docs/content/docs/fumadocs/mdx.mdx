@@ -79,9 +79,9 @@ import { Tabs } from './tabs';
 
 `getMdxComponents()`, `Prose` and `Preview` are server modules, and the components of the map that
 need the browser are client modules (`'use client'`): the MDX of a page renders as a React Server
-Component too, as on Next.js. There, overrides are server components, or named exports of client
-modules: a map built on the server cannot read inside an export of a client module
-([Kit in server components](/docs/fumadocs/setup#kit-in-server-components)).
+Component too, as on Next.js. There, overrides are server components, Kit's components, or named
+exports of client modules: a map built on the server cannot read inside an export of a client
+module of your own ([Kit in server components](/docs/fumadocs/setup#kit-in-server-components)).
 
 ## Prose
 

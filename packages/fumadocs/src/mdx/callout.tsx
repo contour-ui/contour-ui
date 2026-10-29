@@ -1,5 +1,3 @@
-'use client';
-
 import { Alert } from '@contour-ui/kit';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 
