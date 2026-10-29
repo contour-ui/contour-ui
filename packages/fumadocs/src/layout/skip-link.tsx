@@ -1,4 +1,4 @@
-import { Button } from '@contour-ui/kit';
+import { Button } from '@contour-ui/react';
 import type { ReactElement } from 'react';
 
 /**

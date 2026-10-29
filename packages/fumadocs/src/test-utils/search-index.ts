@@ -33,7 +33,7 @@ const SEARCH_PAGES: readonly SearchPage[] = [
     markdown: [
       '## Usage',
       '',
-      'Import `Button` from `@contour-ui/kit` and give it a label.',
+      'Import `Button` from `@contour-ui/react` and give it a label.',
       '',
       '## Variants',
       '',

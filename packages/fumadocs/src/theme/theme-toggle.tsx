@@ -2,8 +2,8 @@
 
 import { monitorIcon, moonIcon, sunIcon } from '@contour-ui/icons';
 import type { IconData } from '@contour-ui/icons';
-import { Button, Icon, SegmentGroup, useTheme } from '@contour-ui/kit';
-import type { ThemeChoice } from '@contour-ui/kit';
+import { Button, Icon, SegmentGroup, useTheme } from '@contour-ui/react';
+import type { ThemeChoice } from '@contour-ui/react';
 import { use } from 'react';
 import type { ReactElement } from 'react';
 

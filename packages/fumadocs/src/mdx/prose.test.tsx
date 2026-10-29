@@ -1,4 +1,4 @@
-import { Card } from '@contour-ui/kit';
+import { Card } from '@contour-ui/react';
 import { vars } from '@contour-ui/tokens';
 import { describe, expect, it } from 'vite-plus/test';
 import { render } from 'vitest-browser-react';
@@ -8,7 +8,7 @@ import { Prose } from './prose.tsx';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** Computed value of `property` when set to `value` (resolves `var(--ct-…)`). */
 function computed(property: string, value: string): string {

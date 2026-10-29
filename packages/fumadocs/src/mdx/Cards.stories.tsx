@@ -1,5 +1,5 @@
 import { fileTextIcon, githubIcon, lightbulbIcon } from '@contour-ui/icons';
-import { Icon } from '@contour-ui/kit';
+import { Icon } from '@contour-ui/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 

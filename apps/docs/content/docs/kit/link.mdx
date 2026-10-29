@@ -3,7 +3,7 @@ title: Link
 description: A link in the accent color, underlined on hover or always, or muted in navigation lists.
 ---
 
-import { Link } from '@contour-ui/kit';
+import { Link } from '@contour-ui/react';
 import { vars } from '@contour-ui/tokens';
 
 <Preview>
@@ -21,7 +21,7 @@ import { vars } from '@contour-ui/tokens';
 </Preview>
 
 ```tsx
-import { Link } from '@contour-ui/kit';
+import { Link } from '@contour-ui/react';
 
 <Link href="/docs/guide">Guide</Link>;
 ```
@@ -102,7 +102,7 @@ With `asChild`, Link renders your router's link instead of its own `<a>`, with t
 attributes merged into it:
 
 ```tsx
-import { Link } from '@contour-ui/kit';
+import { Link } from '@contour-ui/react';
 import { Link as RouterLink } from 'react-router';
 
 <Link asChild variant="underline">

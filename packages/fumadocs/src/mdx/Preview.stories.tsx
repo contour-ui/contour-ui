@@ -1,4 +1,4 @@
-import { Button, Card, Link } from '@contour-ui/kit';
+import { Button, Card, Link } from '@contour-ui/react';
 import { vars } from '@contour-ui/tokens';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';

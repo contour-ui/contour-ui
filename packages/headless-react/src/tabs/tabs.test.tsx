@@ -211,7 +211,7 @@ describe('Tabs', () => {
     });
 
     it('takes any string as a value', async () => {
-      const value = 'npm install @contour-ui/kit';
+      const value = 'npm install @contour-ui/react';
       const { tab, panel } = await setup({
         items: [
           { value, label: 'npm' },

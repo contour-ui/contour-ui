@@ -8,7 +8,7 @@ import { renderDocs } from '../test-utils/render.tsx';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** A docs page in the layout of the fixtures' tree. */
 function DocsSite(): ReactElement {

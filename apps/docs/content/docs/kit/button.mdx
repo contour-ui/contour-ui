@@ -11,7 +11,7 @@ import {
   moonIcon,
   searchIcon,
 } from '@contour-ui/icons';
-import { Button, CloseButton, Icon, IconButton } from '@contour-ui/kit';
+import { Button, CloseButton, Icon, IconButton } from '@contour-ui/react';
 
 <Preview>
   {
@@ -35,7 +35,7 @@ import { Button, CloseButton, Icon, IconButton } from '@contour-ui/kit';
 </Preview>
 
 ```tsx
-import { Button } from '@contour-ui/kit';
+import { Button } from '@contour-ui/react';
 
 <Button onClick={save}>Save</Button>;
 ```
@@ -135,7 +135,7 @@ of the label. It is decorative: the label names the button.
 
 ```tsx
 import { chevronRightIcon, copyIcon } from '@contour-ui/icons';
-import { Button, Icon } from '@contour-ui/kit';
+import { Button, Icon } from '@contour-ui/react';
 
 <Button variant="subtle">
   <Icon icon={copyIcon} />
@@ -186,7 +186,7 @@ be an `<a>` or your router's link component.
 </Preview>
 
 ```tsx
-import { Button } from '@contour-ui/kit';
+import { Button } from '@contour-ui/react';
 import { Link } from 'react-router';
 
 <Button asChild variant="outline">
@@ -223,7 +223,7 @@ and the icon grows with the size.
 
 ```tsx
 import { menuIcon } from '@contour-ui/icons';
-import { IconButton } from '@contour-ui/kit';
+import { IconButton } from '@contour-ui/react';
 
 <IconButton label="Open menu" icon={menuIcon} variant="ghost" />;
 ```
@@ -264,7 +264,7 @@ close, say which one in `label`.
 </Preview>
 
 ```tsx
-import { CloseButton } from '@contour-ui/kit';
+import { CloseButton } from '@contour-ui/react';
 
 <CloseButton onClick={() => setOpen(false)} />
 <CloseButton label="Close search" onClick={closeSearch} />

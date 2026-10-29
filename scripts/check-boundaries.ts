@@ -65,7 +65,7 @@ function isForbiddenExternal(specifier: string): boolean {
   );
 }
 
-/** `@contour-ui/kit/styles.css` -> `kit`; anything else -> undefined. */
+/** `@contour-ui/react/styles.css` -> `kit`; anything else -> undefined. */
 function internalName(specifier: string): string | undefined {
   if (!specifier.startsWith(`${SCOPE}/`)) {
     return undefined;

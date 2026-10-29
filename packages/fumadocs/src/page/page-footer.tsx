@@ -1,5 +1,5 @@
 import { chevronLeftIcon, chevronRightIcon } from '@contour-ui/icons';
-import { Card, Icon } from '@contour-ui/kit';
+import { Card, Icon } from '@contour-ui/react';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';
 import { findNeighbour } from 'fumadocs-core/page-tree';
 import type { Item, Root } from 'fumadocs-core/page-tree';

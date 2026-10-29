@@ -1,7 +1,7 @@
 'use client';
 
 import { panelLeftIcon } from '@contour-ui/icons';
-import { IconButton } from '@contour-ui/kit';
+import { IconButton } from '@contour-ui/react';
 import { useRef } from 'react';
 import type { ReactElement } from 'react';
 

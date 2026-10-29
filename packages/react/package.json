@@ -1,0 +1,83 @@
+{
+  "name": "@contour-ui/react",
+  "version": "0.0.0",
+  "description": "contour-ui for React: styled React DOM components, everyday (Essentials) and for audio interfaces (Audio).",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contour-ui/contour-ui.git",
+    "directory": "packages/react"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/styles.css",
+    "./src/**/*.css"
+  ],
+  "exports": {
+    ".": {
+      "@contour-ui/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./theme-script": {
+      "@contour-ui/source": "./src/theme-provider/theme-script.ts",
+      "types": "./dist/theme-script.d.ts",
+      "default": "./dist/theme-script.js"
+    },
+    "./styles.css": {
+      "@contour-ui/source": "./src/styles.css",
+      "default": "./dist/styles.css"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./theme-script": {
+        "types": "./dist/theme-script.d.ts",
+        "default": "./dist/theme-script.js"
+      },
+      "./styles.css": "./dist/styles.css",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch",
+    "storybook": "storybook dev --port 6103 --no-open",
+    "build-storybook": "storybook build --output-dir storybook-static"
+  },
+  "dependencies": {
+    "@contour-ui/headless-react": "workspace:*",
+    "@contour-ui/icons": "workspace:*",
+    "@contour-ui/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@contour-ui/vite-config": "workspace:*",
+    "@storybook/addon-a11y": "catalog:",
+    "@storybook/addon-docs": "catalog:",
+    "@storybook/addon-vitest": "catalog:",
+    "@storybook/react-vite": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "storybook": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest-browser-react": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

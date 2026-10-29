@@ -1,6 +1,6 @@
 'use client';
 
-import { Collapsible } from '@contour-ui/kit';
+import { Collapsible } from '@contour-ui/react';
 import { useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 

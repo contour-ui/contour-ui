@@ -12,6 +12,6 @@ export interface PackageStorybook {
 export const PACKAGE_STORYBOOKS: readonly PackageStorybook[] = [
   { name: 'tokens', title: 'Tokens', port: 6101 },
   { name: 'headless-react', title: 'Headless', port: 6102 },
-  { name: 'kit', title: 'Kit', port: 6103 },
+  { name: 'react', title: 'React', port: 6103 },
   { name: 'fumadocs', title: 'Fumadocs', port: 6105 },
 ];

@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@contour-ui/headless-react": "workspace:*",
-    "@contour-ui/kit": "workspace:*",
+    "@contour-ui/react": "workspace:*",
     "@contour-ui/tokens": "workspace:*",
     "react": "catalog:",
     "react-dom": "catalog:"

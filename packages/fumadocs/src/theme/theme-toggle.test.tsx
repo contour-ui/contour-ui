@@ -12,7 +12,7 @@ import { site } from '../test-utils/site.ts';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 const root = document.documentElement;
 

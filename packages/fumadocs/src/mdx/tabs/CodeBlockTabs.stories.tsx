@@ -33,7 +33,7 @@ type Story = StoryObj<typeof meta>;
  */
 export const PackageInstallBlock: Story = {
   name: 'Package install',
-  render: () => <PackageInstall packages="@contour-ui/kit @contour-ui/tokens" />,
+  render: () => <PackageInstall packages="@contour-ui/react @contour-ui/tokens" />,
   play: async ({ canvas }) => {
     await expect(canvas.getAllByRole('tab').map((tab) => tab.textContent)).toStrictEqual([
       'npm',
@@ -44,7 +44,7 @@ export const PackageInstallBlock: Story = {
     await userEvent.click(canvas.getByRole('tab', { name: 'pnpm' }));
     // The panel shown: the others are hidden, out of the accessibility tree.
     await expect(canvas.getByRole('tabpanel')).toHaveTextContent(
-      'pnpm add @contour-ui/kit @contour-ui/tokens',
+      'pnpm add @contour-ui/react @contour-ui/tokens',
     );
     await expect(canvas.getByRole('button', { name: 'Copy code' })).toBeVisible();
     // Back to the first tab, for the screenshot.

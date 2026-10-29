@@ -11,7 +11,7 @@ import { site } from '../test-utils/site.ts';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** The site of the fixtures, with a link to another site and one to a page of its own. */
 const SITE: DocsSite = {

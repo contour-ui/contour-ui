@@ -1,9 +1,9 @@
-import { Button, Clipboard } from '@contour-ui/kit';
+import { Button, Clipboard } from '@contour-ui/react';
 import type { ReactElement } from 'react';
 import { Link as RouterLink } from 'react-router';
 
 /** The command of the install box. */
-const INSTALL = 'pnpm add @contour-ui/kit';
+const INSTALL = 'pnpm add @contour-ui/react';
 
 /** How long the check mark of the install box shows after a copy, in milliseconds. */
 const COPIED_MS = 1500;

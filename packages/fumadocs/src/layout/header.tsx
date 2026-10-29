@@ -1,6 +1,6 @@
 'use client';
 
-import { Link } from '@contour-ui/kit';
+import { Link } from '@contour-ui/react';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';
 import type { ReactElement } from 'react';
 

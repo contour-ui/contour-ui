@@ -84,7 +84,7 @@ export const ColorRoles: Story = {
 /** What each `color.syntax.<role>` colors, as code text. */
 const SYNTAX_SAMPLES: Readonly<Record<string, string>> = {
   constant: 'MAX_GAIN 0.71 true',
-  string: 'add @contour-ui/kit',
+  string: 'add @contour-ui/react',
   comment: '// Follow the system theme',
   keyword: 'export const return',
   parameter: 'theme event',

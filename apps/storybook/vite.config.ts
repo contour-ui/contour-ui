@@ -10,7 +10,7 @@ export default defineConfig({
   run: {
     tasks: {
       // Builds every package Storybook, then the host, into one deployable folder:
-      // storybook-static/{index.html, tokens/, headless-react/, kit/, fumadocs/}.
+      // storybook-static/{index.html, tokens/, headless-react/, react/, fumadocs/}.
       'build-storybook': {
         command: ['storybook build --output-dir storybook-static', 'node scripts/compose.ts'],
         // Storybook wipes and rewrites its output directory, so results are not cacheable.
@@ -18,7 +18,7 @@ export default defineConfig({
         dependsOn: [
           '@contour-ui/tokens#build-storybook',
           '@contour-ui/headless-react#build-storybook',
-          '@contour-ui/kit#build-storybook',
+          '@contour-ui/react#build-storybook',
           '@contour-ui/fumadocs#build-storybook',
         ],
       },

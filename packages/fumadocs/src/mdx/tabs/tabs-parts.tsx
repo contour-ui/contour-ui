@@ -1,7 +1,7 @@
 'use client';
 
 import { useComposedRefs } from '@contour-ui/headless-react';
-import { Tabs as KitTabs } from '@contour-ui/kit';
+import { Tabs as KitTabs } from '@contour-ui/react';
 import type { ComponentProps, ReactElement } from 'react';
 
 import { DocsTabsContext, useDocsTabs, useDocsTabsContext } from './use-docs-tabs.ts';

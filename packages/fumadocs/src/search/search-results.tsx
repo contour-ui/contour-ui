@@ -6,7 +6,7 @@ import {
   textAlignStartIcon,
 } from '@contour-ui/icons';
 import type { IconData } from '@contour-ui/icons';
-import { Icon, Listbox } from '@contour-ui/kit';
+import { Icon, Listbox } from '@contour-ui/react';
 import type { SearchResultRecord, SearchResultTable } from 'fumadocs-core/search/client';
 import { toJsx } from 'fumadocs-core/utils/hast-to-jsx';
 import type { ToJsxOptions } from 'fumadocs-core/utils/hast-to-jsx';

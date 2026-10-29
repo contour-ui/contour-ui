@@ -5,7 +5,7 @@ import { App } from './app.tsx';
 
 import '@contour-ui/tokens/tokens.css';
 import '@contour-ui/tokens/fonts.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 import './styles.css';
 
 const container = document.querySelector('#root');

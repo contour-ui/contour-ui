@@ -7,7 +7,7 @@ import { Card, Cards } from './cards.tsx';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 describe('Cards', () => {
   it('lays its cards out on a grid', async () => {

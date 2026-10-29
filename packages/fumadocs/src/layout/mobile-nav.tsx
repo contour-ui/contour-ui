@@ -1,7 +1,7 @@
 'use client';
 
 import { menuIcon } from '@contour-ui/icons';
-import { Drawer, IconButton, Portal } from '@contour-ui/kit';
+import { Drawer, IconButton, Portal } from '@contour-ui/react';
 import { usePathname } from 'fumadocs-core/framework';
 import { useEffect, useState } from 'react';
 import type { MouseEvent, ReactElement } from 'react';

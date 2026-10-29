@@ -7,7 +7,7 @@ import { createSearchIndexUrl } from '../test-utils/search-index.ts';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** The URL of the search index of the fixtures. */
 let from = '';

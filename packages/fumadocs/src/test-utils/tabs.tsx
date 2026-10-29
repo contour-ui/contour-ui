@@ -28,7 +28,7 @@ function installLine(manager: string, command: string, packages: string): CodeLi
 }
 
 export interface PackageInstallProps extends Pick<CodeBlockTabsProps, 'groupId' | 'persist'> {
-  /** The packages to install, as the block lists them: `@contour-ui/kit @contour-ui/tokens`. */
+  /** The packages to install, as the block lists them: `@contour-ui/react @contour-ui/tokens`. */
   readonly packages: string;
 }
 

@@ -30,11 +30,11 @@ test.describe('an install command', () => {
       'true',
     );
     const panel = page.getByRole('main').getByRole('tabpanel').first();
-    await expect(panel).toHaveText('npm install @contour-ui/kit @contour-ui/tokens');
+    await expect(panel).toHaveText('npm install @contour-ui/react @contour-ui/tokens');
 
     await block.getByRole('tab', { name: 'pnpm', exact: true }).click();
     await expect(page.getByRole('main').getByRole('tabpanel').first()).toHaveText(
-      'pnpm add @contour-ui/kit @contour-ui/tokens',
+      'pnpm add @contour-ui/react @contour-ui/tokens',
     );
     await expect(
       page.getByRole('main').getByRole('button', { name: 'Copy code' }).first(),

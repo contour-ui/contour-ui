@@ -2,7 +2,7 @@
  * Prose: typography and vertical rhythm for the MDX content of a docs page.
  *
  * styles.css imports this file into the `contour.fumadocs-prose` cascade layer, between the page
- * base (`contour.fumadocs-base`) and Kit (`contour.kit`): a Kit component inside the content
+ * base (`contour.fumadocs-base`) and Kit (`contour.components`): a Kit component inside the content
  * keeps its own styles. Prose relies on no reset: it sets the
  * margins, paddings, list markers and fonts of the elements it styles over the browser's defaults.
  *

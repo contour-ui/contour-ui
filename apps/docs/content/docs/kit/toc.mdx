@@ -3,7 +3,7 @@ title: Toc
 description: A table of contents for the headings of a page that marks the sections in view as the page scrolls.
 ---
 
-import { Toc } from '@contour-ui/kit';
+import { Toc } from '@contour-ui/react';
 import { vars } from '@contour-ui/tokens';
 
 export const manual = [
@@ -105,7 +105,7 @@ export const manual = [
 </Preview>
 
 ```tsx
-import { Toc } from '@contour-ui/kit';
+import { Toc } from '@contour-ui/react';
 
 const items = [
   { value: 'install', depth: 2 },
@@ -142,7 +142,7 @@ A Fumadocs page has its table of contents as `toc`: items `{ title, url: '#id', 
 is the url without the `#`:
 
 ```tsx title="toc-panel.tsx"
-import { Toc } from '@contour-ui/kit';
+import { Toc } from '@contour-ui/react';
 import type { TableOfContents } from 'fumadocs-core/toc';
 
 export function TocPanel({ toc }: { toc: TableOfContents }) {

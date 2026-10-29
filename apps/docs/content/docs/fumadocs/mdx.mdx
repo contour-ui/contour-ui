@@ -101,12 +101,12 @@ commands of npm, pnpm, yarn and bun, as code block tabs. `remarkNpm` of Fumadocs
 
 ````mdx title="page.mdx"
 ```package-install
-@contour-ui/kit @contour-ui/tokens
+@contour-ui/react @contour-ui/tokens
 ```
 ````
 
 ```package-install
-@contour-ui/kit @contour-ui/tokens
+@contour-ui/react @contour-ui/tokens
 ```
 
 Its `persist` option makes the tabs of every such block one group, remembered across visits, as on
@@ -253,7 +253,7 @@ wrapping when the row is full. Its content is outside Prose (`contour-docs-not-p
 components render with their own styles only. A page imports the components it shows at its top:
 
 ```mdx title="button.mdx"
-import { Button } from '@contour-ui/kit';
+import { Button } from '@contour-ui/react';
 
 <Preview>
   <Button>Save</Button>

@@ -1,5 +1,5 @@
 import { Placeholder as HeadlessPlaceholder } from '@contour-ui/headless-react';
-import { Placeholder } from '@contour-ui/kit';
+import { Placeholder } from '@contour-ui/react';
 import { defaultTheme, themeAttribute, themes } from '@contour-ui/tokens';
 import type { Theme } from '@contour-ui/tokens';
 import { useEffect, useState } from 'react';

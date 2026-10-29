@@ -1,4 +1,4 @@
-import { Kbd, Table } from '@contour-ui/kit';
+import { Kbd, Table } from '@contour-ui/react';
 import type { MDXComponents } from 'mdx/types';
 
 import { Callout } from './callout.tsx';

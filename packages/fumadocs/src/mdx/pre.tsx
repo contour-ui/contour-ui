@@ -1,4 +1,4 @@
-import { CodeBlock } from '@contour-ui/kit';
+import { CodeBlock } from '@contour-ui/react';
 import type { ComponentProps, ReactElement } from 'react';
 
 /**

@@ -1,5 +1,5 @@
 import { chevronLeftIcon, chevronRightIcon } from '@contour-ui/icons';
-import { Button, Icon, IconButton, Link, Placeholder, Tabs } from '@contour-ui/kit';
+import { Button, Icon, IconButton, Link, Placeholder, Tabs } from '@contour-ui/react';
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
 import { Link as RouterLink } from 'react-router';
 

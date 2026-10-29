@@ -37,7 +37,7 @@ vp -C apps/docs run e2e     # build, then the end-to-end and axe tests
   sequencer whose tracks are the parts of contour-ui and whose clips are their components (Kit's
   `Placeholder` for those that do not ship yet), the docs index and the footer.
 - Live examples import contour-ui components at the top of the page
-  (`import { Button } from '@contour-ui/kit';`) and render them inside `<Preview>`, the frame for
+  (`import { Button } from '@contour-ui/react';`) and render them inside `<Preview>`, the frame for
   live examples; imports resolve to package sources (`@contour-ui/source` condition), so the dev
   server shows changes to the packages, the layout package included, at once.
 - Code blocks are highlighted at build time with Shiki's css-variables theme (`rehypeCodeOptions`

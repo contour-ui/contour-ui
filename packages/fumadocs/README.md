@@ -1,12 +1,12 @@
 # @contour-ui/fumadocs
 
 **Layer 4 — docs.** A documentation layout for sites on [Fumadocs](https://fumadocs.dev)'
-`fumadocs-core`, built from `@contour-ui/kit`: install it **in place of** `fumadocs-ui`, not on
+`fumadocs-core`, built from `@contour-ui/react`: install it **in place of** `fumadocs-ui`, not on
 top of it. The sidebar, the search, the table of contents, the page parts and the MDX components
 come from contour-ui; `fumadocs-core` gives the data (page tree, search index, table of contents),
 and the app's framework adapter (`fumadocs-core/framework`) the links and the navigation.
 
-- **May depend on (internal):** `@contour-ui/kit`, `@contour-ui/headless-react`, `@contour-ui/tokens`,
+- **May depend on (internal):** `@contour-ui/react`, `@contour-ui/headless-react`, `@contour-ui/tokens`,
   `@contour-ui/icons`.
 - **Peers:** `react`, `react-dom`, `fumadocs-core`; `@types/mdx` (optional, for TypeScript).
 - **Entry points:** `@contour-ui/fumadocs` (provider and layouts), `@contour-ui/fumadocs/mdx` (MDX
@@ -26,7 +26,7 @@ import { ReactRouterProvider } from 'fumadocs-core/framework/react-router';
 import '@contour-ui/tokens/tokens.css';
 import '@contour-ui/tokens/fonts.css';
 import '@contour-ui/fumadocs/styles.css'; // before Kit's: it sets the cascade layer order
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 const site: DocsSite = {
   name: 'My docs',
@@ -140,8 +140,8 @@ export const { staticGET: GET } = createFromSource(source);
 - Props go from server components to client components: pass data, React nodes and components,
   never functions.
 - Kit and headless carry `'use client'` per module too: a server component, MDX included, imports
-  `@contour-ui/kit` directly and renders `Card.Root` or `Button`. Kit's `themeScript` also comes
-  without React from `@contour-ui/kit/theme-script`.
+  `@contour-ui/react` directly and renders `Card.Root` or `Button`. Kit's `themeScript` also comes
+  without React from `@contour-ui/react/theme-script`.
 - A server component cannot read inside an export of a client module of your own (an object
   exported from a `'use client'` file is a reference there). Kit's namespaces are server modules,
   so `Card.Root` works; write your own parts as a namespace barrel without the directive, or export
@@ -180,7 +180,7 @@ export const { staticGET: GET } = createFromSource(source);
 
 - Load `styles.css` after `@contour-ui/tokens/tokens.css` and **before** Kit's and Audio's styles:
   it starts with the cascade layer order `contour.fumadocs-base, contour.fumadocs-prose,
-  contour.kit, contour.fumadocs`. The page base (no reset) and Prose rank below the
+  contour.components, contour.fumadocs`. The page base (no reset) and Prose rank below the
   components, so components inside the content keep their styles; the layout ranks above them.
   Every layer is inside `contour`, so your unlayered CSS overrides them all.
 - Public class names are `contour-docs-<part>` (the layout root is `contour-docs-layout`). The

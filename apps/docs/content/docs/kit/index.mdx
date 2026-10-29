@@ -11,13 +11,13 @@ stylesheet; components without behavior, such as buttons, cards and alerts, exis
 ## Setup
 
 ```bash
-pnpm add @contour-ui/kit @contour-ui/tokens
+pnpm add @contour-ui/react @contour-ui/tokens
 ```
 
 ```tsx title="main.tsx"
 import '@contour-ui/tokens/tokens.css';
 import '@contour-ui/tokens/fonts.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 ```
 
 Details and the reasons for the order: [Installation](/docs/guide/installation).
@@ -29,7 +29,7 @@ parts is a namespace of parts, such as `Card`. Each part renders one element and
 through:
 
 ```tsx
-import { Button, Card } from '@contour-ui/kit';
+import { Button, Card } from '@contour-ui/react';
 
 export function Welcome() {
   return (

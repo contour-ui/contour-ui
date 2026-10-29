@@ -12,7 +12,7 @@
     "@contour-ui/fumadocs": "workspace:*",
     "@contour-ui/headless-react": "workspace:*",
     "@contour-ui/icons": "workspace:*",
-    "@contour-ui/kit": "workspace:*",
+    "@contour-ui/react": "workspace:*",
     "@contour-ui/tokens": "workspace:*",
     "@react-router/node": "catalog:",
     "fumadocs-core": "catalog:",

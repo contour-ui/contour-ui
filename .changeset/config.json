@@ -8,7 +8,7 @@
       "@contour-ui/icons",
       "@contour-ui/core",
       "@contour-ui/headless-react",
-      "@contour-ui/kit",
+      "@contour-ui/react",
       "@contour-ui/fumadocs"
     ]
   ],

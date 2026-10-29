@@ -1,7 +1,7 @@
 // No 'use client' and no runtime import of Kit's main entry: React Server Components call
 // `docsScript()` in the root layout, and Kit's entry creates contexts as it loads.
-import type { ThemeScriptOptions } from '@contour-ui/kit';
-import { themeScript } from '@contour-ui/kit/theme-script';
+import type { ThemeScriptOptions } from '@contour-ui/react';
+import { themeScript } from '@contour-ui/react/theme-script';
 
 import { DEFAULT_SIDEBAR_STORAGE_KEY, sidebarScript } from '../layout/sidebar-state.ts';
 

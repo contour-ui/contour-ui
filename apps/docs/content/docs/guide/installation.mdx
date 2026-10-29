@@ -19,7 +19,7 @@ others follow, and the site remembers it.
 **Kit:**
 
 ```package-install
-@contour-ui/kit @contour-ui/tokens
+@contour-ui/react @contour-ui/tokens
 ```
 
 **Headless**, no styles and no tokens:
@@ -31,7 +31,7 @@ others follow, and the site remembers it.
 **Fumadocs**, a docs site on fumadocs-core:
 
 ```package-install
-@contour-ui/fumadocs @contour-ui/kit @contour-ui/tokens fumadocs-core fumadocs-mdx
+@contour-ui/fumadocs @contour-ui/react @contour-ui/tokens fumadocs-core fumadocs-mdx
 ```
 
 A docs site on Fumadocs takes a few more steps: [Setup](/docs/fumadocs/setup) wires it into React
@@ -45,7 +45,7 @@ stylesheets once, in your app entry, in this order:
 ```tsx title="main.tsx"
 import '@contour-ui/tokens/tokens.css'; // tokens: --ct-* custom properties for every theme
 import '@contour-ui/tokens/fonts.css'; // IBM Plex Sans and JetBrains Mono
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 ```
 
 The stylesheets do not import each other, so your app decides what loads and when, and tokens
@@ -61,7 +61,7 @@ layers ([Fumadocs](/docs/fumadocs#load-the-stylesheets)).
 ### Cascade layers
 
 Every Kit rule sits in a
-[cascade layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer): `contour.kit`, inside
+[cascade layer](https://developer.mozilla.org/en-US/docs/Web/CSS/@layer): `contour.components`, inside
 the `contour` layer. CSS outside any layer wins over layered CSS
 whatever its selectors, so your own stylesheet overrides a component without heavier selectors or
 `!important`:
@@ -119,12 +119,12 @@ body {
 ## A minimal app
 
 ```tsx title="main.tsx"
-import { Button } from '@contour-ui/kit';
+import { Button } from '@contour-ui/react';
 import { createRoot } from 'react-dom/client';
 
 import '@contour-ui/tokens/tokens.css';
 import '@contour-ui/tokens/fonts.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 import './app.css';
 
 const root = document.querySelector('#root');

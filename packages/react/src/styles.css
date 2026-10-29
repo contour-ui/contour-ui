@@ -1,0 +1,30 @@
+/*
+ * Kit styles consume semantic token custom properties only (never --ct-base-*).
+ * Load `@contour-ui/tokens/tokens.css` first; it is a separate entry point so apps
+ * control when and how often it loads.
+ *
+ * One file per component, all in the `contour.components` cascade layer, so unlayered app
+ * CSS overrides kit without specificity tricks. The layer is assigned here, by
+ * `layer()` on each import, so component files stay layer-free and cannot miss it;
+ * `vp pack` (Lightning CSS) and Vite (postcss-import) both turn it into `@layer` blocks.
+ */
+@layer contour.components;
+
+@import './alert/alert.css' layer(contour.components);
+@import './button/button.css' layer(contour.components);
+@import './card/card.css' layer(contour.components);
+@import './clipboard/clipboard.css' layer(contour.components);
+@import './code-block/code-block.css' layer(contour.components);
+@import './collapsible/collapsible.css' layer(contour.components);
+@import './dialog/dialog.css' layer(contour.components);
+@import './drawer/drawer.css' layer(contour.components);
+@import './icon/icon.css' layer(contour.components);
+@import './kbd/kbd.css' layer(contour.components);
+@import './link/link.css' layer(contour.components);
+@import './listbox/listbox.css' layer(contour.components);
+@import './placeholder/placeholder.css' layer(contour.components);
+@import './popover/popover.css' layer(contour.components);
+@import './segment-group/segment-group.css' layer(contour.components);
+@import './table/table.css' layer(contour.components);
+@import './tabs/tabs.css' layer(contour.components);
+@import './toc/toc.css' layer(contour.components);

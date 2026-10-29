@@ -12,7 +12,7 @@ import { PageTree } from './page-tree.tsx';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** The folder Forms of the Kit section, without its index page: two pages. */
 const FORMS_PAGES: Folder = {

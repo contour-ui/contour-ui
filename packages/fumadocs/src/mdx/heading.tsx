@@ -1,6 +1,6 @@
 import { mergeProps } from '@contour-ui/headless-react';
 import { hashIcon } from '@contour-ui/icons';
-import { Icon } from '@contour-ui/kit';
+import { Icon } from '@contour-ui/react';
 import type { ComponentProps, ReactElement } from 'react';
 
 interface MdxHeadingProps extends ComponentProps<'h2'> {

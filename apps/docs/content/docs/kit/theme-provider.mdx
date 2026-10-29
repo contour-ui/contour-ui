@@ -3,7 +3,7 @@ title: ThemeProvider
 description: Keeps the theme of the page on the html element, the system's until the user chooses one, stored and restored without a flash.
 ---
 
-import { Button, useTheme } from '@contour-ui/kit';
+import { Button, useTheme } from '@contour-ui/react';
 
 export const themeChoices = [
   { value: 'light', label: 'Light' },
@@ -51,7 +51,7 @@ and restores it on the next visit. `useTheme` reads the theme and changes it, an
 sets it before the first paint of a page rendered on the server.
 
 ```tsx
-import { ThemeProvider, useTheme } from '@contour-ui/kit';
+import { ThemeProvider, useTheme } from '@contour-ui/react';
 
 <ThemeProvider>
   <App />
@@ -73,7 +73,7 @@ also needs two things in its root layout: the script of `themeScript()` at the t
 `suppressHydrationWarning` on `<html>`. With React Router:
 
 ```tsx title="root.tsx"
-import { ThemeProvider, themeScript } from '@contour-ui/kit';
+import { ThemeProvider, themeScript } from '@contour-ui/react';
 import type { ReactNode } from 'react';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 
@@ -114,8 +114,8 @@ Give the script the options of the provider, so both read the same key and set t
 attribute:
 
 ```tsx
-import { ThemeProvider, themeScript } from '@contour-ui/kit';
-import type { ThemeScriptOptions } from '@contour-ui/kit';
+import { ThemeProvider, themeScript } from '@contour-ui/react';
+import type { ThemeScriptOptions } from '@contour-ui/react';
 
 const themeOptions = {
   defaultTheme: 'light',
@@ -129,12 +129,12 @@ const themeOptions = {
 The source is the same for the same options and version of Kit, so a Content Security Policy can
 allow the script by its hash, or by a nonce on the `<script>` element.
 
-`themeScript` also comes from `@contour-ui/kit/theme-script`, an entry point without React: import
+`themeScript` also comes from `@contour-ui/react/theme-script`, an entry point without React: import
 it from there where the code runs before React does, such as the root layout of Next.js, a React
 Server Component that needs the script and none of the components.
 
 ```tsx
-import { themeScript } from '@contour-ui/kit/theme-script';
+import { themeScript } from '@contour-ui/react/theme-script';
 ```
 
 An app rendered only in the browser hydrates nothing, so it needs no `suppressHydrationWarning`,
@@ -158,7 +158,7 @@ one:
 
 ```tsx title="theme-toggle.tsx"
 import { moonIcon, sunIcon } from '@contour-ui/icons';
-import { IconButton, useTheme } from '@contour-ui/kit';
+import { IconButton, useTheme } from '@contour-ui/react';
 
 export function ThemeToggle() {
   const { resolvedTheme, setTheme } = useTheme();

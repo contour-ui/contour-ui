@@ -1,5 +1,5 @@
 import { HomeLayout } from '@contour-ui/fumadocs';
-import { Link } from '@contour-ui/kit';
+import { Link } from '@contour-ui/react';
 import type { ReactElement, ReactNode } from 'react';
 import { Link as RouterLink } from 'react-router';
 

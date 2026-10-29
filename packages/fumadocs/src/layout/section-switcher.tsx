@@ -1,7 +1,7 @@
 'use client';
 
 import { checkIcon, chevronsUpDownIcon } from '@contour-ui/icons';
-import { Button, Icon, Popover, Portal } from '@contour-ui/kit';
+import { Button, Icon, Popover, Portal } from '@contour-ui/react';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';
 import type { Folder } from 'fumadocs-core/page-tree';
 import { useId, useState } from 'react';

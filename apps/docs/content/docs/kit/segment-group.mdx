@@ -4,7 +4,7 @@ description: A row of mutually exclusive options on a track, the checked one rai
 ---
 
 import { monitorIcon, moonIcon, sunIcon } from '@contour-ui/icons';
-import { Icon, SegmentGroup } from '@contour-ui/kit';
+import { Icon, SegmentGroup } from '@contour-ui/react';
 
 <Preview>
   <SegmentGroup.Root defaultValue="week" aria-label="Range">
@@ -25,7 +25,7 @@ import { Icon, SegmentGroup } from '@contour-ui/kit';
 </Preview>
 
 ```tsx
-import { SegmentGroup } from '@contour-ui/kit';
+import { SegmentGroup } from '@contour-ui/react';
 
 <SegmentGroup.Root defaultValue="week" aria-label="Range">
   <SegmentGroup.Indicator />
@@ -92,7 +92,7 @@ give the radio button an `aria-label`, as in this theme picker:
 
 ```tsx
 import { monitorIcon, moonIcon, sunIcon } from '@contour-ui/icons';
-import { Icon, SegmentGroup } from '@contour-ui/kit';
+import { Icon, SegmentGroup } from '@contour-ui/react';
 
 <SegmentGroup.Root defaultValue="system" aria-label="Theme">
   <SegmentGroup.Indicator />

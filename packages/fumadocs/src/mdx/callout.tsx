@@ -1,4 +1,4 @@
-import { Alert } from '@contour-ui/kit';
+import { Alert } from '@contour-ui/react';
 import type { ComponentProps, ReactElement, ReactNode } from 'react';
 
 /** The callout types of Fumadocs, whose MDX API the pages keep. */

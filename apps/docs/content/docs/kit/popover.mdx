@@ -3,7 +3,7 @@ title: Popover
 description: A small raised panel next to its trigger, for a short form, a choice from a list or details, that closes on Escape or a press outside.
 ---
 
-import { Button, createListCollection, Listbox, Popover, Portal } from '@contour-ui/kit';
+import { Button, createListCollection, Listbox, Popover, Portal } from '@contour-ui/react';
 import { useState } from 'react';
 
 export const waveforms = createListCollection({
@@ -81,7 +81,7 @@ export function WaveformExample() {
 </Preview>
 
 ```tsx
-import { Button, Popover, Portal } from '@contour-ui/kit';
+import { Button, Popover, Portal } from '@contour-ui/react';
 
 <Popover.Root>
   <Popover.Trigger asChild>

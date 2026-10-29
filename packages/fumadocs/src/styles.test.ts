@@ -5,13 +5,13 @@ import styles from './styles.css?raw';
 
 import '@contour-ui/tokens/tokens.css';
 import './styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** The cascade layers of the package, lowest first. */
 const LAYERS = [
   'contour.fumadocs-base',
   'contour.fumadocs-prose',
-  'contour.kit',
+  'contour.components',
   'contour.fumadocs',
 ] as const;
 

@@ -1,4 +1,4 @@
-import { Kbd, Table } from '@contour-ui/kit';
+import { Kbd, Table } from '@contour-ui/react';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vite-plus/test';
 

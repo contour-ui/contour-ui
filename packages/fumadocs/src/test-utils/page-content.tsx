@@ -1,4 +1,4 @@
-import { Kbd } from '@contour-ui/kit';
+import { Kbd } from '@contour-ui/react';
 import type { ReactElement } from 'react';
 
 import { Callout, Prose } from '../mdx/index.ts';
@@ -36,7 +36,7 @@ export function PageContent(): ReactElement {
       <CodeExample title="app.tsx" lines={BUTTON_CODE} />
       <H2 id="usage">Usage</H2>
       <p>
-        Import <code>Button</code> from <code>@contour-ui/kit</code> and give it a label that says
+        Import <code>Button</code> from <code>@contour-ui/react</code> and give it a label that says
         what it does. Keep the label short: a verb, and the object when it is not obvious.
       </p>
       <p>

@@ -1,7 +1,7 @@
 'use client';
 
 import { searchIcon, triangleAlertIcon } from '@contour-ui/icons';
-import { createListCollection, Dialog, Icon, Kbd, Listbox, Portal } from '@contour-ui/kit';
+import { createListCollection, Dialog, Icon, Kbd, Listbox, Portal } from '@contour-ui/react';
 import { usePathname, useRouter } from 'fumadocs-core/framework';
 import type { SearchResultRecord, StaticOptions } from 'fumadocs-core/search/client';
 import { useHighlightQuery, useStaticSearch } from 'fumadocs-core/search/client';

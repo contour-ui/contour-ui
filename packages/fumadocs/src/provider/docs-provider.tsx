@@ -1,7 +1,7 @@
 'use client';
 
-import { ThemeProvider } from '@contour-ui/kit';
-import type { ThemeProviderProps } from '@contour-ui/kit';
+import { ThemeProvider } from '@contour-ui/react';
+import type { ThemeProviderProps } from '@contour-ui/react';
 import { useMemo } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 

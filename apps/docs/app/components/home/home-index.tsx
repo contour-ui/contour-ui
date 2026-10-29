@@ -1,4 +1,4 @@
-import { Link } from '@contour-ui/kit';
+import { Link } from '@contour-ui/react';
 import type { ReactElement } from 'react';
 import { Link as RouterLink } from 'react-router';
 

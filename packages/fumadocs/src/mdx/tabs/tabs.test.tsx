@@ -8,7 +8,7 @@ import type { TabsProps } from '../index.ts';
 
 import '@contour-ui/tokens/tokens.css';
 import '../../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** The tab `name` of the list labeled `list`, or of the page. */
 const tab = (name: string, list?: string) =>

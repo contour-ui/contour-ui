@@ -97,13 +97,13 @@ export function CodeExample({ lines, title, noCopy, lineNumbers }: CodeExamplePr
   );
 }
 
-/** `import { Button } from '@contour-ui/kit';` and a button, as on the page of Button. */
+/** `import { Button } from '@contour-ui/react';` and a button, as on the page of Button. */
 export const BUTTON_CODE: readonly CodeLine[] = [
   [
     ['import', 'token-keyword'],
     [' { Button } ', 'foreground'],
     ['from', 'token-keyword'],
-    [" '@contour-ui/kit'", 'token-string-expression'],
+    [" '@contour-ui/react'", 'token-string-expression'],
     [';', 'foreground'],
   ],
   [],
@@ -123,7 +123,7 @@ export const INSTALL_CODE: readonly CodeLine[] = [
   [
     ['pnpm', 'token-function'],
     [' add', 'token-string'],
-    [' @contour-ui/kit', 'token-string'],
+    [' @contour-ui/react', 'token-string'],
     [' @contour-ui/tokens', 'token-string'],
   ],
 ];

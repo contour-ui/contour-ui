@@ -10,7 +10,7 @@ import { PageFooter } from './page-footer.tsx';
 // The label and the title are blocks with the styles, which keeps them apart in the name.
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 const neighbours = page.getByRole('navigation', { name: 'Previous and next page' });
 const previousLink = neighbours.getByRole('link', { name: /^Previous/u });

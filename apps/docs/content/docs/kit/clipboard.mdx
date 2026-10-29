@@ -3,11 +3,11 @@ title: Clipboard
 description: A value to copy, such as an install command or a link, in a bordered row with a copy button at its end.
 ---
 
-import { Button, Clipboard } from '@contour-ui/kit';
+import { Button, Clipboard } from '@contour-ui/react';
 
 <Preview>
   {
-    <Clipboard.Root value="pnpm add @contour-ui/kit">
+    <Clipboard.Root value="pnpm add @contour-ui/react">
       <Clipboard.Control>
         <Clipboard.ValueText prompt="$" />
         <Clipboard.Trigger>
@@ -20,9 +20,9 @@ import { Button, Clipboard } from '@contour-ui/kit';
 </Preview>
 
 ```tsx
-import { Clipboard } from '@contour-ui/kit';
+import { Clipboard } from '@contour-ui/react';
 
-<Clipboard.Root value="pnpm add @contour-ui/kit">
+<Clipboard.Root value="pnpm add @contour-ui/react">
   <Clipboard.Control>
     <Clipboard.ValueText prompt="$" />
     <Clipboard.Trigger>
@@ -106,7 +106,7 @@ indicator next to the trigger, outside it.
   {
     <div style={{ display: 'grid', justifyItems: 'start', gap: 'var(--ct-space-group-gap)' }}>
       {['sm', 'md', 'lg'].map((size) => (
-        <Clipboard.Root key={size} size={size} value="pnpm add @contour-ui/kit">
+        <Clipboard.Root key={size} size={size} value="pnpm add @contour-ui/react">
           <Clipboard.Control>
             <Clipboard.ValueText prompt="$" />
             <Clipboard.Trigger aria-label={`Copy the command (${size})`} />
@@ -128,7 +128,7 @@ indicator next to the trigger, outside it.
       }}
     >
       <Button size="lg">Get started</Button>
-      <Clipboard.Root size="lg" value="pnpm add @contour-ui/kit" aria-label="Install">
+      <Clipboard.Root size="lg" value="pnpm add @contour-ui/react" aria-label="Install">
         <Clipboard.Control>
           <Clipboard.ValueText prompt="$" />
           <Clipboard.Trigger>
@@ -143,7 +143,7 @@ indicator next to the trigger, outside it.
 
 ```tsx
 <Button size="lg">Get started</Button>
-<Clipboard.Root size="lg" value="pnpm add @contour-ui/kit" aria-label="Install">
+<Clipboard.Root size="lg" value="pnpm add @contour-ui/react" aria-label="Install">
   …
 </Clipboard.Root>
 ```

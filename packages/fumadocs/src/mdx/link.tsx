@@ -1,5 +1,5 @@
 import { arrowUpRightIcon } from '@contour-ui/icons';
-import { Icon, Link } from '@contour-ui/kit';
+import { Icon, Link } from '@contour-ui/react';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';
 import type { ComponentProps, ReactElement } from 'react';
 

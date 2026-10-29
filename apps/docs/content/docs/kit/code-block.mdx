@@ -6,7 +6,7 @@ description: Code highlighted by Shiki, framed with an optional title and a copy
 <Preview>
 
 ```tsx title="save-button.tsx"
-import { Button } from '@contour-ui/kit';
+import { Button } from '@contour-ui/react';
 
 export function SaveButton() {
   return <Button variant="solid">Save</Button>; // [!code highlight]
@@ -16,7 +16,7 @@ export function SaveButton() {
 </Preview>
 
 ```tsx
-import { CodeBlock } from '@contour-ui/kit';
+import { CodeBlock } from '@contour-ui/react';
 
 <CodeBlock.Root>
   <CodeBlock.Header>
@@ -94,7 +94,7 @@ as in the second block here:
 <Preview>
 
 ```bash
-pnpm add @contour-ui/kit @contour-ui/tokens
+pnpm add @contour-ui/react @contour-ui/tokens
 ```
 
 ```bash noCopy
@@ -174,8 +174,8 @@ spans the whole width it scrolls.
 <Preview>
 
 ```bash title="install.sh"
-pnpm add @contour-ui/kit @contour-ui/tokens # [!code highlight]
-pnpm add @contour-ui/kit @contour-ui/tokens @contour-ui/icons @contour-ui/headless-react react react-dom
+pnpm add @contour-ui/react @contour-ui/tokens # [!code highlight]
+pnpm add @contour-ui/react @contour-ui/tokens @contour-ui/icons @contour-ui/headless-react react react-dom
 ```
 
 </Preview>

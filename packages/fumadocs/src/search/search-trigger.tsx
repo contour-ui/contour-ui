@@ -2,7 +2,7 @@
 
 import { mergeProps } from '@contour-ui/headless-react';
 import { searchIcon } from '@contour-ui/icons';
-import { Button, Icon, IconButton, Kbd } from '@contour-ui/kit';
+import { Button, Icon, IconButton, Kbd } from '@contour-ui/react';
 import { use } from 'react';
 import type { ReactElement } from 'react';
 

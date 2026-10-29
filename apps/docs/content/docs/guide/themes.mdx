@@ -34,7 +34,7 @@ theme until the user chooses one, then their choice, stored in `localStorage` an
 next visit. Render it once, around the app:
 
 ```tsx
-import { ThemeProvider } from '@contour-ui/kit';
+import { ThemeProvider } from '@contour-ui/react';
 
 <ThemeProvider>
   <App />
@@ -45,8 +45,8 @@ Below it, `useTheme` reads the theme and changes it. `theme` is the user's choic
 included; `resolvedTheme` is the theme in use, `light` or `dark`:
 
 ```tsx title="theme-switch.tsx"
-import { Button, useTheme } from '@contour-ui/kit';
-import type { ThemeChoice } from '@contour-ui/kit';
+import { Button, useTheme } from '@contour-ui/react';
+import type { ThemeChoice } from '@contour-ui/react';
 
 const choices: ThemeChoice[] = ['system', 'light', 'dark'];
 

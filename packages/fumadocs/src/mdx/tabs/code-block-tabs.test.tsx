@@ -9,7 +9,7 @@ import { Prose, Tab, Tabs } from '../index.ts';
 
 import '@contour-ui/tokens/tokens.css';
 import '../../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** Computed value of `property` when set to `value` (resolves `var(--ct-…)`). */
 function computed(property: string, value: string): string {
@@ -45,7 +45,7 @@ afterEach(() => {
 
 describe('CodeBlockTabs', () => {
   it('shows the code of the default tab, then of the tab the reader selects', async () => {
-    await render(<PackageInstall packages="@contour-ui/kit" />);
+    await render(<PackageInstall packages="@contour-ui/react" />);
     const tabs = page.getByRole('tab');
 
     await expect.element(tabs.nth(0)).toHaveTextContent('npm');
@@ -55,15 +55,15 @@ describe('CodeBlockTabs', () => {
       'yarn',
       'bun',
     ]);
-    await expect.element(page.getByText('npm install @contour-ui/kit')).toBeVisible();
+    await expect.element(page.getByText('npm install @contour-ui/react')).toBeVisible();
 
     await userEvent.click(page.getByRole('tab', { name: 'pnpm' }));
-    await expect.element(page.getByText('pnpm add @contour-ui/kit')).toBeVisible();
-    await expect.element(page.getByText('npm install @contour-ui/kit')).not.toBeVisible();
+    await expect.element(page.getByText('pnpm add @contour-ui/react')).toBeVisible();
+    await expect.element(page.getByText('npm install @contour-ui/react')).not.toBeVisible();
   });
 
   it('draws one frame, the code under the row of triggers without a border of its own', async () => {
-    await render(<PackageInstall packages="@contour-ui/kit" />);
+    await render(<PackageInstall packages="@contour-ui/react" />);
     await expect.element(page.getByRole('tab', { name: 'npm' })).toBeVisible();
     const frame = getComputedStyle(only('.contour-docs-code-tabs'));
     const shown = only('.contour-docs-code-tabs__content:not([hidden]) > .contour-code-block');
@@ -79,7 +79,7 @@ describe('CodeBlockTabs', () => {
   });
 
   it('keeps the copy button of the code shown, at the end of the row of triggers', async () => {
-    await render(<PackageInstall packages="@contour-ui/kit" />);
+    await render(<PackageInstall packages="@contour-ui/react" />);
     const copy = page.getByRole('button', { name: 'Copy code' });
     await expect.element(copy).toBeVisible();
     // The buttons of the hidden tabs are hidden with them.
@@ -95,7 +95,7 @@ describe('CodeBlockTabs', () => {
   });
 
   it('leads from the trigger to the copy button and the code, in the Tab order', async () => {
-    await render(<PackageInstall packages="@contour-ui/kit" />);
+    await render(<PackageInstall packages="@contour-ui/react" />);
     await userEvent.click(page.getByRole('tab', { name: 'yarn' }));
 
     await userEvent.tab();

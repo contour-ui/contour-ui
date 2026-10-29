@@ -1,4 +1,4 @@
-import type { Tabs as KitTabs } from '@contour-ui/kit';
+import type { Tabs as KitTabs } from '@contour-ui/react';
 import type { ComponentProps, ReactElement } from 'react';
 
 import { cx } from '../../utils/cx.ts';

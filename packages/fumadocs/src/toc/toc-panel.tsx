@@ -1,7 +1,7 @@
 'use client';
 
 import { chevronDownIcon, chevronRightIcon, textAlignStartIcon } from '@contour-ui/icons';
-import { Button, Icon, Popover, Portal, Toc } from '@contour-ui/kit';
+import { Button, Icon, Popover, Portal, Toc } from '@contour-ui/react';
 import type { TableOfContents } from 'fumadocs-core/toc';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';

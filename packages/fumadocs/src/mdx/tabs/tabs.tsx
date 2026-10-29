@@ -1,6 +1,6 @@
 'use client';
 
-import type { Tabs as KitTabs } from '@contour-ui/kit';
+import type { Tabs as KitTabs } from '@contour-ui/react';
 import { Children, createContext, isValidElement, use, useId } from 'react';
 import type { ComponentProps, Context, ReactElement, ReactNode } from 'react';
 
@@ -52,8 +52,8 @@ const TabIndexContext: Context<number | null> = createContext<number | null>(nul
  *
  * @example
  * <Tabs items={['npm', 'pnpm']} groupId="package-manager" persist>
- *   <Tab value="npm">npm install @contour-ui/kit</Tab>
- *   <Tab value="pnpm">pnpm add @contour-ui/kit</Tab>
+ *   <Tab value="npm">npm install @contour-ui/react</Tab>
+ *   <Tab value="pnpm">pnpm add @contour-ui/react</Tab>
  * </Tabs>
  */
 export function Tabs({

@@ -1,4 +1,4 @@
-import { Button } from '@contour-ui/kit';
+import { Button } from '@contour-ui/react';
 import { vars } from '@contour-ui/tokens';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';

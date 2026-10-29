@@ -8,7 +8,7 @@ import { getMdxComponents } from './get-mdx-components.tsx';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
-import '@contour-ui/kit/styles.css';
+import '@contour-ui/react/styles.css';
 
 /** Computed value of `property` when set to `value` (resolves `var(--ct-…)`). */
 function computed(property: string, value: string): string {

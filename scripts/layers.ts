@@ -65,17 +65,17 @@ export const LAYERS: readonly LayerPackage[] = [
     react: 'peer',
   },
   {
-    name: 'kit',
+    name: 'react',
     layer: 3,
-    purpose: 'styled general-purpose components',
+    purpose: 'styled React DOM components: Essentials and Audio',
     allowed: ['headless-react', 'tokens', 'icons'],
     react: 'peer',
   },
   {
     name: 'fumadocs',
     layer: 4,
-    purpose: 'documentation layout for fumadocs-core sites, built from Kit',
-    allowed: ['kit', 'headless-react', 'tokens', 'icons'],
+    purpose: 'documentation layout for fumadocs-core sites, built from @contour-ui/react',
+    allowed: ['react', 'headless-react', 'tokens', 'icons'],
     react: 'peer',
   },
 ];

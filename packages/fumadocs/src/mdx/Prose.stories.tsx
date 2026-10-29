@@ -1,4 +1,4 @@
-import { Button, Kbd } from '@contour-ui/kit';
+import { Button, Kbd } from '@contour-ui/react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
@@ -190,7 +190,7 @@ export const Text: Story = {
       <p>Add the packages with the package manager of the project.</p>
       <ul>
         <li>
-          <code>@contour-ui/kit</code>, the components.
+          <code>@contour-ui/react</code>, the components.
         </li>
         <li>
           <code>@contour-ui/tokens</code>, the CSS variables they use.

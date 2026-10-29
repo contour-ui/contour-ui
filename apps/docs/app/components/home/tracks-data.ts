@@ -29,7 +29,7 @@ export const TRACKS: readonly Track[] = [
   {
     id: 'audio',
     name: 'Audio',
-    pkg: '@contour-ui/kit',
+    pkg: '@contour-ui/react',
     description: 'Controls and displays for sound',
     href: '/docs/audio',
     clips: [
@@ -43,7 +43,7 @@ export const TRACKS: readonly Track[] = [
   {
     id: 'kit',
     name: 'Kit',
-    pkg: '@contour-ui/kit',
+    pkg: '@contour-ui/react',
     description: 'The everyday parts of any interface',
     href: '/docs/kit',
     clips: [

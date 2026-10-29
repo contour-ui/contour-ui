@@ -35,8 +35,8 @@ Rules:
 - Kits (`kit`, `audio`) and `fumadocs` are styled with plain CSS + token CSS variables. **No Tailwind in packages.**
   Use semantic roles only (`--ct-color-*`, `--ct-space-*`, `--ct-text-*`…), never `--ct-base-*`.
 - Kit CSS is one file per component (`src/<component>/<component>.css`) with plain rules, added to
-  `src/styles.css` as `@import './<component>/<component>.css' layer(contour.kit);` (audio:
-  `layer(contour.audio)`; its entry declares `@layer contour.kit, contour.audio;` so audio always
+  `src/styles.css` as `@import './<component>/<component>.css' layer(contour.components);` (audio:
+  `layer(contour.audio)`; its entry declares `@layer contour.components, contour.audio;` so audio always
   ranks above kit). Unlayered app CSS overrides both.
 - `react` / `react-dom` are never regular `dependencies`; in `headless`, the kits and `fumadocs` they are required
   peers. `fumadocs` also takes `fumadocs-core` as a peer (`@types/mdx` as an optional one).
@@ -72,10 +72,10 @@ built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` tas
 | `vp check` / `vp check --fix`            | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                   |
 | `vp run boundaries`                      | layer boundary check for `package.json` / CSS                                                                                    |
 | `vp test`                                | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages), stories-as-tests |
-| `vp -C packages/kit test`                | one package's tests                                                                                                              |
+| `vp -C packages/react test`              | one package's tests                                                                                                              |
 | `vp run -r build`                        | build everything (`vp pack` + publint + attw for packages, apps)                                                                 |
 | `vp run storybook`                       | every package Storybook + the composition host on http://localhost:6100                                                          |
-| `vp -C packages/kit run storybook`       | one package Storybook (tokens 6101, headless 6102, kit 6103, audio 6104, fumadocs 6105)                                          |
+| `vp -C packages/react run storybook`     | one package Storybook (tokens 6101, headless-react 6102, react 6103, fumadocs 6105)                                              |
 | `vp run build-storybook`                 | all Storybooks → one deployable folder `apps/storybook/storybook-static`                                                         |
 | `vp run visual` / `vp run visual:update` | screenshot tests of the styled Storybooks in the pinned Playwright Linux image (Docker); `:update` rewrites changed screenshots  |
 | `vp -C apps/docs run dev` / `run build`  | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                     |
@@ -140,7 +140,7 @@ Every published package maps its entry points to sources under the custom
 - CSS entry points (`tokens.css`, `styles.css`) are separate exports. Vite's CSS `@import`
   resolver ignores custom conditions, so package CSS does not `@import` other workspace packages: apps
   load `@contour-ui/tokens/tokens.css` and `@contour-ui/tokens/fonts.css`, then
-  `@contour-ui/kit/styles.css`, then `@contour-ui/audio/styles.css`.
+  `@contour-ui/react/styles.css`, then `@contour-ui/audio/styles.css`.
 - A `.css` file in `libraryPack()`'s `entry` is bundled by `vp pack` into `dist/<name>.css`
   (Lightning CSS inlines its relative `@import`s and turns `layer()` into `@layer` blocks); files
   passed as `css` (tokens) are copied verbatim, so their `@import`s stay external.
@@ -246,7 +246,7 @@ version of these rules.
   than a component (a hook, a function, an object) from a module that needs the browser, in its
   own package or another one. Everything else stays a server module: entry points, namespaces
   (`export * as Card`), `Primitive`, `mergeProps`, pure utils and parts that only render markup,
-  so a server component imports `@contour-ui/kit` and renders `Card.Root`.
+  so a server component imports `@contour-ui/react` and renders `Card.Root`.
   `describeClientBoundary()` (`@contour-ui/vite-config/client-boundary`) fails on missing and on
   needless directives, in each package's `<package>:node` Vitest project. `core` carries none:
   `core/react` holds hooks only, which run in client modules.
@@ -265,7 +265,7 @@ version of these rules.
   Kit Clipboard's trigger stays "Copy" while its icon turns into a check mark.
 - **Kit styles.** Classes `contour-<component>` on the root or the single element and
   `contour-<component>__<part>` on the other parts, joined with the user's `className` by `cx`
-  (`packages/kit/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
+  (`packages/react/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
   `data-size`, always rendered with the resolved value (defaults included), so selectors read
   `.contour-button[data-variant='solid']`. CSS: one file per component (see "Layers"); it relies
   on no reset (neither Storybook nor the docs site has one), so parts set their own
@@ -291,7 +291,7 @@ Router (prerendered) with `fumadocs-core` (page tree, search index, neighbours, 
 of which it is the first consumer. When a component lands, add
 `content/docs/<package>/<component>.mdx` (live example in `<Preview>`, anatomy, props, tokens) and
 list it in that section's `meta.json` and on the section's index page. Live examples import the
-component at the top of the page (`import { Button } from '@contour-ui/kit';`); MDX imports
+component at the top of the page (`import { Button } from '@contour-ui/react';`); MDX imports
 resolve to package sources like the rest of the app.
 
 **The layout package** (`@contour-ui/fumadocs`):
@@ -319,7 +319,7 @@ resolve to package sources like the rest of the app.
   `max-inline-size: calc(width + 2 * inset)`. Its links are the navigation "Main", Kit's neutral
   links in `text.nav` set to `fg-default` and underlined on hover; out of room, they scroll in
   their own box. `search={false}` drops only the search triggers: the shortcut stays.
-- **Before hydration.** `docsScript()` (Kit's `themeScript()` from `@contour-ui/kit/theme-script`,
+- **Before hydration.** `docsScript()` (Kit's `themeScript()` from `@contour-ui/react/theme-script`,
   plus the sidebar) sets `data-theme` (key `contour-theme`) and
   `data-contour-docs-sidebar="collapsed"` (key `contour-docs-sidebar`) on `<html>` before the
   first paint. Components render both states and CSS shows one, as the theme toggle and the
@@ -340,7 +340,7 @@ resolve to package sources like the rest of the app.
   with `persist`), as in fumadocs-ui; the address opens the tab whose panel is or holds `#id`;
   `updateAnchor` writes with `replaceState(history.state, …)`. Values are the items as written.
 - **Styles.** `@contour-ui/fumadocs/styles.css` loads before Kit's: it starts with the layer order
-  `contour.fumadocs-base, contour.fumadocs-prose, contour.kit, contour.audio, contour.fumadocs`.
+  `contour.fumadocs-base, contour.fumadocs-prose, contour.components, contour.audio, contour.fumadocs`.
   The page base (no reset, so Kit renders as in Storybook) and Prose rank below the components, so
   components inside the content keep their styles; the layout and the docs components rank above
   the Kit parts they adjust. Prose relies on no reset either (it sets the margins, list markers and
