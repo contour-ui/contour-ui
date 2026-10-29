@@ -1,3 +1,5 @@
+'use client';
+
 import { getListIntent, initialTypeahead, listbox, nextTypeahead } from '@contour-ui/core';
 import type { ListIntent, Platform, TypeaheadState } from '@contour-ui/core';
 import { useMachine } from '@contour-ui/core/react';

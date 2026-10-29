@@ -1,3 +1,5 @@
+'use client';
+
 import { toc } from '@contour-ui/core';
 import type { Platform } from '@contour-ui/core';
 import { useMachine } from '@contour-ui/core/react';

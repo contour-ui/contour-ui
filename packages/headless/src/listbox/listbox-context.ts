@@ -1,3 +1,5 @@
+'use client';
+
 import type { listbox } from '@contour-ui/core';
 import { createContext, use } from 'react';
 import type { Context, RefCallback } from 'react';

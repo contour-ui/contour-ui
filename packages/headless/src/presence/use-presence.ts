@@ -1,3 +1,5 @@
+'use client';
+
 import { useCallback, useInsertionEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { RefCallback } from 'react';
 import { flushSync } from 'react-dom';

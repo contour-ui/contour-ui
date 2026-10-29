@@ -1,3 +1,5 @@
+'use client';
+
 import { popover } from '@contour-ui/core';
 import type { Placement } from '@contour-ui/core';
 import { useMachine } from '@contour-ui/core/react';

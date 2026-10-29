@@ -1,3 +1,5 @@
+'use client';
+
 import type { clipboard } from '@contour-ui/core';
 import type { ReactElement } from 'react';
 

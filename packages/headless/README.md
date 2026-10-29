@@ -8,6 +8,16 @@ anatomy: `Component.Part`, `data-scope` / `data-part` attributes).
 - **Peers:** `react`, `react-dom`.
 - **Storybook:** unstyled behavior stories (`vp run storybook`, port 6102).
 
+## React Server Components
+
+`vp pack` builds the package one file per module, and the modules that need the browser start
+with `'use client'`: the hooks of components, their contexts and the parts that read them,
+`Portal`, `Presence`. The entry point, the namespaces (`Dialog`, `Popover`…), `Primitive`,
+`mergeProps` and `composeRefs` stay server modules: a server component imports
+`@contour-ui/headless` and renders `Dialog.Root` or `Primitive.div` (with `asChild` too). Hooks
+run in client modules only. `src/client-boundary.test.ts` checks the directives (Vitest project
+`headless:node`).
+
 ## Building parts
 
 Parts render through `Primitive.<element>` (`Primitive.div`, `Primitive.button`, …). With

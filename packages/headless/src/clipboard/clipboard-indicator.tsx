@@ -1,3 +1,5 @@
+'use client';
+
 import type { ReactElement, ReactNode } from 'react';
 
 import { mergeProps, Primitive } from '../primitive/index.ts';
