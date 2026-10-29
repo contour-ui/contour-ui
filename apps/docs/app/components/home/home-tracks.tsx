@@ -106,7 +106,7 @@ function TrackRow({ track, active }: TrackRowProps): ReactElement {
           <span className="docs-tracks__package">{track.pkg}</span>
           <p className="docs-tracks__description">{track.description}</p>
         </div>
-        <Link asChild className="docs-tracks__browse">
+        <Link asChild variant="neutral" className="docs-tracks__browse">
           <RouterLink to={track.href} aria-label={`Browse ${track.name}`}>
             Browse
             <Icon icon={chevronRightIcon} />

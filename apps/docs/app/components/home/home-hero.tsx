@@ -1,9 +1,12 @@
-import { Button, CodeBlock } from '@contour-ui/kit';
+import { Button, Clipboard } from '@contour-ui/kit';
 import type { ReactElement } from 'react';
 import { Link as RouterLink } from 'react-router';
 
 /** The command of the install box. */
 const INSTALL = 'pnpm add @contour-ui/audio';
+
+/** How long the check mark of the install box shows after a copy, in milliseconds. */
+const COPIED_MS = 1500;
 
 /** What the hero says contour-ui is: also the description of the page. */
 export const HOME_DESCRIPTION =
@@ -11,7 +14,8 @@ export const HOME_DESCRIPTION =
 
 /**
  * The hero of the home page (`home.css`): the title on the left; the description, the way into
- * the guide and the install command on the right, both columns as high as each other.
+ * the guide and the install command on the right, both columns as high as each other. The
+ * install command is Kit's Clipboard, as high as the button beside it.
  */
 export function HomeHero(): ReactElement {
   return (
@@ -23,21 +27,15 @@ export function HomeHero(): ReactElement {
           <Button asChild size="lg">
             <RouterLink to="/docs/guide">Get started</RouterLink>
           </Button>
-          <CodeBlock.Root
-            value={INSTALL}
-            aria-label="Install command"
-            className="docs-home__install"
-          >
-            <CodeBlock.CopyTrigger label="Copy install command" />
-            <CodeBlock.Content>
-              <pre>
-                <code>
-                  <span className="docs-home__prompt">$ </span>
-                  {INSTALL}
-                </code>
-              </pre>
-            </CodeBlock.Content>
-          </CodeBlock.Root>
+          <Clipboard.Root value={INSTALL} size="lg" timeout={COPIED_MS}>
+            <Clipboard.Control>
+              <Clipboard.ValueText prompt="$" />
+              <Clipboard.Trigger aria-label="Copy the install command">
+                <Clipboard.Indicator />
+                Copy
+              </Clipboard.Trigger>
+            </Clipboard.Control>
+          </Clipboard.Root>
         </div>
       </div>
     </section>

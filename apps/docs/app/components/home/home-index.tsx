@@ -89,7 +89,7 @@ export function HomeIndex(): ReactElement {
                     <span className="docs-home__tag">planned</span>
                   </>
                 ) : (
-                  <Link asChild>
+                  <Link asChild variant="neutral">
                     <RouterLink to={href}>{label}</RouterLink>
                   </Link>
                 )}

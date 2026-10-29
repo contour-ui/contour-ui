@@ -12,11 +12,12 @@ export function meta(): Array<Record<string, string>> {
 
 /**
  * The home page (`home.css`, `home-tracks.css`), built from Kit and the tokens only: the hero,
- * the sequencer of the parts of contour-ui, the docs index and the foot of the page.
+ * the sequencer of the parts of contour-ui, the docs index and the foot of the page. Its header
+ * leaves the search out: the search lives in the docs, and its shortcut works here too.
  */
 export default function Home(): ReactElement {
   return (
-    <HomeLayout>
+    <HomeLayout search={false}>
       <div className="docs-home">
         <HomeHero />
         <HomeTracks />

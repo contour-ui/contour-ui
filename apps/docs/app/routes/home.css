@@ -1,8 +1,8 @@
 /*
  * The home page: the hero, the sequencer (`home-tracks.css`), the docs index and the foot of the
- * page, in a column as wide as the header's content allows. Every color, type style, radius,
- * border and space is a token of contour-ui; the larger gaps of the page are multiples of the
- * section gap.
+ * page, in the column of HomeLayout (`--contour-docs-home-width`), where the header lays out its
+ * content too. Every color, type style, radius, border and space is a token of contour-ui; the
+ * larger gaps of the page are multiples of the section gap.
  */
 .docs-home {
   display: flex;
@@ -10,7 +10,7 @@
   flex-direction: column;
   box-sizing: border-box;
   inline-size: 100%;
-  max-inline-size: 80rem;
+  max-inline-size: calc(var(--contour-docs-home-width) + 2 * var(--contour-docs-page-inset));
   margin-inline: auto;
   padding-inline: var(--contour-docs-page-inset);
 }
@@ -25,6 +25,7 @@
   padding-block: calc(3 * var(--ct-space-section-gap)) calc(2.5 * var(--ct-space-section-gap));
 }
 
+/* The display style on phones, where the hero style would take four lines; the hero from 48rem. */
 .docs-home__title {
   flex: 1 1 35rem;
   min-inline-size: 0;
@@ -32,6 +33,13 @@
   color: var(--ct-color-fg-default);
   font: var(--ct-text-display);
   letter-spacing: var(--ct-text-display-letter-spacing);
+}
+
+@media (min-width: 48rem) {
+  .docs-home__title {
+    font: var(--ct-text-hero);
+    letter-spacing: var(--ct-text-hero-letter-spacing);
+  }
 }
 
 /* The description at the top, the actions at the bottom. */
@@ -47,8 +55,8 @@
 .docs-home__description {
   margin: 0;
   color: var(--ct-color-fg-muted);
-  font: var(--ct-text-prose);
-  letter-spacing: var(--ct-text-prose-letter-spacing);
+  font: var(--ct-text-lead);
+  letter-spacing: var(--ct-text-lead-letter-spacing);
 }
 
 /* The way into the guide and the install command, on one row while it fits. */
@@ -57,18 +65,6 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--ct-space-group-gap);
-}
-
-.docs-home__install {
-  flex: 1 1 auto;
-  min-inline-size: 0;
-  margin: 0;
-}
-
-/* The prompt is no part of the command, which the copy button copies from the root's value. */
-.docs-home__prompt {
-  color: var(--ct-color-fg-muted);
-  user-select: none;
 }
 
 /* A column per part of the docs, as many on a row as fit. */
@@ -146,7 +142,7 @@
   justify-content: space-between;
   gap: var(--ct-space-panel-inset);
   box-sizing: border-box;
-  max-inline-size: 80rem;
+  max-inline-size: calc(var(--contour-docs-home-width) + 2 * var(--contour-docs-page-inset));
   margin-inline: auto;
   padding: calc(1.25 * var(--ct-space-section-gap)) var(--contour-docs-page-inset);
   font: var(--ct-text-body);

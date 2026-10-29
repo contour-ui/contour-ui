@@ -10,7 +10,9 @@ export function HomeFooter(): ReactElement {
     <footer className="docs-home__footer">
       <div className="docs-home__footer-content">
         <p className="docs-home__status">@contour-ui · in development, APIs may change</p>
-        <Link href={REPOSITORY}>GitHub</Link>
+        <Link variant="neutral" href={REPOSITORY}>
+          GitHub
+        </Link>
       </div>
     </footer>
   );
