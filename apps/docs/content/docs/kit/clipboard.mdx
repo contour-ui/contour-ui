@@ -1,0 +1,241 @@
+---
+title: Clipboard
+description: A value to copy, such as an install command or a link, in a bordered row with a copy button at its end.
+---
+
+import { Button, Clipboard } from '@contour-ui/kit';
+
+<Preview>
+  {
+    <Clipboard.Root value="pnpm add @contour-ui/kit">
+      <Clipboard.Control>
+        <Clipboard.ValueText prompt="$" />
+        <Clipboard.Trigger>
+          <Clipboard.Indicator />
+          Copy
+        </Clipboard.Trigger>
+      </Clipboard.Control>
+    </Clipboard.Root>
+  }
+</Preview>
+
+```tsx
+import { Clipboard } from '@contour-ui/kit';
+
+<Clipboard.Root value="pnpm add @contour-ui/kit">
+  <Clipboard.Control>
+    <Clipboard.ValueText prompt="$" />
+    <Clipboard.Trigger>
+      <Clipboard.Indicator />
+      Copy
+    </Clipboard.Trigger>
+  </Clipboard.Control>
+</Clipboard.Root>;
+```
+
+Clipboard is the [Headless Clipboard](/docs/headless/clipboard) with the look of Kit: the value in
+mono in a row with a border, and the trigger at the end of the row. A click writes `value` to the
+clipboard. Once the browser has written it, the copy icon turns into a check mark for `timeout`
+milliseconds (3 seconds by default), and screen readers hear "Copied to clipboard".
+
+## The parts
+
+- **The control.** `Clipboard.Control` is the row: as high as a control of the root's `size`, with
+  a border and no fill, like a text field. Put the value text and the trigger in it, the trigger
+  last: it fills the end of the row up to the border.
+- **The value.** `Clipboard.ValueText` shows `value` on one line. It takes the free width of the
+  row and ends in an ellipsis when the row is too narrow, while the trigger stays whole. `prompt`
+  draws a mark before the value in the muted color, such as `$` before a shell command. CSS draws
+  it: it is not part of the value, a selection of the text leaves it out, and screen readers skip
+  it.
+- **The trigger.** `Clipboard.Trigger` is a Kit [Button](/docs/kit/button), `ghost` by default,
+  which stays muted next to the value until it is hovered. With children it is a text button;
+  without, a square icon button. It takes the `size` of the root unless you give it one.
+- **The indicator.** `Clipboard.Indicator` shows its children, and `copied` in their place while
+  the value is copied; without either, a copy icon that turns into a check mark. What it shows
+  while copied comes in with a short pop, which only fades in under reduced motion.
+- **The label.** `Clipboard.Label` is a caption above the control, which names the clipboard.
+
+## Icon only
+
+A trigger without children is a square icon button. It has no text, so name it after what it
+copies with `aria-label`:
+
+<Preview>
+  {
+    <Clipboard.Root
+      value="https://contour-ui.dev/docs/kit/clipboard"
+      style={{ inlineSize: '22rem' }}
+    >
+      <Clipboard.Label>Share link</Clipboard.Label>
+      <Clipboard.Control>
+        <Clipboard.ValueText />
+        <Clipboard.Trigger aria-label="Copy the link" />
+      </Clipboard.Control>
+    </Clipboard.Root>
+  }
+</Preview>
+
+```tsx
+<Clipboard.Root value={url}>
+  <Clipboard.Label>Share link</Clipboard.Label>
+  <Clipboard.Control>
+    <Clipboard.ValueText />
+    <Clipboard.Trigger aria-label="Copy the link" />
+  </Clipboard.Control>
+</Clipboard.Root>
+```
+
+## Why the text stays "Copy"
+
+While the value is copied, the icon turns into a check mark and the text of the trigger stays
+"Copy". The trigger keeps its name, "Copy to clipboard", so screen readers do not announce it again,
+speech users can say "click Copy" at any time, and the status element announces the copy. Text in
+the trigger that turned into "Copied" would not be part of that name for the moment it shows (WCAG
+2.5.3, Label in Name), and checks such as axe report it. For a "Copied" in words, the
+[Headless Clipboard](/docs/headless/clipboard#accessibility) explains where it goes instead: in an
+indicator next to the trigger, outside it.
+
+## Sizes
+
+`size` is `sm`, `md` (the default) or `lg`: the height of the control tokens, as for
+[Button](/docs/kit/button), so a clipboard lines up with a button of the same size in a row. In
+`lg`, the value, the label and the trigger are larger, with wider sides.
+
+<Preview>
+  {
+    <div style={{ display: 'grid', justifyItems: 'start', gap: 'var(--ct-space-group-gap)' }}>
+      {['sm', 'md', 'lg'].map((size) => (
+        <Clipboard.Root key={size} size={size} value="pnpm add @contour-ui/kit">
+          <Clipboard.Control>
+            <Clipboard.ValueText prompt="$" />
+            <Clipboard.Trigger aria-label={`Copy the command (${size})`} />
+          </Clipboard.Control>
+        </Clipboard.Root>
+      ))}
+    </div>
+  }
+</Preview>
+
+<Preview>
+  {
+    <div
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 'var(--ct-space-group-gap)',
+      }}
+    >
+      <Button size="lg">Get started</Button>
+      <Clipboard.Root size="lg" value="pnpm add @contour-ui/audio" aria-label="Install">
+        <Clipboard.Control>
+          <Clipboard.ValueText prompt="$" />
+          <Clipboard.Trigger>
+            <Clipboard.Indicator />
+            Copy
+          </Clipboard.Trigger>
+        </Clipboard.Control>
+      </Clipboard.Root>
+    </div>
+  }
+</Preview>
+
+```tsx
+<Button size="lg">Get started</Button>
+<Clipboard.Root size="lg" value="pnpm add @contour-ui/audio" aria-label="Install">
+  …
+</Clipboard.Root>
+```
+
+## The value and the copied state
+
+The root takes the props of the [Headless Clipboard](/docs/headless/clipboard#the-value): `value`,
+or `defaultValue` for a value it keeps itself, `onValueChange`, `onStatusChange`, which reports
+`{ copied }` when the copied state starts and ends, `timeout` and `copiedMessage`. The browser
+writes to the clipboard on secure pages only (https, and localhost); a refused write leaves the
+clipboard idle, with nothing shown or announced.
+
+## Anatomy
+
+| Part                  | Element              | Class                                          | Attributes                                                                                        |
+| --------------------- | -------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `Clipboard.Root`      | `div`                | `contour-clipboard`                            | `data-part="root"`, `data-size`, `data-copied`; `role="group"` and `aria-labelledby` with a label |
+| `Clipboard.Label`     | `span`               | `contour-clipboard__label`                     | `data-part="label"`, `id`, `data-copied`                                                          |
+| `Clipboard.Control`   | `div`                | `contour-clipboard__control`                   | `data-part="control"`, `data-copied`                                                              |
+| `Clipboard.ValueText` | `span`               | `contour-clipboard__value-text`                | `data-part="value-text"`, `data-prompt`, `data-copied`; the value as its text                     |
+| `Clipboard.Trigger`   | `button`             | `contour-button`, `contour-clipboard__trigger` | `data-part="trigger"`, `type="button"`, `aria-label`, `data-variant`, `data-size`, `data-copied`  |
+| `Clipboard.Indicator` | `span`, or its `svg` | `contour-clipboard__indicator`                 | `data-part="indicator"`, `aria-hidden="true"`, `data-copied`                                      |
+| status, by the root   | `span`               | —                                              | `data-part="status"`, `role="status"`, `aria-live="polite"`, visually hidden                      |
+
+Every part carries `data-scope="clipboard"`. A trigger without children also has the class
+`contour-icon-button`. The indicator's default icons are its own element, so a button sizes them as
+its icons. `data-copied` is present while the value is copied.
+
+## Props
+
+`Clipboard.Root`:
+
+| Prop             | Type                                     | Default                 |
+| ---------------- | ---------------------------------------- | ----------------------- |
+| `value`          | `string`                                 | —                       |
+| `defaultValue`   | `string`                                 | `''`                    |
+| `onValueChange`  | `(details: { value: string }) => void`   | —                       |
+| `onStatusChange` | `(details: { copied: boolean }) => void` | —                       |
+| `timeout`        | `number`: milliseconds                   | `3000`                  |
+| `copiedMessage`  | `string`: what screen readers announce   | `'Copied to clipboard'` |
+| `size`           | `'sm'`, `'md'`, `'lg'`                   | `'md'`                  |
+
+`Clipboard.Trigger` takes the props of [Button](/docs/kit/button) but `asChild`: `variant`
+(`'ghost'` by default), `size` (the root's by default), `disabled`, and `aria-label` (`'Copy to
+clipboard'` by default). Your `onClick` runs before the copy: call `event.preventDefault()` in it
+to cancel the copy.
+
+| Part                  | Prop     | Type                                        | Default        |
+| --------------------- | -------- | ------------------------------------------- | -------------- |
+| `Clipboard.ValueText` | `prompt` | `string`: a mark before the value           | —              |
+| `Clipboard.Indicator` | `copied` | `ReactNode`: shown in place of the children | the check mark |
+
+The other parts take `asChild` and the props of their element, such as `className`, `style` and
+`ref`; `className` is merged with the part's class. `Clipboard.ValueText` shows its children in
+place of the value when it has them.
+
+## Keyboard
+
+| Key              | Action                     |
+| ---------------- | -------------------------- |
+| `Tab`            | Moves focus to the trigger |
+| `Enter`, `Space` | Copies the value           |
+
+## Accessibility
+
+- **A name that stays.** The trigger is named "Copy to clipboard", or by your `aria-label`, and
+  keeps the name while copied. Where a page has several, name each after what it copies, such as
+  "Copy the install command".
+- **The announcement.** The root renders a visually hidden status element that announces
+  `copiedMessage` once the browser has written the value, without moving focus.
+- **The indicator is for the eyes.** It is hidden from assistive technology: the name of the
+  trigger and the status element say the same. It swaps the icon and leaves the text of the
+  trigger alone, so the visible text is always part of the name (WCAG 2.5.3).
+- **The label** names the root, a `group`, so screen readers say it as focus enters the trigger.
+  Without a label, an `aria-label` on the root does the same.
+- **The prompt** is generated content with empty alternative text: screen readers skip it.
+- **The focus ring** is drawn inside the trigger, clear of the border of the row.
+- **A cut value** is still whole for screen readers and in the copy; on the screen, its start
+  shows. Give the clipboard room for values whose end matters.
+
+## Tokens
+
+| Token                                                                                                            | Used for                                   |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------ |
+| `--ct-size-control-sm`, `--ct-size-control-md`, `--ct-size-control-lg`                                           | the height of the control                  |
+| `--ct-color-border-default`, `--ct-border-width-default`, `--ct-radius-control`                                  | the border and corners of the control      |
+| `--ct-space-control-inset`, `--ct-space-control-inset-lg`, `--ct-space-control-gap`, `--ct-space-control-gap-lg` | the sides and gaps of the control          |
+| `--ct-text-value`, `--ct-text-code`                                                                              | the value (`code` in `lg`)                 |
+| `--ct-text-label`, `--ct-text-label-lg`                                                                          | the label                                  |
+| `--ct-color-fg-default`                                                                                          | the value, the label, a hovered trigger    |
+| `--ct-color-fg-muted`                                                                                            | the prompt, a ghost trigger at rest        |
+| `--ct-color-border-focus`, `--ct-border-width-focus`                                                             | the focus ring of the trigger              |
+| `--ct-motion-enter`                                                                                              | the pop of what the indicator shows copied |
+
+The trigger takes the rest of its look from [Button](/docs/kit/button).
