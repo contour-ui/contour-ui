@@ -47,11 +47,31 @@ export interface DocsSite {
   readonly links?: readonly DocsLink[] | undefined;
 }
 
+/**
+ * How the theme toggle lets the reader choose: `light-dark`, a button that switches between the
+ * light and the dark theme; `light-dark-system`, three choices, the light theme, the dark one, and
+ * the one of the operating system.
+ */
+export type ThemeToggleMode = 'light-dark' | 'light-dark-system';
+
+/** The theme toggle of the layouts. */
+export interface DocsThemeToggleOptions {
+  /**
+   * How it lets the reader choose: a button between the light and the dark theme, or three
+   * choices with the theme of the operating system.
+   *
+   * @defaultValue 'light-dark'
+   */
+  readonly mode?: ThemeToggleMode | undefined;
+}
+
 /** What `DocsProvider` gives the layouts. */
 export interface DocsContextValue {
   readonly site: DocsSite;
   /** Collapse or expand the sidebar, and remember the choice under the provider's key. */
   readonly setSidebarCollapsed: (collapsed: boolean) => void;
+  /** How the theme toggles of the layouts let the reader choose. */
+  readonly themeToggleMode: ThemeToggleMode;
 }
 
 /** The site and the settings of the nearest `DocsProvider`. */

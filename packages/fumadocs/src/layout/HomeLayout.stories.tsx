@@ -64,3 +64,21 @@ export const Phone: Story = {
     await expect(icon).not.toHaveClass('contour-docs-search-trigger');
   },
 };
+
+/**
+ * `themeToggle: { mode: 'light-dark-system' }` on `DocsProvider`, on a phone: the three-way theme
+ * picker fits in the header next to the search and the icon links.
+ */
+export const PhoneLightDarkSystemTheme: Story = {
+  // A phone: the viewport of the canvas and the story tests, the tag of the screenshot tests.
+  globals: { viewport: { value: 'phone' } },
+  tags: ['phone'],
+  parameters: { themeToggle: 'light-dark-system' },
+  play: async ({ canvas }) => {
+    const header = canvas.getByRole('banner');
+    const picker = canvas.getByRole('radiogroup', { name: 'Theme' });
+    await expect(header.contains(picker)).toBe(true);
+    // Inside the width of the header: nothing runs past its end.
+    await expect(header.scrollWidth).toBeLessThanOrEqual(header.clientWidth);
+  },
+};

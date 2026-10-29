@@ -182,6 +182,24 @@ export const NestedPage: Story = {
 };
 
 /**
+ * `themeToggle: { mode: 'light-dark-system' }` on `DocsProvider`: the theme toggle at the foot of
+ * the sidebar offers the theme of the operating system next to the light and the dark one.
+ */
+export const LightDarkSystemTheme: Story = {
+  parameters: { themeToggle: 'light-dark-system' },
+  render: ({ tree }) => (
+    <DocsLayout tree={tree}>
+      <ShortPage />
+    </DocsLayout>
+  ),
+  play: async ({ canvas }) => {
+    const picker = canvas.getByRole('radiogroup', { name: 'Theme' });
+    await expect(picker.closest('.contour-docs-sidebar__footer')).not.toBeNull();
+    await expect(within(picker).getAllByRole('radio')).toHaveLength(3);
+  },
+};
+
+/**
  * A page outside the sections, such as the index of the docs: the switcher says "Sections", and
  * the navigation lists the pages around the sections and the sections themselves, each a link to
  * where it starts.

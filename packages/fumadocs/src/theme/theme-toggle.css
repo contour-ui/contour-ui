@@ -1,9 +1,14 @@
 /*
- * The theme toggle: a ghost Button of size `lg`, square like an IconButton of that size. It holds
- * both choices; the one that fits the theme of the page shows, keyed on the `data-theme` of
- * `<html>`. The page is dark unless it says `light`, as the token stylesheet is.
+ * The theme toggle, in its two modes (`data-mode`).
+ *
+ * `light-dark`: a ghost Button of size `lg`, square like an IconButton of that size. It holds both
+ * choices; the one that fits the theme of the page shows, keyed on the `data-theme` of `<html>`.
+ * The page is dark unless it says `light`, as the token stylesheet is.
+ *
+ * `light-dark-system`: Kit's SegmentGroup of size `lg`, as high as the buttons around it, drawn by
+ * Kit alone.
  */
-.contour-docs-theme-toggle {
+.contour-docs-theme-toggle[data-mode='light-dark'] {
   inline-size: var(--ct-size-control-lg);
   padding-inline: 0;
 }
@@ -20,7 +25,7 @@
 }
 
 /* As large as the icon of an IconButton of size `lg`. */
-.contour-docs-theme-toggle .contour-icon {
+.contour-docs-theme-toggle[data-mode='light-dark'] .contour-icon {
   inline-size: var(--ct-size-icon-lg);
   block-size: var(--ct-size-icon-lg);
 }
@@ -33,4 +38,9 @@
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+/* In a row of actions, the picker keeps its size. */
+.contour-docs-theme-toggle[data-mode='light-dark-system'] {
+  flex-shrink: 0;
 }

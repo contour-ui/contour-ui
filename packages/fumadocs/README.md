@@ -70,15 +70,19 @@ import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
 - `DocsProvider`: `site` (`name`; `url`, where the brand leads, `/` by default; `nav`, text links in
   the header of `HomeLayout`; `links`, icon buttons such as GitHub), `search` (`{ from }`, the URL
   of fumadocs-core's static index, `/api/search` by default; `false` for none), `theme` (Kit
-  `ThemeProvider` options), `sidebarStorageKey`. Give `docsScript()` the same `theme` and
-  `sidebarStorageKey`.
+  `ThemeProvider` options), `themeToggle` (`{ mode }`, below), `sidebarStorageKey`. Give
+  `docsScript()` the same `theme` and `sidebarStorageKey`.
+- The theme toggle of the layouts: `themeToggle: { mode: 'light-dark' }`, the default, a button
+  between the light and the dark theme; `'light-dark-system'`, three choices on Kit's
+  SegmentGroup, with the theme of the operating system. The server cannot know the stored choice,
+  so the three-way picker checks none until the page has hydrated.
 - Folders of the page tree open and close: the name links to the index page, a button after it
   shows the pages. A folder opens when it holds the page (also as the reader goes to one of its
   pages) and with `"defaultOpen": true` in its `meta.json`; `"collapsible": false` keeps it open.
 - The search downloads the index that `createFromSource(source).staticGET()` of
   `fumadocs-core/search/server` serves, prerendered on a static site.
-- A layout of your own: `SearchTrigger`, `ThemeToggle` and `SkipLink` (render it first, and give
-  the main content `id="content"` and `tabIndex={-1}`).
+- A layout of your own: `SearchTrigger`, `ThemeToggle` (`mode`, or the provider's) and `SkipLink`
+  (render it first, and give the main content `id="content"` and `tabIndex={-1}`).
 
 ## Next.js (App Router)
 

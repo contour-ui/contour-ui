@@ -8,7 +8,7 @@ import type { ReactElement, ReactNode } from 'react';
 import { DEFAULT_SIDEBAR_STORAGE_KEY, setSidebarCollapsed } from '../layout/sidebar-state.ts';
 import { SearchProvider } from '../search/search-provider.tsx';
 import { DocsContext } from './docs-context.ts';
-import type { DocsContextValue, DocsSite } from './docs-context.ts';
+import type { DocsContextValue, DocsSite, DocsThemeToggleOptions } from './docs-context.ts';
 import type { DocsScriptOptions } from './docs-script.ts';
 
 /** The search of the site: fumadocs-core's static search, in the browser. */
@@ -32,6 +32,11 @@ export interface DocsProviderProps extends DocsScriptOptions {
   readonly search?: DocsSearchOptions | false | undefined;
   /** The options of Kit's `ThemeProvider`; give `docsScript()` the same. */
   readonly theme?: Omit<ThemeProviderProps, 'children'> | undefined;
+  /**
+   * The theme toggle of the layouts: `{ mode: 'light-dark-system' }` offers the theme of the
+   * operating system next to the light and the dark one.
+   */
+  readonly themeToggle?: DocsThemeToggleOptions | undefined;
   readonly children?: ReactNode;
 }
 
@@ -57,17 +62,20 @@ export function DocsProvider({
   site,
   search,
   theme,
+  themeToggle,
   sidebarStorageKey = DEFAULT_SIDEBAR_STORAGE_KEY,
   children,
 }: DocsProviderProps): ReactElement {
+  const themeToggleMode = themeToggle?.mode ?? 'light-dark';
   const docs = useMemo<DocsContextValue>(
     () => ({
       site,
       setSidebarCollapsed: (collapsed) => {
         setSidebarCollapsed(collapsed, sidebarStorageKey);
       },
+      themeToggleMode,
     }),
-    [site, sidebarStorageKey],
+    [site, sidebarStorageKey, themeToggleMode],
   );
 
   return (

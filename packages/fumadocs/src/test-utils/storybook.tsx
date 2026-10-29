@@ -3,6 +3,7 @@ import type { Theme } from '@contour-ui/tokens';
 import type { Decorator, Preview } from '@storybook/react-vite';
 
 import { DocsProvider } from '../index.ts';
+import type { ThemeToggleMode } from '../index.ts';
 import { MemoryFramework } from './framework.tsx';
 import { createSearchIndexUrl } from './search-index.ts';
 import { site } from './site.ts';
@@ -15,6 +16,11 @@ const STORAGE_KEYS = ['contour-theme', 'contour-docs-sidebar'] as const;
 
 /** The attribute of `<html>` that collapses the sidebar (`docsScript()`). */
 const SIDEBAR_ATTRIBUTE = 'data-contour-docs-sidebar';
+
+/** The mode of the theme toggle a story asks for (its `themeToggle` parameter), if any. */
+function themeToggleMode(value: unknown): ThemeToggleMode | undefined {
+  return value === 'light-dark' || value === 'light-dark-system' ? value : undefined;
+}
 
 /** The theme chosen in the toolbar, or the default one when they show side by side. */
 function toolbarTheme(value: unknown): Theme {
@@ -47,10 +53,12 @@ export const docsAnnotations: Pick<Preview, 'beforeEach' | 'loaders'> = {
  * Render every story as a page of the docs site of the fixtures: inside the framework of
  * fumadocs-core (`MemoryFramework`), at the `pathname` parameter of the story, so links go to
  * the pages of `pageTree` without leaving the canvas, and inside `DocsProvider`, with the search
- * on the index of the fixtures and the theme of the toolbar until a story switches it.
+ * on the index of the fixtures, the theme of the toolbar until a story switches it, and the mode
+ * of the theme toggle of the `themeToggle` parameter.
  *
  * @example
  * export const Guide: Story = { parameters: { pathname: '/docs/guide' } };
+ * export const ThemePicker: Story = { parameters: { themeToggle: 'light-dark-system' } };
  */
 export const withDocs: Decorator = (Story, { parameters, globals, loaded }) => {
   const value: unknown = parameters['pathname'];
@@ -63,6 +71,7 @@ export const withDocs: Decorator = (Story, { parameters, globals, loaded }) => {
         site={site}
         search={typeof from === 'string' ? { from } : false}
         theme={{ defaultTheme: toolbarTheme(globals['theme']) }}
+        themeToggle={{ mode: themeToggleMode(parameters['themeToggle']) }}
       >
         <Story />
       </DocsProvider>

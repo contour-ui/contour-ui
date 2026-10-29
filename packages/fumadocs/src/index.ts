@@ -1,6 +1,12 @@
 export { DocsProvider } from './provider/docs-provider.tsx';
 export type { DocsProviderProps, DocsSearchOptions } from './provider/docs-provider.tsx';
-export type { DocsLink, DocsNavLink, DocsSite } from './provider/docs-context.ts';
+export type {
+  DocsLink,
+  DocsNavLink,
+  DocsSite,
+  DocsThemeToggleOptions,
+  ThemeToggleMode,
+} from './provider/docs-context.ts';
 export { docsScript } from './provider/docs-script.ts';
 export type { DocsScriptOptions } from './provider/docs-script.ts';
 export { DocsLayout } from './layout/docs-layout.tsx';
@@ -14,3 +20,4 @@ export { SearchTrigger } from './search/search-trigger.tsx';
 export type { SearchTriggerProps } from './search/search-trigger.tsx';
 export { SkipLink } from './layout/skip-link.tsx';
 export { ThemeToggle } from './theme/theme-toggle.tsx';
+export type { ThemeToggleProps } from './theme/theme-toggle.tsx';
