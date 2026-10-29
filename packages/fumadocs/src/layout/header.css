@@ -1,8 +1,12 @@
 /*
- * The header: a bar on the canvas color with a divider below, `--contour-docs-header-height`
- * high, that sticks to the top. The actions sit at the end. The `docs` variant goes from 48rem,
- * where the sidebar takes over; the `site` variant shows the search as a field from 48rem, as an
- * icon below.
+ * The header: a bar on the canvas color, `--contour-docs-header-height` high, that sticks to the
+ * top, with the brand at the start and the rest at the end.
+ *
+ * - `docs`: on the docs pages below 48rem, where the sidebar takes over. A divider below it, and
+ *   the page inset at the start only: its last button holds room of its own.
+ * - `site`: no divider, so it is part of the page, and its content in the column of the page:
+ *   `--contour-docs-home-width` wide, centered, with at least the page inset at the sides. The
+ *   search is a field from 48rem, an icon below.
  */
 .contour-docs-header {
   position: sticky;
@@ -13,27 +17,73 @@
   gap: var(--ct-space-section-gap);
   box-sizing: border-box;
   block-size: var(--contour-docs-header-height);
-  padding-inline: var(--contour-docs-page-inset) var(--ct-space-group-gap);
-  border-block-end: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
   background: var(--ct-color-bg-canvas);
 }
 
-/* A navigation link next to the brand, in the body text. */
+.contour-docs-header[data-variant='docs'] {
+  padding-inline: var(--contour-docs-page-inset) var(--ct-space-group-gap);
+  border-block-end: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+}
+
+/* What the column leaves at each side, at least the page inset. */
+.contour-docs-header[data-variant='site'] {
+  padding-inline: max(var(--contour-docs-page-inset), (100% - var(--contour-docs-home-width)) / 2);
+}
+
+/* The brand at the start, what follows it at the end. */
+.contour-docs-header > .contour-docs-brand {
+  margin-inline-end: auto;
+}
+
+/*
+ * The text links of the site. Where the header runs out of room, they scroll sideways in their
+ * own box, so the brand and the actions keep their place and the page never scrolls sideways.
+ * The padding of the box holds the focus ring of a link, its margin takes that room back, and
+ * its scroll padding keeps the ring in view where a link scrolls into it.
+ */
+.contour-docs-header__nav {
+  min-inline-size: 0;
+  margin: calc(-2 * var(--ct-border-width-focus));
+  padding: calc(2 * var(--ct-border-width-focus));
+  overflow-x: auto;
+  scroll-padding-inline: calc(2 * var(--ct-border-width-focus));
+}
+
+/* As wide as its links, so the box scrolls to its end padding too. */
+.contour-docs-header__nav-list {
+  display: flex;
+  gap: var(--ct-space-section-gap);
+  inline-size: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * Kit's neutral link in the type of a site's navigation and the color of the brand and the
+ * buttons beside it: the main navigation of the site reads as strong as they do. It cannot get
+ * brighter on hover, so it is underlined instead.
+ */
 .contour-docs-header__link {
-  font: var(--ct-text-body);
-  letter-spacing: var(--ct-text-body-letter-spacing);
+  display: block;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-nav);
+  letter-spacing: var(--ct-text-nav-letter-spacing);
+  white-space: nowrap;
+}
+
+.contour-docs-header__link:hover {
+  text-decoration-line: underline;
 }
 
 .contour-docs-header__actions {
   display: flex;
   align-items: center;
   gap: var(--ct-space-control-gap);
-  margin-inline-start: auto;
 }
 
 .contour-docs-header__search-field {
   inline-size: 14rem;
-  margin-inline-end: var(--ct-space-group-gap);
 }
 
 @media (width < 48rem) {
@@ -42,9 +92,23 @@
   }
 }
 
+/*
+ * From 48rem the `site` header spreads out: two and a quarter section gaps between its groups and
+ * between its links, a section gap between its buttons.
+ */
 @media (min-width: 48rem) {
   .contour-docs-header[data-variant='docs'],
   .contour-docs-header__search-icon {
     display: none;
+  }
+
+  .contour-docs-header[data-variant='site'],
+  .contour-docs-header__nav-list {
+    gap: calc(2.25 * var(--ct-space-section-gap));
+  }
+
+  .contour-docs-header[data-variant='site']
+    :is(.contour-docs-header__actions, .contour-docs-site-links) {
+    gap: var(--ct-space-section-gap);
   }
 }

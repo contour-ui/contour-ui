@@ -38,7 +38,9 @@ export interface DocsSite {
    * @defaultValue '/'
    */
   readonly url?: string | undefined;
-  /** Text links next to the brand in the header of `HomeLayout`, such as `Docs`. */
+  /**
+   * Text links in the header of `HomeLayout`, the navigation "Main" of its pages, such as `Docs`.
+   */
   readonly nav?: readonly DocsNavLink[] | undefined;
   /**
    * Icon links, such as the repository on GitHub: in the header of `HomeLayout`, and at the foot

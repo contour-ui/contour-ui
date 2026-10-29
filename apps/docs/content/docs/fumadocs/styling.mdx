@@ -58,7 +58,7 @@ the parts keep their own classes, such as `contour-button`, next to these.
 | ----------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `contour-docs-layout`                     | the root of `DocsLayout`, which sets the layout variables                                           |
 | `contour-docs-sidebar`                    | the sidebar: `__panel`, `__header`, `__search`, `__body`, `__footer`, `__toolbar`                   |
-| `contour-docs-header`                     | the header, `data-variant="docs"` or `"site"`: `__actions`, `__link`                                |
+| `contour-docs-header`                     | the header, `data-variant="docs"` or `"site"`: `__nav`, `__nav-list`, `__link`, `__actions`         |
 | `contour-docs-mobile-nav__footer`         | the foot of the menu                                                                                |
 | `contour-docs-section-switcher`           | the button of the switcher; its popover: `__content`, `__list`, `__link`, `__name`, `__description` |
 | `contour-docs-page-tree`                  | the navigation of the pages: `__list`, `__group`, `__label`, `__folder`, `__link`                   |
@@ -69,7 +69,7 @@ the parts keep their own classes, such as `contour-button`, next to these.
 | `contour-docs-toc-panel`                  | the column of the table of contents                                                                 |
 | `contour-docs-toc-trigger`                | the button of the bar of the table of contents                                                      |
 | `contour-docs-toc-popover`                | the popover of that button                                                                          |
-| `contour-docs-home-layout`                | the root of `HomeLayout`: `__main`                                                                  |
+| `contour-docs-home-layout`                | the root of `HomeLayout`, which sets its layout variables: `__main`                                 |
 | `contour-docs-brand`                      | the name of the site, a link home                                                                   |
 | `contour-docs-site-links`                 | the icon links of the site                                                                          |
 | `contour-docs-search-trigger`             | `SearchTrigger` in the `field` variant                                                              |
@@ -96,19 +96,32 @@ your CSS:
 }
 ```
 
-| Variable                           | Default                                              | Sets                                                         |
-| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
-| `--contour-docs-sidebar-width`     | `16rem`                                              | the width of the sidebar                                     |
-| `--contour-docs-article-width`     | `44rem`                                              | the widest the article gets: a readable line of prose        |
-| `--contour-docs-toc-width`         | `13rem`                                              | the width of the column of the table of contents             |
-| `--contour-docs-page-inset`        | `1rem`, `2rem` from 48rem                            | the side padding of the page and the header                  |
-| `--contour-docs-header-height`     | `3rem`, `0px` from 48rem                             | the height of the sticky header                              |
-| `--contour-docs-toc-bar-height`    | `2.5rem`, `0px` from 80rem and on a page without one | the height of the bar of the table of contents               |
-| `--contour-docs-toolbar-clearance` | the width of the toolbar and a gap                   | the room a collapsed sidebar leaves at the start of the page |
+| Variable                           | Default                                              | Sets                                                          |
+| ---------------------------------- | ---------------------------------------------------- | ------------------------------------------------------------- |
+| `--contour-docs-sidebar-width`     | `16rem`                                              | the width of the sidebar                                      |
+| `--contour-docs-article-width`     | `44rem`                                              | the widest the article gets: a readable line of prose         |
+| `--contour-docs-toc-width`         | `13rem`                                              | the width of the column of the table of contents              |
+| `--contour-docs-page-inset`        | `1rem`, `2rem` from 48rem                            | the side padding of the page and the header                   |
+| `--contour-docs-header-height`     | `3rem`, `0px` from 48rem                             | the height of the sticky header                               |
+| `--contour-docs-home-width`        | `80rem`                                              | the width of the column of a `HomeLayout` page and its header |
+| `--contour-docs-toc-bar-height`    | `2.5rem`, `0px` from 80rem and on a page without one | the height of the bar of the table of contents                |
+| `--contour-docs-toolbar-clearance` | the width of the toolbar and a gap                   | the room a collapsed sidebar leaves at the start of the page  |
 
-`HomeLayout` sets `--contour-docs-header-height` and `--contour-docs-page-inset` as well. A value
-you set holds at every width: set the ones the layout changes at a breakpoint in a media query of
-your own.
+`HomeLayout` sets `--contour-docs-home-width`: the width of the column its header lays its content
+out in, which a column of your page reads to line up with it
+([the column of the page](/docs/fumadocs/layouts#the-column-of-the-page)). It sets
+`--contour-docs-page-inset` and `--contour-docs-header-height` as well: the same inset, and a
+header `3rem` high on phones and `4.5rem` from 48rem.
+
+```css title="app.css"
+/* A narrower column on the pages of HomeLayout, their header included. */
+.contour-docs-home-layout {
+  --contour-docs-home-width: 72rem;
+}
+```
+
+A value you set holds at every width: set the ones the layout changes at a breakpoint in a media
+query of your own.
 
 The heights of the sticky bars are for content that a link scrolls to: headings keep their sum
 free at the top, and an element of yours can do the same.

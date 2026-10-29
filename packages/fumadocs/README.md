@@ -64,7 +64,7 @@ import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
   </DocsPage>
 </DocsLayout>;
 
-<HomeLayout>…</HomeLayout>;
+<HomeLayout search={false}>…</HomeLayout>;
 ```
 
 - `DocsProvider`: `site` (`name`; `url`, where the brand leads, `/` by default; `nav`, text links in
@@ -72,6 +72,12 @@ import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
   of fumadocs-core's static index, `/api/search` by default; `false` for none), `theme` (Kit
   `ThemeProvider` options), `themeToggle` (`{ mode }`, below), `sidebarStorageKey`. Give
   `docsScript()` the same `theme` and `sidebarStorageKey`.
+- `HomeLayout`: `search` (`true` by default; `false` leaves the search button out of its header,
+  and the shortcut, ⌘K or Ctrl K, still opens the search). Its header, without a divider, lays its
+  content out in the column of the page, `--contour-docs-home-width` wide: the brand at the start;
+  the `nav` links (the navigation "Main"), the search, the `links` and the theme toggle at the end.
+  It is `4.5rem` high from 48rem and `3rem` on phones, where the `nav` links scroll sideways in
+  their own box if the header runs out of room.
 - The theme toggle of the layouts: `themeToggle: { mode: 'light-dark' }`, the default, a button
   between the light and the dark theme; `'light-dark-system'`, three choices on Kit's
   SegmentGroup, with the theme of the operating system. The server cannot know the stored choice,
@@ -181,6 +187,11 @@ export const { staticGET: GET } = createFromSource(source);
   layout root sets `--contour-docs-sidebar-width`, `--contour-docs-article-width`,
   `--contour-docs-toc-width`, `--contour-docs-page-inset`, and the heights of the sticky bars
   `--contour-docs-header-height` and `--contour-docs-toc-bar-height` (`0px` where a bar is gone).
+- The root of `HomeLayout` (`contour-docs-home-layout`) sets `--contour-docs-home-width` (`80rem`),
+  the width of the column of its pages, with `--contour-docs-page-inset` and
+  `--contour-docs-header-height`. A column of a page lines up with the header when it reads them:
+  `box-sizing: border-box`, `margin-inline: auto`, `padding-inline: var(--contour-docs-page-inset)`
+  and `max-inline-size: calc(var(--contour-docs-home-width) + 2 * var(--contour-docs-page-inset))`.
 - A collapsed sidebar is `<html data-contour-docs-sidebar="collapsed">`, set by `docsScript()`
   before the first paint and stored under `contour-docs-sidebar`; the theme is Kit's `data-theme`,
   stored under `contour-theme`.

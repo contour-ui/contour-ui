@@ -1,8 +1,15 @@
 /*
  * The layout of the pages outside the docs: the header, then the content, which fills the rest
- * of the viewport. Its root sets the variables the header reads, as the docs layout does.
+ * of the viewport. Its root sets the variables the header reads, as the docs layout does:
+ * - `--contour-docs-home-width`: the width of the column of the page, centered, with at least
+ *   `--contour-docs-page-inset` beside it. The header lays its content out in it, and the
+ *   content of a page lines up with the header when its own column reads the same variables.
+ * - `--contour-docs-header-height`: 3rem on phones, as the header of the docs pages there, so the
+ *   brand stays in place from one layout to the other; 4.5rem from 48rem.
+ * - `--contour-docs-page-inset`: the room at the sides of the page.
  */
 .contour-docs-home-layout {
+  --contour-docs-home-width: 80rem;
   --contour-docs-header-height: 3rem;
   --contour-docs-page-inset: 1rem;
 
@@ -13,6 +20,7 @@
 
 @media (min-width: 48rem) {
   .contour-docs-home-layout {
+    --contour-docs-header-height: 4.5rem;
     --contour-docs-page-inset: 2rem;
   }
 }

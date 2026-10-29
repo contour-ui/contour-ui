@@ -57,8 +57,10 @@ The index loads as the dialog first opens, and stays for the rest of the visit.
 ## Opening the search
 
 - **The buttons.** The sidebar holds a search field and the header of a phone an icon; a collapsed
-  sidebar keeps an icon in its toolbar. `HomeLayout` shows a field from 48rem and an icon below.
-  A layout of your own renders `SearchTrigger` ([Layouts](/docs/fumadocs/layouts#a-layout-of-your-own)).
+  sidebar keeps an icon in its toolbar. `HomeLayout` shows a field from 48rem and an icon below,
+  or none with `search={false}`, where the shortcut still opens the search
+  ([HomeLayout](/docs/fumadocs/layouts#the-header)). A layout of your own renders
+  `SearchTrigger` ([Layouts](/docs/fumadocs/layouts#a-layout-of-your-own)).
 - **The shortcut.** <Kbd>⌘</Kbd> <Kbd>K</Kbd> on macOS, iOS and iPadOS, <Kbd>Ctrl</Kbd> <Kbd>K</Kbd>
   elsewhere, opens the dialog, and closes it again. Once the page has hydrated, the search
   buttons name the keys of the platform in `aria-keyshortcuts`, and the wide ones show them, except

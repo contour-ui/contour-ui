@@ -68,7 +68,7 @@ layouts lets the reader choose.
 | ------- | --------------------------------------------------------------------------------------------------------------------------------- | -------- |
 | `name`  | `ReactNode`: the brand, a link home at the start of the headers and the sidebar                                                   | required |
 | `url`   | `string`: where the brand leads                                                                                                   | `'/'`    |
-| `nav`   | `DocsNavLink[]`, `{ label, href }`: text links next to the brand, in the header of `HomeLayout`                                   | —        |
+| `nav`   | `DocsNavLink[]`, `{ label, href }`: text links in the header of `HomeLayout`, its navigation "Main"                               | —        |
 | `links` | `DocsLink[]`, `{ label, href, icon }`: icon buttons in the header of `HomeLayout`, and at the foot of the sidebar and of the menu | —        |
 
 A `DocsLink` is named by its `label` and shows its `icon`, one of the `<camelName>Icon` exports of
@@ -246,14 +246,59 @@ the `h3` above it. A page without these headings shows none.
 
 ## HomeLayout
 
-| Prop       | Type                                        | Default  |
-| ---------- | ------------------------------------------- | -------- |
-| `children` | `ReactNode`: the content, in `main#content` | required |
+| Prop       | Type                                                         | Default  |
+| ---------- | ------------------------------------------------------------ | -------- |
+| `children` | `ReactNode`: the content, in `main#content`                  | required |
+| `search`   | `boolean`: whether the header holds the button of the search | `true`   |
 
 `HomeLayout` renders the skip link, the header of the site, then its children in `main#content`,
-which fills the rest of the viewport. The header holds the brand, the `nav` links, the search (a
-field from 48rem, an icon below), the theme toggle and the `links` of the site. `HomeLayout`
-renders on the server too: the home page can be a React Server Component.
+which fills the rest of the viewport. `HomeLayout` renders on the server too: the home page can be
+a React Server Component.
+
+```tsx
+// A home page whose search lives in the docs: ⌘K still opens it.
+<HomeLayout search={false}>
+  <Hero />
+</HomeLayout>
+```
+
+### The header
+
+The header sticks to the top of the page, on the color of the page and without a divider. It
+lays its content out in the column of the page: as wide as
+[`--contour-docs-home-width`](/docs/fumadocs/styling#layout-variables), `80rem` by default,
+centered, with at least the page inset at its sides:
+
+- **At the start**, the brand.
+- **At the end**, the `nav` links of the site, its navigation "Main", in the type of a site's
+  navigation (`--ct-text-nav`) and the color of the brand, underlined on hover; then the search
+  (a field from 48rem, an icon below), unless `search` is `false`; then the `links` of the site
+  and the theme toggle.
+
+It is `4.5rem` high from 48rem, and `3rem` on phones, as the header of the docs pages there, so
+the brand stays in place from one layout to the other. Where a phone leaves the header too little
+room, the `nav` links scroll sideways in their own box, and the brand, the buttons and the page
+stay in place: keep the labels short, or use a logo that turns into its mark on phones.
+
+`search={false}` only takes the button out of the header: the search of `DocsProvider` is still
+there, and its shortcut, ⌘K or Ctrl K, opens it on every page.
+
+### The column of the page
+
+The content spans the width of the page, so a section can run its background or its border from
+edge to edge. A column of your own lines up with the header when it reads the same variables:
+
+```css title="home.css"
+.home-section {
+  box-sizing: border-box;
+  max-inline-size: calc(var(--contour-docs-home-width) + 2 * var(--contour-docs-page-inset));
+  margin-inline: auto;
+  padding-inline: var(--contour-docs-page-inset);
+}
+```
+
+Set `--contour-docs-home-width` on `.contour-docs-home-layout` from your CSS for another width: the
+header and the columns that read it follow.
 
 ## A layout of your own
 
@@ -313,7 +358,8 @@ export function AppLayout({ children }: { children: ReactNode }) {
 - **Landmarks.** The sidebar from 48rem, the header below, is the banner of a docs page. The
   pages of the section are the navigation "Docs", the table of contents the navigation "On this
   page", and the links to the previous and the next page the navigation "Previous and next page".
-  The article is the `main`, and the title of the page its only `h1`.
+  The article is the `main`, and the title of the page its only `h1`. On a page of `HomeLayout`,
+  the header is the banner, and its `nav` links, a list, the navigation "Main".
 - **The skip link** is the first stop of the Tab order, and leads past the navigation to the
   article; the next Tab goes on in the content.
 - **Focus.** Collapsing and expanding the sidebar move the focus to the other button. Escape
