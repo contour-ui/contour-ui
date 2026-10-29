@@ -6,7 +6,8 @@ import { useId } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 
 import { isExternalHref } from '../utils/href.ts';
-import { getSectionUrl } from './sections.ts';
+import { CollapsibleFolder } from './page-tree-folder.tsx';
+import { containsPage, getSectionUrl } from './sections.ts';
 
 export interface PageTreeProps {
   /** The section whose pages to list, or the whole tree for a page outside the sections. */
@@ -18,8 +19,9 @@ export interface PageTreeProps {
 /**
  * The pages of a section as the navigation "Docs" (`page-tree.css`): the pages before the first
  * separator (`---Name---` in `meta.json`), then a list per separator, labeled with its name. A
- * folder lists its own pages under its name; a section, listed on a page outside the sections, is
- * a link to where it starts. The link of the page is `aria-current="page"`.
+ * folder lists its own pages under its name, and opens and closes unless its `meta.json` says
+ * `"collapsible": false`; a section, listed on a page outside the sections, is a link to where it
+ * starts. The link of the page is `aria-current="page"`.
  */
 export function PageTree({ root, url }: PageTreeProps): ReactElement {
   return (
@@ -146,22 +148,50 @@ interface PageTreeFolderProps {
 }
 
 /**
- * A folder: its name, then its index page and its own pages and groups, indented. The name labels
+ * A folder, which opens and closes (`CollapsibleFolder`): its index page is the link of its name,
+ * and its pages and groups are indented under it. One with `"collapsible": false` in its
+ * `meta.json` stays open: its name, then its index page and its pages and groups. The name labels
  * the list of the pages before its first separator.
  */
 function PageTreeFolder({ folder, url }: PageTreeFolderProps): ReactElement {
   const labelId = useId();
-  const nodes = folder.index === undefined ? folder.children : [folder.index, ...folder.children];
 
+  if (folder.collapsible === false) {
+    const nodes = folder.index === undefined ? folder.children : [folder.index, ...folder.children];
+    return (
+      <li className="contour-docs-page-tree__group">
+        <div id={labelId} className="contour-docs-page-tree__label">
+          {folder.name}
+        </div>
+        <div className="contour-docs-page-tree__folder">
+          <PageTreeNodes nodes={nodes} url={url} labelledBy={labelId} />
+        </div>
+      </li>
+    );
+  }
+  const { index } = folder;
   return (
-    <li className="contour-docs-page-tree__group">
-      <div id={labelId} className="contour-docs-page-tree__label">
-        {folder.name}
-      </div>
-      <div className="contour-docs-page-tree__folder">
-        <PageTreeNodes nodes={nodes} url={url} labelledBy={labelId} />
-      </div>
-    </li>
+    <CollapsibleFolder
+      name={folder.name}
+      labelId={labelId}
+      link={
+        index === undefined ? undefined : (
+          <PageLink
+            id={labelId}
+            folder
+            href={index.url}
+            current={index.url === url}
+            external={index.external}
+          >
+            {folder.name}
+          </PageLink>
+        )
+      }
+      defaultOpen={folder.defaultOpen === true}
+      active={containsPage(folder, url)}
+    >
+      <PageTreeNodes nodes={folder.children} url={url} labelledBy={labelId} />
+    </CollapsibleFolder>
   );
 }
 
@@ -170,21 +200,24 @@ interface PageLinkProps {
   readonly current: boolean;
   /** Whether the page is on another site; by default, when `href` has a scheme. */
   readonly external?: boolean | undefined;
+  /** The id of the link, when something points at it. */
+  readonly id?: string | undefined;
+  /** Whether it is the index page of a folder, in the row of its name. */
+  readonly folder?: boolean | undefined;
   readonly children: ReactNode;
 }
 
 /**
  * A page: through the framework, or in a new tab for another site, with an arrow that says so.
  */
-function PageLink({ href, current, external, children }: PageLinkProps): ReactElement {
+function PageLink({ href, current, external, id, folder, children }: PageLinkProps): ReactElement {
+  const className =
+    folder === true
+      ? 'contour-docs-page-tree__link contour-docs-page-tree__folder-link'
+      : 'contour-docs-page-tree__link';
   if (external ?? isExternalHref(href)) {
     return (
-      <a
-        className="contour-docs-page-tree__link"
-        href={href}
-        target="_blank"
-        rel="noreferrer noopener"
-      >
+      <a id={id} className={className} href={href} target="_blank" rel="noreferrer noopener">
         {children}
         <Icon icon={arrowUpRightIcon} label="opens in a new tab" />
       </a>
@@ -192,7 +225,8 @@ function PageLink({ href, current, external, children }: PageLinkProps): ReactEl
   }
   return (
     <FrameworkLink
-      className="contour-docs-page-tree__link"
+      id={id}
+      className={className}
       href={href}
       aria-current={current ? 'page' : undefined}
     >

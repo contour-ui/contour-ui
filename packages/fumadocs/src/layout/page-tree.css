@@ -84,3 +84,97 @@
   inline-size: var(--ct-size-icon-sm);
   block-size: var(--ct-size-icon-sm);
 }
+
+/*
+ * A folder that opens and closes (page-tree-folder.tsx): its row holds the link to its index page
+ * and the toggle after it, or the toggle alone, with its name. Its pages slide open under it.
+ */
+.contour-docs-page-tree__collapsible {
+  /* The space under the row is inside the content, so it opens and closes with it. */
+  gap: 0;
+}
+
+.contour-docs-page-tree__folder-row {
+  display: flex;
+  align-items: center;
+  gap: 1px;
+}
+
+/* The link to the index page shows the folder's name: the label's color and weight. */
+.contour-docs-page-tree__folder-link {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.contour-docs-page-tree__folder-link:not([aria-current='page']) {
+  color: var(--ct-color-fg-default);
+  font-weight: var(--ct-text-heading-font-weight);
+}
+
+/* The toggle of a folder without an index page: the whole row, the name, then the chevron. */
+.contour-docs-page-tree__folder-trigger {
+  flex: 1;
+  justify-content: space-between;
+  box-sizing: border-box;
+  min-inline-size: 0;
+  min-block-size: var(--ct-size-control-lg);
+  padding: var(--ct-space-control-gap) var(--ct-space-group-gap);
+  font: var(--ct-text-body);
+  font-weight: var(--ct-text-heading-font-weight);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+/* The toggle after the link to the index page: a square as high as the link. */
+.contour-docs-page-tree__folder-toggle {
+  flex-shrink: 0;
+  justify-content: center;
+  inline-size: var(--ct-size-control-lg);
+  block-size: var(--ct-size-control-lg);
+}
+
+.contour-docs-page-tree__folder-trigger,
+.contour-docs-page-tree__folder-toggle {
+  transition: background-color var(--ct-motion-feedback);
+}
+
+/* Touch screens would keep the hover look after a tap. */
+@media (hover: hover) {
+  .contour-docs-page-tree__folder-trigger:hover,
+  .contour-docs-page-tree__folder-toggle:hover {
+    background-color: var(--ct-color-bg-hover);
+  }
+}
+
+/* Inside the button, as for the links: the scroll area of the sidebar never cuts it. */
+.contour-docs-page-tree__folder-trigger:focus-visible,
+.contour-docs-page-tree__folder-toggle:focus-visible {
+  outline-offset: calc(-1 * var(--ct-border-width-focus));
+}
+
+/* The name of the toggle after a link, for assistive technology only. */
+.contour-docs-page-tree__toggle-label {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/*
+ * A column, so the margin of the pages stays inside it, in the height it opens to (a block would
+ * let it through, out of the measured height).
+ */
+.contour-docs-page-tree__folder-content {
+  display: flex;
+  flex-direction: column;
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-docs-page-tree__folder-content[hidden] {
+  display: none;
+}
+
+.contour-docs-page-tree__folder-content > .contour-docs-page-tree__folder {
+  margin-block-start: var(--ct-space-control-gap);
+}

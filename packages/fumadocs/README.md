@@ -72,6 +72,9 @@ import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
   of fumadocs-core's static index, `/api/search` by default; `false` for none), `theme` (Kit
   `ThemeProvider` options), `sidebarStorageKey`. Give `docsScript()` the same `theme` and
   `sidebarStorageKey`.
+- Folders of the page tree open and close: the name links to the index page, a button after it
+  shows the pages. A folder opens when it holds the page (also as the reader goes to one of its
+  pages) and with `"defaultOpen": true` in its `meta.json`; `"collapsible": false` keeps it open.
 - The search downloads the index that `createFromSource(source).staticGET()` of
   `fumadocs-core/search/server` serves, prerendered on a static site.
 - A layout of your own: `SearchTrigger`, `ThemeToggle` and `SkipLink` (render it first, and give

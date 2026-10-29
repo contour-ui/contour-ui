@@ -70,6 +70,11 @@ export const Desktop: Story = {
       'aria-current',
       'page',
     );
+    // The folder Forms holds another page: closed, its toggle after the link to its index page.
+    await expect(within(docs).getByRole('button', { name: 'Forms pages' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
     await expect(canvas.getByRole('heading', { level: 1, name: 'Button' })).toBeVisible();
     // The column of the table of contents, in place of its bar.
     await expect(canvas.getByRole('navigation', { name: 'On this page' })).toBeVisible();
@@ -150,8 +155,8 @@ export const CollapsedSidebar: Story = {
 };
 
 /**
- * A page in a folder of its section: the folder lists its index page and its pages under its
- * name, and the separators of the section name the groups around it.
+ * A page in a folder of its section: the folder is open, its name the link to its index page,
+ * its pages under it, and the separators of the section name the groups around it.
  */
 export const NestedPage: Story = {
   parameters: { pathname: '/docs/kit/forms/checkbox' },
@@ -164,6 +169,10 @@ export const NestedPage: Story = {
   ),
   play: async ({ canvas }) => {
     const docs = canvas.getByRole('navigation', { name: 'Docs' });
+    await expect(within(docs).getByRole('button', { name: 'Forms pages' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    );
     const forms = within(docs).getByRole('list', { name: 'Forms' });
     await expect(within(forms).getByRole('link', { name: 'Checkbox' })).toHaveAttribute(
       'aria-current',
