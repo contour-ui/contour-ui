@@ -1,0 +1,176 @@
+---
+title: Tabs
+description: Sections of content shown one at a time, picked from a row of tabs, in three variants and three sizes.
+---
+
+import { Tabs } from '@contour-ui/kit';
+import { vars } from '@contour-ui/tokens';
+
+<Preview>
+  {
+    <Tabs.Root defaultValue="mix" style={{ inlineSize: '100%' }}>
+      <Tabs.List aria-label="Channel">
+        <Tabs.Trigger value="mix">Mix</Tabs.Trigger>
+        <Tabs.Trigger value="sends" disabled>
+          Sends
+        </Tabs.Trigger>
+        <Tabs.Trigger value="inserts">Inserts</Tabs.Trigger>
+        <Tabs.Trigger value="meter">Meter</Tabs.Trigger>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Content value="mix">Volume and pan of the channel.</Tabs.Content>
+      <Tabs.Content value="sends">Send levels.</Tabs.Content>
+      <Tabs.Content value="inserts">Effects in series.</Tabs.Content>
+      <Tabs.Content value="meter">Peak and loudness.</Tabs.Content>
+    </Tabs.Root>
+  }
+</Preview>
+
+```tsx
+import { Tabs } from '@contour-ui/kit';
+
+<Tabs.Root defaultValue="mix">
+  <Tabs.List aria-label="Channel">
+    <Tabs.Trigger value="mix">Mix</Tabs.Trigger>
+    <Tabs.Trigger value="sends" disabled>
+      Sends
+    </Tabs.Trigger>
+    <Tabs.Trigger value="inserts">Inserts</Tabs.Trigger>
+    <Tabs.Trigger value="meter">Meter</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="mix">Volume and pan of the channel.</Tabs.Content>
+  <Tabs.Content value="sends">Send levels.</Tabs.Content>
+  <Tabs.Content value="inserts">Effects in series.</Tabs.Content>
+  <Tabs.Content value="meter">Peak and loudness.</Tabs.Content>
+</Tabs.Root>;
+```
+
+Tabs show one section at a time, picked from a row of triggers. They are the
+[Headless Tabs](/docs/headless/tabs) with the Kit styles: the value, the keyboard, mounting and
+every prop are described there. A trigger and its content belong together by `value`, any string;
+`defaultValue` selects a tab at first, or `value` and `onValueChange` keep the selection yourself.
+Without either, no tab is selected until the user picks one.
+
+`Tabs.Indicator` slides the mark of the selected trigger to the next one. Without it, and until it
+is measured on the first render, the selected trigger draws the mark itself.
+
+## Variants
+
+`variant` sets how the tabs look; every part follows the root, and a Tabs nested in a content
+keeps its own look. The selected trigger takes the default text color, and a mark that does not
+rely on color: a bar, a raised box or a filled box.
+
+<Preview>
+  {
+    <div style={{ display: 'grid', gap: vars.space['section-gap'], inlineSize: '100%' }}>
+      {['line', 'enclosed', 'subtle'].map((variant) => (
+        <Tabs.Root key={variant} defaultValue="inserts" variant={variant}>
+          <Tabs.List aria-label={`Channel, ${variant}`}>
+            <Tabs.Trigger value="mix">Mix</Tabs.Trigger>
+            <Tabs.Trigger value="inserts">Inserts</Tabs.Trigger>
+            <Tabs.Trigger value="meter">Meter</Tabs.Trigger>
+            <Tabs.Indicator />
+          </Tabs.List>
+        </Tabs.Root>
+      ))}
+    </div>
+  }
+</Preview>
+
+- **`line`** (default): the triggers stand on a rule, and an accent bar marks the selected one.
+- **`enclosed`**: the triggers sit in a sunken strip, and the selected one is raised out of it,
+  with a border. It suits a header above content, such as the files of a code example.
+- **`subtle`**: no rule; the selected trigger is a filled box.
+
+## Sizes
+
+`size` sets the height of the triggers: `sm`, `md` (default) or `lg`, the heights of the other
+controls. `lg` has a larger label and a wider inset. Icons in a trigger take the icon size of the
+control.
+
+## Vertical
+
+`orientation="vertical"` puts the list beside the contents, as a column: ↓ and ↑ move along it, and
+the mark of `line` runs along its end edge.
+
+<Preview>
+  {
+    <Tabs.Root defaultValue="inserts" orientation="vertical" style={{ inlineSize: '100%' }}>
+      <Tabs.List aria-label="Channel, vertical">
+        <Tabs.Trigger value="mix">Mix</Tabs.Trigger>
+        <Tabs.Trigger value="inserts">Inserts</Tabs.Trigger>
+        <Tabs.Trigger value="meter">Meter</Tabs.Trigger>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Content value="mix">Volume and pan of the channel.</Tabs.Content>
+      <Tabs.Content value="inserts">Effects in series.</Tabs.Content>
+      <Tabs.Content value="meter">Peak and loudness.</Tabs.Content>
+    </Tabs.Root>
+  }
+</Preview>
+
+## Anatomy
+
+| Part             | Element  | Class                     | Attributes                                                                                                              |
+| ---------------- | -------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `Tabs.Root`      | `div`    | `contour-tabs`            | `data-scope="tabs" data-part="root"`, `data-orientation`                                                                |
+| `Tabs.List`      | `div`    | `contour-tabs__list`      | `data-part="list"`, `role="tablist"`, `aria-orientation`                                                                |
+| `Tabs.Trigger`   | `button` | `contour-tabs__trigger`   | `data-part="trigger"`, `role="tab"`, `aria-selected`, `aria-controls`, `data-value`, `data-selected`, `data-disabled`   |
+| `Tabs.Content`   | `div`    | `contour-tabs__content`   | `data-part="content"`, `role="tabpanel"`, `aria-labelledby`, `hidden` (not selected), `data-value`, `data-selected`     |
+| `Tabs.Indicator` | `div`    | `contour-tabs__indicator` | `data-part="indicator"`, `aria-hidden="true"`, `hidden` (nothing to point at); `--left`, `--top`, `--width`, `--height` |
+
+Every part carries `data-scope="tabs"`, the `data-variant` and `data-size` of the root, and
+`data-orientation`. The list scrolls when the triggers do not fit, and the indicator scrolls with
+them.
+
+## Props
+
+`Tabs.Root` takes the props of [Headless Tabs](/docs/headless/tabs#props), and:
+
+| Prop      | Type                               | Default  |
+| --------- | ---------------------------------- | -------- |
+| `variant` | `'line' \| 'enclosed' \| 'subtle'` | `'line'` |
+| `size`    | `'sm' \| 'md' \| 'lg'`             | `'md'`   |
+
+`Tabs.Trigger` takes `value` and `disabled`; `Tabs.Content` takes `value`. Every part takes
+`asChild` and the props of its element, such as `className`, `style` and `id`; `className` is
+merged with the part's class.
+
+## Keyboard
+
+| Key              | Action                                                     |
+| ---------------- | ---------------------------------------------------------- |
+| `Tab`            | Moves focus to the selected trigger, then into its content |
+| `→`, `←`         | Moves to the next or previous trigger, and selects it      |
+| `↓`, `↑`         | The same, in a vertical list                               |
+| `Home`, `End`    | Moves to the first or the last trigger, and selects it     |
+| `Enter`, `Space` | Selects the focused trigger                                |
+
+The arrow keys skip disabled triggers and wrap around. With `activationMode="manual"`, they only
+move focus, and Enter or Space selects.
+
+## Accessibility
+
+- **WAI-ARIA tabs**: a `tablist` of `tab`s, each controlling its `tabpanel`, which it names.
+- **Name the list** with `aria-label` when the page does not make its purpose plain.
+- **Not by color alone.** The selected trigger has the default text color and the others are
+  muted, but the bar, the raised box or the filled box marks the selection too.
+- **Reduced motion.** When the user prefers reduced motion, the indicator moves without sliding.
+
+## Tokens
+
+| Token                                                                                     | Used for                                           |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| `--ct-size-control-sm`, `--ct-size-control-md`, `--ct-size-control-lg`                    | the height of the triggers                         |
+| `--ct-text-label`, `--ct-space-control-inset`, `--ct-space-control-gap`                   | the label, the inset and the icon gap (`sm`, `md`) |
+| `--ct-text-label-lg`, `--ct-space-control-inset-lg`, `--ct-space-control-gap-lg`          | the same, in `lg`                                  |
+| `--ct-size-icon-sm`, `--ct-size-icon-md`                                                  | icons in the triggers                              |
+| `--ct-color-fg-muted`, `--ct-color-fg-default`, `--ct-color-fg-disabled`                  | the triggers, selected or hovered, disabled        |
+| `--ct-color-border-default`, `--ct-border-width-default`                                  | the rule of `line`, the strip of `enclosed`        |
+| `--ct-color-accent-fill`, `--ct-border-width-focus`, `--ct-radius-round`                  | the bar of `line`                                  |
+| `--ct-color-bg-inset`, `--ct-color-bg-raised`, `--ct-radius-panel`, `--ct-radius-control` | the strip and the raised box of `enclosed`         |
+| `--ct-color-bg-hover`                                                                     | the box of `subtle`                                |
+| `--ct-motion-enter`, `--ct-motion-feedback`                                               | the slide of the indicator, the trigger colors     |
+| `--ct-text-body`, `--ct-space-group-gap`                                                  | the content, and the space above it                |
+| `--ct-color-border-focus`, `--ct-border-width-focus`                                      | the focus ring, inside the trigger                 |

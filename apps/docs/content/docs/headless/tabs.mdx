@@ -1,0 +1,235 @@
+---
+title: Tabs
+description: Layered sections of content, one shown at a time, chosen from a list of tabs that the arrow keys move through, with an indicator that follows the selected tab.
+---
+
+import { Tabs } from '@contour-ui/headless';
+
+<Preview>
+  {
+    <Tabs.Root defaultValue="mix" className="docs-tabs">
+      <Tabs.List aria-label="Channel" className="docs-tabs-list">
+        <Tabs.Trigger value="mix">Mix</Tabs.Trigger>
+        <Tabs.Trigger value="sends" disabled>
+          Sends
+        </Tabs.Trigger>
+        <Tabs.Trigger value="inserts">Inserts</Tabs.Trigger>
+        <Tabs.Trigger value="meter">Meter</Tabs.Trigger>
+        <Tabs.Indicator className="docs-tabs-indicator" />
+      </Tabs.List>
+      <Tabs.Content value="mix">Volume and pan of the channel.</Tabs.Content>
+      <Tabs.Content value="sends">Send levels.</Tabs.Content>
+      <Tabs.Content value="inserts">Effects in series.</Tabs.Content>
+      <Tabs.Content value="meter">Peak and loudness.</Tabs.Content>
+      <style>{`
+        .docs-tabs { color: var(--ct-color-fg-default); }
+        .docs-tabs-list { position: relative; display: flex; gap: 4px; border-bottom: 1px solid var(--ct-color-border-default); }
+        .docs-tabs-list [role='tab'] { padding: 6px 10px; border: 0; background: none; color: inherit; font: inherit; }
+        .docs-tabs-list [role='tab'][data-disabled] { color: var(--ct-color-fg-disabled); }
+        .docs-tabs-indicator {
+          position: absolute; bottom: -1px; left: 0; height: 2px; width: var(--width);
+          translate: var(--left) 0; background: var(--ct-color-accent-fill); transition: translate 150ms, width 150ms;
+        }
+        .docs-tabs-indicator[hidden] { display: none; }
+        .docs-tabs [role='tabpanel'] { padding-block: 8px; }
+      `}</style>
+    </Tabs.Root>
+  }
+</Preview>
+
+```tsx
+import { Tabs } from '@contour-ui/headless';
+
+<Tabs.Root defaultValue="mix">
+  <Tabs.List aria-label="Channel">
+    <Tabs.Trigger value="mix">Mix</Tabs.Trigger>
+    <Tabs.Trigger value="sends" disabled>
+      Sends
+    </Tabs.Trigger>
+    <Tabs.Trigger value="inserts">Inserts</Tabs.Trigger>
+    <Tabs.Indicator />
+  </Tabs.List>
+  <Tabs.Content value="mix">Volume and pan of the channel.</Tabs.Content>
+  <Tabs.Content value="sends">Send levels.</Tabs.Content>
+  <Tabs.Content value="inserts">Effects in series.</Tabs.Content>
+</Tabs.Root>;
+```
+
+Tabs show one section of content at a time: a list of triggers, the tabs, picks the section, and
+only that one is shown. The list is one stop of the Tab key, and the arrow keys move along it. An
+indicator, if you render one, gets the box of the selected trigger to slide along the list.
+[Kit's Tabs](/docs/kit/tabs) is this component with the contour-ui look.
+
+## The value
+
+A trigger and a content belong together by their `value`, any string: a word, a file name, a
+command. The value of the root is the value of the selected tab: `defaultValue` in tabs that keep
+it, or `value` and `onValueChange` to keep it yourself. `onValueChange` receives `{ value }` for
+every selection, also one you then refuse:
+
+```tsx
+const [tab, setTab] = useState('mix');
+
+<Tabs.Root value={tab} onValueChange={(details) => setTab(details.value)}>
+  …
+</Tabs.Root>;
+```
+
+A controlled value can come from anywhere: the address, storage, or other tabs of the page that
+should switch together. To keep them in step, give them one state.
+
+- **No value.** Without `value` or `defaultValue` (or with `null`), no tab is selected and no
+  content shows until the user picks one. The first enabled trigger is the stop of the Tab key.
+- **A value without a trigger** selects no trigger, and shows the content of that value if there is
+  one. The first enabled trigger is the stop of the Tab key.
+- **A disabled trigger** cannot be picked by the user, but a value can still select it: its content
+  shows, and the stop of the Tab key moves to the first enabled trigger.
+
+## Activation
+
+With `activationMode="automatic"`, the default, the arrow keys, Home and End select the tab they
+move to: its content shows at once. With `"manual"`, they only move focus, and Enter or Space
+selects; use it when showing a content is slow, as when it loads data. Focus alone never selects:
+Tab lands on the selected trigger, and `focus(value)` moves focus without selecting.
+
+`orientation="vertical"` lays the list out as a column, for the arrow keys: ↓ and ↑ move instead of
+→ and ←. In a right-to-left page, ← moves to the next trigger of a horizontal list. `loopFocus`
+(on by default) wraps around from the last trigger to the first; turn it off to stop at the ends.
+
+## Mounting contents
+
+Every content is in the page from the start, hidden while its tab is not selected, so the state of
+what it holds survives a switch. With `lazyMount`, the children of a content mount when its tab is
+first selected, and stay. With `unmountOnExit`, they unmount when it is deselected, and start over
+the next time. The content element itself always renders, so its trigger can point to it.
+
+## The indicator
+
+`Tabs.Indicator` goes inside `Tabs.List`. It gets the box of the selected trigger as `--left`,
+`--top`, `--width` and `--height`, in pixels, relative to the padding box of the list, which it
+follows as the triggers resize, move, or the list scrolls. Position the list and the indicator,
+and move it with a transition of your own:
+
+```css
+[data-scope='tabs'][data-part='list'] {
+  position: relative;
+}
+
+[data-scope='tabs'][data-part='indicator'] {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: var(--width);
+  height: 2px;
+  translate: var(--left) 0;
+  transition:
+    translate 150ms,
+    width 150ms;
+}
+```
+
+The offsets are physical, from the left and the top, in right-to-left pages too. The indicator is
+`hidden` until it has a trigger to point at, and while the list is hidden: when it shows, it is
+already in place, so the transition does not run from where it was.
+
+## Anatomy
+
+| Part             | Element  | Attributes                                                                                                                                                                                             |
+| ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Tabs.Root`      | `div`    | `data-scope="tabs" data-part="root"`, `data-orientation`                                                                                                                                               |
+| `Tabs.List`      | `div`    | `data-part="list"`, `role="tablist"`, `aria-orientation`, `data-orientation`                                                                                                                           |
+| `Tabs.Trigger`   | `button` | `data-part="trigger"`, `type="button"`, `role="tab"`, `id`, `aria-selected`, `aria-controls`, `tabindex`, `disabled`, `data-value`, `data-selected`, `data-focus`, `data-disabled`, `data-orientation` |
+| `Tabs.Content`   | `div`    | `data-part="content"`, `role="tabpanel"`, `id`, `aria-labelledby`, `tabindex="0"`, `hidden` (not selected), `data-value`, `data-selected`, `data-orientation`                                          |
+| `Tabs.Indicator` | `div`    | `data-part="indicator"`, `aria-hidden="true"`, `hidden` (nothing to point at), `data-orientation`; `--left`, `--top`, `--width`, `--height` in its style                                               |
+
+Every part carries `data-scope="tabs"`. A trigger and its content point to each other by id once
+both are mounted; give either an `id` of your own, and the other follows it.
+
+## Props
+
+`Tabs.Root`:
+
+| Prop             | Type                                                    | Default        |
+| ---------------- | ------------------------------------------------------- | -------------- |
+| `value`          | `string \| null`                                        | —              |
+| `defaultValue`   | `string \| null`                                        | `null`         |
+| `onValueChange`  | `(details: { value: string }) => void`                  | —              |
+| `onFocusChange`  | `(details: { focusedValue: string \| null }) => void`   | —              |
+| `orientation`    | `'horizontal' \| 'vertical'`                            | `'horizontal'` |
+| `activationMode` | `'automatic' \| 'manual'`                               | `'automatic'`  |
+| `loopFocus`      | `boolean`: the arrow keys wrap around                   | `true`         |
+| `lazyMount`      | `boolean`: mount a content's children on first select   | `false`        |
+| `unmountOnExit`  | `boolean`: unmount a content's children when deselected | `false`        |
+
+`Tabs.Trigger` takes `value` and `disabled`; `Tabs.Content` takes `value`. Every part takes
+`asChild` and the props of its element, such as `className`, `style` and `ref`. A click handler of
+yours on a trigger that calls `event.preventDefault()` keeps the selection.
+
+## Keyboard
+
+| Key              | Action                                                                          |
+| ---------------- | ------------------------------------------------------------------------------- |
+| `Tab`            | Moves focus to the selected trigger, then into its content                      |
+| `→`, `←`         | In a horizontal list, moves to the next or previous enabled trigger             |
+| `↓`, `↑`         | In a vertical list, moves to the next or previous enabled trigger               |
+| `Home`, `End`    | Moves to the first or the last enabled trigger                                  |
+| `Enter`, `Space` | Selects the focused trigger (the arrow keys already did, in the automatic mode) |
+
+## Accessibility
+
+- **WAI-ARIA tabs.** The list is a `tablist` with its `aria-orientation`, each trigger a `tab`
+  with `aria-selected` that controls its `tabpanel`, and each content is named by its trigger.
+- **Name the list** with `aria-label` or `aria-labelledby` when the page does not make its
+  purpose plain.
+- **One stop of the Tab key.** Only one trigger is in the Tab order (`tabindex="0"`), so Tab moves
+  from the list into the content. The content is in the Tab order too, so it is reached even
+  without focusable elements of its own.
+- **Disabled triggers** are native disabled buttons: the arrow keys skip them.
+- **The indicator** is hidden from assistive technology: `aria-selected` tells the selection.
+
+## How it works
+
+`Tabs.Root` runs the tabs machine of `@contour-ui/core`, `tabs.machine`, with `useMachine`. It has
+one state; the selected value and the focused trigger are its context. The triggers report
+themselves as they mount, in the order of the page, and the machine moves focus over them,
+skipping disabled ones:
+
+| Event                          | Sent by                                      | What happens                                                                      |
+| ------------------------------ | -------------------------------------------- | --------------------------------------------------------------------------------- |
+| `FOCUS.NEXT`, `FOCUS.PREVIOUS` | `→` and `←` (`↓` and `↑`), `focusNext()`…    | moves focus to the next or previous enabled trigger; selects it in automatic mode |
+| `FOCUS.FIRST`, `FOCUS.LAST`    | `Home`, `End`, `focusFirst()`, `focusLast()` | moves focus to the first or last enabled trigger; selects it in automatic mode    |
+| `FOCUS.SET`                    | `focus(value)`                               | moves focus to an enabled trigger                                                 |
+| `TRIGGER.CLICK`                | a click, `Enter`, `Space`                    | selects the tab of an enabled trigger                                             |
+| `TRIGGER.FOCUS`, `BLUR`        | focus in and out of the triggers             | records the focused trigger (`onFocusChange`)                                     |
+| `VALUE.SET`                    | `setValue(value)`                            | selects any value                                                                 |
+
+Moving focus is the one thing it asks of the platform (`focusTrigger`). The indicator is the DOM's
+own: a `ResizeObserver` and a `MutationObserver` on the list keep its box up to date.
+
+## Hooks
+
+`useTabs` runs the machine without the parts: it takes the props of `Tabs.Root` and returns the API
+(`value`, `focusedValue`, `triggers`, `tabStopValue`, `setValue()`, `focus()`, `focusNext()`…) and
+the props of each element: `getRootProps()`, `getListProps()`, `getTriggerProps({ value,
+disabled })`, `getContentProps({ value })` and `getIndicatorProps()`. Mounting the content's
+children is yours.
+
+```tsx
+import { useTabs } from '@contour-ui/headless';
+
+function Channel() {
+  const tabs = useTabs({ defaultValue: 'mix' });
+  return (
+    <div {...tabs.getRootProps()}>
+      <div {...tabs.getListProps()} aria-label="Channel">
+        <button {...tabs.getTriggerProps({ value: 'mix' })}>Mix</button>
+        <button {...tabs.getTriggerProps({ value: 'meter' })}>Meter</button>
+      </div>
+      <div {...tabs.getContentProps({ value: 'mix' })}>Volume and pan.</div>
+      <div {...tabs.getContentProps({ value: 'meter' })}>Peak and loudness.</div>
+    </div>
+  );
+}
+```
+
+Inside `Tabs.Root`, `useTabsContext()` returns the same API, plus `lazyMount` and `unmountOnExit`.
