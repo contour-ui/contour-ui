@@ -294,12 +294,18 @@ resolve to package sources like the rest of the app.
   package never imports `react-router`. The layout root sets `--contour-docs-header-height` and
   `--contour-docs-toc-bar-height` (`0px` where a bar is gone): headings keep their sum free with
   `scroll-margin-block-start`, and the TOC (`src/toc/`, Kit's `Toc`) observes the area below.
-  Classes are `contour-docs-<part>`, variables `--contour-docs-*`.
+  Classes are `contour-docs-<part>`, variables `--contour-docs-*`. Folders of the page tree open
+  and close on Kit's Collapsible (`page-tree-folder.tsx`: the name links to the index page, a
+  button after it toggles; open with `defaultOpen` or while they hold the page);
+  `"collapsible": false` keeps the static list. `ThemeToggle` takes `mode` (`light-dark`, a
+  button, by default; `light-dark-system`, Kit's SegmentGroup), by default the `themeToggle` of
+  `DocsProvider`.
 - **Before hydration.** `docsScript()` (Kit's `themeScript()` from `@contour-ui/kit/theme-script`,
   plus the sidebar) sets `data-theme` (key `contour-theme`) and
   `data-contour-docs-sidebar="collapsed"` (key `contour-docs-sidebar`) on `<html>` before the
   first paint. Components render both states and CSS shows one, as the theme toggle and the
-  shortcut of the search button do.
+  shortcut of the search button do. The three-way theme picker cannot (`data-theme` does not tell
+  `system` from the theme it resolves to): it checks no item until the page has hydrated.
 - **Search** (`src/search/`): Kit's Dialog with a Kit Listbox whose Input is the field, on
   fumadocs-core's static index (`search.from`, `/api/search` by default). A result opens with
   `useRouter().push`; one at the current address only scrolls.
@@ -308,6 +314,12 @@ resolve to package sources like the rest of the app.
   as is, another site in a new tab); tables and code blocks with Kit's `Table` and `CodeBlock`;
   `<Callout>`, `<Card>` and `<Cards>` (Fumadocs props) with `Alert` and `Card` (a card's title is
   no heading); and registers `Kbd` and `<Preview>`. Images stay plain `img`.
+- **Tabs** (`src/mdx/tabs/`): the map holds Fumadocs' `Tabs` and `Tab` (and `TabsList`,
+  `TabsTrigger`, `TabsContent`) and the `CodeBlockTabs*` that `remarkCodeTab` and `remarkNpm`
+  write, on Kit's `line` Tabs, controlled by `useDocsTabs`. A `groupId` group lives in a module
+  registry (`tab-groups.ts`) and is stored under its id in `sessionStorage` (and `localStorage`
+  with `persist`), as in fumadocs-ui; the address opens the tab whose panel is or holds `#id`;
+  `updateAnchor` writes with `replaceState(history.state, …)`. Values are the items as written.
 - **Styles.** `@contour-ui/fumadocs/styles.css` loads before Kit's: it starts with the layer order
   `contour.fumadocs-base, contour.fumadocs-prose, contour.kit, contour.audio, contour.fumadocs`.
   The page base (no reset, so Kit renders as in Storybook) and Prose rank below the components, so
@@ -325,8 +337,10 @@ resolve to package sources like the rest of the app.
   `MemoryFramework` (fumadocs-core's `FrameworkProvider` with an in-memory pathname; `push`
   changes it in a transition, as routers do; `Link` is a plain `<a data-framework-link>`),
   `renderDocs()` for tests, and the decorator `withDocs` for stories (search on a real static
-  index built in the browser). Page stories set `parameters: { canvasPadding: false }`.
-  testing-library takes a `<header>` inside `<main>` for a banner: find landmarks by name.
+  index built in the browser). Page stories set `parameters: { canvasPadding: false }`, and
+  `themeToggle: 'light-dark-system'` for the three-way picker. testing-library takes a `<header>`
+  inside `<main>` for a banner: find landmarks by name. Click an icon-only SegmentGroup item
+  through its label (`radio.closest('label')`): the icon covers the hidden radio.
 
 **The site** (`apps/docs`) keeps its routes (`docs.tsx` with its loader, `clientLoader` and error
 boundary, `home.tsx`, `not-found.tsx`), `lib/source.ts`, the search index route
@@ -336,6 +350,9 @@ its own CSS (`app/app.css`, unlayered, loaded after every package stylesheet).
 - Code is highlighted at build time with Shiki's css-variables theme (`rehypeCodeOptions` in
   `vite.config.ts`); `CodeBlock` maps its variables to the syntax tokens. A lowercase JSX tag in
   MDX (`<kbd>`, `<a>`) is a literal element and skips the MDX map: write `<Kbd>`.
+- Install commands are ` ```package-install ` blocks: one tab group across the site
+  (`remarkNpmOptions.persist.id: 'package-manager'`). In tests, `name: 'npm'` also matches
+  `pnpm`: pass `exact: true`.
 - Oxfmt formats MDX like JSX: the text of an element with several attributes goes on a line of its
   own, where MDX turns it into a paragraph, even inside a `<button>`. Write inline examples as an
   expression (`{<p>…</p>}`).
