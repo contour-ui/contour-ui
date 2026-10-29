@@ -1,0 +1,132 @@
+/*
+ * Collapsible: no look of its own beyond its trigger, a plain label with the focus ring. The
+ * content grows from nothing to its height (`--height`, which headless measures and keeps up to
+ * date) as it opens and shrinks back as it closes; the indicator turns with it.
+ */
+
+/* `overflow` is part of the keyframes: it clips only while the height changes, never the focus
+   rings of what the open content holds. */
+@keyframes contour-collapsible-expand {
+  from {
+    height: 0;
+    overflow: hidden;
+  }
+
+  to {
+    height: var(--height);
+    overflow: hidden;
+  }
+}
+
+@keyframes contour-collapsible-collapse {
+  from {
+    height: var(--height);
+    overflow: hidden;
+  }
+
+  to {
+    height: 0;
+    overflow: hidden;
+  }
+}
+
+@keyframes contour-collapsible-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes contour-collapsible-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+.contour-collapsible__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: var(--ct-radius-control);
+  background: none;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  text-align: start;
+  cursor: pointer;
+  appearance: none;
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-collapsible__trigger[hidden] {
+  display: none;
+}
+
+.contour-collapsible__trigger:focus-visible {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
+
+.contour-collapsible__trigger:disabled {
+  color: var(--ct-color-fg-disabled);
+  cursor: not-allowed;
+}
+
+.contour-collapsible__indicator {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--ct-color-fg-muted);
+  transition: rotate var(--ct-motion-enter);
+}
+
+.contour-collapsible__indicator[hidden] {
+  display: none;
+}
+
+.contour-collapsible__indicator > svg {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+.contour-collapsible__indicator[data-state='open'] {
+  rotate: 90deg;
+}
+
+/* Right-to-left text: the closed chevron points left, and turns the other way to point down. */
+.contour-collapsible__indicator:dir(rtl) {
+  scale: -1 1;
+}
+
+.contour-collapsible__indicator[data-state='open']:dir(rtl) {
+  rotate: -90deg;
+}
+
+.contour-collapsible__indicator[data-disabled] {
+  color: var(--ct-color-fg-disabled);
+}
+
+.contour-collapsible__content[data-state='open'] {
+  animation: contour-collapsible-expand var(--ct-motion-enter);
+}
+
+/* Its own keyframes: the closed state must start an animation of another name. */
+.contour-collapsible__content[data-state='closed'] {
+  animation: contour-collapsible-collapse var(--ct-motion-exit);
+}
+
+/* No change of height and no turning: the content only fades. */
+@media (prefers-reduced-motion: reduce) {
+  .contour-collapsible__content[data-state='open'] {
+    animation-name: contour-collapsible-fade-in;
+  }
+
+  .contour-collapsible__content[data-state='closed'] {
+    animation-name: contour-collapsible-fade-out;
+  }
+
+  .contour-collapsible__indicator {
+    transition: none;
+  }
+}

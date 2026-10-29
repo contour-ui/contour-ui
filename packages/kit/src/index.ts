@@ -3,6 +3,7 @@ export { Button, CloseButton, IconButton } from './button/index.ts';
 export type { ButtonProps, CloseButtonProps, IconButtonProps } from './button/index.ts';
 export * as Card from './card/index.ts';
 export * as CodeBlock from './code-block/index.ts';
+export * as Collapsible from './collapsible/index.ts';
 export * as Dialog from './dialog/index.ts';
 // The portal of the overlays, so that apps need no other package to render them.
 export { Portal } from '@contour-ui/headless';
