@@ -7,7 +7,7 @@ import { HomeIndex } from '../components/home/home-index.tsx';
 import { HomeTracks } from '../components/home/home-tracks.tsx';
 
 export function meta(): Array<Record<string, string>> {
-  return [{ title: 'contour-ui' }, { name: 'description', content: HOME_DESCRIPTION }];
+  return [{ title: 'Contour UI' }, { name: 'description', content: HOME_DESCRIPTION }];
 }
 
 /**

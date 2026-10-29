@@ -16,5 +16,5 @@ test('the 404 page leads back to the docs', async ({ page }) => {
   await openPage(page, '/nope');
   await page.getByRole('main').getByRole('link', { name: 'Back to docs' }).click();
   await expect(page).toHaveURL('/docs');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('contour-ui');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Contour UI');
 });

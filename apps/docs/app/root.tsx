@@ -46,8 +46,8 @@ export function Layout({ children }: { readonly children: ReactNode }): ReactEle
         <script dangerouslySetInnerHTML={{ __html: docsScript() }} />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         {/* The mark, dark or light with the color scheme; a dark tile where SVG icons are not read. */}
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-        <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
+        <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/icon-32.png" sizes="32x32" type="image/png" />
         <link rel="apple-touch-icon" href="/app-icon-180.png" />
         <Meta />
         <Links />

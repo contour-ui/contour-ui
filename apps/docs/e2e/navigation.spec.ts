@@ -4,6 +4,7 @@ test.use({ viewport: { width: 1280, height: 800 } });
 
 test('the home page leads to the guide and to each part of contour-ui', async ({ page }) => {
   await openPage(page, '/');
+  await expect(page).toHaveTitle('Contour UI');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(
     'A design system for audio interfaces',
   );
@@ -35,6 +36,15 @@ test('the playhead of the home page waits for a reader who prefers reduced motio
   await tracks.getByRole('button', { name: 'Play' }).click();
   await expect(tracks.getByRole('button', { name: 'Pause' })).toBeVisible();
   await expect(position).not.toHaveText('001.3');
+});
+
+test('every page has the Contour logo as its icon', async ({ page }) => {
+  await openPage(page, '/docs/guide');
+  const icon = page.locator('link[rel="icon"][type="image/svg+xml"]');
+  await expect(icon).toHaveAttribute('href', '/icon.svg');
+  const response = await page.request.get('/icon.svg');
+  expect(response.ok()).toBe(true);
+  expect(await response.text()).toContain('<title>Contour</title>');
 });
 
 test('the skip link is the first Tab stop and moves on to the content', async ({ page }) => {
