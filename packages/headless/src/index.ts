@@ -81,6 +81,18 @@ export type {
   UsePopoverProps,
   UsePopoverReturn,
 } from './popover/use-popover.ts';
+export * as Tabs from './tabs/index.ts';
+export { useTabsContext } from './tabs/tabs-context.ts';
+export { useTabs } from './tabs/use-tabs.ts';
+export type {
+  TabsContentAttributes,
+  TabsIndicatorAttributes,
+  TabsListAttributes,
+  TabsPartAttributes,
+  TabsTriggerAttributes,
+  UseTabsProps,
+  UseTabsReturn,
+} from './tabs/use-tabs.ts';
 export * as Toc from './toc/index.ts';
 export { useTocContext } from './toc/toc-context.ts';
 export { useToc } from './toc/use-toc.ts';

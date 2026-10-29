@@ -1,0 +1,10 @@
+export { TabsRoot as Root } from './tabs-root.tsx';
+export type { TabsRootProps as RootProps } from './tabs-root.tsx';
+export { TabsList as List } from './tabs-list.tsx';
+export type { TabsListProps as ListProps } from './tabs-list.tsx';
+export { TabsTrigger as Trigger } from './tabs-trigger.tsx';
+export type { TabsTriggerProps as TriggerProps } from './tabs-trigger.tsx';
+export { TabsContent as Content } from './tabs-content.tsx';
+export type { TabsContentProps as ContentProps } from './tabs-content.tsx';
+export { TabsIndicator as Indicator } from './tabs-indicator.tsx';
+export type { TabsIndicatorProps as IndicatorProps } from './tabs-indicator.tsx';
