@@ -1,0 +1,234 @@
+---
+title: Collapsible
+description: A button that shows and hides a region below it, with the size of the region in CSS variables for a height animation, and an exit that waits for it.
+---
+
+import { Collapsible } from '@contour-ui/headless';
+
+<Preview>
+  {
+    <Collapsible.Root className="docs-collapsible">
+      <Collapsible.Trigger className="docs-collapsible-trigger">
+        <Collapsible.Indicator className="docs-collapsible-indicator">›</Collapsible.Indicator>
+        Shipping
+      </Collapsible.Trigger>
+      <Collapsible.Content className="docs-collapsible-content">
+        <p style={{ margin: 0, paddingBlockStart: 8 }}>
+          Orders ship within two business days. Tracking arrives by email once the parcel leaves the
+          warehouse.
+        </p>
+      </Collapsible.Content>
+      <style>{`
+        @keyframes docs-collapsible-expand { from { height: 0; } to { height: var(--height); } }
+        @keyframes docs-collapsible-collapse { from { height: var(--height); } to { height: 0; } }
+        .docs-collapsible { max-inline-size: 24rem; color: var(--ct-color-fg-default); }
+        .docs-collapsible-trigger { display: inline-flex; gap: 6px; align-items: center; }
+        .docs-collapsible-indicator { display: inline-block; transition: rotate 150ms; }
+        .docs-collapsible-indicator[data-state='open'] { rotate: 90deg; }
+        .docs-collapsible-content { overflow: hidden; }
+        .docs-collapsible-content[data-state='open'] { animation: docs-collapsible-expand 200ms ease-out; }
+        .docs-collapsible-content[data-state='closed'] { animation: docs-collapsible-collapse 150ms ease-in; }
+      `}</style>
+    </Collapsible.Root>
+  }
+</Preview>
+
+```tsx
+import { Collapsible } from '@contour-ui/headless';
+
+<Collapsible.Root>
+  <Collapsible.Trigger>
+    <Collapsible.Indicator>›</Collapsible.Indicator>
+    Shipping
+  </Collapsible.Trigger>
+  <Collapsible.Content>Orders ship within two business days.</Collapsible.Content>
+</Collapsible.Root>;
+```
+
+Collapsible is a disclosure: a button that shows and hides a region, such as the answer to a
+question or the pages of a folder in a sidebar. The content grows to its height as it opens and
+shrinks back as it closes, with an animation of your own on the size Headless measures.
+[Kit's Collapsible](/docs/kit/collapsible) is this component with the contour-ui look.
+
+## Opening and closing
+
+`Collapsible.Trigger` opens the content and closes it again. Each request is reported as
+`onOpenChange({ open })`; a request for the state the collapsible is in reports nothing.
+`disabled` ignores every request and disables the trigger.
+
+`defaultOpen` opens a collapsible that keeps its own state on its first render. To keep the state
+yourself, pass `open` and `onOpenChange`: requests are then only reported, and the collapsible
+opens or closes when you pass the new `open`, which is not reported back, even while it is
+disabled.
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<Collapsible.Root open={open} onOpenChange={(details) => setOpen(details.open)}>
+  …
+</Collapsible.Root>;
+```
+
+## A link and a trigger
+
+The trigger can sit anywhere inside the root. A folder of a sidebar names itself with a link to
+its index page and opens with a button next to it; name the button, since its chevron has no
+text. Pass `open` to open the folder that holds the current page:
+
+```tsx
+<Collapsible.Root
+  open={open || containsCurrentPage}
+  onOpenChange={(details) => setOpen(details.open)}
+>
+  <div className="folder">
+    <a href="/docs/guide">Guide</a>
+    <Collapsible.Trigger aria-label="Guide pages">
+      <Collapsible.Indicator>›</Collapsible.Indicator>
+    </Collapsible.Trigger>
+  </div>
+  <Collapsible.Content>
+    <ul>…</ul>
+  </Collapsible.Content>
+</Collapsible.Root>
+```
+
+## Mounting and animations
+
+The content is rendered while closed, `hidden`; `lazyMount` renders it only once the collapsible
+first opens, and `unmountOnExit` removes it once it has closed; `onExitComplete` reports each
+close. The content carries `data-state`, `open` or `closed`: give the closed state an animation of
+its own `@keyframes`, and the content stays on screen, `inert`, until it ends, as
+[Presence](/docs/headless/presence) does.
+
+The content carries the size it takes when open, in pixels, in its inline style: `--height` and
+`--width`. They are measured as it opens, before the browser paints, and again whenever it resizes
+while open, as when what it holds changes. Animate `height` to and from `--height`, and clip what
+overflows while it does:
+
+```css
+@keyframes expand {
+  from {
+    height: 0;
+    overflow: hidden;
+  }
+  to {
+    height: var(--height);
+    overflow: hidden;
+  }
+}
+
+@keyframes collapse {
+  from {
+    height: var(--height);
+    overflow: hidden;
+  }
+  to {
+    height: 0;
+    overflow: hidden;
+  }
+}
+
+[data-scope='collapsible'][data-part='content'][data-state='open'] {
+  animation: expand 200ms ease-out;
+}
+
+[data-scope='collapsible'][data-part='content'][data-state='closed'] {
+  animation: collapse 150ms ease-in;
+}
+```
+
+`overflow` in the keyframes clips the content only while it animates, never the focus rings of
+what the open content holds. Padding belongs inside the content, on what it holds: `--height`
+includes it, and the animation sets the height of the content's own box.
+
+Content that is open on the first render, with `defaultOpen` or `open`, shows at once: it has
+`animation-name: none` in its style until it first closes, so its open animation does not run on
+load, nor after server rendering.
+
+## Anatomy
+
+| Part                    | Element  | Attributes                                                                                                                                         |
+| ----------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Collapsible.Root`      | `div`    | `data-scope="collapsible" data-part="root"`, `data-state`, `data-disabled`                                                                         |
+| `Collapsible.Trigger`   | `button` | `data-part="trigger"`, `type="button"`, `aria-expanded`, `aria-controls` (while the content is mounted), `disabled`, `data-state`, `data-disabled` |
+| `Collapsible.Content`   | `div`    | `data-part="content"`, `id`, `data-state`, `data-disabled`, `hidden` (closed), `inert` (closing); `--height` and `--width` in its style            |
+| `Collapsible.Indicator` | `span`   | `data-part="indicator"`, `aria-hidden="true"`, `data-state`, `data-disabled`                                                                       |
+
+Every part carries `data-scope="collapsible"`. The trigger points to the content by id; give the
+content an `id` of your own, and the trigger follows it.
+
+## Props
+
+`Collapsible.Root`:
+
+| Prop             | Type                                   | Default |
+| ---------------- | -------------------------------------- | ------- |
+| `open`           | `boolean`                              | —       |
+| `defaultOpen`    | `boolean`                              | `false` |
+| `onOpenChange`   | `(details: { open: boolean }) => void` | —       |
+| `disabled`       | `boolean`                              | `false` |
+| `lazyMount`      | `boolean`                              | `false` |
+| `unmountOnExit`  | `boolean`                              | `false` |
+| `onExitComplete` | `() => void`: the content has closed   | —       |
+
+Every part takes `asChild` and the props of its element, such as `className`, `style` and `ref`.
+A click handler of yours on the trigger that calls `event.preventDefault()` keeps the state.
+
+## Keyboard
+
+| Key              | Action                                      |
+| ---------------- | ------------------------------------------- |
+| `Enter`, `Space` | On the trigger, opens or closes the content |
+| `Tab`            | Through the open content, in page order     |
+
+## Accessibility
+
+- **A disclosure.** The trigger is a button that tells whether the content is expanded
+  (`aria-expanded`) and, while the content is mounted, which element it controls
+  (`aria-controls`).
+- **Closed content** is `hidden`: out of the Tab order and the accessibility tree. While it
+  closes, it is `inert`.
+- **The indicator** is hidden from assistive technology: the trigger tells the state.
+- **A trigger with only an indicator** needs a name, such as an `aria-label`.
+
+## How it works
+
+`Collapsible.Root` runs the collapsible machine of `@contour-ui/core`, `collapsible.machine`,
+with `useMachine`. Its two states are `closed` and `open`, and it asks nothing of the platform:
+
+| Event                                 | Sent by                              | What happens                                                                        |
+| ------------------------------------- | ------------------------------------ | ----------------------------------------------------------------------------------- |
+| `OPEN`, `CLOSE`, `TOGGLE`             | `setOpen()`, `toggle()`, the trigger | opens or closes, or only reports it while `open` is controlled; ignored if disabled |
+| `CONTROLLED.OPEN`, `CONTROLLED.CLOSE` | a new `open` from the owner          | follows it, without a report                                                        |
+
+The parts add the DOM side: the root, a [presence](/docs/headless/presence) that keeps the closing
+content until its animation ends; the content, a `ResizeObserver` that keeps `--height` and
+`--width` up to date.
+
+## Hooks
+
+`useCollapsible` runs the machine without the parts: it takes `open`, `defaultOpen`,
+`onOpenChange` and `disabled`, and returns the API (`open`, `disabled`, `setOpen()`, `toggle()`)
+and the props of each element: `getRootProps()`, `getTriggerProps()`, `getContentProps()` and
+`getIndicatorProps()`. Showing and hiding the content is yours: with `hidden`, or with
+[`usePresence`](/docs/headless/presence) for an exit animation.
+
+```tsx
+import { useCollapsible } from '@contour-ui/headless';
+
+function Shipping() {
+  const collapsible = useCollapsible();
+  return (
+    <div {...collapsible.getRootProps()}>
+      <button {...collapsible.getTriggerProps()}>Shipping</button>
+      <div {...collapsible.getContentProps()} hidden={!collapsible.open}>
+        Orders ship within two business days.
+      </div>
+    </div>
+  );
+}
+```
+
+Inside `Collapsible.Root`, `useCollapsibleContext()` returns the same API, plus `presence`, the
+presence the content shows and hides with, and `skipAnimation`, `true` while content that started
+open has not closed yet.

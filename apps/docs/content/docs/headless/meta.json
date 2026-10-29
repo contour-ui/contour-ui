@@ -6,6 +6,7 @@
     "index",
     "---Components---",
     "clipboard",
+    "collapsible",
     "dialog",
     "listbox",
     "placeholder",

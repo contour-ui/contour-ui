@@ -1,0 +1,149 @@
+---
+title: Collapsible
+description: A trigger with a chevron that shows and hides a region below it, which grows to its height as it opens.
+---
+
+import { Collapsible, Link } from '@contour-ui/kit';
+
+<Preview>
+  {
+    <Collapsible.Root>
+      <Collapsible.Trigger>
+        <Collapsible.Indicator />
+        Shipping
+      </Collapsible.Trigger>
+      <Collapsible.Content>
+        <p style={{ margin: 0, paddingBlockStart: 'var(--ct-space-control-gap)' }}>
+          Orders ship within two business days. Tracking arrives by email once the parcel leaves the
+          warehouse.
+        </p>
+      </Collapsible.Content>
+    </Collapsible.Root>
+  }
+</Preview>
+
+```tsx
+import { Collapsible } from '@contour-ui/kit';
+
+<Collapsible.Root>
+  <Collapsible.Trigger>
+    <Collapsible.Indicator />
+    Shipping
+  </Collapsible.Trigger>
+  <Collapsible.Content>Orders ship within two business days.</Collapsible.Content>
+</Collapsible.Root>;
+```
+
+Collapsible is the [Headless Collapsible](/docs/headless/collapsible) with the look of Kit, which
+is mostly motion: the content grows to its height as it opens and shrinks back as it closes, and
+the chevron turns down with it. Content open on the first render shows at once. Under reduced
+motion, the content only fades and the chevron turns without a transition.
+
+## The parts
+
+- **The trigger.** `Collapsible.Trigger` is a plain label in the text color, with the focus ring
+  of Kit. For the look of a button, pass a `Button` with `asChild`.
+- **The indicator.** `Collapsible.Indicator` draws a chevron that points to the end while closed
+  and down while open. Pass children to draw something else; they turn the same way.
+- **The content.** `Collapsible.Content` adds no spacing: put your own around what it holds,
+  inside it, as the paragraph above does.
+
+## A link and a trigger
+
+A folder of a sidebar names itself with a link and opens with the chevron next to it. The trigger
+can sit anywhere inside the root; name it, since the chevron has no text:
+
+<Preview>
+  {
+    <Collapsible.Root defaultOpen>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--ct-space-control-gap)' }}>
+        <Collapsible.Trigger aria-label="Guide pages">
+          <Collapsible.Indicator />
+        </Collapsible.Trigger>
+        <Link href="/docs">Guide</Link>
+      </div>
+      <Collapsible.Content>
+        <ul style={{ margin: 0 }}>
+          <li>
+            <Link href="/docs/guide/installation">Installation</Link>
+          </li>
+          <li>
+            <Link href="/docs/guide/themes">Themes</Link>
+          </li>
+        </ul>
+      </Collapsible.Content>
+    </Collapsible.Root>
+  }
+</Preview>
+
+```tsx
+<Collapsible.Root open={open} onOpenChange={(details) => setOpen(details.open)}>
+  <div className="folder">
+    <Collapsible.Trigger aria-label="Guide pages">
+      <Collapsible.Indicator />
+    </Collapsible.Trigger>
+    <Link href="/docs/guide">Guide</Link>
+  </div>
+  <Collapsible.Content>
+    <ul>…</ul>
+  </Collapsible.Content>
+</Collapsible.Root>
+```
+
+## Open and close
+
+`defaultOpen` opens a collapsible that keeps its own state; `open` and `onOpenChange` keep it in
+yours, as above. `disabled` greys out the trigger and ignores it. `lazyMount` renders the content
+only once it first opens, and `unmountOnExit` removes it once it has closed.
+
+## Anatomy
+
+| Part                    | Element  | Class                            | Attributes                                                                                             |
+| ----------------------- | -------- | -------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `Collapsible.Root`      | `div`    | `contour-collapsible`            | `data-part="root"`, `data-state`, `data-disabled`                                                      |
+| `Collapsible.Trigger`   | `button` | `contour-collapsible__trigger`   | `data-part="trigger"`, `aria-expanded`, `aria-controls`, `disabled`, `data-state`, `data-disabled`     |
+| `Collapsible.Content`   | `div`    | `contour-collapsible__content`   | `data-part="content"`, `id`, `data-state`, `hidden` (closed), `inert` (closing), `--height`, `--width` |
+| `Collapsible.Indicator` | `span`   | `contour-collapsible__indicator` | `data-part="indicator"`, `aria-hidden="true"`, `data-state`; a chevron `Icon` by default               |
+
+Every part carries `data-scope="collapsible"`.
+
+## Props
+
+`Collapsible.Root`:
+
+| Prop             | Type                                   | Default |
+| ---------------- | -------------------------------------- | ------- |
+| `open`           | `boolean`                              | —       |
+| `defaultOpen`    | `boolean`                              | `false` |
+| `onOpenChange`   | `(details: { open: boolean }) => void` | —       |
+| `disabled`       | `boolean`                              | `false` |
+| `lazyMount`      | `boolean`                              | `false` |
+| `unmountOnExit`  | `boolean`                              | `false` |
+| `onExitComplete` | `() => void`                           | —       |
+
+Every part takes `asChild` and the props of its element, such as `className`, `style` and `ref`;
+`className` is merged with the part's class.
+
+## Keyboard
+
+| Key              | Action                                      |
+| ---------------- | ------------------------------------------- |
+| `Enter`, `Space` | On the trigger, opens or closes the content |
+
+## Accessibility
+
+- **The trigger** tells whether the content is expanded and which element it controls.
+- **Closed content** is hidden from the Tab order and from assistive technology.
+- **The chevron** is decorative: a trigger with nothing else in it needs an `aria-label`.
+
+## Tokens
+
+| Token                                                | Used for                                    |
+| ---------------------------------------------------- | ------------------------------------------- |
+| `--ct-color-fg-default`, `--ct-text-label`           | the trigger's text                          |
+| `--ct-space-control-gap`                             | the gap between the chevron and the label   |
+| `--ct-color-border-focus`, `--ct-border-width-focus` | the focus ring of the trigger               |
+| `--ct-radius-control`                                | the corners of the focus ring               |
+| `--ct-color-fg-disabled`                             | a disabled trigger and its chevron          |
+| `--ct-color-fg-muted`, `--ct-size-icon-sm`           | the chevron                                 |
+| `--ct-motion-enter`, `--ct-motion-exit`              | growing open and shrinking closed, the turn |
