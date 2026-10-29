@@ -13,20 +13,31 @@ description: Add a package, its peer dependencies, and its stylesheets.
 
 Your app imports the token stylesheet (and, for Audio, the Kit stylesheet) directly, so list those
 packages as your own dependencies too: strict package managers such as pnpm do not expose
-dependencies of dependencies to your code.
+dependencies of dependencies to your code. Pick your package manager in any block below: the
+others follow, and the site remembers it.
 
-```bash
-# Kit
-pnpm add @contour-ui/kit @contour-ui/tokens
+**Kit:**
 
-# Audio (with Kit for the rest of the UI)
-pnpm add @contour-ui/audio @contour-ui/kit @contour-ui/tokens
+```package-install
+@contour-ui/kit @contour-ui/tokens
+```
 
-# Headless: no styles, no tokens
-pnpm add @contour-ui/headless
+**Audio**, with Kit for the rest of the UI:
 
-# Fumadocs: a docs site on fumadocs-core, set up as /docs/fumadocs/setup shows
-pnpm add @contour-ui/fumadocs @contour-ui/kit @contour-ui/tokens fumadocs-core fumadocs-mdx
+```package-install
+@contour-ui/audio @contour-ui/kit @contour-ui/tokens
+```
+
+**Headless**, no styles and no tokens:
+
+```package-install
+@contour-ui/headless
+```
+
+**Fumadocs**, a docs site on fumadocs-core:
+
+```package-install
+@contour-ui/fumadocs @contour-ui/kit @contour-ui/tokens fumadocs-core fumadocs-mdx
 ```
 
 A docs site on Fumadocs takes a few more steps: [Setup](/docs/fumadocs/setup) wires it into React

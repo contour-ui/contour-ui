@@ -49,16 +49,18 @@ const site: DocsSite = {
 <DocsProvider site={site}>{children}</DocsProvider>;
 ```
 
-| Prop                | Type                                                                                                       | Default                    |
-| ------------------- | ---------------------------------------------------------------------------------------------------------- | -------------------------- |
-| `site`              | `DocsSite`: the name and the links of the site                                                             | required                   |
-| `search`            | `DocsSearchOptions`, `{ from?: string }`: the URL of the index; or `false` for a site without search       | the index at `/api/search` |
-| `theme`             | the props of Kit's `ThemeProvider`: `defaultTheme`, `storageKey`, `attribute`, `disableTransitionOnChange` | Kit's defaults             |
-| `sidebarStorageKey` | `string`: the `localStorage` key that remembers a collapsed sidebar                                        | `'contour-docs-sidebar'`   |
+| Prop                | Type                                                                                                        | Default                    |
+| ------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------- |
+| `site`              | `DocsSite`: the name and the links of the site                                                              | required                   |
+| `search`            | `DocsSearchOptions`, `{ from?: string }`: the URL of the index; or `false` for a site without search        | the index at `/api/search` |
+| `theme`             | the props of Kit's `ThemeProvider`: `defaultTheme`, `storageKey`, `attribute`, `disableTransitionOnChange`  | Kit's defaults             |
+| `themeToggle`       | `DocsThemeToggleOptions`, `{ mode?: 'light-dark' \| 'light-dark-system' }`: the theme toggle of the layouts | `{ mode: 'light-dark' }`   |
+| `sidebarStorageKey` | `string`: the `localStorage` key that remembers a collapsed sidebar                                         | `'contour-docs-sidebar'`   |
 
 `search` is on the [Search](/docs/fumadocs/search#options) page, and the options of the theme on
 the [ThemeProvider](/docs/kit/theme-provider#props) page: until the user picks a theme, the site
-follows the operating system.
+follows the operating system. `themeToggle` sets how the [theme toggle](#the-theme-toggle) of the
+layouts lets the reader choose.
 
 ### The site
 
@@ -111,6 +113,33 @@ const options = {
 `sidebarStorageKey`, with the defaults of `DocsProvider`. The source is the same for the same
 options, so a Content Security Policy can allow the script by its hash.
 
+### The theme toggle
+
+The layouts hold a theme toggle: at the foot of the sidebar and of the menu, and in the header of
+`HomeLayout`. `themeToggle.mode` of `DocsProvider` sets how it lets the reader choose:
+
+<Preview>
+  <ThemeToggle mode="light-dark" />
+  <ThemeToggle mode="light-dark-system" />
+</Preview>
+
+```tsx
+<DocsProvider site={site} themeToggle={{ mode: 'light-dark-system' }}>
+  {children}
+</DocsProvider>
+```
+
+- **`light-dark`**, the default: a button that switches between the light and the dark theme. It
+  shows the icon of the theme it switches to, and its name says so: "Switch to the light theme".
+  Both choices are in the HTML, and CSS shows the one that fits the `data-theme` of `<html>`, so it
+  is right before the page hydrates.
+- **`light-dark-system`**: three choices, Light, Dark and System, the one of the operating system,
+  as icons on Kit's [SegmentGroup](/docs/kit/segment-group), the radio group "Theme". The choice the
+  reader made is checked. `data-theme` cannot tell System from the theme it resolves to, so no
+  choice is checked until the page has hydrated and the stored choice is known.
+
+The two examples above switch the theme of this site.
+
 ## DocsLayout
 
 | Prop       | Type                                                             | Default  |
@@ -134,13 +163,26 @@ one checked. A section starts at its index page, or else at its first page.
   "title": "Kit",
   "description": "Styled general-purpose components",
   "root": true,
-  "pages": ["index", "---Components---", "alert", "button", "card"]
+  "pages": ["index", "---Components---", "alert", "button", "card", "forms"]
+}
+```
+
+```json title="content/docs/kit/forms/meta.json"
+{
+  "title": "Forms",
+  "defaultOpen": true,
+  "pages": ["index", "checkbox", "select"]
 }
 ```
 
 - **Groups.** A separator in `pages`, `---Components---`, starts a group of the navigation,
   labeled with its name. The pages before the first separator come first, without a label.
-- **Folders** inside a section list their pages under their name, indented.
+- **Folders** inside a section open and close. The name of a folder links to its index page, and
+  the button after it, named "Forms pages" for a folder Forms, shows or hides its pages, indented
+  under it; a folder without an index page is that button itself. A folder starts open when it
+  holds the page, or with `"defaultOpen": true` in its `meta.json`, and opens as the reader goes
+  to one of its pages; it stays as the reader leaves it otherwise. `"collapsible": false` keeps a
+  folder open, its index page and its pages listed under its name.
 - **Links** in `pages`, `[GitHub](https://github.com/me/my-docs)`, open another site in a new tab,
   with an arrow that says so; `external:[Name](/path)` does that for a path too.
 - **The current page** is marked, as `aria-current="page"`.
@@ -253,17 +295,15 @@ export function AppLayout({ children }: { children: ReactNode }) {
   container lets it; `icon`, an icon button. Both have the `lg` size of the buttons around them,
   and the shortcut as `aria-keyshortcuts` once the page has hydrated. On a site without search, it
   renders nothing.
-- **`ThemeToggle`** switches between the light and the dark theme. It shows the icon of the theme
-  it switches to, and its name says so: "Switch to the light theme". Both choices are in the HTML,
-  and CSS shows the one that fits the `data-theme` of `<html>`, so no wrong icon shows before
-  hydration.
+- **`ThemeToggle`** is [the theme toggle](#the-theme-toggle) of the layouts, in the `mode` of
+  `DocsProvider`'s `themeToggle`, or in the one you give it.
 - **`SkipLink`**, "Skip to content", is the first stop of the Tab order, out of sight until it has
   the focus. Render it first, and give the main content `id="content"` and `tabIndex={-1}`.
 
 | Part            | Props                                                   |
 | --------------- | ------------------------------------------------------- |
 | `SearchTrigger` | `variant`: `'field'` (default) or `'icon'`; `className` |
-| `ThemeToggle`   | none                                                    |
+| `ThemeToggle`   | `mode`: `'light-dark'` or `'light-dark-system'`         |
 | `SkipLink`      | none                                                    |
 
 `SearchTrigger` and `ThemeToggle` read `DocsProvider`: render them inside it, as the layouts are.
@@ -282,4 +322,5 @@ export function AppLayout({ children }: { children: ReactNode }) {
   article for a page, so reading and the Tab order go on from there.
 - **Names.** The current page is `aria-current="page"` in the navigation; the switcher reads a
   section's description after its name; links to another site say that they open in a new tab.
+  The button of a folder says whether its pages show (`aria-expanded`).
 - **Motion.** Under `prefers-reduced-motion: reduce`, the overlays fade without moving.

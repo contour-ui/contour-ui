@@ -1,6 +1,6 @@
 ---
 title: MDX components
-description: What each Markdown element of a page becomes, Prose for the typography of the content, and Callout, Cards, Kbd and Preview on every page.
+description: What each Markdown element of a page becomes, Prose for the typography of the content, code block tabs, and Callout, Cards, Kbd, Preview and Tabs on every page.
 ---
 
 `@contour-ui/fumadocs/mdx` draws the MDX of a page with Kit. `getMdxComponents()` returns the
@@ -17,18 +17,21 @@ import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
 
 ## The components
 
-| In the MDX                   | Renders as                                                                                 |
-| ---------------------------- | ------------------------------------------------------------------------------------------ |
-| headings, `#` to `######`    | the heading, whose text links to its own `#id`, with a hash that shows on hover and focus  |
-| a link to a page of the site | Kit's [Link](/docs/kit/link), underlined, through the `Link` of the framework              |
-| a link to a `#heading`       | Kit's `Link`, as a plain link                                                              |
-| a link to another site       | Kit's `Link`, which opens in a new tab, with an arrow named "opens in a new tab"           |
-| tables                       | Kit's [Table](/docs/kit/table), outlined, scrolling sideways when wider than the column    |
-| fenced code                  | Kit's [CodeBlock](/docs/kit/code-block): the title, the highlighted code and a copy button |
-| `<Callout>`                  | Kit's [Alert](/docs/kit/alert), see [Callout](#callout)                                    |
-| `<Cards>`, `<Card>`          | a grid of Kit's [Card](/docs/kit/card), see [Cards](#cards)                                |
-| `<Kbd>`                      | Kit's [Kbd](/docs/kit/kbd): <Kbd>⌘</Kbd> <Kbd>K</Kbd>                                      |
-| `<Preview>`                  | the frame of a live example, see [Preview](#preview)                                       |
+| In the MDX                    | Renders as                                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------------------------ |
+| headings, `#` to `######`     | the heading, whose text links to its own `#id`, with a hash that shows on hover and focus  |
+| a link to a page of the site  | Kit's [Link](/docs/kit/link), underlined, through the `Link` of the framework              |
+| a link to a `#heading`        | Kit's `Link`, as a plain link                                                              |
+| a link to another site        | Kit's `Link`, which opens in a new tab, with an arrow named "opens in a new tab"           |
+| tables                        | Kit's [Table](/docs/kit/table), outlined, scrolling sideways when wider than the column    |
+| fenced code                   | Kit's [CodeBlock](/docs/kit/code-block): the title, the highlighted code and a copy button |
+| fenced code with a `tab`      | the tabs of one code block, see [Code block tabs](#code-block-tabs)                        |
+| ` ```npm `, `package-install` | the command of each package manager, see [Package managers](#package-managers)             |
+| `<Tabs>`, `<Tab>`             | Kit's [Tabs](/docs/kit/tabs) in a frame, see [Tabs](#tabs)                                 |
+| `<Callout>`                   | Kit's [Alert](/docs/kit/alert), see [Callout](#callout)                                    |
+| `<Cards>`, `<Card>`           | a grid of Kit's [Card](/docs/kit/card), see [Cards](#cards)                                |
+| `<Kbd>`                       | Kit's [Kbd](/docs/kit/kbd): <Kbd>⌘</Kbd> <Kbd>K</Kbd>                                      |
+| `<Preview>`                   | the frame of a live example, see [Preview](#preview)                                       |
 
 The components in angle brackets need no import in a page. Other elements, such as lists, quotes
 and images, render as they are, and Prose styles them. A lowercase tag in MDX, such as `<kbd>`, is
@@ -58,10 +61,144 @@ export function App() {
 The notation comments of Shiki, such as `// [!code highlight]` and `// [!code ++]`, mark lines as
 Kit's [CodeBlock](/docs/kit/code-block#notations) shows.
 
-<Callout type="warn" title="No code block tabs yet">
-  The code block tabs of Fumadocs, from the `tab` meta and from `npm` blocks, render components that
-  the map does not hold: a page that uses them fails to render. Write one block per command instead.
-</Callout>
+## Code block tabs
+
+Consecutive code blocks with a `tab` meta become the tabs of one block. `remarkCodeTab` of
+Fumadocs, which `fumadocs-mdx` runs by default, writes them into the page as `CodeBlockTabs`, and
+the map draws them: one frame, the triggers where a code block has its header, the code of the
+selected tab under them, and its copy button at the end of the row of triggers.
+
+````mdx title="page.mdx"
+```tsx tab="React Router"
+import { ReactRouterProvider } from 'fumadocs-core/framework/react-router';
+```
+
+```tsx tab="Next.js" title="app/layout.tsx"
+import { NextProvider } from 'fumadocs-core/framework/next';
+```
+````
+
+```tsx tab="React Router"
+import { ReactRouterProvider } from 'fumadocs-core/framework/react-router';
+```
+
+```tsx tab="Next.js" title="app/layout.tsx"
+import { NextProvider } from 'fumadocs-core/framework/next';
+```
+
+- **The meta of each block** stays its own: a block with a `title` keeps its header under the row
+  of triggers, and `noCopy` leaves its copy button out.
+- **`tab-group="framework"`** on the first block of the tabs makes them one
+  [group](#groups-and-storage) with the other blocks and `Tabs` of that id, remembered across
+  visits: the reader picks a framework once, for the whole site.
+- **In `<Tabs>`**, code blocks with a `tab` meta become its `Tab`s instead, by the item they name.
+
+### Package managers
+
+A code block in the `npm` language, or `package-install` with only the packages, becomes the
+commands of npm, pnpm, yarn and bun, as code block tabs. `remarkNpm` of Fumadocs writes them, and
+`fumadocs-mdx` runs it by default too:
+
+````mdx title="page.mdx"
+```package-install
+@contour-ui/kit @contour-ui/tokens
+```
+````
+
+```package-install
+@contour-ui/kit @contour-ui/tokens
+```
+
+Its `persist` option makes the tabs of every such block one group, remembered across visits, as on
+this site, where the package manager you pick shows in every install command:
+
+```ts title="vite.config.ts"
+fumadocsMdx({
+  globalOptions: {
+    mdxOptions: {
+      remarkNpmOptions: { persist: { id: 'package-manager' } },
+    },
+  },
+});
+```
+
+The components are those of Fumadocs, with its props, so the output of both plugins renders as it
+is: `CodeBlockTabs` (`defaultValue`, and `groupId`, `persist` and `updateAnchor` as in
+[Tabs](#tabs)), `CodeBlockTabsList`, `CodeBlockTabsTrigger` (`value`) and `CodeBlockTab` (`value`).
+
+## Tabs
+
+<Tabs items={['JavaScript', 'TypeScript']} label="Language" updateAnchor>
+  <Tab id="tabs-javascript">Import the components, and pass them their props.</Tab>
+  <Tab id="tabs-typescript">
+    Import the components and the types of their props: every component exports the type of its
+    props next to it.
+  </Tab>
+</Tabs>
+
+```mdx title="page.mdx"
+<Tabs items={['JavaScript', 'TypeScript']} label="Language" updateAnchor>
+  <Tab id="tabs-javascript">Import the components, and pass them their props.</Tab>
+  <Tab id="tabs-typescript">Import the components and the types of their props…</Tab>
+</Tabs>
+```
+
+`Tabs` shows sections of content one at a time: Kit's [Tabs](/docs/kit/tabs) in a frame, the row of
+triggers at the top and the selected panel under it, with the props of the `Tabs` of Fumadocs.
+`items` makes a trigger for each name, and each `Tab` holds the content of one: its `value` is the
+item, as written, or, without one, the item of its place among the children. A code block alone in
+a `Tab` fills it, and its copy button moves up into the row of triggers.
+
+| Prop           | Type                                                               | Default |
+| -------------- | ------------------------------------------------------------------ | ------- |
+| `items`        | `string[]`: the names of the tabs, a trigger each                  | —       |
+| `defaultIndex` | `number`: the index of the item selected at first                  | `0`     |
+| `defaultValue` | `string`: the value selected at first, in place of `defaultIndex`  | —       |
+| `label`        | `ReactNode`: a label at the start of the row, which names the tabs | —       |
+| `groupId`      | `string`: the [group](#groups-and-storage) of the tabs             | —       |
+| `persist`      | `boolean`: the group remembers the tab across visits               | `false` |
+| `updateAnchor` | `boolean`: a tab the reader selects puts its `id` in the address   | `false` |
+
+`Tab` takes `value` and the props of its `div`, such as `id`. Other props of `Tabs` go to its root,
+a `div`. The keyboard is Kit's: the arrow keys move along the triggers and select, Home and End go
+to the ends.
+
+### Groups and storage
+
+- **A group.** Tabs with the same `groupId`, on the page and on the next pages, select the same tab:
+  a reader's choice in one selects it in the others that have it, and the others keep theirs.
+  `Tabs`, code block tabs and their `tab-group` share the groups.
+- **For the session.** A group remembers the tab in `sessionStorage`, under its id, so the next pages
+  open on it.
+- **Across visits** with `persist`: in `localStorage` too, under its id. The keys are those of
+  `fumadocs-ui`, so the readers of a site that moves over keep their choice.
+- **Before hydration** the server renders the default tab: the remembered one follows as the page
+  hydrates.
+
+### Links to a tab
+
+- **The address opens a tab.** `#tabs-typescript`, the `id` of a `Tab`, selects it and scrolls the
+  tabs into view; an address that points into a tab, such as a heading inside it, selects that tab
+  and scrolls to the element. Try it: [TypeScript](#tabs-typescript).
+- **`updateAnchor`** puts the `id` of the tab the reader selects in the address, replacing the entry
+  of the history, so the address links to it. A tab without an `id` leaves the address alone.
+
+### Parts
+
+Without `items`, build the tabs part by part, as `remarkCodeTab` does with its `parseMdx` option:
+`TabsList` holds the `TabsTrigger`s (`value`), and each `TabsContent` (`value`) the content of one.
+`defaultValue` selects one at first.
+
+```mdx
+<Tabs defaultValue="props">
+  <TabsList aria-label="Reference">
+    <TabsTrigger value="props">Props</TabsTrigger>
+    <TabsTrigger value="events">Events</TabsTrigger>
+  </TabsList>
+  <TabsContent value="props">The props of the component.</TabsContent>
+  <TabsContent value="events">What it reports.</TabsContent>
+</Tabs>
+```
 
 ## Your own components
 
@@ -72,9 +209,9 @@ without an import, or replaces the ones above. The overrides come last:
 import { getMdxComponents } from '@contour-ui/fumadocs/mdx';
 
 import { Figure } from './figure';
-import { Tabs } from './tabs';
+import { Steps } from './steps';
 
-<Mdx components={getMdxComponents({ Tabs, img: Figure })} />;
+<Mdx components={getMdxComponents({ Steps, img: Figure })} />;
 ```
 
 `getMdxComponents()`, `Prose` and `Preview` are server modules, and the components of the map that

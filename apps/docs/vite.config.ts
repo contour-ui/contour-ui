@@ -30,6 +30,9 @@ export default defineConfig({
             // No language icons: the header of a code block shows its title only.
             icon: false,
           },
+          // The tabs of `npm` and `package-install` blocks form one group: the package manager a
+          // reader picks shows in every block, and is remembered across visits.
+          remarkNpmOptions: { persist: { id: 'package-manager' } },
         },
       },
     }),
