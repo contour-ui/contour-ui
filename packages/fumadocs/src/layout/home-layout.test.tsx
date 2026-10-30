@@ -11,6 +11,7 @@ import { createSearchIndexUrl } from '../test-utils/search-index.ts';
 import { site } from '../test-utils/site.ts';
 
 import '@contour-ui/tokens/tokens.css';
+import '@contour-ui/tokens/fonts.css';
 import '../styles.css';
 import '@contour-ui/react/styles.css';
 
@@ -59,6 +60,16 @@ const themeToggle = banner.getByRole('button', { name: /^Switch to the/u });
 const box = (locator: { readonly element: () => Element }): DOMRect =>
   locator.element().getBoundingClientRect();
 
+/**
+ * Waits for the fonts the page uses, once a layout has started their loading. The links are as wide
+ * as their text: measured in the fonts of the tokens, it is as wide on every system, where the
+ * fallback fonts are not (CI's Linux draws them wider than macOS).
+ */
+async function fontsLoaded(): Promise<void> {
+  document.body.getBoundingClientRect();
+  await document.fonts.ready;
+}
+
 /** Render the home page of the fixtures, at `/`, with its search unless `options` say otherwise. */
 async function renderHome(options: RenderDocsOptions = {}): Promise<void> {
   await renderDocs(
@@ -68,6 +79,7 @@ async function renderHome(options: RenderDocsOptions = {}): Promise<void> {
     { pathname: '/', search: { from }, ...options },
   );
   await expect.element(nav).toBeVisible();
+  await fontsLoaded();
 }
 
 describe('HomeLayout', () => {
@@ -248,6 +260,7 @@ describe('the header of HomeLayout', () => {
       { pathname: '/', search: { from } },
     );
     await expect.element(nav).toBeVisible();
+    await fontsLoaded();
     const links = nav.element();
     const header = banner.element();
 
