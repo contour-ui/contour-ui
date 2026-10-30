@@ -32,6 +32,10 @@
       "@contour-ui/source": "./src/fonts.css",
       "default": "./dist/fonts.css"
     },
+    "./docs.json": {
+      "@contour-ui/source": "./src/generated/docs.json",
+      "default": "./dist/docs.json"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -42,6 +46,7 @@
       },
       "./tokens.css": "./dist/tokens.css",
       "./fonts.css": "./dist/fonts.css",
+      "./docs.json": "./dist/docs.json",
       "./package.json": "./package.json"
     },
     "access": "public"

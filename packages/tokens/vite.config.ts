@@ -10,6 +10,7 @@ export default defineConfig({
   pack: libraryPack({
     entry: { index: 'src/index.ts' },
     css: ['src/generated/tokens.css', 'src/fonts.css'],
+    copy: ['src/generated/docs.json'],
   }),
   test: {
     projects: [
