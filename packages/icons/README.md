@@ -7,7 +7,7 @@ component of `@contour-ui/react` renders the data as `<svg>`, and canvas-based U
 it with `drawIcon`.
 
 - **May depend on (internal):** nothing.
-- **Storybook:** none (the `Essentials/Icon` stories of `@contour-ui/react` show the icon set).
+- **The icon set:** the Icon page of the docs (`/docs/essentials/icon`) shows it.
 
 ## Usage
 

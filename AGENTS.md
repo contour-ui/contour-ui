@@ -71,37 +71,52 @@ Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `confi
 Vite+ wraps everything; there is no Turborepo, ESLint or Prettier. `vp <cmd>` runs a
 built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` task.
 
-| Command                                  | What it does                                                                                                                     |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `vp install`                             | install (pnpm 12, pinned via `packageManager`)                                                                                   |
-| `vp check` / `vp check --fix`            | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                   |
-| `vp run boundaries`                      | layer boundary check for `package.json` / CSS                                                                                    |
-| `vp test`                                | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages), stories-as-tests |
-| `vp -C packages/react test`              | one package's tests                                                                                                              |
-| `vp run -r build`                        | build everything (`vp pack` + publint + attw for packages, apps)                                                                 |
-| `vp run storybook`                       | every package Storybook + the composition host on http://localhost:6100                                                          |
-| `vp -C packages/react run storybook`     | one package Storybook (tokens 6101, headless-react 6102, react 6103, fumadocs 6105)                                              |
-| `vp run build-storybook`                 | all Storybooks → one deployable folder `apps/storybook/storybook-static`                                                         |
-| `vp run visual` / `vp run visual:update` | screenshot tests of the styled Storybooks in the pinned Playwright Linux image (Docker); `:update` rewrites changed screenshots  |
-| `vp -C apps/docs run dev` / `run build`  | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                     |
-| `vp -C apps/docs run e2e`                | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                   |
-| `vp -C apps/playground dev`              | Vite + React sandbox on http://localhost:5173                                                                                    |
-| `vp run changeset`                       | record a changeset (all published packages are versioned together)                                                               |
-| `vp run ready`                           | everything CI's first three jobs run                                                                                             |
+| Command                                  | What it does                                                                                                                                               |
+| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vp install`                             | install (pnpm 12, pinned via `packageManager`)                                                                                                             |
+| `vp check` / `vp check --fix`            | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                                             |
+| `vp run boundaries`                      | layer boundary check for `package.json` / CSS                                                                                                              |
+| `vp test`                                | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages); screenshot tests only with `vp run visual` |
+| `vp -C packages/react test`              | one package's tests                                                                                                                                        |
+| `vp run -r build`                        | build everything (`vp pack` + publint + attw for packages, apps)                                                                                           |
+| `vp run visual` / `vp run visual:update` | screenshot tests (`*.visual.test.tsx`) with Chromium of the pinned Playwright Linux image, in Docker; `:update` rewrites every screenshot                  |
+| `vp -C apps/docs run dev` / `run build`  | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                                               |
+| `vp -C apps/docs run e2e`                | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                                             |
+| `vp -C apps/playground dev`              | Vite + React sandbox on http://localhost:5173                                                                                                              |
+| `vp run changeset`                       | record a changeset (all published packages are versioned together)                                                                                         |
+| `vp run ready`                           | everything CI's first three jobs run                                                                                                                       |
 
 Run checks **one task at a time** (`vp check`, then `vp test`, then `vp run -r build`);
 narrow with `vp -C <dir>` or `--filter` for focused changes. First time on a machine:
 `vp exec playwright install chromium` for browser-mode tests.
 
-**Visual tests.** Every story of the `tokens`, `react` and `fumadocs` Storybooks is screenshotted in
-each theme (Playwright, `apps/storybook/visual/`, screenshots in `visual/__snapshots__/`), at
-1280×720; a story tagged `phone` at 390×844 (write `tags: ['phone']` and
-`globals: { viewport: { value: 'phone' } }` in the story's own literal: the indexer reads tags
-statically). They run
-against the static build, in Docker locally and in the same image in CI, because rendering differs
-between machines: never commit screenshots made outside that image. After an intended visual
-change, run `vp run visual:update`, review the changed PNGs, and commit them. A story opts out with
-`tags: ['!visual']`.
+**Screenshot tests.** Every state of the styled packages (`react`, `fumadocs`) is a screenshot test
+in `src/<component>/<component>.visual.test.tsx`: `visualStates({ '<state>': { render } })` from the
+package's `src/test-utils/visual.ts(x)`, on `defineVisualStates()` of
+`@contour-ui/vite-config/visual`. Each state, named in lowercase words with dashes, is a test per
+theme:
+
+- it is drawn on the canvas of an app page at 1280×720 (`phone: true`: 390×844; `padded: false`
+  for a layout drawn to the edges; fumadocs states are pages of the docs site of the fixtures, at
+  `params: { pathname, themeToggle }`);
+- `ready` takes the steps that lead to the state from the keyboard (`element.focus()`, then Enter
+  or Space), not with clicks: a real click leaves `:hover` under the pointer, and Chrome then
+  shows no focus ring in the states after it;
+- it waits for the element that takes the focus (`focused`) and for running animations, then axe
+  checks it in the default theme (every default rule but `region`; `axe: false` with a reason opts
+  out);
+- the viewport grows to a taller page, as a full-page screenshot, and the canvas, or the whole page
+  for overlays in a portal (`target: 'page'`), is compared with
+  `__visual__/<test file>/<state>-<theme>.png`.
+
+The browser is Chromium of the pinned Playwright Linux image, because rendering differs between
+machines: `vp run visual` ([`scripts/visual.ts`](scripts/visual.ts)) starts `playwright run-server`
+in Docker, or uses one already on port 6677, and runs each package's `<name>:visual` project
+against it; CI runs `vp run visual:ci` inside that image. Never commit screenshots from another
+browser (`CONTOUR_VISUAL=1` without `CONTOUR_VISUAL_SERVER` launches the local one, only to try a
+test out). A missing screenshot fails its test (locally, it is written for review). After an
+intended visual change, run `vp run visual:update`, which rewrites every screenshot so stale ones
+disappear, review the changed PNGs, and commit them.
 
 Lint and format config lives **only** in the root `vite.config.ts` (per-package
 rules via `lint.overrides`). Package `vite.config.ts` files hold Vite, Vitest and
@@ -113,7 +128,7 @@ rules via `lint.overrides`). Package `vite.config.ts` files hold Vite, Vitest an
 which `noPropertyAccessFromIndexSignature` rejects: write `dataset['x']`.
 
 Browser tests never fake `requestAnimationFrame`: overlay effects start on the next frame (fake
-`setTimeout` / `clearTimeout` only). Once a new dependency is reachable from stories, the first
+`setTimeout` / `clearTimeout` only). Once a new dependency is reachable from tests, the first
 local run with a warm Vite cache may fail in `collectTests` while the optimizer rebundles; run it
 again (a cold cache, as in CI, does not).
 
@@ -138,9 +153,8 @@ Every published package maps its entry points to sources under the custom
 ```
 
 - TypeScript picks it up via `customConditions` (`configs/typescript/base.json`).
-- Vite (apps, Storybook, tests) via the `contourSource()` plugin from `@contour-ui/vite-config`. So
-  the playground, Storybook, docs and tests consume **sources** with HMR, without building packages
-  first.
+- Vite (apps, tests) via the `contourSource()` plugin from `@contour-ui/vite-config`. So the
+  playground, docs and tests consume **sources** with HMR, without building packages first.
 - pnpm swaps in `publishConfig.exports` on pack/publish, so published consumers never see the
   condition (and `types` comes first there). `vp run boundaries` keeps both maps in sync.
 - CSS entry points (`tokens.css`, `styles.css`) are separate exports. Vite's CSS `@import` resolver
@@ -158,8 +172,8 @@ Every published package maps its entry points to sources under the custom
 built with **Style Dictionary** into `src/generated/tokens.css` (`--ct-*` custom properties),
 `src/generated/vars.ts` (typed `var(--ct-…)` references to semantic tokens) and
 `src/generated/docs.json` (every custom property with its value and alias per theme, published
-as `@contour-ui/tokens/docs.json`; the docs site's Tokens page and the Storybook token tables
-read it). The generated files are committed;
+as `@contour-ui/tokens/docs.json`; the docs site's Tokens page reads it). The generated files are
+committed;
 `vp test` fails when they drift from the sources.
 
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
@@ -278,7 +292,7 @@ version of these rules.
   (`packages/react/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
   `data-size`, always rendered with the resolved value (defaults included), so selectors read
   `.contour-button[data-variant='solid']`. CSS: one file per component (see "Layers"); it relies
-  on no reset (neither Storybook nor the docs site has one), so parts set their own
+  on no reset (neither the tests nor the docs site have one), so parts set their own
   font and colors and reset the default margins of their elements (`p`, `h3`). A root sets no
   margin (unless its element has a default one, as `<button>` may), so its container spaces it,
   even from a lower cascade layer, as the docs site's Prose does. Text takes `fg-default` or
@@ -352,7 +366,7 @@ resolve to package sources like the rest of the app.
   `updateAnchor` writes with `replaceState(history.state, …)`. Values are the items as written.
 - **Styles.** `@contour-ui/fumadocs/styles.css` loads before `@contour-ui/react/styles.css`: it
   starts with the layer order `contour.fumadocs-base, contour.fumadocs-prose, contour.components,
-  contour.fumadocs`. The page base (no reset, so the components render as in Storybook) and Prose
+  contour.fumadocs`. The page base (no reset, so the components render as in their tests) and Prose
   rank below the components, so components inside the content keep their styles; the layout and the
   docs components rank above the styled parts they adjust. Prose relies on no reset either (it sets
   the margins, list markers and fonts of what it styles); `contour-docs-not-prose` opts a subtree
@@ -363,14 +377,14 @@ resolve to package sources like the rest of the app.
   object exported by a client module is a client reference, and spreading it yields nothing). The
   public layouts take serializable props only. `src/client-boundary.test.ts` (`fumadocs:node`) runs
   the shared check with those server modules, and checks that no module imports `react-router`.
-- **Tests and stories** render the package as a docs site from `src/test-utils/`:
-  `MemoryFramework` (fumadocs-core's `FrameworkProvider` with an in-memory pathname; `push`
-  changes it in a transition, as routers do; `Link` is a plain `<a data-framework-link>`),
-  `renderDocs()` for tests, and the decorator `withDocs` for stories (search on a real static
-  index built in the browser). Page stories set `parameters: { canvasPadding: false }`, and
-  `themeToggle: 'light-dark-system'` for the three-way picker. testing-library takes a `<header>`
-  inside `<main>` for a banner: find landmarks by name. Click an icon-only SegmentGroup item
-  through its label (`radio.closest('label')`): the icon covers the hidden radio.
+- **Tests** render the package as a docs site from `src/test-utils/`: `MemoryFramework`
+  (fumadocs-core's `FrameworkProvider` with an in-memory pathname; `push` changes it in a
+  transition, as routers do; `Link` is a plain `<a data-framework-link>`), `renderDocs()`, and
+  `visualStates` for screenshot tests (each state a page at its `params.pathname`, with the search
+  on a real static index built in the browser, started afresh; page states set `padded: false`, and
+  `params.themeToggle: 'light-dark-system'` for the three-way picker). testing-library takes a
+  `<header>` inside `<main>` for a banner: find landmarks by name. Click an icon-only SegmentGroup
+  item through its label (`radio.closest('label')`): the icon covers the hidden radio.
 
 **The site** (`apps/docs`) keeps its routes (`docs.tsx` with its loader, `clientLoader` and error
 boundary, `home.tsx`, `not-found.tsx`), `lib/source.ts`, the search index route
@@ -412,13 +426,12 @@ loaded after every package stylesheet).
    deps via `catalog:` / `workspace:*`), `tsconfig.json` (extends a `@contour-ui/typescript-config`
    preset), `vite.config.ts` (`libraryPack()`, tests), `README.md` (layer, purpose, allowed deps),
    `LICENSE` (a copy of the root one).
-3. UI packages: add `.storybook/` (`storybookConfig()` from `@contour-ui/vite-config/storybook`),
-   a fixed dev port in the `storybook` script, and an entry in `apps/storybook/refs.ts`. Styled
-   packages wrap their preview in `withThemes()` (`@contour-ui/vite-config/storybook-preview`) for
-   the Theme toolbar menu; story tests run in the default theme. React packages build with
-   `libraryPack({ unbundle: true })` and call `describeClientBoundary()` in
-   `src/client-boundary.test.ts`, run by a `<package>:node` Vitest project (environment `node`,
-   excluded from the browser project).
+3. UI packages: React packages build with `libraryPack({ unbundle: true })` and call
+   `describeClientBoundary()` in `src/client-boundary.test.ts`, run by a `<package>:node` Vitest
+   project (environment `node`, excluded from the browser project). A styled package gets
+   screenshot tests: `src/test-utils/visual.ts` with `defineVisualStates()` (its themes, canvas and
+   stylesheets), `VISUAL_TESTS` excluded from its browser project, and `...visualProjects('<name>')`
+   in its `test.projects`.
 4. New external dependencies go into the `catalog` in `pnpm-workspace.yaml` first (`catalogMode:
    strict`).
 5. `vp install && vp check && vp run boundaries && vp test && vp run -r build`.
@@ -430,7 +443,7 @@ loaded after every package stylesheet).
   `type(scope): subject`, imperative, starting lowercase, no trailing period, header within 72
   characters, body separated by a blank line. Types: `feat`, `fix`, `docs`, `test`, `refactor`,
   `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`, `icons`, `core`,
-  `headless-react`, `react`, `fumadocs`) or `docs`, `storybook`, `playground`, `config`, `repo`; no
+  `headless-react`, `react`, `fumadocs`) or `docs`, `playground`, `config`, `repo`; no
   scope when a change spans several packages.
 - Hooks live in `.vite-hooks/` (installed by `vp config` on `vp install`): `pre-commit` runs
   `vp staged` (`vp check --fix` on staged files), `commit-msg` runs
@@ -441,5 +454,5 @@ loaded after every package stylesheet).
 
 Node 24 LTS (`.nvmrc`), pnpm 12 (`packageManager`; older pnpm fails on `engines.pnpm`),
 Vite+ 1.4 (bundles Vite 8, Vitest 5, Oxlint, Oxfmt, tsdown). `vite` in the catalog is aliased
-to `@voidzero-dev/vite-plus-core` so Storybook and React Router use the same Vite as `vp`.
+to `@voidzero-dev/vite-plus-core` so React Router and Vite plugins use the same Vite as `vp`.
 Run `vp toolchain` for the exact tool graph and `vp env doctor` when the environment looks wrong.

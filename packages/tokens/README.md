@@ -5,9 +5,8 @@ format, built with [Style Dictionary](https://styledictionary.com) into CSS cust
 properties and typed TS references.
 
 - **May depend on (internal):** nothing.
-- **Storybook:** token reference (port 6101) — tables of every custom property with its value and
-  alias per theme (color roles, syntax colors, palette, text styles, space, size, overlay size,
-  radius, border width, shadow, layer, motion), built from `src/generated/docs.json`.
+- **Token reference:** the Tokens page of the docs (`/docs/guide/tokens`) shows every custom
+  property with its value and alias per theme, built from `src/generated/docs.json`.
 
 ## Usage
 
@@ -36,7 +35,8 @@ vars.color.bg.surface; // 'var(--ct-color-bg-surface)'
   `vars` exposes only those.
 - **Fonts:** `fonts.css` declares the faces for `--ct-base-font-family-*` and every
   `--ct-base-font-weight-*` (Fontsource packages, SIL OFL 1.1; scripts load via `unicode-range`).
-  A story test checks that every family × weight from the tokens actually loads.
+  A browser test (`src/fonts.browser.test.ts`) checks that every family × weight of the tokens
+  loads.
 - **Typography:** each text style is `--ct-text-<style>` (`font` shorthand) plus
   `--ct-text-<style>-font-family | -font-size | -font-weight | -line-height | -letter-spacing`.
   The dense plugin styles (`heading`, `body`, `label`, `label-lg`, `value`, `caption`) have
@@ -103,7 +103,6 @@ src/base/*.tokens.json         raw values — color.tokens.json is generated
 src/semantic/*.tokens.json     roles — color.{dark,light}.tokens.json are generated;
                                color and shadow files per theme, the rest theme-independent
 src/generated/                 Style Dictionary output (committed): tokens.css, vars.ts, docs.json
-src/stories/                   Storybook token tables (read docs.json)
 scripts/                       build and generators
 ```
 
@@ -126,7 +125,7 @@ coordinates, so the CSS value and the `hex` fallback are the same color. DTCG al
 change alpha, so a translucent role (`overlay.scrim`) is a copy of its palette color with an
 alpha, regenerated with the palette.
 
-Generated files are committed so apps, Storybook and tests use tokens without a build
+Generated files are committed so apps and tests use tokens without a build
 step. `vp test` checks that they match their sources (`src/generated.test.ts`), that
 the color roles meet their WCAG contrast targets in both themes (`src/contrast.test.ts`),
 and that every token can be expressed in Soundor (`src/soundor.test.ts`): colors inside

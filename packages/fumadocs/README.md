@@ -11,7 +11,8 @@ and the app's framework adapter (`fumadocs-core/framework`) the links and the na
 - **Peers:** `react`, `react-dom`, `fumadocs-core`; `@types/mdx` (optional, for TypeScript).
 - **Entry points:** `@contour-ui/fumadocs` (provider and layouts), `@contour-ui/fumadocs/mdx` (MDX
   components), `@contour-ui/fumadocs/styles.css`.
-- **Storybook:** port 6105.
+- **Screenshot tests:** each state of the layouts and MDX components as a page of a docs site of
+  fixtures, in both themes (`vp run visual`).
 
 ## Usage
 

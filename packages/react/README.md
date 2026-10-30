@@ -9,7 +9,8 @@ CSS + token CSS variables. No Tailwind.
 - **Peers:** `react`, `react-dom`.
 - **Entry points:** `@contour-ui/react` (components), `@contour-ui/react/styles.css` (load after `@contour-ui/tokens/tokens.css`), `@contour-ui/react/theme-script` (`themeScript()` without React, for code that runs before it, such as a root layout on the server).
 - **Styles:** one file per component (`src/<component>/<component>.css`), imported by `src/styles.css` into the `contour.components` cascade layer; `vp pack` bundles them into one `dist/styles.css`.
-- **Storybook:** port 6103.
+- **Screenshot tests:** each state of every component in both themes, checked with axe
+  (`*.visual.test.tsx`, `vp run visual`).
 
 ## React Server Components
 
