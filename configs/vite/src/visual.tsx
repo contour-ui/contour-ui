@@ -18,13 +18,23 @@ export interface VisualOptions {
   readonly attribute: string;
   /** Style of the canvas in each theme: token background, text color, font. */
   readonly canvas: CSSProperties;
+  /** Runs before every state renders: clear what the states before it stored. */
+  readonly setup?: () => void | Promise<void>;
   /** Wraps every state, such as in the providers of a docs site. */
-  readonly wrap?: (ui: ReactElement) => ReactElement;
+  readonly wrap?: (ui: ReactElement, context: VisualContext) => ReactElement;
+}
+
+/** What a state is drawn for: the theme of the test, the state's own parameters. */
+export interface VisualContext {
+  readonly theme: string;
+  readonly params: Readonly<Record<string, unknown>>;
 }
 
 /** One state of a component, screenshotted in every theme. */
 export interface VisualState {
-  readonly render: () => ReactElement;
+  readonly render: (context: VisualContext) => ReactElement;
+  /** Passed to `wrap` with the theme, as parameters were to the decorators of a story. */
+  readonly params?: Readonly<Record<string, unknown>>;
   /**
    * What the screenshot shows: the canvas (the default), or the whole page, for overlays, which
    * render under `<body>`, outside the canvas.
@@ -58,6 +68,21 @@ export async function animationsDone(): Promise<void> {
 }
 
 /**
+ * Grows the viewport to the height of the page, as a full-page screenshot does: the test runs in a
+ * frame, and what lies below the frame's viewport would come out blank. Units of the viewport
+ * (`100vh`) grow with it, so a page may grow again: up to three rounds.
+ */
+async function fitViewportToPage(width: number, height: number, round = 0): Promise<void> {
+  const needed = Math.ceil(document.documentElement.scrollHeight);
+  if (needed <= height || round === 3) {
+    return;
+  }
+  await page.viewport(width, needed);
+  await animationsDone();
+  await fitViewportToPage(width, needed, round + 1);
+}
+
+/**
  * Checks the page with every rule axe runs by default, but `region`: a component alone sits in no
  * landmark (the Storybook a11y checks skipped it too).
  */
@@ -78,7 +103,7 @@ export async function expectNoAxeViolations(context: Element = document.body): P
 export function defineVisualStates(
   options: VisualOptions,
 ): (states: Readonly<Record<string, VisualState>>) => void {
-  const { themes, defaultTheme, attribute, canvas, wrap } = options;
+  const { themes, defaultTheme, attribute, canvas, setup, wrap } = options;
   return (states) => {
     for (const [name, state] of Object.entries(states)) {
       for (const theme of themes) {
@@ -88,7 +113,9 @@ export function defineVisualStates(
           // Overlays that portal to <body> take the theme from <html>.
           document.documentElement.setAttribute(attribute, theme);
           document.body.style.margin = '0';
-          const ui = state.render();
+          await setup?.();
+          const context: VisualContext = { theme, params: state.params ?? {} };
+          const ui = state.render(context);
           const screen = await render(
             <div
               data-testid="visual-canvas"
@@ -100,7 +127,7 @@ export function defineVisualStates(
                 ...canvas,
               }}
             >
-              {wrap === undefined ? ui : wrap(ui)}
+              {wrap === undefined ? ui : wrap(ui, context)}
             </div>,
           );
           // Layout first, so that the faces in use start loading before we wait for them.
@@ -114,6 +141,7 @@ export function defineVisualStates(
           if (theme === defaultTheme && state.axe !== false) {
             await expectNoAxeViolations();
           }
+          await fitViewportToPage(width, height);
           const target =
             state.target === 'page'
               ? page.elementLocator(document.body)
