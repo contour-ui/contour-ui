@@ -6,6 +6,8 @@ import type { ReactElement } from 'react';
 import { isRouteErrorResponse, useLoaderData } from 'react-router';
 import type { ClientLoaderFunctionArgs, LoaderFunctionArgs } from 'react-router';
 
+import { VariantTabs } from '../components/variant-tabs/variant-tabs.tsx';
+import type { Variant } from '../components/variant-tabs/variant-tabs.tsx';
 import { docs, source } from '../lib/source.ts';
 import { NotFound } from './not-found.tsx';
 
@@ -19,10 +21,29 @@ export async function loader({ params }: LoaderFunctionArgs) {
   }
   return {
     path: page.path,
+    url: page.url,
+    variants: getVariants(slugs),
     title: page.data.title,
     description: page.data.description,
     pageTree: await source.serializePageTree(source.getPageTree()),
   };
+}
+
+/** The pages of a component with headless parts (`components/dialog/`), as tabs. */
+function getVariants(slugs: readonly string[]): Variant[] | undefined {
+  const [section, name] = slugs;
+  if (section !== 'components' || name === undefined) {
+    return undefined;
+  }
+  const styled = source.getPage([section, name]);
+  const headless = source.getPage([section, name, 'headless']);
+  if (styled === undefined || headless === undefined) {
+    return undefined;
+  }
+  return [
+    { label: 'Styled', url: styled.url },
+    { label: 'Headless', url: headless.url },
+  ];
 }
 
 /**
@@ -37,14 +58,16 @@ export function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 }
 
 interface ContentProps {
-  /** The path of the page's file, as the collection knows it (`essentials/button.mdx`). */
+  /** The path of the page's file, as the collection knows it (`components/button.mdx`). */
   readonly path: string;
   readonly title: string;
   readonly description: string | undefined;
+  readonly url: string;
+  readonly variants: readonly Variant[] | undefined;
 }
 
 /** The page itself, once its MDX and its table of contents have loaded. */
-function Content({ path, title, description }: ContentProps): ReactElement {
+function Content({ path, title, description, url, variants }: ContentProps): ReactElement {
   const page = docs.getPage(path);
   if (page === undefined) {
     throw new Error(`Unknown page: ${path}`);
@@ -54,6 +77,7 @@ function Content({ path, title, description }: ContentProps): ReactElement {
 
   return (
     <DocsPage title={title} description={description} toc={toc}>
+      {variants === undefined ? null : <VariantTabs variants={variants} current={url} />}
       <Prose>
         <Mdx components={getMdxComponents()} />
       </Prose>
@@ -62,7 +86,7 @@ function Content({ path, title, description }: ContentProps): ReactElement {
 }
 
 export default function Page(): ReactElement {
-  const { path, title, description, pageTree } =
+  const { path, title, description, url, variants, pageTree } =
     useFumadocsLoader(useLoaderData<typeof clientLoader>());
 
   return (
@@ -71,7 +95,13 @@ export default function Page(): ReactElement {
       {description === undefined ? null : <meta name="description" content={description} />}
       {/* The layout and the page find the page in the tree by the pathname. */}
       <DocsLayout tree={pageTree}>
-        <Content path={path} title={title} description={description} />
+        <Content
+          path={path}
+          title={title}
+          description={description}
+          url={url}
+          variants={variants}
+        />
       </DocsLayout>
     </>
   );

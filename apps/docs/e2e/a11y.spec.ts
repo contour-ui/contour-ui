@@ -11,7 +11,7 @@ import { expect, openPage, test } from './fixtures.ts';
 const PAGES = [
   '/',
   '/docs/guide',
-  '/docs/essentials/button',
+  '/docs/components/button',
   '/docs/fumadocs/mdx',
   '/docs/guide/tokens',
 ];

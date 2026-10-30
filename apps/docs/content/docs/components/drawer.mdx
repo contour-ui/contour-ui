@@ -22,8 +22,8 @@ import { Button, Drawer, Link, Portal } from '@contour-ui/react';
             </Drawer.Header>
             <Drawer.Body>
               <Link href="/docs/guide">Guide</Link>
-              <Link href="/docs/essentials">Essentials</Link>
-              <Link href="/docs/headless">Headless</Link>
+              <Link href="/docs/components">Essentials</Link>
+              <Link href="/docs/guide/headless">Headless</Link>
             </Drawer.Body>
             <Drawer.Footer>
               <Drawer.CloseTrigger asChild>
@@ -61,8 +61,8 @@ import { Button, Drawer, Portal } from '@contour-ui/react';
 </Drawer.Root>;
 ```
 
-A drawer is a [Dialog](/docs/essentials/dialog) that slides in from an edge of the screen: the same
-parts on the [Headless Dialog](/docs/headless/dialog), with the same behavior. While it is open,
+A drawer is a [Dialog](/docs/components/dialog) that slides in from an edge of the screen: the same
+parts on the [Headless Dialog](/docs/components/dialog/headless), with the same behavior. While it is open,
 focus stays inside it, the page does not scroll and the rest of it is out of reach; Escape, a press
 on the scrim, the x and the other close triggers close it, and focus goes back to the trigger. It
 is a panel on the surface color, with a border on its inner side and a shadow, and it slides back
@@ -87,7 +87,7 @@ screen. The drawer is never larger than the screen.
 
 ## The parts
 
-They are the parts of [Dialog](/docs/essentials/dialog#the-parts), with their own classes:
+They are the parts of [Dialog](/docs/components/dialog#the-parts), with their own classes:
 `Drawer.CloseTrigger` is the x in the top end corner, or, with `asChild`, a button of yours that
 closes the drawer; the header stacks the title and the description; the body takes the rest of the
 height and scrolls, from edge to edge of the drawer, opening scrolled to the element focus moves
@@ -96,7 +96,7 @@ positioner in a `Portal`.
 
 ## Open and close
 
-Every option of the [Headless Dialog](/docs/headless/dialog#props) works the same here:
+Every option of the [Headless Dialog](/docs/components/dialog/headless#props) works the same here:
 `defaultOpen`, `open` and `onOpenChange` to keep the state yourself, `closeOnEscape`,
 `closeOnInteractOutside`, `initialFocusEl`, `finalFocusEl`. Close a navigation drawer once a
 link is followed: keep `open` in your state, and set it to `false` when the page changes.
@@ -133,14 +133,14 @@ A drawer is a dialog: every part carries `data-scope="dialog"`. Style a drawer b
 
 ## Props
 
-`Drawer.Root` takes every prop of the [Headless Dialog](/docs/headless/dialog#props), and:
+`Drawer.Root` takes every prop of the [Headless Dialog](/docs/components/dialog/headless#props), and:
 
 | Prop        | Values                                  | Default   |
 | ----------- | --------------------------------------- | --------- |
 | `placement` | `'start'`, `'end'`, `'top'`, `'bottom'` | `'start'` |
 | `size`      | `'sm'`, `'md'`, `'lg'`, `'full'`        | `'sm'`    |
 
-`Drawer.CloseTrigger` takes the props of [`CloseButton`](/docs/essentials/button), `size` (`'md'`, a
+`Drawer.CloseTrigger` takes the props of [`CloseButton`](/docs/components/button), `size` (`'md'`, a
 24 px target) among them, or, with `asChild`, renders its child. Every other part takes `asChild`
 and the props of its element; `className` is merged with the part's class.
 

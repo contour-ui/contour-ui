@@ -66,13 +66,13 @@ import { Dialog, Portal } from '@contour-ui/headless-react';
 The trigger opens the dialog, and focus moves to its first field. While it is open, Tab and
 Shift+Tab go round its elements, the page behind it does not scroll, and the rest of the page is
 out of reach. Escape, a press on the backdrop and the close triggers close it, and focus goes
-back to the trigger. The [styled Dialog](/docs/essentials/dialog) is this component with the
-contour-ui look, and the [Drawer](/docs/essentials/drawer) slides it in from an edge of the screen.
+back to the trigger. The [styled Dialog](/docs/components/dialog) is this component with the
+contour-ui look, and the [Drawer](/docs/components/drawer) slides it in from an edge of the screen.
 
 ## The overlay
 
 `Dialog.Root` renders no element: it holds the state. The trigger stays in the page; put the
-backdrop and the positioner in a [`Portal`](/docs/headless/portal), at the end of the body, so the
+backdrop and the positioner in a [`Portal`](/docs/components/portal), at the end of the body, so the
 overlay escapes the `overflow` and the stacking context of the page around the trigger.
 
 - `Dialog.Backdrop` covers the page behind the dialog. A press on it is a press outside the
@@ -185,7 +185,7 @@ The stack is shared with the other overlays of Headless, such as popovers.
 ## Animations
 
 The backdrop, the positioner and the content carry `data-state="open"` or `"closed"`. They are
-[`Presence`](/docs/headless/presence) elements: once the dialog closes, they stay on screen,
+[`Presence`](/docs/components/presence) elements: once the dialog closes, they stay on screen,
 `inert`, while an exit animation keyed on `data-state="closed"` runs, then get `hidden`. Give the
 closed state `@keyframes` of its own:
 
@@ -345,7 +345,7 @@ machine itself has no DOM: a renderer other than React DOM runs it with a platfo
 mounting ones, and returns `open`, `modal`, `role`, `setOpen()`, `toggle()` and the props of each
 element: `getTriggerProps()`, `getBackdropProps()`, `getPositionerProps()`, `getContentProps()`,
 `getTitleProps()`, `getDescriptionProps()` and `getCloseTriggerProps()`. Show and hide the overlay
-yourself, with [`usePresence`](/docs/headless/presence) for an exit animation:
+yourself, with [`usePresence`](/docs/components/presence) for an exit animation:
 
 ```tsx
 import { useDialog } from '@contour-ui/headless-react';

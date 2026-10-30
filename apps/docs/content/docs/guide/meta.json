@@ -2,5 +2,5 @@
   "title": "Guide",
   "description": "How contour-ui works and how to set it up",
   "root": true,
-  "pages": ["index", "installation", "themes", "styling", "tokens"]
+  "pages": ["index", "installation", "themes", "styling", "headless", "tokens"]
 }

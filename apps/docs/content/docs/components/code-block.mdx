@@ -86,7 +86,7 @@ It copies its `value`, or else the `value` of `CodeBlock.Root`, or else the text
 Shiki removed, the line numbers or the signs of a diff. Once the browser has written it, the
 copy icon turns into a check mark for `timeout` milliseconds (3 seconds by default), and screen
 readers hear "Copied to clipboard". The button runs the clipboard of Headless
-([Clipboard](/docs/headless/clipboard)): nothing changes when the browser refuses to write.
+([Clipboard](/docs/components/clipboard/headless)): nothing changes when the browser refuses to write.
 
 On this site every code block gets the button; `noCopy` in the meta of a code block leaves it out,
 as in the second block here:
@@ -197,7 +197,7 @@ trigger after it sits at the end of the row. While a title is mounted, the root 
 `aria-labelledby` with the title's `id`.
 
 The copy trigger is an `IconButton`, so it also has the classes and attributes of a
-[button](/docs/essentials/button) in the `ghost` variant and the `sm` size. `data-copied` is
+[button](/docs/components/button) in the `ghost` variant and the `sm` size. `data-copied` is
 present, and empty, while the code is copied. The status element right after it is empty until a
 copy, and hidden from sight but not from screen readers.
 

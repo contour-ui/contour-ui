@@ -68,7 +68,7 @@ import { Button, Dialog, Portal } from '@contour-ui/react';
 </Dialog.Root>;
 ```
 
-Dialog is the [Headless Dialog](/docs/headless/dialog) with the look of contour-ui: the scrim of
+Dialog is the [Headless Dialog](/docs/components/dialog/headless) with the look of contour-ui: the scrim of
 the overlay over the page, and a raised panel with a border, a shadow and the corners of a panel.
 It grows in when it opens and fades out when it closes. While it is open, focus stays inside it,
 the page does not scroll and the rest of it is out of reach; Escape, a press on the scrim, the x
@@ -122,7 +122,7 @@ const [open, setOpen] = useState(false);
 dialog with `modal={false}` leaves the page within reach: render no backdrop for it. Focus goes to
 the first element of the dialog when it opens, or to `initialFocusEl()`, and back to the trigger,
 or to `finalFocusEl()`, when it closes. Every option of the
-[Headless Dialog](/docs/headless/dialog#props) works the same here.
+[Headless Dialog](/docs/components/dialog/headless#props) works the same here.
 
 ## Alert dialogs
 
@@ -184,11 +184,11 @@ Every part carries `data-scope="dialog"`; `data-state` is `"open"` or `"closed"`
 overlay stays mounted, `hidden`, unless `unmountOnExit`; while it fades out it is `inert`. The
 content, the positioner and the backdrop get `--layer-index` while the dialog is open: their place
 among the open overlays, so a dialog opened from another one goes above it. The
-[Headless Dialog](/docs/headless/dialog#anatomy) lists every attribute.
+[Headless Dialog](/docs/components/dialog/headless#anatomy) lists every attribute.
 
 ## Props
 
-`Dialog.Root` takes every prop of the [Headless Dialog](/docs/headless/dialog#props) (`open`,
+`Dialog.Root` takes every prop of the [Headless Dialog](/docs/components/dialog/headless#props) (`open`,
 `defaultOpen`, `onOpenChange`, `modal`, `closeOnEscape`, `closeOnInteractOutside`, `role`,
 `initialFocusEl`, `finalFocusEl`, `restoreFocus`, `lazyMount`, `unmountOnExit`…), and:
 
@@ -197,7 +197,7 @@ among the open overlays, so a dialog opened from another one goes above it. The
 | `placement` | `'center'`, `'top'`    | `'center'` |
 | `size`      | `'sm'`, `'md'`, `'lg'` | `'md'`     |
 
-`Dialog.CloseTrigger` takes the props of [`CloseButton`](/docs/essentials/button), `label`
+`Dialog.CloseTrigger` takes the props of [`CloseButton`](/docs/components/button), `label`
 (`'Close'`), `variant` (`'ghost'`) and `size` (`'md'`) among them, or, with `asChild`, renders its
 child. Every other part takes `asChild` and the props of its element, such as `className`, `style`
 and `ref`; `className` is merged with the part's class.

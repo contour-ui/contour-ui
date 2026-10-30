@@ -7,15 +7,15 @@ import { createListCollection, Listbox } from '@contour-ui/react';
 import { useMemo, useState } from 'react';
 
 export const pages = [
-  { url: '/docs/essentials/alert', page: 'Alert', text: 'Alert' },
-  { url: '/docs/essentials/alert#status', page: 'Alert', text: 'Status' },
-  { url: '/docs/essentials/button', page: 'Button', text: 'Button' },
-  { url: '/docs/essentials/button#variants', page: 'Button', text: 'Variants' },
-  { url: '/docs/essentials/button#sizes', page: 'Button', text: 'Sizes' },
-  { url: '/docs/essentials/card', page: 'Card', text: 'Card' },
-  { url: '/docs/essentials/card#variants', page: 'Card', text: 'Variants' },
-  { url: '/docs/essentials/code-block', page: 'CodeBlock', text: 'CodeBlock' },
-  { url: '/docs/essentials/code-block#copy', page: 'CodeBlock', text: 'Copy' },
+  { url: '/docs/components/alert', page: 'Alert', text: 'Alert' },
+  { url: '/docs/components/alert#status', page: 'Alert', text: 'Status' },
+  { url: '/docs/components/button', page: 'Button', text: 'Button' },
+  { url: '/docs/components/button#variants', page: 'Button', text: 'Variants' },
+  { url: '/docs/components/button#sizes', page: 'Button', text: 'Sizes' },
+  { url: '/docs/components/card', page: 'Card', text: 'Card' },
+  { url: '/docs/components/card#variants', page: 'Card', text: 'Variants' },
+  { url: '/docs/components/code-block', page: 'CodeBlock', text: 'CodeBlock' },
+  { url: '/docs/components/code-block#copy', page: 'CodeBlock', text: 'Copy' },
 ];
 
 export function SearchExample() {
@@ -106,7 +106,7 @@ const collection = createListCollection({
 ```
 
 Listbox shows the items of a collection, highlights one of them, where the keyboard acts, and
-selects one or several. It is the [Headless Listbox](/docs/headless/listbox) with the look of
+selects one or several. It is the [Headless Listbox](/docs/components/listbox/headless) with the look of
 contour-ui: the highlighted item on the hover background, a check mark in the accent color on
 the selected ones. The list has no frame of its own, so it sits on the card, popover or dialog
 around it.

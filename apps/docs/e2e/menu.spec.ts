@@ -31,9 +31,7 @@ test('a link in the menu goes to its page and closes the menu', async ({ page })
   await page.getByRole('banner').getByRole('button', { name: 'Open menu' }).click();
   const menu = page.getByRole('dialog', { name: 'Menu' });
   await expect(
-    menu
-      .getByRole('navigation', { name: 'Docs' })
-      .getByRole('link', { name: 'How contour-ui works' }),
+    menu.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Overview' }),
   ).toHaveAttribute('aria-current', 'page');
 
   await menu.getByRole('link', { name: 'Installation' }).click();

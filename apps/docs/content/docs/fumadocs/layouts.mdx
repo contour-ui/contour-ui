@@ -32,7 +32,7 @@ import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
 ## DocsProvider
 
 `DocsProvider` holds what every layout needs: the site, the search, and a
-[ThemeProvider](/docs/essentials/theme-provider). Render it once, around the whole app, inside the
+[ThemeProvider](/docs/components/theme-provider). Render it once, around the whole app, inside the
 adapter of the framework ([Setup](/docs/fumadocs/setup)); the layouts throw outside it.
 
 ```tsx
@@ -58,7 +58,7 @@ const site: DocsSite = {
 | `sidebarStorageKey` | `string`: the `localStorage` key that remembers a collapsed sidebar                                         | `'contour-docs-sidebar'`        |
 
 `search` is on the [Search](/docs/fumadocs/search#options) page, and the options of the theme on
-the [ThemeProvider](/docs/essentials/theme-provider#props) page: until the user picks a theme, the
+the [ThemeProvider](/docs/components/theme-provider#props) page: until the user picks a theme, the
 site follows the operating system. `themeToggle` sets how the [theme toggle](#the-theme-toggle) of
 the layouts lets the reader choose.
 
@@ -81,7 +81,7 @@ site goes through the `Link` of the framework, as the `nav` links do.
 What only the browser knows, the theme the user chose and a sidebar they collapsed, would show
 only after hydration, and a page rendered on the server would flash. `docsScript()` returns the
 source of an inline script that sets both on `<html>` before the first paint: `data-theme`, as
-[`themeScript()`](/docs/essentials/theme-provider#set-up) does, and
+[`themeScript()`](/docs/components/theme-provider#set-up) does, and
 `data-contour-docs-sidebar="collapsed"`. The layouts render every state, and CSS shows the one the
 attributes ask for, so the page neither flashes nor hydrates differently.
 
@@ -134,7 +134,7 @@ The layouts hold a theme toggle: at the foot of the sidebar and of the menu, and
   Both choices are in the HTML, and CSS shows the one that fits the `data-theme` of `<html>`, so it
   is right before the page hydrates.
 - **`light-dark-system`**: three choices, Light, Dark and System, the one of the operating system,
-  as icons on a [SegmentGroup](/docs/essentials/segment-group), the radio group "Theme". The choice
+  as icons on a [SegmentGroup](/docs/components/segment-group), the radio group "Theme". The choice
   the reader made is checked. `data-theme` cannot tell System from the theme it resolves to, so no
   choice is checked until the page has hydrated and the stored choice is known.
 
@@ -153,21 +153,21 @@ from 48rem, a header with a menu below.
 ### Sections
 
 The layout splits the docs into sections: the root folders of the page tree, whose `meta.json`
-says `"root": true`, such as Essentials and Headless on this site. The navigation lists the pages
+says `"root": true`, such as Guide and Components on this site. The navigation lists the pages
 of the current section only, and the section switcher at its top goes to another one: its button
 shows the section of the page, and its list every section with its `description`, the current
 one checked. A section starts at its index page, or else at its first page.
 
-```json title="content/docs/essentials/meta.json"
+```json title="content/docs/components/meta.json"
 {
-  "title": "Essentials",
-  "description": "The everyday components of @contour-ui/react",
+  "title": "Components",
+  "description": "Styled and headless components for React",
   "root": true,
   "pages": ["index", "---Components---", "alert", "button", "card", "forms"]
 }
 ```
 
-```json title="content/docs/essentials/forms/meta.json"
+```json title="content/docs/components/forms/meta.json"
 {
   "title": "Forms",
   "defaultOpen": true,
@@ -237,7 +237,7 @@ The table of contents lists the `h2` and `h3` headings of the page; a deeper hea
 the `h3` above it. A page without these headings shows none.
 
 - **From 80rem**, the column "On this page" beside the article: the styled
-  [Toc](/docs/essentials/toc), which marks the headings in view. It stays in view as the page
+  [Toc](/docs/components/toc), which marks the headings in view. It stays in view as the page
   scrolls, and scrolls on its own when it is taller than the viewport.
 - **Below 80rem**, a bar above the article, sticky below the header. Its button shows the heading
   being read, "On this page › Props", and opens the list in a popover, with the focus on the

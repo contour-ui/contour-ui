@@ -20,17 +20,17 @@ import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
 | In the MDX                    | Renders as                                                                                    |
 | ----------------------------- | --------------------------------------------------------------------------------------------- |
 | headings, `#` to `######`     | the heading, whose text links to its own `#id`, with a hash that shows on hover and focus     |
-| a link to a page of the site  | the styled [Link](/docs/essentials/link), underlined, through the `Link` of the framework     |
+| a link to a page of the site  | the styled [Link](/docs/components/link), underlined, through the `Link` of the framework     |
 | a link to a `#heading`        | the styled `Link`, as a plain link                                                            |
 | a link to another site        | the styled `Link`, which opens in a new tab, with an arrow named "opens in a new tab"         |
-| tables                        | a [Table](/docs/essentials/table), outlined, scrolling sideways when wider than the column    |
-| fenced code                   | a [CodeBlock](/docs/essentials/code-block): the title, the highlighted code and a copy button |
+| tables                        | a [Table](/docs/components/table), outlined, scrolling sideways when wider than the column    |
+| fenced code                   | a [CodeBlock](/docs/components/code-block): the title, the highlighted code and a copy button |
 | fenced code with a `tab`      | the tabs of one code block, see [Code block tabs](#code-block-tabs)                           |
 | ` ```npm `, `package-install` | the command of each package manager, see [Package managers](#package-managers)                |
-| `<Tabs>`, `<Tab>`             | the styled [Tabs](/docs/essentials/tabs) in a frame, see [Tabs](#tabs)                        |
-| `<Callout>`                   | an [Alert](/docs/essentials/alert), see [Callout](#callout)                                   |
-| `<Cards>`, `<Card>`           | a grid of styled [cards](/docs/essentials/card), see [Cards](#cards)                          |
-| `<Kbd>`                       | a [Kbd](/docs/essentials/kbd): <Kbd>⌘</Kbd> <Kbd>K</Kbd>                                      |
+| `<Tabs>`, `<Tab>`             | the styled [Tabs](/docs/components/tabs) in a frame, see [Tabs](#tabs)                        |
+| `<Callout>`                   | an [Alert](/docs/components/alert), see [Callout](#callout)                                   |
+| `<Cards>`, `<Card>`           | a grid of styled [cards](/docs/components/card), see [Cards](#cards)                          |
+| `<Kbd>`                       | a [Kbd](/docs/components/kbd): <Kbd>⌘</Kbd> <Kbd>K</Kbd>                                      |
 | `<Preview>`                   | the frame of a live example, see [Preview](#preview)                                          |
 
 The components in angle brackets need no import in a page. Other elements, such as lists, quotes
@@ -59,7 +59,7 @@ export function App() {
 ````
 
 The notation comments of Shiki, such as `// [!code highlight]` and `// [!code ++]`, mark lines as
-the [CodeBlock](/docs/essentials/code-block#notations) page shows.
+the [CodeBlock](/docs/components/code-block#notations) page shows.
 
 ## Code block tabs
 
@@ -143,7 +143,7 @@ is: `CodeBlockTabs` (`defaultValue`, and `groupId`, `persist` and `updateAnchor`
 </Tabs>
 ```
 
-`Tabs` shows sections of content one at a time: the styled [Tabs](/docs/essentials/tabs) in a
+`Tabs` shows sections of content one at a time: the styled [Tabs](/docs/components/tabs) in a
 frame, the row of triggers at the top and the selected panel under it, with the props of the
 `Tabs` of Fumadocs. `items` makes a trigger for each name, and each `Tab` holds the content of
 one: its `value` is the item, as written, or, without one, the item of its place among the
@@ -276,7 +276,7 @@ examples inside come from client modules
 </Callout>
 ```
 
-`Callout` is an [Alert](/docs/essentials/alert): the icon of its status, the title, then the
+`Callout` is an [Alert](/docs/components/alert): the icon of its status, the title, then the
 content, which may hold paragraphs. Its props are those of the callout of Fumadocs, so pages
 written for `fumadocs-ui` render as they are:
 
@@ -308,7 +308,7 @@ Other props go to the root of the alert, a `div`.
 ```
 
 `Cards` lays its cards out in a grid: one column on phones, two from 40rem. `Card` is the styled
-[Card](/docs/essentials/card), with the props of the card of Fumadocs:
+[Card](/docs/components/card), with the props of the card of Fumadocs:
 
 | Prop          | Type                                                   | Default                                |
 | ------------- | ------------------------------------------------------ | -------------------------------------- |

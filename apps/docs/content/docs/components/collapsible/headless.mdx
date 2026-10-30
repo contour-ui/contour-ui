@@ -48,7 +48,7 @@ import { Collapsible } from '@contour-ui/headless-react';
 Collapsible is a disclosure: a button that shows and hides a region, such as the answer to a
 question or the pages of a folder in a sidebar. The content grows to its height as it opens and
 shrinks back as it closes, with an animation of your own on the size Headless measures.
-The [styled Collapsible](/docs/essentials/collapsible) is this component with the contour-ui look.
+The [styled Collapsible](/docs/components/collapsible) is this component with the contour-ui look.
 
 ## Opening and closing
 
@@ -98,7 +98,7 @@ The content is rendered while closed, `hidden`; `lazyMount` renders it only once
 first opens, and `unmountOnExit` removes it once it has closed; `onExitComplete` reports each
 close. The content carries `data-state`, `open` or `closed`: give the closed state an animation of
 its own `@keyframes`, and the content stays on screen, `inert`, until it ends, as
-[Presence](/docs/headless/presence) does.
+[Presence](/docs/components/presence) does.
 
 The content carries the size it takes when open, in pixels, in its inline style: `--height` and
 `--width`. They are measured as it opens, before the browser paints, and again whenever it resizes
@@ -201,7 +201,7 @@ with `useMachine`. Its two states are `closed` and `open`, and it asks nothing o
 | `OPEN`, `CLOSE`, `TOGGLE`             | `setOpen()`, `toggle()`, the trigger | opens or closes, or only reports it while `open` is controlled; ignored if disabled |
 | `CONTROLLED.OPEN`, `CONTROLLED.CLOSE` | a new `open` from the owner          | follows it, without a report                                                        |
 
-The parts add the DOM side: the root, a [presence](/docs/headless/presence) that keeps the closing
+The parts add the DOM side: the root, a [presence](/docs/components/presence) that keeps the closing
 content until its animation ends; the content, a `ResizeObserver` that keeps `--height` and
 `--width` up to date.
 
@@ -211,7 +211,7 @@ content until its animation ends; the content, a `ResizeObserver` that keeps `--
 `onOpenChange` and `disabled`, and returns the API (`open`, `disabled`, `setOpen()`, `toggle()`)
 and the props of each element: `getRootProps()`, `getTriggerProps()`, `getContentProps()` and
 `getIndicatorProps()`. Showing and hiding the content is yours: with `hidden`, or with
-[`usePresence`](/docs/headless/presence) for an exit animation.
+[`usePresence`](/docs/components/presence) for an exit animation.
 
 ```tsx
 import { useCollapsible } from '@contour-ui/headless-react';

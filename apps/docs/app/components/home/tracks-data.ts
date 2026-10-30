@@ -31,7 +31,7 @@ export const TRACKS: readonly Track[] = [
     name: 'Audio',
     pkg: '@contour-ui/react',
     description: 'Controls and displays for sound',
-    href: '/docs/audio',
+    href: '/docs/components/audio',
     clips: [
       { id: 'knob', title: 'Knob', start: 0.4, width: 30.4 },
       { id: 'spectrum', title: 'Spectrum', start: 31.6, width: 30.4 },
@@ -45,7 +45,7 @@ export const TRACKS: readonly Track[] = [
     name: 'Essentials',
     pkg: '@contour-ui/react',
     description: 'The everyday parts of any interface',
-    href: '/docs/essentials',
+    href: '/docs/components',
     clips: [
       { id: 'button', title: 'Button', start: 0.4, width: 18.3 },
       { id: 'select', title: 'Select', start: 18.9, width: 18.3 },
@@ -59,7 +59,7 @@ export const TRACKS: readonly Track[] = [
     name: 'Headless',
     pkg: '@contour-ui/headless-react',
     description: 'Behavior, ARIA and host callbacks for Essentials and Audio. No styles',
-    href: '/docs/headless',
+    href: '/docs/guide/headless',
     clips: [
       { id: 'headless-knob', title: 'Knob, unstyled', start: 0.4, width: 37 },
       { id: 'headless-slider', title: 'Slider, unstyled', start: 37.9, width: 30.8 },

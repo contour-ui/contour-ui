@@ -102,7 +102,7 @@ import { Button, Popover, Portal } from '@contour-ui/react';
 </Popover.Root>;
 ```
 
-Popover is the [Headless Popover](/docs/headless/popover) with the look of contour-ui: a raised
+Popover is the [Headless Popover](/docs/components/popover/headless) with the look of contour-ui: a raised
 panel with a border, a shadow and the corners of a panel, next to its trigger. It grows in from the
 edge next to the trigger when it opens and shrinks back when it closes. Focus moves into it as it
 opens; Escape, a press outside it, Tab past its end and its close triggers close it, and focus
@@ -134,7 +134,7 @@ side with `positioning`:
 
 `placement` takes `top`, `right`, `bottom` and `left`, centered or with `-start` and `-end`;
 `offset` is the gap to the trigger, and `sameWidth` makes the content as wide as its trigger. The
-other options are on the [Headless page](/docs/headless/popover#placement).
+other options are on the [Headless page](/docs/components/popover/headless#placement).
 
 ## Size
 
@@ -151,7 +151,7 @@ greatest width, set the token on the content, with a class of your own:
 
 ## A choice from a list
 
-A [Listbox](/docs/essentials/listbox) fits in a popover as it is, with no frame of its own. Here the
+A [Listbox](/docs/components/listbox) fits in a popover as it is, with no frame of its own. Here the
 owner keeps `open` in its state and closes the popover when an item is selected:
 
 <Preview>

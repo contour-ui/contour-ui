@@ -1,14 +1,15 @@
 ---
-title: Essentials
-description: The everyday components of @contour-ui/react, in the contour-ui look.
+title: Components
+description: The components of @contour-ui/react, in the contour-ui look, with their headless parts.
 ---
 
-Essentials are the everyday components of `@contour-ui/react`, the parts of any interface. The
-stylesheet of the package is built on [tokens](/docs/guide/styling), so every component follows
-the [theme](/docs/guide/themes) with no extra code. Components with behavior, such as popovers and
-dialogs, are [Headless](/docs/headless) components plus that stylesheet; components without
-behavior, such as buttons, cards and alerts, exist only here. The controls of audio-plugin UIs
-ship in the same package: see [Audio](/docs/audio).
+The components of `@contour-ui/react` are the parts of any interface, and the controls of
+audio-plugin UIs ([Audio](/docs/components/audio)). The stylesheet of the package is built on
+[tokens](/docs/guide/styling), so every component follows the [theme](/docs/guide/themes) with no
+extra code. A component with behavior, such as a popover or a dialog, is a
+[headless](/docs/guide/headless) component plus that stylesheet: its page has a **Headless** tab
+for the unstyled parts of `@contour-ui/headless-react`. Components without behavior, such as
+buttons, cards and alerts, exist only in the styled package.
 
 ## Setup
 
@@ -63,69 +64,69 @@ export function Welcome() {
   ```
 
 - **Another look.** If these styles are in the way, use the same component from
-  [Headless](/docs/headless): same parts, same props, no CSS. Components without behavior have no
+  [Headless](/docs/guide/headless): same parts, same props, no CSS. Components without behavior have no
   Headless version: build your own from `Primitive`, the elements every part renders through.
 
 ## Components
 
 <Cards>
-  <Card title="Alert" href="/docs/essentials/alert">
+  <Card title="Alert" href="/docs/components/alert">
     A message set apart from the text around it, with an icon for its status.
   </Card>
-  <Card title="Button" href="/docs/essentials/button">
+  <Card title="Button" href="/docs/components/button">
     A button in four variants and three sizes, with icon-only and close buttons.
   </Card>
-  <Card title="Card" href="/docs/essentials/card">
+  <Card title="Card" href="/docs/components/card">
     A surface for a title, a description and related content, or a link to a page.
   </Card>
-  <Card title="Clipboard" href="/docs/essentials/clipboard">
+  <Card title="Clipboard" href="/docs/components/clipboard">
     A value to copy, such as an install command, in a bordered row with a copy button at its end.
   </Card>
-  <Card title="CodeBlock" href="/docs/essentials/code-block">
+  <Card title="CodeBlock" href="/docs/components/code-block">
     Code highlighted by Shiki, with an optional title, in the syntax colors of the theme.
   </Card>
-  <Card title="Collapsible" href="/docs/essentials/collapsible">
+  <Card title="Collapsible" href="/docs/components/collapsible">
     A trigger with a chevron that shows and hides a region, which grows to its height as it opens.
   </Card>
-  <Card title="Dialog" href="/docs/essentials/dialog">
+  <Card title="Dialog" href="/docs/components/dialog">
     A window over the page, in the middle or near the top, with a header, a body and a footer.
   </Card>
-  <Card title="Drawer" href="/docs/essentials/drawer">
+  <Card title="Drawer" href="/docs/components/drawer">
     A dialog that slides in from an edge of the screen, such as the navigation on a phone.
   </Card>
-  <Card title="Icon" href="/docs/essentials/icon">
+  <Card title="Icon" href="/docs/components/icon">
     An icon from the contour-ui set that takes the size and color of the text around it.
   </Card>
-  <Card title="Kbd" href="/docs/essentials/kbd">
+  <Card title="Kbd" href="/docs/components/kbd">
     A keyboard key for shortcuts, in text and on controls.
   </Card>
-  <Card title="Link" href="/docs/essentials/link">
+  <Card title="Link" href="/docs/components/link">
     A link in the accent color, underlined on hover or always, or muted in navigation lists, that
     can render a router's link.
   </Card>
-  <Card title="Listbox" href="/docs/essentials/listbox">
+  <Card title="Listbox" href="/docs/components/listbox">
     A list of options to highlight and select, with groups, typeahead and a search input.
   </Card>
-  <Card title="Placeholder" href="/docs/essentials/placeholder">
+  <Card title="Placeholder" href="/docs/components/placeholder">
     Stand-in that shows the shape of every styled component.
   </Card>
-  <Card title="Popover" href="/docs/essentials/popover">
+  <Card title="Popover" href="/docs/components/popover">
     A small raised panel next to its trigger, for a short form, a choice from a list or details.
   </Card>
-  <Card title="SegmentGroup" href="/docs/essentials/segment-group">
+  <Card title="SegmentGroup" href="/docs/components/segment-group">
     A row of options of which one is checked, the checked one raised, with text or icons.
   </Card>
-  <Card title="Table" href="/docs/essentials/table">
+  <Card title="Table" href="/docs/components/table">
     Rows and columns of data, with a scroll area for tables wider than the page.
   </Card>
-  <Card title="Tabs" href="/docs/essentials/tabs">
+  <Card title="Tabs" href="/docs/components/tabs">
     Sections of content shown one at a time, picked from a row of tabs, in three variants.
   </Card>
-  <Card title="ThemeProvider" href="/docs/essentials/theme-provider">
+  <Card title="ThemeProvider" href="/docs/components/theme-provider">
     The theme of the page: the system's until the user chooses one, stored and restored without a
     flash.
   </Card>
-  <Card title="Toc" href="/docs/essentials/toc">
+  <Card title="Toc" href="/docs/components/toc">
     A table of contents for the headings of a page, with the sections in view marked.
   </Card>
 </Cards>

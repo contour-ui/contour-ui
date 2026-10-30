@@ -9,9 +9,9 @@ test('the home page leads to the guide and to each part of contour-ui', async ({
     'A design system for audio interfaces',
   );
   const parts = [
-    ['Audio', '/docs/audio'],
-    ['Essentials', '/docs/essentials'],
-    ['Headless', '/docs/headless'],
+    ['Audio', '/docs/components/audio'],
+    ['Essentials', '/docs/components'],
+    ['Headless', '/docs/guide/headless'],
   ] as const;
   await Promise.all(
     parts.map(([name, href]) =>
@@ -77,6 +77,32 @@ test('the sidebar marks the current page and goes to another one', async ({ page
   await expect(installation).not.toHaveAttribute('aria-current');
 });
 
+test('the tabs of a component go to its headless page, which the sidebar lists as the component', async ({
+  page,
+}) => {
+  await openPage(page, '/docs/components/dialog');
+  const docs = page.getByRole('navigation', { name: 'Docs' });
+  const variants = page.getByRole('navigation', { name: 'Variant' });
+  await expect(docs.getByRole('link', { name: 'Overview' })).toBeVisible();
+  await expect(variants.getByRole('link', { name: 'Styled' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+
+  await variants.getByRole('link', { name: 'Headless' }).click();
+  await expect(page).toHaveURL('/docs/components/dialog/headless');
+  await expect(variants.getByRole('link', { name: 'Headless' })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await expect(docs.getByRole('link', { name: 'Dialog', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  // A section only the headless page has.
+  await expect(page.getByRole('heading', { name: 'Nested dialogs' })).toBeVisible();
+});
+
 test('the sidebar collapses, stays collapsed after a reload, and expands', async ({ page }) => {
   await openPage(page, '/docs/guide');
   const docs = page.getByRole('navigation', { name: 'Docs' });
@@ -104,12 +130,12 @@ test('the section switcher goes to another section', async ({ page }) => {
     'true',
   );
 
-  await sections.getByRole('link', { name: 'Essentials', exact: true }).click();
-  await expect(page).toHaveURL('/docs/essentials');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Essentials');
+  await sections.getByRole('link', { name: 'Components', exact: true }).click();
+  await expect(page).toHaveURL('/docs/components');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Components');
   await expect(sections).toBeHidden();
   // The switcher now shows the new section, and has the focus back.
-  await expect(banner.getByRole('button', { name: 'Essentials', exact: true })).toBeFocused();
+  await expect(banner.getByRole('button', { name: 'Components', exact: true })).toBeFocused();
 });
 
 test('the previous and next links follow the order of the section', async ({ page }) => {

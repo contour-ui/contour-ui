@@ -310,17 +310,27 @@ version of these rules.
 
 ## Docs
 
-The docs site (`apps/docs`) documents what ships: a **Guide** (how the packages fit together,
-installation, themes, styling with tokens) and a section per part — **Essentials** and **Audio**
-(the two sections of `@contour-ui/react`), **Headless**, **Fumadocs** — as root folders under
-`content/docs/` (`essentials/`, `audio/`, `headless/`, `fumadocs/`). It runs on React
-Router (prerendered) with `fumadocs-core` (page tree, search index, neighbours, TOC data) and
-`fumadocs-mdx` (content); its layout is the package `@contour-ui/fumadocs` (`packages/fumadocs/`),
-of which it is the first consumer. When a component lands, add
-`content/docs/<section>/<component>.mdx` (live example in `<Preview>`, anatomy, props, tokens) and
-list it in that section's `meta.json` and on the section's index page. Live examples import the
-component at the top of the page (`import { Button } from '@contour-ui/react';`); MDX imports
-resolve to package sources like the rest of the app.
+The docs site (`apps/docs`) documents what ships in three sections, root folders under
+`content/docs/`: **Guide** (`guide/`: how the packages fit together, installation, themes, styling,
+headless components, tokens), **Components** (`components/`: one page per component of the styled
+and headless packages, in groups by purpose, Audio among them) and **Fumadocs** (`fumadocs/`). It
+runs on React Router (prerendered) with `fumadocs-core` (page tree, search index, neighbours, TOC
+data) and `fumadocs-mdx` (content); its layout is the package `@contour-ui/fumadocs`
+(`packages/fumadocs/`), of which it is the first consumer. When a component lands, add its page
+(live example in `<Preview>`, anatomy, props, tokens), list it under its group in
+`components/meta.json` and on the overview (`components/index.mdx`); a headless-only utility lists
+on the headless guide (`guide/headless.mdx`) too. Live examples import the component at the top of
+the page (`import { Button } from '@contour-ui/react';`); MDX imports resolve to package sources
+like the rest of the app.
+
+- **A component without behavior** is one file, `components/<name>.mdx`.
+- **A component with headless parts** is a folder: `components/<name>/index.mdx` (styled) and
+  `components/<name>/headless.mdx`. The site's page tree (`app/lib/source.ts`) lists the folder as
+  its index page alone, and the route renders **Styled | Headless** tabs above both pages
+  (`app/components/variant-tabs/`). The layout counts the headless page as part of its parent: a
+  page left out of the tree marks its nearest ancestor in it as current.
+- The sidebar lists the index page of each section as "Overview"; the page keeps the section's
+  name as its title.
 
 **The layout package** (`@contour-ui/fumadocs`):
 

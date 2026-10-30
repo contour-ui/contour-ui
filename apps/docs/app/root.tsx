@@ -28,8 +28,8 @@ const SITE: DocsSite = {
   name: <ContourLogo />,
   nav: [
     { label: 'Docs', href: '/docs' },
-    { label: 'Essentials', href: '/docs/essentials' },
-    { label: 'Audio', href: '/docs/audio' },
+    { label: 'Components', href: '/docs/components' },
+    { label: 'Audio', href: '/docs/components/audio' },
   ],
   links: [{ label: 'GitHub', href: 'https://github.com/contour-ui/contour-ui', icon: githubIcon }],
 };

@@ -29,7 +29,7 @@ Set the theme on `<html>` rather than on an app wrapper: components that render 
 
 ## Switch at runtime
 
-[ThemeProvider](/docs/essentials/theme-provider) keeps the theme on `<html>` for you: the system
+[ThemeProvider](/docs/components/theme-provider) keeps the theme on `<html>` for you: the system
 theme until the user chooses one, then their choice, stored in `localStorage` and restored on the
 next visit. Render it once, around the app:
 
@@ -73,7 +73,7 @@ export function ThemeSwitch() {
 
 A page rendered on the server also needs the script of `themeScript()` at the top of its
 `<head>`, so the browser paints it in the right theme before the app runs: see
-[Set up](/docs/essentials/theme-provider#set-up). For code of your own, `@contour-ui/tokens`
+[Set up](/docs/components/theme-provider#set-up). For code of your own, `@contour-ui/tokens`
 exports the theme names (`themes`, `defaultTheme`) and the attribute (`themeAttribute`), so it
 stays in sync with the stylesheet.
 

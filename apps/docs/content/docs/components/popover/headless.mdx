@@ -57,7 +57,7 @@ import { Popover, Portal } from '@contour-ui/headless-react';
 Popover opens a dialog next to its trigger: a short form, a list of choices, details about
 something on the page. The trigger above opens it; focus moves to the field, Tab goes on to Done
 and then out of the popover, and Escape, a press outside or Done closes it and sends focus back to
-the trigger. The [styled Popover](/docs/essentials/popover) is this component with the
+the trigger. The [styled Popover](/docs/components/popover) is this component with the
 contour-ui look.
 
 ## Opening and closing
@@ -106,7 +106,7 @@ view. Its placement after a flip is `data-placement` on the positioner and on th
 <Popover.Root positioning={{ placement: 'top', offset: 4, sameWidth: true }}>
 ```
 
-Put the positioner in a [Portal](/docs/headless/portal), as above: it is then rendered at the end
+Put the positioner in a [Portal](/docs/components/portal), as above: it is then rendered at the end
 of `document.body`, out of the `overflow` and the stacking context of the trigger's parents. A
 popover rendered in place, without a portal, tells it with `portalled={false}`, so that the
 Tab order is left as it is.
@@ -139,7 +139,7 @@ once the popover first opens, and `unmountOnExit` removes them once it has close
 `onExitComplete` reports each close. The content
 carries `data-state`, `open` or `closed`: give the closed state an animation of its own
 `@keyframes`, and the popover stays on screen, `inert`, until it ends, as
-[Presence](/docs/headless/presence) does.
+[Presence](/docs/components/presence) does.
 
 ```css
 @keyframes popover-in {
@@ -290,7 +290,7 @@ and `restoreFocus` move focus in as it opens and back as it closes.
 `portalled`, `placement`, `setOpen()`, `toggle()`) and the props of each element:
 `getTriggerProps()`, `getAnchorProps()`, `getPositionerProps()`, `getContentProps()`,
 `getTitleProps()`, `getDescriptionProps()` and `getCloseTriggerProps()`. Showing and hiding the
-content is yours: with `hidden`, or with [`usePresence`](/docs/headless/presence) for an exit
+content is yours: with `hidden`, or with [`usePresence`](/docs/components/presence) for an exit
 animation, as `Popover.Root` does.
 
 ```tsx
