@@ -1,9 +1,10 @@
 /*
- * The app's own pages: the home page and the message of the 404 and error pages. Unlayered, so
- * they rank above every style of contour-ui, which sits in the `contour` layers
- * (`@contour-ui/fumadocs/styles.css` sets their order).
+ * The app's own pages: the home page, the components of the Tokens page and the message of the
+ * 404 and error pages. Unlayered, so they rank above every style of contour-ui, which sits in the
+ * `contour` layers (`@contour-ui/fumadocs/styles.css` sets their order).
  */
 @import './components/contour-logo.css';
 @import './routes/home.css';
 @import './components/home/home-tracks.css';
+@import './components/tokens/token-reference.css';
 @import './routes/not-found.css';

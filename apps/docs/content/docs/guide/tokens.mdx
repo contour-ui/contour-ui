@@ -1,0 +1,110 @@
+---
+title: Tokens
+description: Every semantic token with its value in both themes, a sample drawn with it and a button to copy its name.
+---
+
+import {
+  BasePalette,
+  BorderWidthTokens,
+  ColorRoles,
+  LayerTokens,
+  MotionTokens,
+  OverlaySizeTokens,
+  RadiusTokens,
+  ShadowTokens,
+  SizeTokens,
+  SpaceTokens,
+  SyntaxColors,
+  TextStyles,
+} from '../../../app/components/tokens/index.ts';
+
+This page reads the tokens from `@contour-ui/tokens/docs.json`, which the token build writes along
+with `tokens.css`, so it lists what the stylesheet declares, with the value of each token in each
+theme. The button next to a variable copies it; [Styling with tokens](/docs/guide/styling) explains
+how to use them.
+
+## Colors
+
+The color roles, grouped as their names are, each group in both themes side by side. Under a
+value is the palette color it refers to. Text roles show their contrast on the backgrounds they
+are meant for, as WCAG 2 computes it, and the least ratio the token tests allow in both themes:
+7:1 for `fg-default`, 4.5:1 for the other text roles, and only 3:1 for `fg-subtle`. So `fg-subtle`
+is for units and tick labels, not for text that people read, which needs 4.5:1. Disabled text has
+no target.
+
+<ColorRoles />
+
+## Syntax colors
+
+The colors of highlighted code, named after the variables of Shiki's `css-variables` theme. They
+are meant for `bg-inset`, the background of code blocks, at 4.5:1 or more.
+
+<SyntaxColors />
+
+## Typography
+
+Each text style is a `font` shorthand, `--ct-text-<style>`: pair it with
+`--ct-text-<style>-letter-spacing`, which the shorthand cannot hold. The styles come in three sets:
+dense ones for plugin UIs, long-form ones for docs pages, and a few for site pages such as a home
+page.
+
+<TextStyles />
+
+## Space and size
+
+### Space
+
+Padding inside controls and panels, and the gaps between them.
+
+<SpaceTokens />
+
+### Size
+
+The heights of controls, the same for every kind of control of a size, and the sizes of icons.
+
+<SizeTokens />
+
+### Overlay sizes
+
+How wide dialogs and popovers grow, and how far drawers reach in. The samples are drawn at a
+quarter of the size.
+
+<OverlaySizeTokens />
+
+## Radius and border width
+
+### Radius
+
+<RadiusTokens />
+
+### Border width
+
+<BorderWidthTokens />
+
+## Shadows
+
+A `box-shadow` list, stronger in the dark theme. A shadow is decoration: whatever casts it also has
+a border and a `raised` background, as these cards do.
+
+<ShadowTokens />
+
+## Layers
+
+Plain numbers for `z-index`: the stacking order of what floats above the page.
+
+<LayerTokens />
+
+## Motion
+
+A duration, an easing and a delay, for `transition: <property> var(--ct-motion-<name>)`. Hover a
+row, or move the focus to its copy button, and the dot crosses its track with that transition; the
+curve beside it is the easing. Under reduced motion, the dot only changes color.
+
+<MotionTokens />
+
+## Base palette
+
+The raw colors behind the roles, `--ct-base-color-<hue>-<stop>`, for tuning the roles. They are
+not part of the API and change without notice: use the roles above.
+
+<BasePalette />

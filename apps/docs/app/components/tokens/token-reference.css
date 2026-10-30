@@ -1,0 +1,385 @@
+/*
+ * The Tokens page (`content/docs/guide/tokens.mdx`): groups of tokens in a panel per theme, token
+ * tables and lists, and the samples drawn with the tokens they show. The roots opt out of Prose
+ * (`contour-docs-not-prose`), so they set the fonts and margins of what they hold.
+ */
+
+/* A stack of groups, each a heading and what it names. */
+.docs-token-groups {
+  display: grid;
+  gap: calc(2 * var(--ct-space-section-gap));
+}
+
+.docs-token-group {
+  display: grid;
+  gap: var(--ct-space-panel-inset);
+  min-inline-size: 0;
+}
+
+.docs-token-group__title {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-subtitle);
+  letter-spacing: var(--ct-text-subtitle-letter-spacing);
+}
+
+/* The panels of the themes: side by side while each gets 20rem, one above the other below. */
+.docs-token-themes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--ct-space-section-gap);
+}
+
+/* A theme of its own (`data-theme`): the tokens inside resolve to that theme, its surface too. */
+.docs-token-theme {
+  min-inline-size: 0;
+  padding: var(--ct-space-panel-inset) var(--ct-space-group-gap);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-surface);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.docs-token-theme__title {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  margin: 0 0 var(--ct-space-group-gap);
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+}
+
+.docs-token-theme__title > svg {
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+}
+
+/* The roles of a group in a theme, a divider above each. */
+.docs-token-roles {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-token-role {
+  display: grid;
+  gap: var(--ct-space-group-gap);
+  min-inline-size: 0;
+  padding-block: var(--ct-space-panel-inset);
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+}
+
+.docs-token-role:last-child {
+  padding-block-end: 0;
+}
+
+.docs-token-role__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ct-space-panel-inset);
+}
+
+.docs-token-role__details {
+  display: grid;
+  gap: var(--ct-space-group-gap);
+  min-inline-size: 0;
+}
+
+/* As wide as the name and its button, and no wider than its container: then the name is cut. */
+.docs-token-name {
+  inline-size: fit-content;
+  max-inline-size: 100%;
+}
+
+/*
+ * A swatch: the color over two tones of its theme, which show through a translucent color (the
+ * scrim). Its outline shows a color as light or as dark as the panel.
+ */
+.docs-token-swatch {
+  display: block;
+  flex: none;
+  inline-size: var(--ct-size-control-lg);
+  block-size: var(--ct-size-control-lg);
+  overflow: hidden;
+  border-radius: var(--ct-radius-control);
+  background: linear-gradient(
+    135deg,
+    var(--ct-color-fg-default) 50%,
+    var(--ct-color-bg-canvas) 50%
+  );
+}
+
+.docs-token-swatch > span {
+  display: block;
+  block-size: 100%;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 var(--ct-border-width-default) var(--ct-color-border-default);
+}
+
+/*
+ * Values: the resolved value, the custom property it refers to under it. Ligatures are off, as in
+ * Prose's inline code (JetBrains Mono would join `--`); `font` resets them, so they come after it.
+ */
+.docs-token-value {
+  display: grid;
+  justify-items: start;
+}
+
+:is(.docs-token-value, .docs-token-contrast, .docs-token-props) :is(code, dd) {
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-value);
+  font-variant-ligatures: none;
+  letter-spacing: var(--ct-text-value-letter-spacing);
+  overflow-wrap: anywhere;
+}
+
+.docs-token-value .docs-token-value__alias {
+  color: var(--ct-color-fg-muted);
+}
+
+/* A token whose themes differ: each theme's value after its name. */
+.docs-token-value__theme {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--ct-space-group-gap);
+}
+
+.docs-token-description {
+  max-inline-size: 48ch;
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.docs-token-contrast {
+  color: var(--ct-color-fg-muted);
+}
+
+.docs-token-contrast__target {
+  margin: 0;
+}
+
+.docs-token-contrast__pairs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Code in a syntax color on the code block background, as a code block shows it. */
+.docs-token-code {
+  justify-self: start;
+  max-inline-size: 100%;
+  box-sizing: border-box;
+  padding: var(--ct-space-control-gap) var(--ct-space-group-gap);
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-bg-inset);
+  font: var(--ct-text-code);
+  font-variant-ligatures: none;
+  letter-spacing: var(--ct-text-code-letter-spacing);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* A list of tokens in a frame, as the tables have it: the text styles. */
+.docs-token-list {
+  margin: 0;
+  padding: 0;
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+  list-style: none;
+}
+
+.docs-token-text {
+  display: grid;
+  gap: var(--ct-space-group-gap);
+  min-inline-size: 0;
+  padding: var(--ct-space-panel-inset);
+}
+
+.docs-token-text + .docs-token-text {
+  border-block-start: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+}
+
+/* The sample sets its own font inline; a long word of a large style breaks rather than overflow. */
+.docs-token-text__sample {
+  margin: 0;
+  color: var(--ct-color-fg-default);
+  overflow-wrap: anywhere;
+}
+
+.docs-token-props {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ct-space-control-gap) var(--ct-space-section-gap);
+  margin: 0;
+  color: var(--ct-color-fg-muted);
+}
+
+.docs-token-props > div {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ct-space-control-gap);
+}
+
+.docs-token-props dd {
+  margin: 0;
+}
+
+/*
+ * Token tables. The scroll area holds what is positioned inside it, such as the text only screen
+ * readers read, so it clips that too: otherwise the page would scroll sideways to reach it.
+ */
+.docs-token-table {
+  position: relative;
+}
+
+/* The token's own header cell reads as a cell, and each row centers its cells. */
+.docs-token-table .contour-table__column-header[scope='row'] {
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-body);
+  letter-spacing: var(--ct-text-body-letter-spacing);
+}
+
+.docs-token-table .contour-table__body :is(.contour-table__column-header, .contour-table__cell) {
+  vertical-align: middle;
+}
+
+.docs-token-table .contour-table__column-header[scope='row'] .docs-token-description {
+  margin-block-start: var(--ct-space-control-gap);
+}
+
+/* A value stays on its lines: the table scrolls sideways rather than break it. */
+.docs-token-table .docs-token-value code {
+  overflow-wrap: normal;
+  white-space: nowrap;
+}
+
+/* Samples: a bar as long as a length, a box as large as a size or with a radius or a border. */
+.docs-token-bar {
+  display: block;
+  block-size: var(--ct-size-control-sm);
+  background: var(--ct-color-accent-fill);
+}
+
+.docs-token-box {
+  display: block;
+  box-sizing: border-box;
+  inline-size: var(--ct-size-control-lg);
+  block-size: var(--ct-size-control-lg);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-strong);
+  background: var(--ct-color-bg-inset);
+}
+
+/* Raised cards with room around them for their shadows. */
+.docs-token-shadows {
+  display: grid;
+  gap: calc(2 * var(--ct-space-section-gap));
+  margin: 0;
+  padding: var(--ct-space-group-gap) var(--ct-space-group-gap) calc(2 * var(--ct-space-section-gap));
+  list-style: none;
+}
+
+.docs-token-shadow {
+  display: grid;
+  gap: var(--ct-space-group-gap);
+  min-inline-size: 0;
+  padding: var(--ct-space-panel-inset);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-default);
+  border-radius: var(--ct-radius-panel);
+  background: var(--ct-color-bg-raised);
+}
+
+/*
+ * Motion: the curve of the easing, and a dot that crosses its track with the transition. Both
+ * sit on `bg-inset`, which is the canvas in the dark theme: a border outlines them there.
+ */
+.docs-token-motion {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-group-gap);
+}
+
+.docs-token-curve {
+  display: block;
+  flex: none;
+  box-sizing: border-box;
+  inline-size: var(--ct-size-control-lg);
+  block-size: var(--ct-size-control-lg);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+  border-radius: var(--ct-radius-control);
+  background: var(--ct-color-bg-inset);
+  fill: none;
+  stroke: var(--ct-color-accent-fg);
+  stroke-width: 0.06;
+}
+
+.docs-token-motion__track {
+  --docs-token-track: calc(3 * var(--ct-size-control-lg));
+
+  display: block;
+  flex: none;
+  box-sizing: border-box;
+  inline-size: var(--docs-token-track);
+  padding: var(--ct-space-control-gap);
+  border: var(--ct-border-width-default) solid var(--ct-color-border-subtle);
+  border-radius: var(--ct-radius-round);
+  background: var(--ct-color-bg-inset);
+}
+
+.docs-token-motion__dot {
+  display: block;
+  inline-size: var(--ct-size-icon-sm);
+  block-size: var(--ct-size-icon-sm);
+  border-radius: var(--ct-radius-round);
+  background-color: var(--ct-color-fg-muted);
+}
+
+/* The row plays it on hover, and while its copy button has the focus. */
+.contour-table__row:is(:hover, :focus-within) .docs-token-motion__dot {
+  background-color: var(--ct-color-accent-fill);
+}
+
+/* Under reduced motion the dot stays put: only its color changes. */
+@media (prefers-reduced-motion: no-preference) {
+  .contour-table__row:is(:hover, :focus-within) .docs-token-motion__dot {
+    translate: calc(
+        var(--docs-token-track) - 2 * var(--ct-space-control-gap) - 2 *
+          var(--ct-border-width-default) - var(--ct-size-icon-sm)
+      )
+      0;
+  }
+}
+
+/* The base palette, closed until asked for. The content adds no spacing: this does. */
+.docs-token-palette__content {
+  padding-block-start: var(--ct-space-group-gap);
+}
+
+.docs-token-palette__swatch {
+  display: block;
+  inline-size: var(--ct-size-control-md);
+  block-size: var(--ct-size-control-md);
+  border-radius: var(--ct-radius-control);
+  box-shadow: inset 0 0 0 var(--ct-border-width-default) var(--ct-color-border-subtle);
+}
+
+/* Text only screen readers read: the value of a palette swatch. */
+.docs-token-visually-hidden {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

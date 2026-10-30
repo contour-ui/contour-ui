@@ -60,7 +60,7 @@ const INDEX: readonly IndexColumn[] = [
     title: 'Foundations',
     subtitle: 'Tokens, headless, icons',
     entries: [
-      { label: 'Tokens', href: '/docs/guide/styling' },
+      { label: 'Tokens', href: '/docs/guide/tokens' },
       { label: 'Themes', href: '/docs/guide/themes' },
       { label: 'Icons', href: '/docs/essentials/icon' },
       { label: 'Headless', href: '/docs/headless' },
