@@ -1,4 +1,4 @@
-import { chevronRightIcon, githubIcon, menuIcon, xIcon } from '@contour-ui/icons';
+import { chevronRightIcon, githubIcon, menuIcon, searchIcon, xIcon } from '@contour-ui/icons';
 import { vars } from '@contour-ui/tokens';
 import { createRef } from 'react';
 import { describe, expect, it, vi } from 'vite-plus/test';
@@ -11,6 +11,35 @@ import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
 
 const sizes = ['sm', 'md', 'lg'] as const;
+const variants = ['solid', 'subtle', 'outline', 'ghost'] as const;
+
+/** Every variant in every size, enabled and disabled. */
+const combinations = variants.flatMap((variant) =>
+  sizes.flatMap((size) => [false, true].map((disabled) => ({ variant, size, disabled }))),
+);
+
+/** What each of `combinations` renders: its variant and size, and its disabled state twice. */
+const expectedStates = combinations.map(({ variant, size, disabled }) => ({
+  variant,
+  size,
+  disabled,
+  dataDisabled: disabled,
+}));
+
+/** The variant, the size and the disabled state a button renders. */
+function stateOf(button: HTMLElement): {
+  variant: string | undefined;
+  size: string | undefined;
+  disabled: boolean;
+  dataDisabled: boolean;
+} {
+  return {
+    variant: button.dataset['variant'],
+    size: button.dataset['size'],
+    disabled: button.hasAttribute('disabled'),
+    dataDisabled: Object.hasOwn(button.dataset, 'disabled'),
+  };
+}
 
 /** Computed value of `property` when set to `value` (resolves `var(--ct-…)`). */
 function computed(property: string, value: string): string {
@@ -95,6 +124,50 @@ describe('Button', () => {
     await expect.element(save).not.toHaveAttribute('data-disabled');
     await expect.element(cancel).toHaveAttribute('data-variant', 'ghost');
     await expect.element(cancel).toHaveAttribute('data-size', 'lg');
+  });
+
+  it('renders every variant in every size, enabled and disabled', async () => {
+    const screen = await render(
+      <>
+        {combinations.map(({ variant, size, disabled }) => (
+          <Button
+            key={`${variant}-${size}-${disabled}`}
+            variant={variant}
+            size={size}
+            disabled={disabled}
+          >
+            Save
+          </Button>
+        ))}
+      </>,
+    );
+    const buttons = [...screen.container.querySelectorAll<HTMLElement>('.contour-button')];
+
+    expect(buttons.map((button) => stateOf(button))).toStrictEqual(expectedStates);
+  });
+
+  it('is named by its label alone: its icons are decorative', async () => {
+    const screen = await render(
+      <>
+        <Button variant="outline">
+          <Icon icon={searchIcon} />
+          Search
+        </Button>
+        <Button>
+          Next
+          <Icon icon={chevronRightIcon} />
+        </Button>
+      </>,
+    );
+
+    const search = screen.getByRole('button', { name: 'Search', exact: true });
+    const next = screen.getByRole('button', { name: 'Next', exact: true });
+
+    await expect.element(search).toBeInTheDocument();
+    await expect.element(next).toBeInTheDocument();
+    expect(
+      [search, next].map((button) => iconOf(button.element()).getAttribute('aria-hidden')),
+    ).toStrictEqual(['true', 'true']);
   });
 
   it('passes button props, the class name and the ref through', async () => {
@@ -425,6 +498,26 @@ describe('IconButton', () => {
     );
   });
 
+  it('renders every variant in every size, enabled and disabled', async () => {
+    const screen = await render(
+      <>
+        {combinations.map(({ variant, size, disabled }) => (
+          <IconButton
+            key={`${variant}-${size}-${disabled}`}
+            label={`Open menu (${variant})`}
+            icon={menuIcon}
+            variant={variant}
+            size={size}
+            disabled={disabled}
+          />
+        ))}
+      </>,
+    );
+    const buttons = [...screen.container.querySelectorAll<HTMLElement>('.contour-icon-button')];
+
+    expect(buttons.map((button) => stateOf(button))).toStrictEqual(expectedStates);
+  });
+
   it('puts the icon into its child with asChild', async () => {
     const screen = await render(
       <IconButton asChild label="GitHub" icon={githubIcon} variant="ghost" disabled>
@@ -435,6 +528,7 @@ describe('IconButton', () => {
 
     await expect.element(link).toHaveAttribute('href', '#github');
     await expect.element(link).toHaveAttribute('class', 'contour-button contour-icon-button');
+    await expect.element(link).toHaveAttribute('data-variant', 'ghost');
     await expect.element(link).toHaveAttribute('aria-disabled', 'true');
     // The icon replaces the child's content.
     await expect.element(link).toHaveTextContent('');
@@ -467,6 +561,27 @@ describe('CloseButton', () => {
     click(button.element());
 
     expect(onClick).toHaveBeenCalledOnce();
+  });
+
+  it('takes each size, md by default, with its own label too', async () => {
+    const screen = await render(
+      <>
+        <CloseButton size="sm" />
+        <CloseButton size="md" />
+        <CloseButton size="lg" />
+        <CloseButton label="Close search" />
+      </>,
+    );
+    const buttons = [...screen.container.querySelectorAll<HTMLElement>('.contour-close-button')];
+
+    expect(
+      buttons.map((button) => [button.getAttribute('aria-label'), button.dataset['size']]),
+    ).toStrictEqual([
+      ['Close', 'sm'],
+      ['Close', 'md'],
+      ['Close', 'lg'],
+      ['Close search', 'md'],
+    ]);
   });
 
   it('takes another label, variant and size', async () => {

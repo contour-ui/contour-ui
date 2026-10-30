@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vite-plus/test';
 import { cdp, userEvent } from 'vite-plus/test/browser';
 import { render } from 'vitest-browser-react';
 
-import { Clipboard } from '../index.ts';
+import { Button, Clipboard } from '../index.ts';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
@@ -386,6 +386,34 @@ describe('Clipboard', () => {
     await expect.element(trigger).toHaveAttribute('data-copied', '');
     expect(iconOf(trigger.element())).toBe(firstPath(checkIcon));
     await expect.element(screen.getByRole('status')).toHaveTextContent('Copied to clipboard');
+  });
+
+  it('copies its value from an icon trigger, and marks the whole group copied', async () => {
+    const writeText = stubClipboard();
+    const screen = await render(<ShareLink />);
+    const group = screen.getByRole('group', { name: 'Share link' });
+
+    await expect.element(group).not.toHaveAttribute('data-copied');
+    await userEvent.click(screen.getByRole('button', { name: 'Copy the link' }));
+
+    expect(writeText).toHaveBeenCalledExactlyOnceWith(
+      'https://contour-ui.dev/docs/essentials/clipboard',
+    );
+    await expect.element(group).toHaveAttribute('data-copied', '');
+  });
+
+  it('is as high as a button of the same size beside it', async () => {
+    stubClipboard();
+    const screen = await render(
+      <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Button size="lg">Get started</Button>
+        <InstallCommand size="lg" aria-label="Install" />
+      </div>,
+    );
+    const button = screen.getByRole('button', { name: 'Get started' }).element();
+    const control = part('control', screen.getByRole('group', { name: 'Install' }).element());
+
+    expect(control.getBoundingClientRect().height).toBe(button.getBoundingClientRect().height);
   });
 
   it('pops the copied indicator in, and only fades it in under reduced motion', async () => {

@@ -1,10 +1,11 @@
 import { vars } from '@contour-ui/tokens';
+import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { afterEach, describe, expect, it } from 'vite-plus/test';
 import { cdp, userEvent } from 'vite-plus/test/browser';
 import { render } from 'vitest-browser-react';
 
-import { Collapsible } from '../index.ts';
+import { Collapsible, Link } from '../index.ts';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
@@ -64,6 +65,27 @@ function Shipping(props: Collapsible.RootProps): ReactElement {
   );
 }
 
+/** A folder of a sidebar, controlled: its name links to its page, the chevron beside it toggles. */
+function Folder(): ReactElement {
+  const [open, setOpen] = useState(true);
+  return (
+    <Collapsible.Root
+      open={open}
+      onOpenChange={(details) => {
+        setOpen(details.open);
+      }}
+    >
+      <Collapsible.Trigger aria-label="Guide pages">
+        <Collapsible.Indicator />
+      </Collapsible.Trigger>
+      <Link href="#guide">Guide</Link>
+      <Collapsible.Content>
+        <Link href="#themes">Themes</Link>
+      </Collapsible.Content>
+    </Collapsible.Root>
+  );
+}
+
 afterEach(async () => {
   await cdp().send('Emulation.setEmulatedMedia', { features: [] });
 });
@@ -91,6 +113,45 @@ describe('Collapsible', () => {
     );
     expect(part('indicator')).toHaveTextContent('+');
     expect(part('indicator').querySelector('svg')).toBeNull();
+  });
+
+  it('opens and closes with its trigger, which says so in aria-expanded', async () => {
+    const screen = await render(<Shipping />);
+    const trigger = screen.getByRole('button', { name: 'Shipping' });
+    const text = screen.getByText(/Orders ship/u);
+
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(trigger);
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect.element(text).toBeVisible();
+
+    await userEvent.click(trigger);
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect.element(text).not.toBeVisible();
+  });
+
+  it('starts closed, open or disabled, and toggles while controlled, beside a link', async () => {
+    const screen = await render(
+      <>
+        <Shipping />
+        <Shipping defaultOpen />
+        <Shipping disabled />
+        <Folder />
+      </>,
+    );
+    const [closed, open, disabled] = screen.getByRole('button', { name: 'Shipping' }).elements();
+    const folder = screen.getByRole('button', { name: 'Guide pages' });
+    const themes = screen.getByRole('link', { name: 'Themes' });
+
+    expect(closed).toHaveAttribute('aria-expanded', 'false');
+    expect(open).toHaveAttribute('aria-expanded', 'true');
+    expect(disabled).toBeDisabled();
+    await expect.element(themes).toBeVisible();
+
+    await userEvent.click(folder);
+    await expect.element(themes).not.toBeInTheDocument();
+    await userEvent.click(folder);
+    await expect.element(themes).toBeVisible();
   });
 
   it('is styled with semantic tokens', async () => {

@@ -208,6 +208,25 @@ describe('CodeBlock', () => {
     await expect.element(screen.getByRole('figure', { name: 'save-button.tsx' })).toBeVisible();
   });
 
+  test('starts the figure with the header of a title, and has none without a title', async () => {
+    const screen = await render(
+      <>
+        <Block title="save-button.tsx">
+          <ShikiPre lines={SAVE_BUTTON} />
+        </Block>
+        <Block>
+          <ShikiPre lines={STYLESHEETS} />
+        </Block>
+      </>,
+    );
+    const [titled, untitled] = screen.getByRole('figure').elements();
+    const caption = titled?.firstElementChild;
+
+    expect(caption?.tagName).toBe('FIGCAPTION');
+    expect(caption).toHaveTextContent('save-button.tsx');
+    expect(untitled?.querySelector('figcaption')).toBeNull();
+  });
+
   test('merges class names and passes other props and the refs through', async () => {
     const root = createRef<HTMLElement>();
     const header = createRef<HTMLElement>();

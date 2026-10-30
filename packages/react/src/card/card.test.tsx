@@ -119,6 +119,35 @@ describe('Card', () => {
     });
   });
 
+  it('renders every variant and size it is given on the root', async () => {
+    const variants = ['outline', 'subtle', 'elevated'] as const;
+    const sizes = ['sm', 'md', 'lg'] as const;
+    const screen = await render(
+      <>
+        {variants.flatMap((variant) =>
+          sizes.map((size) => (
+            <Card.Root key={`${variant}-${size}`} variant={variant} size={size}>
+              <Card.Header>
+                <Card.Title>{`${variant} ${size}`}</Card.Title>
+              </Card.Header>
+            </Card.Root>
+          )),
+        )}
+      </>,
+    );
+    const rendered = screen
+      .getByRole('heading', { level: 3 })
+      .elements()
+      .map((title) => {
+        const root = title.closest<HTMLElement>('.contour-card');
+        return `${root?.dataset['variant']} ${root?.dataset['size']}`;
+      });
+
+    expect(rendered).toStrictEqual(
+      variants.flatMap((variant) => sizes.map((size) => `${variant} ${size}`)),
+    );
+  });
+
   it('sets the padding and the gap between parts by size', async () => {
     const screen = await render(
       <>

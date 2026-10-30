@@ -8,7 +8,10 @@ import {
 } from '@contour-ui/icons';
 import type { IconData } from '@contour-ui/icons';
 import { vars } from '@contour-ui/tokens';
+import { useState } from 'react';
+import type { ReactElement } from 'react';
 import { describe, expect, test } from 'vite-plus/test';
+import { userEvent } from 'vite-plus/test/browser';
 import { render } from 'vitest-browser-react';
 
 import { Alert, Icon } from '../index.ts';
@@ -52,6 +55,35 @@ const STATUS_ICONS: ReadonlyArray<readonly [NonNullable<Alert.RootProps['status'
   ['neutral', lightbulbIcon],
 ];
 
+const VARIANTS = ['subtle', 'outline'] as const satisfies ReadonlyArray<Alert.RootProps['variant']>;
+
+/** A message that changes while the page is open: a status, which screen readers announce. */
+function SavePreset(): ReactElement {
+  const [saved, setSaved] = useState(false);
+  return (
+    <>
+      {/* The pattern the docs give: the role on the alert itself, not an `<output>`. */}
+      {/* oxlint-disable-next-line jsx-a11y/prefer-tag-over-role */}
+      <Alert.Root role="status" status={saved ? 'success' : 'neutral'}>
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Description>
+            {saved ? 'Preset saved.' : 'The preset has unsaved changes.'}
+          </Alert.Description>
+        </Alert.Content>
+      </Alert.Root>
+      <button
+        type="button"
+        onClick={() => {
+          setSaved(true);
+        }}
+      >
+        Save preset
+      </button>
+    </>
+  );
+}
+
 describe('Alert', () => {
   test('renders every part with its class and attributes, defaults included', async () => {
     const screen = await render(
@@ -79,6 +111,45 @@ describe('Alert', () => {
     expect(root).toHaveAttribute('data-variant', 'subtle');
     // Static text: no role, so nothing is announced.
     expect(root).not.toHaveAttribute('role');
+  });
+
+  test('renders every status and variant it is given, and announces no image', async () => {
+    const screen = await render(
+      <>
+        {VARIANTS.flatMap((variant) =>
+          STATUS_ICONS.map(([status]) => (
+            <Alert.Root key={`${variant}-${status}`} status={status} variant={variant}>
+              <Alert.Indicator />
+              <Alert.Content>
+                <Alert.Description>{`${variant} ${status}`}</Alert.Description>
+              </Alert.Content>
+            </Alert.Root>
+          )),
+        )}
+      </>,
+    );
+    const shown = [...screen.container.querySelectorAll<HTMLElement>('.contour-alert')].map(
+      ({ dataset }) => `${dataset['variant']} ${dataset['status']}`,
+    );
+
+    expect(shown).toStrictEqual(
+      VARIANTS.flatMap((variant) => STATUS_ICONS.map(([status]) => `${variant} ${status}`)),
+    );
+    // The status icons are decorative: none of them is announced as an image.
+    expect(screen.getByRole('img').elements()).toStrictEqual([]);
+  });
+
+  test('announces a message that changes with role="status", in its new status', async () => {
+    const screen = await render(<SavePreset />);
+    const status = screen.getByRole('status');
+
+    await expect.element(status).toHaveTextContent('The preset has unsaved changes.');
+    await expect.element(status).toHaveAttribute('data-status', 'neutral');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save preset' }));
+
+    await expect.element(status).toHaveTextContent('Preset saved.');
+    await expect.element(status).toHaveAttribute('data-status', 'success');
   });
 
   test('is styled with the semantic tokens of its status', async () => {

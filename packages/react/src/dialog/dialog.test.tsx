@@ -127,6 +127,113 @@ describe('Dialog', () => {
     expect(part('title').tagName).toBe('H2');
   });
 
+  it('moves the focus to its first element, the x, when it starts open', async () => {
+    const screen = await render(<Export defaultOpen />);
+
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Export the mix' }))
+      .toHaveClass('contour-dialog__content');
+    await expect.element(screen.getByRole('button', { name: 'Close' })).toHaveFocus();
+  });
+
+  it('keeps the focus inside while open, and gives it back to the trigger as it closes', async () => {
+    const screen = await render(<Export />);
+    const trigger = screen.getByRole('button', { name: 'Export' }).element();
+    await open(screen);
+    const close = screen.getByRole('button', { name: 'Close' });
+
+    // From the first element round to the last, and back.
+    await userEvent.tab({ shift: true });
+    await expect.element(screen.getByRole('button', { name: 'Export' }).last()).toHaveFocus();
+    await userEvent.tab();
+    await expect.element(close).toHaveFocus();
+
+    await userEvent.keyboard('{Escape}');
+    await expect.element(trigger).toHaveFocus();
+
+    await userEvent.click(trigger);
+    await expect.element(close).toHaveFocus();
+    // At its corner: its middle is under the dialog.
+    await userEvent.click(part('backdrop'), { position: { x: 1, y: 1 } });
+    await expect.element(trigger).toHaveFocus();
+  });
+
+  it('is as wide as its size where there is room', async () => {
+    const screen = await render(
+      <div style={{ inlineSize: '1000px' }}>
+        {(['sm', 'md', 'lg'] as const).map((size) => (
+          <Dialog.Root key={size} size={size} modal={false} defaultOpen>
+            <Dialog.Content>
+              <Dialog.Header>
+                <Dialog.Title>{`Size ${size}`}</Dialog.Title>
+              </Dialog.Header>
+            </Dialog.Content>
+          </Dialog.Root>
+        ))}
+      </div>,
+    );
+    const dialogs = [...screen.container.querySelectorAll<HTMLElement>('.contour-dialog__content')];
+
+    // The layout width: the box grows in from a smaller scale.
+    expect(dialogs.map((dialog) => [dialog.dataset['size'], dialog.offsetWidth])).toStrictEqual([
+      ['sm', 400],
+      ['md', 560],
+      ['lg', 800],
+    ]);
+  });
+
+  it('focuses its first field near the top, as a search does', async () => {
+    const screen = await render(
+      <Dialog.Root defaultOpen placement="top">
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content aria-label="Search the docs">
+              <input aria-label="Search" defaultValue="dialog" />
+              <Dialog.Body>Dialog — Essentials</Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>,
+    );
+
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Search the docs' }))
+      .toHaveAttribute('data-placement', 'top');
+    await expect.element(screen.getByRole('textbox', { name: 'Search' })).toHaveFocus();
+  });
+
+  it('asks for an answer as an alert dialog: focuses the first one, and stays open on a press outside', async () => {
+    const screen = await render(
+      <Dialog.Root defaultOpen role="alertdialog" size="sm">
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content>
+              <Dialog.Header>
+                <Dialog.Title>Delete the take?</Dialog.Title>
+              </Dialog.Header>
+              <Dialog.Footer>
+                <Dialog.CloseTrigger asChild>
+                  <Button variant="outline">Keep it</Button>
+                </Dialog.CloseTrigger>
+                <Dialog.CloseTrigger asChild>
+                  <Button>Delete</Button>
+                </Dialog.CloseTrigger>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>,
+    );
+    const dialog = screen.getByRole('alertdialog', { name: 'Delete the take?' });
+
+    await expect.element(screen.getByRole('button', { name: 'Keep it' })).toHaveFocus();
+    await userEvent.click(part('backdrop'), { position: { x: 1, y: 1 } });
+
+    await expect.element(dialog).toHaveAttribute('data-state', 'open');
+  });
+
   it('is styled with semantic tokens', async () => {
     const screen = await render(<Export />);
     await open(screen);
