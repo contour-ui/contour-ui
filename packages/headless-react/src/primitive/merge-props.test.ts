@@ -47,7 +47,7 @@ describe('mergeProps', () => {
       },
       {
         onClick: (value: number) => {
-          calls.push(`kit ${value}`);
+          calls.push(`styled ${value}`);
         },
       },
       {
@@ -59,7 +59,7 @@ describe('mergeProps', () => {
 
     merged.onClick(1);
 
-    expect(calls).toStrictEqual(['user 1', 'kit 1', 'part 1']);
+    expect(calls).toStrictEqual(['user 1', 'styled 1', 'part 1']);
   });
 
   it('still calls earlier handlers after one prevented the default', () => {

@@ -1,7 +1,7 @@
 /*
  * Clipboard: a value to copy, such as an install command, in a bordered row with the trigger at
  * the end, and an optional label above it. The value is mono and ends in an ellipsis when the row
- * is too narrow for it. The size is on the root (`data-size`); the trigger is a Kit button that
+ * is too narrow for it. The size is on the root (`data-size`); the trigger is a `Button` that
  * fills the end of the row, the way the items of a segment group fill its track.
  */
 

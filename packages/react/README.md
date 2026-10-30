@@ -13,7 +13,7 @@ CSS + token CSS variables. No Tailwind.
 
 ## React Server Components
 
-Kit works in React Server Components (Next.js App Router). `vp pack` builds it one file per
+The package works in React Server Components (Next.js App Router). `vp pack` builds it one file per
 module, and the modules that need the browser start with `'use client'`: overlays, contexts,
 `ThemeProvider`, the code block, the close triggers. The others stay server modules: the entry
 point, the namespaces (`Card`, `Table`, `Dialog`…), and the parts that only render markup, such

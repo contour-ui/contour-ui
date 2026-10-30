@@ -115,7 +115,7 @@ describe('Tabs', () => {
     await expect.element(page.getByText('Letter a')).not.toBeVisible();
   });
 
-  it('follows the arrow keys, as Kit tabs do', async () => {
+  it('follows the arrow keys, as the styled Tabs do', async () => {
     await render(<Managers />);
     await userEvent.click(tab('npm'));
 

@@ -35,7 +35,7 @@ describe('Kbd', () => {
     const key = screen.getByText('K');
     const surface = computed('background-color', vars.color.bg.surface);
 
-    // The token resolves to a real color (tokens.css is loaded), and the kit uses it.
+    // The token resolves to a real color (tokens.css is loaded), and the stylesheet uses it.
     expect(surface).toMatch(/^oklch\(/u);
     await expect.element(key).toHaveStyle({
       backgroundColor: surface,

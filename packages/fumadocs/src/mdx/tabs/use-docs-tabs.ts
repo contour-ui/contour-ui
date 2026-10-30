@@ -104,8 +104,8 @@ function createRegistry(): Registry {
 }
 
 /**
- * The selection of the tabs of a page, with what Fumadocs' tabs add to Kit's: a group of tabs
- * that share it (`groupId`), remembered for the session or across visits (`persist`); the
+ * The selection of the tabs of a page, with what Fumadocs' tabs add to the styled Tabs: a group
+ * of tabs that share it (`groupId`), remembered for the session or across visits (`persist`); the
  * address, which opens the tab it points into and which `updateAnchor` keeps on the selected tab.
  *
  * The server and the hydration render show `defaultValue`; the remembered tab and the one the

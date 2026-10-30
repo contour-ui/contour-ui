@@ -33,11 +33,11 @@ function headingsOf(toc: TableOfContents): Heading[] {
 }
 
 /**
- * The area of the viewport a table of contents observes, as Toc's `rootMargin`: Kit's default,
- * from 20px below the top down to 60% of the height, with its top moved below the layout's sticky
- * header and bar, so that a heading under them is not taken for one in view. Their height,
- * `--contour-docs-toc-sticky-height` (toc-panel.css), is read in px from `element`, inside the layout,
- * and read again on every resize: the layout changes it at its breakpoints.
+ * The area of the viewport a table of contents observes, as Toc's `rootMargin`: the default of
+ * the styled Toc, from 20px below the top down to 60% of the height, with its top moved below the
+ * layout's sticky header and bar, so that a heading under them is not taken for one in view.
+ * Their height, `--contour-docs-toc-sticky-height` (toc-panel.css), is read in px from `element`,
+ * inside the layout, and read again on every resize: the layout changes it at its breakpoints.
  */
 function useRootMargin(element: HTMLElement | null): string {
   const [sticky, setSticky] = useState(0);
@@ -83,8 +83,8 @@ interface TocHeadingsProps {
 }
 
 /**
- * The "On this page" column next to the content, on wide screens: Kit's Toc of the `h2` and `h3`
- * headings of the page. The page's sticky cell scrolls it when the list is taller than the
+ * The "On this page" column next to the content, on wide screens: the styled Toc of the `h2` and
+ * `h3` headings of the page. The page's sticky cell scrolls it when the list is taller than the
  * viewport, and Toc keeps the current link in view there. Nothing on a page without headings.
  */
 export function TocPanel({ toc }: TocPanelProps): ReactElement | null {

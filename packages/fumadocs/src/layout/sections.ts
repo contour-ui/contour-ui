@@ -3,7 +3,7 @@ import type { Folder, Root } from 'fumadocs-core/page-tree';
 
 /**
  * The sections of the docs: the root folders of the page tree (`"root": true` in their
- * `meta.json`, such as a section per package), in the order of the tree.
+ * `meta.json`), in the order of the tree.
  */
 export function getSections(tree: Root): Folder[] {
   return getPageTreeRoots(tree).filter((node): node is Folder => node.type === 'folder');

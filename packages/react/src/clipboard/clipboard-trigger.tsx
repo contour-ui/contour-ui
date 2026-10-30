@@ -27,7 +27,7 @@ export interface ClipboardTriggerProps extends Omit<ButtonProps, 'asChild'> {
 }
 
 /**
- * Clipboard trigger: a Kit button that copies the value. Without children, it is a square icon
+ * Clipboard trigger: a `Button` that copies the value. Without children, it is a square icon
  * button whose copy icon turns into a check mark while copied; with children, such as an
  * indicator and "Copy", a text button. At the end of `Clipboard.Control` it fills the row up to
  * its border.

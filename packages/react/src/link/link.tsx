@@ -28,7 +28,7 @@ export interface LinkProps extends PrimitiveProps<'a'> {
  * <Link asChild variant="underline">
  *   <RouterLink to="/docs/guide">Guide</RouterLink>
  * </Link>
- * <Link variant="neutral" href="/docs/kit">Kit</Link>
+ * <Link variant="neutral" href="/docs/essentials">Essentials</Link>
  */
 export function Link({ variant = 'plain', className, ...props }: LinkProps): ReactElement {
   const ownProps = {

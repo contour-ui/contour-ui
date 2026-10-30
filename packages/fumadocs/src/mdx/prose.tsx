@@ -9,8 +9,8 @@ export type ProseProps = ComponentProps<'div'>;
  * an element with the `contour-docs-not-prose` class is left alone: give it to a block that
  * should render with its own styles only, as `Preview` does for live examples.
  *
- * It imports nothing from Kit or Headless, so it renders on the server too (React Server
- * Components) and adds nothing to the client bundle.
+ * It imports nothing from `@contour-ui/react` or `@contour-ui/headless-react`, so it renders on
+ * the server too (React Server Components) and adds nothing to the client bundle.
  *
  * @example
  * <Prose>

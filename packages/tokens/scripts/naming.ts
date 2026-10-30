@@ -7,7 +7,7 @@
  * - typography sub-value `text.label` + `letterSpacing` -> `--ct-text-label-letter-spacing`
  *
  * `base.*` tokens are emitted (semantic roles reference them) but stay internal:
- * components and kits consume semantic roles only.
+ * components consume semantic roles only.
  */
 export const CSS_PREFIX = 'ct';
 

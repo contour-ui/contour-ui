@@ -32,16 +32,17 @@ const mdxHeadingComponents = {
 
 /**
  * MDX components: Markdown headings that link to themselves, links, tables and code blocks drawn
- * by Kit, the components every page can use without an import (`Callout`, `Card`, `Cards`,
- * `Kbd`, `Preview`, `Tabs` and `Tab`), and those that Fumadocs' remark plugins write into a page:
- * the code block tabs of the `tab` meta and of `npm` blocks (`CodeBlockTabs` and its parts), and
- * the parts of `Tabs`. `overrides` come last: the app's own components, or replacements for these.
- * Elements without an entry, such as images, render as they are, and `Prose` styles them.
+ * by the styled components, the components every page can use without an import (`Callout`,
+ * `Card`, `Cards`, `Kbd`, `Preview`, `Tabs` and `Tab`), and those that Fumadocs' remark plugins
+ * write into a page: the code block tabs of the `tab` meta and of `npm` blocks (`CodeBlockTabs`
+ * and its parts), and the parts of `Tabs`. `overrides` come last: the app's own components, or
+ * replacements for these. Elements without an entry, such as images, render as they are, and
+ * `Prose` styles them.
  *
  * It works where MDX renders on the server (React Server Components): the components that need
- * the browser, here and in Kit, are client modules (`'use client'`), which the map holds as
- * references, so a page without tabs loads none of their code; Kit's namespaces such as `Table`
- * are server modules, so the map can read their parts.
+ * the browser, here and in `@contour-ui/react`, are client modules (`'use client'`), which the
+ * map holds as references, so a page without tabs loads none of their code; the namespaces of
+ * `@contour-ui/react` such as `Table` are server modules, so the map can read their parts.
  *
  * @example
  * <Prose>
@@ -54,8 +55,8 @@ export function getMdxComponents(overrides?: MDXComponents): MDXComponents {
     pre: MdxPre,
     a: MdxLink,
     table: MdxTable,
-    // The other table elements are Kit's parts. Their props pass through, the inline `text-align`
-    // of an aligned column included.
+    // The other table elements are the parts of the styled Table. Their props pass through, the
+    // inline `text-align` of an aligned column included.
     thead: Table.Header,
     tbody: Table.Body,
     tr: Table.Row,

@@ -30,7 +30,7 @@ export interface DocsProviderProps extends DocsScriptOptions {
    * default. `false` leaves it out.
    */
   readonly search?: DocsSearchOptions | false | undefined;
-  /** The options of Kit's `ThemeProvider`; give `docsScript()` the same. */
+  /** The options of the `ThemeProvider` of `@contour-ui/react`; give `docsScript()` the same. */
   readonly theme?: Omit<ThemeProviderProps, 'children'> | undefined;
   /**
    * The theme toggle of the layouts: `{ mode: 'light-dark-system' }` offers the theme of the
@@ -43,9 +43,9 @@ export interface DocsProviderProps extends DocsScriptOptions {
 /**
  * What the layouts of this package need around them, once at the root of the app, inside the
  * adapter of its framework (`ReactRouterProvider` from `fumadocs-core/framework/react-router`,
- * `NextProvider`…), which gives them the links, the pathname and the router: Kit's
- * `ThemeProvider`, the site, and the search, whose dialog it renders after its children. Render
- * `docsScript()` in `<head>` with the same options.
+ * `NextProvider`…), which gives them the links, the pathname and the router: the
+ * `ThemeProvider` of `@contour-ui/react`, the site, and the search, whose dialog it renders after
+ * its children. Render `docsScript()` in `<head>` with the same options.
  *
  * @example
  * const site: DocsSite = {

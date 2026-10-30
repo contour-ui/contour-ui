@@ -112,7 +112,7 @@ describe('Icon', () => {
     );
     const [plain, styled] = screen.container.querySelectorAll('svg');
 
-    // A presentation attribute: the name keeps its spaces where Kit's CSS is not loaded.
+    // A presentation attribute: the name keeps its spaces where `styles.css` is not loaded.
     expect(plain).toHaveAttribute('display', 'inline-block');
     expect(getComputedStyle(present(styled)).display).toBe('none');
   });

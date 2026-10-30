@@ -1,7 +1,7 @@
 'use client';
 
 import { useComposedRefs } from '@contour-ui/headless-react';
-import { Tabs as KitTabs } from '@contour-ui/react';
+import { Tabs as StyledTabs } from '@contour-ui/react';
 import type { ComponentProps, ReactElement } from 'react';
 
 import { DocsTabsContext, useDocsTabs, useDocsTabsContext } from './use-docs-tabs.ts';
@@ -14,7 +14,7 @@ export interface DocsTabsRootProps
 }
 
 /**
- * The root of the tabs of the MDX content: Kit's `line` tabs, with the selection of
+ * The root of the tabs of the MDX content: the styled `line` Tabs, with the selection of
  * `useDocsTabs` (groups, storage, the address) shared with the parts below.
  */
 export function DocsTabsRoot({
@@ -31,7 +31,7 @@ export function DocsTabsRoot({
 
   return (
     <DocsTabsContext value={tabs}>
-      <KitTabs.Root
+      <StyledTabs.Root
         {...props}
         ref={composedRef}
         variant="line"
@@ -42,31 +42,36 @@ export function DocsTabsRoot({
         }}
       >
         {children}
-      </KitTabs.Root>
+      </StyledTabs.Root>
     </DocsTabsContext>
   );
 }
 
-/** The row of triggers, with Kit's indicator, which slides to the selected one. */
-export function DocsTabsList({ children, ...props }: KitTabs.ListProps): ReactElement {
+/** The row of triggers, with the styled indicator, which slides to the selected one. */
+export function DocsTabsList({ children, ...props }: StyledTabs.ListProps): ReactElement {
   return (
-    <KitTabs.List {...props}>
+    <StyledTabs.List {...props}>
       {children}
-      <KitTabs.Indicator />
-    </KitTabs.List>
+      <StyledTabs.Indicator />
+    </StyledTabs.List>
   );
 }
 
 /** A trigger, which tells the tabs it has one for its value. */
-export function DocsTabsTrigger({ value, ref, ...props }: KitTabs.TriggerProps): ReactElement {
+export function DocsTabsTrigger({ value, ref, ...props }: StyledTabs.TriggerProps): ReactElement {
   const tabs = useDocsTabsContext();
   const composedRef = useComposedRefs<HTMLButtonElement>(tabs.triggerRef(value), ref);
-  return <KitTabs.Trigger {...props} ref={composedRef} value={value} />;
+  return <StyledTabs.Trigger {...props} ref={composedRef} value={value} />;
 }
 
 /** A panel, which tells the tabs its element and the `id` given to it. */
-export function DocsTabsContent({ value, id, ref, ...props }: KitTabs.ContentProps): ReactElement {
+export function DocsTabsContent({
+  value,
+  id,
+  ref,
+  ...props
+}: StyledTabs.ContentProps): ReactElement {
   const tabs = useDocsTabsContext();
   const composedRef = useComposedRefs<HTMLDivElement>(tabs.contentRef(value, id), ref);
-  return <KitTabs.Content {...props} id={id} ref={composedRef} value={value} />;
+  return <StyledTabs.Content {...props} id={id} ref={composedRef} value={value} />;
 }

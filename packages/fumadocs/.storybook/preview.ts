@@ -7,7 +7,7 @@ import { docsAnnotations, withDocs } from '../src/test-utils/storybook.tsx';
 
 import '@contour-ui/tokens/tokens.css';
 import '@contour-ui/tokens/fonts.css';
-// Before Kit's styles: its first rule is the order of the cascade layers, Kit's included.
+// Before the styled components: its first rule is the order of the cascade layers, theirs included.
 import '../src/styles.css';
 import '@contour-ui/react/styles.css';
 

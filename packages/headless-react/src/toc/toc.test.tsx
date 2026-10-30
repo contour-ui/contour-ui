@@ -254,7 +254,7 @@ describe('Toc', () => {
   });
 
   it('hides the indicator while the list is not laid out, then shows it in place, not sliding', async () => {
-    // As a kit styles it: the indicator slides to the active items.
+    // As the styled Toc styles it: the indicator slides to the active items.
     const sliding: CSSProperties = {
       position: 'absolute',
       insetBlockStart: 0,

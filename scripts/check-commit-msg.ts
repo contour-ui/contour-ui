@@ -7,7 +7,7 @@
  *   Optional body, separated from the header by a blank line.
  *
  * - `type` is one of TYPES; `scope` is lowercase kebab-case (a package name
- *   such as `kit`, or `config`, `repo`…); `!` marks a breaking change.
+ *   such as `react`, or `config`, `repo`…); `!` marks a breaking change.
  * - The subject is imperative, starts lowercase and has no trailing period;
  *   the whole header fits in MAX_HEADER characters.
  * - Merge, revert, fixup and squash messages written by git are not checked.

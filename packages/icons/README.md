@@ -2,11 +2,12 @@
 
 **Layer 0 — foundation.** Icons as renderer-independent data: [Lucide](https://lucide.dev)
 icons and brand logos from [Simple Icons](https://simpleicons.org), compiled into normalized
-paths for SVG and Canvas 2D, plus `drawIcon` for canvas. No React and no DOM: the kit's `Icon`
-component renders the data as `<svg>`, and canvas-based UIs (Soundor) draw it with `drawIcon`.
+paths for SVG and Canvas 2D, plus `drawIcon` for canvas. No React and no DOM: the `Icon`
+component of `@contour-ui/react` renders the data as `<svg>`, and canvas-based UIs (Soundor) draw
+it with `drawIcon`.
 
 - **May depend on (internal):** nothing.
-- **Storybook:** none (the kit shows the icon set).
+- **Storybook:** none (the `Essentials/Icon` stories of `@contour-ui/react` show the icon set).
 
 ## Usage
 

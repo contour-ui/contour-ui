@@ -61,7 +61,7 @@ describe('HomeLayout', () => {
     await renderHome({ site: SITE });
 
     await expect.element(brand).toHaveAttribute('href', '/');
-    // The text links of the site are its navigation "Main", a list of Kit's neutral links.
+    // The text links of the site are its navigation "Main", a list of neutral `Link`s.
     expect(nav.getByRole('listitem').elements()).toHaveLength(3);
     await expect.element(nav.getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs');
     await expect

@@ -7,8 +7,8 @@ export type CollapsibleTriggerProps = Headless.TriggerProps;
 
 /**
  * Collapsible trigger: the button that opens the content, and closes it again. A plain label
- * in the text color, with the focus ring of the kit; for the look of a button, pass a `Button`
- * with `asChild`.
+ * in the text color, with the focus ring of the other controls; for the look of a button, pass
+ * a `Button` with `asChild`.
  *
  * @example
  * <Collapsible.Trigger>

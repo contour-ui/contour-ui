@@ -1,7 +1,8 @@
 /*
  * The search: its trigger, a field-like button (or an icon button in the phone header), and its
  * dialog, a field above the results and a line of key hints. styles.css imports this file into
- * the `contour.fumadocs` layer, above Kit's, so these rules adjust the Kit parts they are set on.
+ * the `contour.fumadocs` layer, above `contour.components`, so these rules adjust the styled parts
+ * they are set on.
  */
 
 /* Text only screen readers read: the title of the dialog, the count of results. */
@@ -100,7 +101,7 @@
   block-size: var(--ct-size-icon-md);
 }
 
-/* The ring of the field, where Kit draws the ring of its text fields: on the border. */
+/* The ring of the field, where the styled text fields draw theirs: on the border. */
 .contour-docs-search__field:has(> .contour-docs-search__input:focus-visible) {
   outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
   outline-offset: calc(-1 * var(--ct-border-width-default));

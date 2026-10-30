@@ -7,7 +7,7 @@ export type SegmentGroupItemControlProps = Headless.ItemControlProps;
 
 /**
  * Segment group item control: a slot hidden from assistive technology for a mark of your own
- * next to the text. Kit gives it no look of its own.
+ * next to the text. The styled SegmentGroup gives it no look of its own.
  */
 export function SegmentGroupItemControl({
   className,

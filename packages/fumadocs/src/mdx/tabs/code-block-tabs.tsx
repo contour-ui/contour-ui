@@ -1,4 +1,4 @@
-import type { Tabs as KitTabs } from '@contour-ui/react';
+import type { Tabs as StyledTabs } from '@contour-ui/react';
 import type { ComponentProps, ReactElement } from 'react';
 
 import { cx } from '../../utils/cx.ts';
@@ -45,14 +45,14 @@ export function CodeBlockTabs({
   );
 }
 
-export type CodeBlockTabsListProps = KitTabs.ListProps;
+export type CodeBlockTabsListProps = StyledTabs.ListProps;
 
 /** The row of triggers of `CodeBlockTabs`, at the top of the block. */
 export function CodeBlockTabsList({ className, ...props }: CodeBlockTabsListProps): ReactElement {
   return <DocsTabsList {...props} className={cx('contour-docs-code-tabs__list', className)} />;
 }
 
-export type CodeBlockTabsTriggerProps = KitTabs.TriggerProps;
+export type CodeBlockTabsTriggerProps = StyledTabs.TriggerProps;
 
 /** A trigger of `CodeBlockTabs`: selects the code of its `value`. */
 export function CodeBlockTabsTrigger({
@@ -64,7 +64,7 @@ export function CodeBlockTabsTrigger({
   );
 }
 
-export type CodeBlockTabProps = KitTabs.ContentProps;
+export type CodeBlockTabProps = StyledTabs.ContentProps;
 
 /**
  * The code of one tab of `CodeBlockTabs`, a code block. Out of the Tab order: the code area of

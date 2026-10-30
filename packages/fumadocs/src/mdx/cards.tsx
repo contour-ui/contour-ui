@@ -1,5 +1,5 @@
 import { mergeProps } from '@contour-ui/headless-react';
-import { Card as KitCard } from '@contour-ui/react';
+import { Card as StyledCard } from '@contour-ui/react';
 import { Link as FrameworkLink } from 'fumadocs-core/framework';
 import type { ComponentProps, HTMLAttributes, ReactElement, ReactNode } from 'react';
 
@@ -28,8 +28,8 @@ export interface CardProps extends Omit<HTMLAttributes<HTMLElement>, 'title'> {
 }
 
 /**
- * MDX `<Card>` as Kit's `Card`. With `href` the whole card is one link. The title looks like
- * Kit's but is no heading: cards follow the page's `h1` or any heading, and a heading level of
+ * MDX `<Card>` as the styled `Card`. With `href` the whole card is one link. The title looks like
+ * the Card's but is no heading: cards follow the page's `h1` or any heading, and a heading level of
  * their own would break the outline of the page. The text under the title is the `description`
  * string, or the children, which MDX wraps in paragraphs. Size `lg`: its padding is the section
  * gap that spaces the text around the cards.
@@ -47,45 +47,45 @@ export function Card({
   const content = (
     <>
       {icon === undefined ? null : (
-        <KitCard.Header className="contour-docs-card__icon">{icon}</KitCard.Header>
+        <StyledCard.Header className="contour-docs-card__icon">{icon}</StyledCard.Header>
       )}
-      <KitCard.Body>
-        <KitCard.Title asChild>
+      <StyledCard.Body>
+        <StyledCard.Title asChild>
           <span>{title}</span>
-        </KitCard.Title>
+        </StyledCard.Title>
         {description === undefined ? null : (
-          <KitCard.Description>{description}</KitCard.Description>
+          <StyledCard.Description>{description}</StyledCard.Description>
         )}
         {children === undefined ? null : (
-          <KitCard.Description asChild>
+          <StyledCard.Description asChild>
             <div>{children}</div>
-          </KitCard.Description>
+          </StyledCard.Description>
         )}
-      </KitCard.Body>
+      </StyledCard.Body>
     </>
   );
 
   if (href === undefined) {
     return (
-      <KitCard.Root {...rootProps} size="lg">
+      <StyledCard.Root {...rootProps} size="lg">
         {content}
-      </KitCard.Root>
+      </StyledCard.Root>
     );
   }
   if (external ?? isExternalHref(href)) {
     return (
-      <KitCard.Root {...rootProps} size="lg" asChild>
+      <StyledCard.Root {...rootProps} size="lg" asChild>
         <a href={href} target="_blank" rel="noreferrer noopener">
           {content}
           {/* The end of its name, as for the site's other links to another site (`cards.css`). */}
           <span className="contour-docs-card__new-tab">{' (opens in a new tab)'}</span>
         </a>
-      </KitCard.Root>
+      </StyledCard.Root>
     );
   }
   return (
-    <KitCard.Root {...rootProps} size="lg" asChild>
+    <StyledCard.Root {...rootProps} size="lg" asChild>
       <FrameworkLink href={href}>{content}</FrameworkLink>
-    </KitCard.Root>
+    </StyledCard.Root>
   );
 }

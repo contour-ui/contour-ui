@@ -165,7 +165,7 @@ export const PANEL: readonly ShikiLine[] = [
   [['foreground', '}']],
 ];
 
-/** The stylesheet imports of an app; the Kit one is highlighted in the stories. */
+/** The stylesheet imports of an app; the stories highlight the one of `@contour-ui/react`. */
 export const STYLESHEETS: readonly ShikiLine[] = [
   "'@contour-ui/tokens/tokens.css'",
   "'@contour-ui/tokens/fonts.css'",

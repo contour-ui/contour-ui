@@ -247,7 +247,7 @@ export interface SearchDialogProps {
 }
 
 /**
- * The search dialog: Kit's Dialog near the top of the viewport, named "Search", with a Listbox
+ * The search dialog: the styled Dialog near the top of the viewport, named "Search", with a Listbox
  * whose input is the search field and whose options are the results, and the keys under them.
  * Its content mounts when it first opens and stays, so the query and its results are still
  * there when it opens again.

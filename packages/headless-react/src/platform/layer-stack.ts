@@ -35,7 +35,7 @@ export interface LayerOptions {
   readonly exclude?: (() => ReadonlyArray<Element | null | undefined>) | undefined;
   /**
    * Elements that get `--layer-index` besides the layer element, read on every change of the
-   * stack: the positioner, the backdrop, whose `z-index` the kits compute from it.
+   * stack: the positioner, the backdrop, whose `z-index` styled components compute from it.
    */
   readonly styleTargets?: (() => ReadonlyArray<HTMLElement | null | undefined>) | undefined;
   /**
@@ -370,7 +370,8 @@ function nestedIn(parent: Layer): Layer[] {
  *   a popover opened from a dialog closes with the dialog, even when the dialog is closed by
  *   its owner.
  * - Each rendered layer and its `styleTargets` get `--layer-index`: their place in the stack,
- *   from 0. Kits stack them with `z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0))`.
+ *   from 0. Styled components stack them with
+ *   `z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0))`.
  *   It is written inline, so React must not render `--layer-index` in their `style`.
  *
  * @example

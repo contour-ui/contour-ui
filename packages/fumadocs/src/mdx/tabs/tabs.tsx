@@ -1,6 +1,6 @@
 'use client';
 
-import type { Tabs as KitTabs } from '@contour-ui/react';
+import type { Tabs as StyledTabs } from '@contour-ui/react';
 import { Children, createContext, isValidElement, use, useId } from 'react';
 import type { ComponentProps, Context, ReactElement, ReactNode } from 'react';
 
@@ -38,7 +38,7 @@ const TabIndexContext: Context<number | null> = createContext<number | null>(nul
 /**
  * Tabs of MDX content, with the props of Fumadocs' `Tabs`: `items` makes a trigger for each name,
  * and each `Tab` holds the content of one; or `TabsList`, `TabsTrigger` and `TabsContent` build
- * them part by part. A frame around Kit's `line` tabs (`tabs.css`): the row of triggers at the
+ * them part by part. A frame around the styled `line` Tabs (`tabs.css`): the row of triggers at the
  * top, the selected panel below. A code block alone in a panel fills it, and its copy button
  * moves up into the row of triggers.
  *
@@ -155,21 +155,21 @@ export function Tab({ value, className, ...props }: TabProps): ReactElement {
   );
 }
 
-export type TabsListProps = KitTabs.ListProps;
+export type TabsListProps = StyledTabs.ListProps;
 
 /** The row of triggers of `Tabs` without `items`. Name it with `aria-label` when it needs one. */
 export function TabsList({ className, ...props }: TabsListProps): ReactElement {
   return <DocsTabsList {...props} className={cx('contour-docs-tabs__list', className)} />;
 }
 
-export type TabsTriggerProps = KitTabs.TriggerProps;
+export type TabsTriggerProps = StyledTabs.TriggerProps;
 
 /** A trigger of `Tabs` without `items`: selects the tab of its `value`. */
 export function TabsTrigger({ className, ...props }: TabsTriggerProps): ReactElement {
   return <DocsTabsTrigger {...props} className={cx('contour-docs-tabs__trigger', className)} />;
 }
 
-export type TabsContentProps = KitTabs.ContentProps;
+export type TabsContentProps = StyledTabs.ContentProps;
 
 /** The content of the tab of its `value`, in `Tabs` without `items`. */
 export function TabsContent({ className, ...props }: TabsContentProps): ReactElement {

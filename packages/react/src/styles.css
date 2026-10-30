@@ -1,10 +1,10 @@
 /*
- * Kit styles consume semantic token custom properties only (never --ct-base-*).
- * Load `@contour-ui/tokens/tokens.css` first; it is a separate entry point so apps
+ * The styles of @contour-ui/react consume semantic token custom properties only (never
+ * --ct-base-*). Load `@contour-ui/tokens/tokens.css` first; it is a separate entry point so apps
  * control when and how often it loads.
  *
  * One file per component, all in the `contour.components` cascade layer, so unlayered app
- * CSS overrides kit without specificity tricks. The layer is assigned here, by
+ * CSS overrides them without specificity tricks. The layer is assigned here, by
  * `layer()` on each import, so component files stay layer-free and cannot miss it;
  * `vp pack` (Lightning CSS) and Vite (postcss-import) both turn it into `@layer` blocks.
  */

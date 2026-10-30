@@ -28,10 +28,10 @@ export interface CardRootProps extends PrimitiveProps<'div'> {
  *
  * @example
  * <Card.Root asChild>
- *   <a href="/docs/kit">
+ *   <a href="/docs/essentials">
  *     <Card.Body>
- *       <Card.Title>Kit</Card.Title>
- *       <Card.Description>Styled general-purpose components.</Card.Description>
+ *       <Card.Title>Essentials</Card.Title>
+ *       <Card.Description>The everyday components.</Card.Description>
  *     </Card.Body>
  *   </a>
  * </Card.Root>

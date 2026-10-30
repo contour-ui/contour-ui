@@ -98,7 +98,7 @@ describe('Alert', () => {
     const icon = styleOf(container, '.contour-alert__indicator svg');
     const background = computed('background-color', vars.color.warning.bg);
 
-    // The token resolves to a real color (tokens.css is loaded), and the kit uses it.
+    // The token resolves to a real color (tokens.css is loaded), and the stylesheet uses it.
     expect(background).toMatch(/^oklch\(/u);
     expect(root.backgroundColor).toBe(background);
     expect(root.borderTopColor).toBe(computed('border-top-color', vars.color.warning.border));

@@ -47,7 +47,7 @@ const isThemeChoice = (value: string | null): value is ThemeChoice =>
  *   render and the hydration render, so the button holds both choices, and CSS shows the one
  *   that fits the `data-theme` of `<html>`, which `docsScript()` sets before the first paint: no
  *   wrong icon flashes, and the name is right before the page is hydrated.
- * - `light-dark-system`: Kit's SegmentGroup "Theme" with three icon choices, Light, Dark and
+ * - `light-dark-system`: the styled SegmentGroup "Theme" with three icon choices, Light, Dark and
  *   System, the choice checked. `data-theme` cannot tell `system` from the theme it resolves to,
  *   so no choice is checked until the page has hydrated and the stored choice is known.
  *

@@ -315,7 +315,7 @@ describe('CodeBlock', () => {
 
     expect(root.marginLeft).toBe('0px');
     expect(root.marginRight).toBe('0px');
-    // The browser's default for a figure: Kit sets no block margin, so a container can.
+    // The browser's default for a figure: the code block sets no block margin, so a container can.
     expect(root.marginTop).toBe(root.fontSize);
   });
 

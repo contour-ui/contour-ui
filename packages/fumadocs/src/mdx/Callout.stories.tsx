@@ -28,7 +28,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-/** `type="info"`, the default: Kit's `Alert` with the `info` status. */
+/** `type="info"`, the default: the styled `Alert` with the `info` status. */
 export const Info: Story = {
   play: async ({ canvas }) => {
     await expect(canvas.getByText('Pre-release').closest('[data-part="root"]')).toHaveAttribute(

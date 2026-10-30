@@ -16,7 +16,7 @@ function part<E extends 'table' | 'thead' | 'tbody' | 'tr' | 'th' | 'td'>(
 }
 
 describe('Markdown tables', () => {
-  it("render as Kit's table in a scroll area, with the outline variant", async () => {
+  it('render as the styled Table in a scroll area, with the outline variant', async () => {
     const MdxTable = part('table');
     const Thead = part('thead');
     const Tbody = part('tbody');

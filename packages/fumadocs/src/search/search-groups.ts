@@ -42,8 +42,8 @@ const comparable = (text: string): string =>
 /**
  * The groups with the pages titled as the query first, the others in the order of the search.
  * The search ranks a page by its best match, so the index page of a section, which lists its
- * components, can come before the page of the component itself: "button" finds Kit's overview
- * first. Only whole groups move; the matches of a page keep the order of the search.
+ * components, can come before the page of the component itself: "button" finds the overview of
+ * Essentials first. Only whole groups move; the matches of a page keep the order of the search.
  */
 export function rankGroups(groups: readonly ResultGroup[], query: string): ResultGroup[] {
   const wanted = comparable(query);

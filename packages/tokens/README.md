@@ -12,7 +12,7 @@ properties and typed TS references.
 ## Usage
 
 ```ts
-import '@contour-ui/tokens/tokens.css'; // once, before kit/audio styles
+import '@contour-ui/tokens/tokens.css'; // once, before @contour-ui/react/styles.css
 import '@contour-ui/tokens/fonts.css'; // IBM Plex Sans + JetBrains Mono, 400/500/600
 import { vars } from '@contour-ui/tokens';
 
@@ -32,7 +32,7 @@ vars.color.bg.surface; // 'var(--ct-color-bg-surface)'
 - **Themes:** dark is the default (`:root`, `[data-theme="dark"]`); `[data-theme="light"]` on
   any element switches its subtree. `themes`, `defaultTheme` and `themeAttribute` are exported.
 - **Base vs semantic:** `--ct-base-*` (raw palette and scales) is emitted because semantic
-  roles reference it, but it is internal: components and kits use semantic roles only, and
+  roles reference it, but it is internal: components use semantic roles only, and
   `vars` exposes only those.
 - **Fonts:** `fonts.css` declares the faces for `--ct-base-font-family-*` and every
   `--ct-base-font-weight-*` (Fontsource packages, SIL OFL 1.1; scripts load via `unicode-range`).

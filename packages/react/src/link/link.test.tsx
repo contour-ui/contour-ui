@@ -68,7 +68,7 @@ describe('Link', () => {
     // the underline.
     await userEvent.unhover(link);
 
-    // The token resolves to a real color (tokens.css is loaded), and the kit uses it.
+    // The token resolves to a real color (tokens.css is loaded), and the stylesheet uses it.
     expect(accentForeground).toMatch(/^oklch\(/u);
     await expect.element(link).toHaveStyle({
       color: accentForeground,

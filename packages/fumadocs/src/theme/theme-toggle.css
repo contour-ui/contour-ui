@@ -5,8 +5,8 @@
  * choices; the one that fits the theme of the page shows, keyed on the `data-theme` of `<html>`.
  * The page is dark unless it says `light`, as the token stylesheet is.
  *
- * `light-dark-system`: Kit's SegmentGroup of size `lg`, as high as the buttons around it, drawn by
- * Kit alone.
+ * `light-dark-system`: the styled SegmentGroup of size `lg`, as high as the buttons around it,
+ * drawn by its own styles alone.
  */
 .contour-docs-theme-toggle[data-mode='light-dark'] {
   inline-size: var(--ct-size-control-lg);

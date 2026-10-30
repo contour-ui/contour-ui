@@ -26,7 +26,7 @@ export interface CollapsibleFolderProps {
 }
 
 /**
- * A folder of the page tree that opens and closes (`page-tree.css`), on Kit's Collapsible. Its
+ * A folder of the page tree that opens and closes (`page-tree.css`), on the styled Collapsible. Its
  * row holds the link to its index page and, after it, the toggle, a button named after the
  * folder; without an index page, the whole row is the toggle. Its pages slide open under it.
  *

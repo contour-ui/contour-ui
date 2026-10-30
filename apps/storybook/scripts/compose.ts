@@ -1,6 +1,6 @@
 /**
  * Copy each package's static Storybook into this host's build output, so the
- * production refs (`./tokens`, `./headless`, …) resolve inside one deployable folder.
+ * production refs (`./tokens`, `./headless-react`, …) resolve inside one deployable folder.
  */
 import { cpSync, existsSync, rmSync } from 'node:fs';
 import path from 'node:path';

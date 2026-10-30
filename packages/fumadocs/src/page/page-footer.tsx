@@ -8,7 +8,7 @@ import type { ReactElement } from 'react';
 export interface PageFooterProps {
   /** The page tree of the site, as the layout has it. */
   readonly tree: Root;
-  /** The URL of the page, as in the tree (`/docs/kit/button`). */
+  /** The URL of the page, as in the tree (`/docs/essentials/button`). */
   readonly url: string;
 }
 
@@ -38,7 +38,7 @@ interface NeighbourLinkProps {
 }
 
 /**
- * A neighbour as Kit's `Card`, the whole card one link of the framework: "Previous" or "Next"
+ * A neighbour as the styled `Card`, the whole card one link of the framework: "Previous" or "Next"
  * with a chevron that points that way, over the title of the page.
  */
 function NeighbourLink({ direction, page }: NeighbourLinkProps): ReactElement {

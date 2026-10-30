@@ -1,8 +1,8 @@
 /*
- * Tabs of the MDX content (tabs.tsx): a frame around Kit's `line` tabs, the row of triggers at the
- * top, on the rule of the list, and the selected panel below it, with a panel's inset. A code
- * block alone in a panel fills it: the frame is its border, and its copy button moves up to the
- * end of the row of triggers. Prose spaces the frame, which sets no margin.
+ * Tabs of the MDX content (tabs.tsx): a frame around the styled `line` Tabs, the row of triggers
+ * at the top, on the rule of the list, and the selected panel below it, with a panel's inset. A
+ * code block alone in a panel fills it: the frame is its border, and its copy button moves up to
+ * the end of the row of triggers. Prose spaces the frame, which sets no margin.
  */
 .contour-docs-tabs {
   /* The containing block of a copy button moved up into the row of triggers. */
@@ -59,7 +59,7 @@
   box-shadow: none;
 }
 
-/* The panel keeps the text of the page, not Kit's body text. */
+/* The panel keeps the text of the page, not the body text of the styled Tabs. */
 .contour-docs-tabs__content {
   padding: var(--ct-space-panel-inset);
   font: inherit;

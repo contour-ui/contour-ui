@@ -17,7 +17,7 @@
 
 /*
  * The gap spaces the examples, so they lose the browser's default margins, such as those of the
- * `figure` of a code block, which Kit leaves to the container.
+ * `figure` of a code block, which the styled CodeBlock leaves to the container.
  */
 .contour-docs-preview > * {
   margin-block: 0;

@@ -1,5 +1,5 @@
-// No 'use client' and no runtime import of Kit's main entry: React Server Components call
-// `docsScript()` in the root layout, and Kit's entry creates contexts as it loads.
+// No 'use client' and no runtime import of the main entry of @contour-ui/react: React Server
+// Components call `docsScript()` in the root layout, and that entry creates contexts as it loads.
 import type { ThemeScriptOptions } from '@contour-ui/react';
 import { themeScript } from '@contour-ui/react/theme-script';
 
@@ -10,7 +10,7 @@ import { DEFAULT_SIDEBAR_STORAGE_KEY, sidebarScript } from '../layout/sidebar-st
  * sets the state the provider then keeps.
  */
 export interface DocsScriptOptions {
-  /** The options of Kit's theme: the default theme, its `localStorage` key, its attribute. */
+  /** The options of the theme: the default theme, its `localStorage` key, its attribute. */
   readonly theme?: ThemeScriptOptions | undefined;
   /**
    * The `localStorage` key that remembers a collapsed sidebar.
@@ -22,9 +22,9 @@ export interface DocsScriptOptions {
 
 /**
  * The source of an inline script that sets, on `<html>`, before the page is first painted, what
- * only the browser knows: the theme (Kit's `themeScript()`) and a collapsed sidebar
- * (`data-contour-docs-sidebar="collapsed"`). The layouts render both states, and CSS shows the
- * one these attributes ask for, so a page rendered on the server neither flashes nor hydrates
+ * only the browser knows: the theme (`themeScript()` of `@contour-ui/react`) and a collapsed
+ * sidebar (`data-contour-docs-sidebar="collapsed"`). The layouts render both states, and CSS shows
+ * the one these attributes ask for, so a page rendered on the server neither flashes nor hydrates
  * differently.
  *
  * Render it in `<head>`, before the stylesheets, with the options `DocsProvider` gets, and let

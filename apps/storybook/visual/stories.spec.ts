@@ -1,6 +1,6 @@
 /**
  * Visual regression for the package Storybooks: every story tagged `visual`
- * (the styled packages tag all their stories; `tags: ['!visual']` opts one out),
+ * (`tokens`, `react` and `fumadocs` tag all their stories; `tags: ['!visual']` opts one out),
  * screenshotted in each theme from the composed static build, at 1280×720, or at
  * the width of a phone for a story tagged `phone`.
  *

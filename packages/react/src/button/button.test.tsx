@@ -58,7 +58,7 @@ describe('Button', () => {
     // the hover fill.
     await userEvent.unhover(button);
 
-    // The token resolves to a real color (tokens.css is loaded), and the kit uses it.
+    // The token resolves to a real color (tokens.css is loaded), and the stylesheet uses it.
     expect(accentFill).toMatch(/^oklch\(/u);
     await expect.element(button).toHaveStyle({
       backgroundColor: accentFill,

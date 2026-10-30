@@ -5,7 +5,7 @@ import { Callout } from './callout.tsx';
 import type { CalloutProps } from './callout.tsx';
 
 describe('Callout', () => {
-  it("renders Kit's alert with the title, then the content", async () => {
+  it('renders the styled Alert with the title, then the content', async () => {
     const screen = await render(
       <Callout title="Pre-release" className="custom" data-testid="callout">
         <p>The packages are not on npm yet.</p>

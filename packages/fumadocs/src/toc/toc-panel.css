@@ -1,6 +1,6 @@
 /*
  * The table of contents of a page (toc-panel.tsx): the column on wide screens, the bar with its
- * popover on narrow ones. Both are Kit's Toc; the page gives them their sticky containers.
+ * popover on narrow ones. Both are the styled Toc; the page gives them their sticky containers.
  */
 
 /*

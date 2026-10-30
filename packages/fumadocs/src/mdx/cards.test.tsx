@@ -25,7 +25,7 @@ describe('Cards', () => {
 });
 
 describe('Card', () => {
-  it("renders Kit's card, size `lg`, with the title and the description", async () => {
+  it('renders the styled Card, size `lg`, with the title and the description', async () => {
     const screen = await render(
       <Card title="Kit" description="Styled general-purpose components." data-testid="card" />,
     );
@@ -34,7 +34,7 @@ describe('Card', () => {
     await expect.element(card).toHaveClass('contour-card contour-docs-card', { exact: true });
     expect(card.element().tagName).toBe('DIV');
     await expect.element(card).toHaveAttribute('data-size', 'lg');
-    // The title is Kit's but no heading, so cards keep the outline of the page.
+    // The title is the styled Card's but no heading, so cards keep the outline of the page.
     expect(screen.getByText('Kit').element()).toHaveClass('contour-card__title', { exact: true });
     expect(screen.getByText('Kit').element().tagName).toBe('SPAN');
     expect(card.element().querySelector('h1, h2, h3, h4, h5, h6')).toBeNull();

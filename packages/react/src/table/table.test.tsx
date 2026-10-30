@@ -173,7 +173,7 @@ describe('Table', () => {
     const cell = styleOf(screen.getByRole('cell', { name: 'Low shelf' }));
     const caption = styleOf(screen.getByText('Bands'));
 
-    // The tokens resolve to real values (tokens.css is loaded), and the kit uses them.
+    // The tokens resolve to real values (tokens.css is loaded), and the stylesheet uses them.
     expect(color(vars.color.border.default)).toMatch(/^oklch\(/u);
     expect(table.borderTopColor).toBe(color(vars.color.border.default));
     expect(table.borderTopWidth).toBe(px(vars['border-width'].default));

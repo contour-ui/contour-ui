@@ -2,13 +2,13 @@ import { toPageUrl } from '../layout/page-url.ts';
 
 /** Where a result leads: its page and its heading. */
 export interface Destination {
-  /** The URL of its page, as the page tree has it (`/docs/kit/button`). */
+  /** The URL of its page, as the page tree has it (`/docs/essentials/button`). */
   readonly page: string;
   /** The `#hash` of its heading, as `location.hash` has it; `''` for the page itself. */
   readonly hash: string;
 }
 
-/** Where the result at `url` leads (`/docs/kit/button#props`). */
+/** Where the result at `url` leads (`/docs/essentials/button#props`). */
 export function destinationOf(url: string): Destination {
   const end = url.search(/[#?]/u);
   return {
@@ -19,8 +19,8 @@ export function destinationOf(url: string): Destination {
 
 /**
  * Let `element` take the focus: one that takes it only with a `tabindex`, such as a heading, gets
- * `tabindex="-1"` until it loses the focus, as Kit's Toc does with headings. Elements that take
- * focus already, such as buttons and links, are left as they are.
+ * `tabindex="-1"` until it loses the focus, as the styled Toc does with headings. Elements that
+ * take focus already, such as buttons and links, are left as they are.
  */
 function focusableUntilBlur(element: HTMLElement): HTMLElement {
   if (element.tabIndex < 0 && !element.hasAttribute('tabindex')) {
@@ -75,9 +75,9 @@ export function focusDestination(hash: string): void {
 
 /**
  * The element to give the focus back to as the dialog closes: the one that had it as the dialog
- * opened, while it is still on the page, able to take it again. Kit's Dialog gives it back to
- * that element itself, but only while it can take focus: a heading that Kit's Toc or a result
- * focused could only until it lost the focus to the dialog. `null` for the page itself.
+ * opened, while it is still on the page, able to take it again. The styled Dialog gives it back
+ * to that element itself, but only while it can take focus: a heading that the styled Toc or a
+ * result focused could only until it lost the focus to the dialog. `null` for the page itself.
  */
 export function focusTargetBack(focusedBefore: Element | null): HTMLElement | null {
   if (

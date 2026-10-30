@@ -19,9 +19,9 @@ interface MdxPreProps extends ComponentProps<'pre'> {
 }
 
 /**
- * A fenced code block as Kit's `CodeBlock`: a header with the title when the block has one, the
- * highlighted `pre` in the scroll area, and a copy button unless the meta says `noCopy`, in the
- * header or, without a title, at the top end of the block.
+ * A fenced code block as the styled `CodeBlock`: a header with the title when the block has one,
+ * the highlighted `pre` in the scroll area, and a copy button unless the meta says `noCopy`, in
+ * the header or, without a title, at the top end of the block.
  */
 export function MdxPre({
   title,
@@ -31,7 +31,7 @@ export function MdxPre({
   ...props
 }: MdxPreProps): ReactElement {
   const start = Number(props['data-line-numbers-start']);
-  // Kit numbers the lines with this counter: reset to one less than the first number.
+  // The code block numbers the lines with this counter: reset to one less than the first number.
   const numbering = Number.isInteger(start)
     ? { counterReset: `contour-code-block-line ${start - 1}` }
     : undefined;

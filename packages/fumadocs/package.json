@@ -1,7 +1,7 @@
 {
   "name": "@contour-ui/fumadocs",
   "version": "0.0.0",
-  "description": "contour-ui for Fumadocs: a documentation layout built from Kit, in place of fumadocs-ui.",
+  "description": "contour-ui for Fumadocs: a documentation layout built from @contour-ui/react, in place of fumadocs-ui.",
   "license": "MIT",
   "repository": {
     "type": "git",

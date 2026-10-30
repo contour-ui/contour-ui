@@ -82,8 +82,8 @@
   }
 
   /*
-   * As high as the viewport less the page's padding, scrolling on its own when longer. Kit Toc
-   * scrolls it to keep the current link in view, a section gap from its edges.
+   * As high as the viewport less the page's padding, scrolling on its own when longer. The styled
+   * Toc scrolls it to keep the current link in view, a section gap from its edges.
    */
   .contour-docs-page__toc {
     position: sticky;

@@ -46,7 +46,7 @@ function winner(layers: readonly string[]): string {
 }
 
 describe('styles.css', () => {
-  it('starts with the full layer order, so it fixes it when it loads before Kit', () => {
+  it('starts with the full layer order, to fix it when it loads before @contour-ui/react', () => {
     const firstRule = styles
       .replaceAll(/\/\*[\s\S]*?\*\//gu, '')
       .trim()
@@ -55,7 +55,7 @@ describe('styles.css', () => {
     expect(firstRule).toBe(`@layer ${LAYERS.join(', ')}`);
   });
 
-  it('ranks the page base and Prose below Kit and Audio, and the docs components above', () => {
+  it('ranks the page base and Prose below the styled components, the docs ones above', () => {
     for (const [index, layer] of LAYERS.entries()) {
       const higher = LAYERS.slice(index + 1);
       for (const other of higher) {

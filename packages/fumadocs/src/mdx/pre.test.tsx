@@ -67,7 +67,7 @@ describe('MdxPre', () => {
 
     expect(pre).toHaveAttribute('data-line-numbers', 'true');
     expect(pre).toHaveAttribute('data-line-numbers-start', '12');
-    // Kit numbers the lines with this counter, so it starts one below the first number.
+    // The code block numbers the lines with this counter, so it starts one below the first number.
     expect(pre?.style.color).toBe('red');
     expect(pre?.style.counterReset).toBe('contour-code-block-line 11');
   });

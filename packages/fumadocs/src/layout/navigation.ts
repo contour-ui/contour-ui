@@ -11,6 +11,6 @@ export interface DocsNavigation {
   readonly sections: readonly Folder[];
   /** The section of the page, or `undefined` for a page outside them, such as `/docs`. */
   readonly section: Folder | undefined;
-  /** The URL of the page, as in the tree (`/docs/kit/button`). */
+  /** The URL of the page, as in the tree (`/docs/essentials/button`). */
   readonly url: string;
 }

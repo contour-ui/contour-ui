@@ -173,7 +173,7 @@ const tailwindPattern: RestrictedPattern = {
   group: FORBIDDEN_EXTERNALS.flatMap((name) =>
     name.endsWith('/*') ? [name] : [name, `${name}/*`],
   ),
-  message: 'No Tailwind in packages: style kits with CSS and token CSS variables.',
+  message: 'No Tailwind in packages: style components with CSS and token CSS variables.',
 };
 
 const reactPattern: RestrictedPattern = {

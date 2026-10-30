@@ -49,7 +49,7 @@ describe('MdxLink', () => {
       </MemoryFramework>,
     );
     // The label of the arrow joins the name of the link as a separate word, even here, where
-    // Kit's stylesheet is not loaded.
+    // `@contour-ui/react/styles.css` is not loaded.
     const link = page.getByRole('link', { name: 'Fumadocs opens in a new tab', exact: true });
 
     await expect.element(link).toHaveAccessibleName('Fumadocs opens in a new tab');

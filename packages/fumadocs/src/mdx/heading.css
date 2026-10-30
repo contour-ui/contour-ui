@@ -15,8 +15,8 @@
 }
 
 /*
- * A link of the table of contents moves the focus to the heading (Kit's Toc), only to start the
- * Tab order there: no ring around the heading. The next Tab stop, its own link, has one.
+ * A link of the table of contents moves the focus to the heading (the styled Toc), only to start
+ * the Tab order there: no ring around the heading. The next Tab stop, its own link, has one.
  */
 .contour-docs-heading:focus {
   outline: none;

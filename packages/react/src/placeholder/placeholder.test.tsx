@@ -22,7 +22,7 @@ test('Placeholder.Root is styled with semantic tokens', async () => {
   const root = screen.getByText('styled');
   const accentForeground = computed('color', vars.color.accent.fg);
 
-  // The token resolves to a real color (tokens.css is loaded), and the kit uses it.
+  // The token resolves to a real color (tokens.css is loaded), and the stylesheet uses it.
   expect(accentForeground).toMatch(/^oklch\(/u);
   await expect.element(root).toHaveClass('contour-placeholder');
   await expect.element(root).toHaveStyle({ color: accentForeground });

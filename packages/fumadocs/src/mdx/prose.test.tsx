@@ -79,7 +79,7 @@ describe('Prose', () => {
       </Prose>,
     );
 
-    // Prose spaces the block after a heading, but Kit ranks above it.
+    // Prose spaces the block after a heading, but the styled components rank above it.
     expect(marginsOf(screen.getByText('48 kHz, 24-bit').element())).toStrictEqual(['0px', '0px']);
   });
 

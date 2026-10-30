@@ -5,7 +5,7 @@ import { BUTTON_CODE, CodeExample, CSS_CODE, INSTALL_CODE } from '../test-utils/
 import { Prose } from './index.ts';
 
 /**
- * A fenced code block of an MDX page, as the MDX map's `pre` draws it with Kit's `CodeBlock`:
+ * A fenced code block of an MDX page, as the MDX map's `pre` draws it with the styled `CodeBlock`:
  * the highlighted code (Shiki's css-variables theme, colored by the syntax tokens), a header
  * with the title from the meta, and a copy button.
  */

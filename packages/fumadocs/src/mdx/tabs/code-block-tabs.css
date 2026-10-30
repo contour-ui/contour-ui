@@ -1,6 +1,6 @@
 /*
- * Code block tabs (code-block-tabs.tsx): one frame with the look of Kit's code block. Kit's
- * `line` tabs stand where a code block has its header, on the rule of the list, and the code
+ * Code block tabs (code-block-tabs.tsx): one frame with the look of the styled CodeBlock. The
+ * styled `line` Tabs stand where a code block has its header, on the rule of the list, and the code
  * of the selected tab fills the rest, its own border and corners given to the frame. The copy
  * button of a block without a title moves up to the end of the row of triggers.
  */

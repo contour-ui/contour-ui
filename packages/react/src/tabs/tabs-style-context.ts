@@ -9,7 +9,7 @@ export interface TabsStyle {
   readonly size: 'sm' | 'md' | 'lg';
 }
 
-/** The variant and size of the nearest Kit `Tabs.Root`, which its parts render. */
+/** The variant and size of the nearest styled `Tabs.Root`, which its parts render. */
 export const TabsStyleContext: Context<TabsStyle> = createContext<TabsStyle>({
   variant: 'line',
   size: 'md',

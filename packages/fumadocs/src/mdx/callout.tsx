@@ -26,7 +26,9 @@ export interface CalloutProps extends Omit<ComponentProps<'div'>, 'title'> {
   icon?: ReactNode;
 }
 
-/** MDX `<Callout>` as Kit's `Alert`: the title, then the content, which may hold paragraphs. */
+/**
+ * MDX `<Callout>` as the styled `Alert`: the title, then the content, which may hold paragraphs.
+ */
 export function Callout({
   type = 'info',
   title,

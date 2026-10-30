@@ -6,9 +6,10 @@ import type { ComponentProps, ReactElement } from 'react';
 import { isExternalHref } from '../utils/href.ts';
 
 /**
- * A Markdown link as Kit's `Link`, underlined as links in running text are. A `#fragment` stays a
- * plain link, a page of this site goes through the framework's link (`fumadocs-core/framework`),
- * and another site opens in a new tab, with an arrow whose label joins the link's name.
+ * A Markdown link as the styled `Link`, underlined as links in running text are. A `#fragment`
+ * stays a plain link, a page of this site goes through the framework's link
+ * (`fumadocs-core/framework`), and another site opens in a new tab, with an arrow whose label
+ * joins the link's name.
  */
 export function MdxLink({ href, children, ...props }: ComponentProps<'a'>): ReactElement {
   if (href === undefined || href.startsWith('#')) {

@@ -36,8 +36,8 @@ function literal(value: unknown): string {
  *
  * Render it in `<head>`, before anything that paints, and pass the options the provider gets.
  * Reading the storage cannot break it: where the browser blocks `localStorage`, it applies the
- * default. The source is the same for the same options and version of Kit, so a Content Security
- * Policy can allow it by its hash, or by the nonce of its `<script>`.
+ * default. The source is the same for the same options and version of `@contour-ui/react`, so a
+ * Content Security Policy can allow it by its hash, or by the nonce of its `<script>`.
  *
  * @example
  * <html lang="en" suppressHydrationWarning>

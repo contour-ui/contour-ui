@@ -12,7 +12,7 @@ export type CardTitleProps = PrimitiveProps<'h3'>;
  *
  * @example
  * <Card.Title asChild>
- *   <h2>Kit</h2>
+ *   <h2>Essentials</h2>
  * </Card.Title>
  */
 export function CardTitle({ className, ...props }: CardTitleProps): ReactElement {

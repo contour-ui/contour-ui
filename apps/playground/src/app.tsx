@@ -34,7 +34,7 @@ export function App(): ReactElement {
         </fieldset>
       </header>
       <HeadlessPlaceholder.Root>headless (unstyled)</HeadlessPlaceholder.Root>
-      <Placeholder.Root>kit (styled)</Placeholder.Root>
+      <Placeholder.Root>react (styled)</Placeholder.Root>
     </main>
   );
 }

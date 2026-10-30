@@ -93,7 +93,7 @@ describe('Card', () => {
     const root = title.element().closest('.contour-card');
     const surface = computed('background-color', vars.color.bg.surface);
 
-    // The token resolves to a real color (tokens.css is loaded), and the kit uses it.
+    // The token resolves to a real color (tokens.css is loaded), and the stylesheet uses it.
     expect(surface).toMatch(/^oklch\(/u);
     expect(root).toHaveStyle({
       backgroundColor: surface,

@@ -6,9 +6,9 @@ import { Prose, Tab, Tabs, TabsContent, TabsList, TabsTrigger } from '../index.t
 
 /**
  * Tabs of MDX content, with the props of Fumadocs' `Tabs`: `items` makes a trigger for each name,
- * and each `Tab` holds the content of one. A frame around Kit's `line` tabs, the selected panel
- * under the row of triggers. A code block alone in a panel fills it, and its copy button moves up
- * into the row.
+ * and each `Tab` holds the content of one. A frame around the styled `line` Tabs, the selected
+ * panel under the row of triggers. A code block alone in a panel fills it, and its copy button
+ * moves up into the row.
  */
 const meta: Meta<typeof Tabs> = {
   title: 'Fumadocs/MDX/Tabs',

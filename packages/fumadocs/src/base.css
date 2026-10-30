@@ -1,7 +1,7 @@
 /*
  * The base of the docs site, instead of a reset: the page itself and nothing more. Every element
  * keeps the browser's defaults (margins, list markers, heading sizes, `box-sizing: content-box`),
- * as in Storybook, so Kit and Audio components render here as they do there. Components set their
+ * as in Storybook, so the styled components render here as they do there. Components set their
  * own font, colors and margins; Prose styles the MDX content. styles.css puts this file in the
  * lowest layer, `contour.fumadocs-base`.
  */
