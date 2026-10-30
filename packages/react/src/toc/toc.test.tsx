@@ -54,26 +54,40 @@ const sections = [
 
 const items = sections.map(({ value, depth }) => ({ value, depth }));
 
+interface PageProps extends Partial<Toc.RootProps> {
+  /** Whether the table of contents is in a panel of its own, 60px high, that scrolls. */
+  readonly panel?: boolean;
+}
+
 /** A table of contents beside its article. */
-function Page(props: Partial<Toc.RootProps>): ReactElement {
+function Page({ panel = false, ...props }: PageProps): ReactElement {
+  const contents = (
+    <Toc.Root
+      items={items}
+      scrollEl={() => document.querySelector<HTMLElement>('#article')}
+      scrollBehavior="auto"
+      {...props}
+    >
+      <Toc.Title>On this page</Toc.Title>
+      <Toc.Indicator />
+      <Toc.List>
+        {sections.map(({ value, depth, title }) => (
+          <Toc.Item key={value} item={{ value, depth }}>
+            <Toc.Link>{title}</Toc.Link>
+          </Toc.Item>
+        ))}
+      </Toc.List>
+    </Toc.Root>
+  );
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16 }}>
-      <Toc.Root
-        items={items}
-        scrollEl={() => document.querySelector<HTMLElement>('#article')}
-        scrollBehavior="auto"
-        {...props}
-      >
-        <Toc.Title>On this page</Toc.Title>
-        <Toc.Indicator />
-        <Toc.List>
-          {sections.map(({ value, depth, title }) => (
-            <Toc.Item key={value} item={{ value, depth }}>
-              <Toc.Link>{title}</Toc.Link>
-            </Toc.Item>
-          ))}
-        </Toc.List>
-      </Toc.Root>
+      {panel ? (
+        <div data-testid="panel" style={{ height: 60, overflow: 'auto' }}>
+          {contents}
+        </div>
+      ) : (
+        contents
+      )}
       <section id="article" aria-label="Article" style={{ height: 300, overflow: 'auto' }}>
         {sections.map(({ value, title }) => (
           <section key={value} style={{ height: 600 }}>
@@ -149,6 +163,32 @@ describe('Toc', () => {
 
     await userEvent.hover(usage);
     await expect.element(usage).toHaveStyle({ color: color(vars.color.fg.default) });
+  });
+
+  it('makes the heading of a clicked link current, with the indicator beside it', async () => {
+    const screen = await render(<Page />);
+    const link = (name: string) => screen.getByRole('link', { name });
+    await expect.element(link('Introduction')).toHaveAttribute('aria-current', 'true');
+
+    await userEvent.click(link('Usage'));
+    expect(location.hash).toBe('#usage');
+    await expect.element(link('Usage')).toHaveAttribute('aria-current', 'true');
+    await expect.element(link('Introduction')).not.toHaveAttribute('data-active');
+    expect(part(screen.container, 'indicator')).toBeVisible();
+  });
+
+  it('keeps the first active link in view in a panel that scrolls, not the page', async () => {
+    const screen = await render(<Page panel />);
+    const usage = screen.getByRole('link', { name: 'Usage' });
+    const panel = screen.getByTestId('panel').element();
+    const article = screen.getByRole('region', { name: 'Article' }).element();
+
+    article.scrollTop = article.scrollHeight;
+    await expect.element(usage).toHaveAttribute('aria-current', 'true');
+    await expect
+      .poll(() => usage.element().getBoundingClientRect().bottom)
+      .toBeLessThanOrEqual(panel.getBoundingClientRect().bottom);
+    expect(window.scrollY).toBe(0);
   });
 
   it('indents each level below an h2 by one step', async () => {

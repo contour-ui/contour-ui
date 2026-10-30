@@ -1,4 +1,5 @@
 import { vars } from '@contour-ui/tokens';
+import { animationsDone, expectNoAxeViolations } from '@contour-ui/vite-config/visual';
 import type { ReactElement, ReactNode } from 'react';
 import { afterEach, describe, expect, it } from 'vite-plus/test';
 import { cdp, userEvent } from 'vite-plus/test/browser';
@@ -129,6 +130,55 @@ describe('Popover', () => {
     await expect.element(close).toHaveAttribute('data-part', 'close-trigger');
   });
 
+  it('is a dialog named by its title and described by its description, below its trigger', async () => {
+    const screen = await render(<Share defaultOpen />);
+    const dialog = screen.getByRole('dialog', { name: 'Share this page' });
+
+    await expect.element(dialog).toHaveAccessibleDescription('Anyone with the link can view it.');
+    // At the start edge of the trigger, once it has its place.
+    await expect.element(dialog).toHaveAttribute('data-placement', 'bottom-start');
+  });
+
+  it('moves focus to its first field, and closes on Escape or as Tab leaves it', async () => {
+    const screen = await render(
+      // On the background of the page, for the contrast that axe checks at the end.
+      <div style={{ background: vars.color.bg.canvas, color: vars.color.fg.default }}>
+        <Share
+          body={
+            <>
+              <label>
+                Link
+                <input defaultValue="https://contour-ui.dev/docs" />
+              </label>
+              <Button size="sm">Copy link</Button>
+            </>
+          }
+        />
+        <Button variant="ghost">Next</Button>
+      </div>,
+    );
+    const trigger = screen.getByRole('button', { name: 'Share' });
+    const link = screen.getByRole('textbox', { name: 'Link' });
+
+    await userEvent.click(trigger);
+    await expect.element(link).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await expect.element(trigger).toHaveFocus();
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.click(trigger);
+    await expect.element(link).toHaveFocus();
+    await userEvent.tab();
+    await userEvent.tab();
+    await expect.element(screen.getByRole('button', { name: 'Close' })).toHaveFocus();
+    // On to what follows the trigger, which closes the popover.
+    await userEvent.tab();
+    await expect.element(screen.getByRole('button', { name: 'Next' })).toHaveFocus();
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
   it('takes the look of a Button given as its trigger', async () => {
     const screen = await render(<Share />);
     const trigger = screen.getByRole('button', { name: 'Share' });
@@ -227,7 +277,7 @@ describe('Popover', () => {
   });
 
   it('makes room for the x beside a description when there is no title', async () => {
-    await render(
+    const screen = await render(
       <Popover.Root defaultOpen>
         <Popover.Trigger>Info</Popover.Trigger>
         <Portal>
@@ -241,6 +291,9 @@ describe('Popover', () => {
       </Popover.Root>,
     );
 
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Info' }))
+      .toHaveClass('contour-popover__content');
     expect(part('description')).toHaveStyle({
       paddingRight: `${pixels(vars.size['control-sm']) + pixels(vars.space['control-gap'])}px`,
     });

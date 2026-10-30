@@ -1,4 +1,6 @@
+import * as icons from '@contour-ui/icons';
 import { githubIcon, searchIcon } from '@contour-ui/icons';
+import type { IconData } from '@contour-ui/icons';
 import { vars } from '@contour-ui/tokens';
 import { describe, expect, test } from 'vite-plus/test';
 import { render } from 'vitest-browser-react';
@@ -7,6 +9,11 @@ import { Icon } from '../index.ts';
 
 import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
+
+/** Every icon of the set: the `IconData` exports of `@contour-ui/icons`. */
+const ICON_SET = Object.values(icons).filter(
+  (value): value is IconData => typeof value === 'object' && 'paths' in value,
+);
 
 /** `value`, failing the test when the element is missing. */
 function present<T>(value: T | null | undefined): T {
@@ -30,8 +37,25 @@ describe('Icon', () => {
     const screen = await render(<Icon icon={githubIcon} label="GitHub" />);
     const image = screen.getByRole('img', { name: 'GitHub' });
 
-    await expect.element(image).toBeInTheDocument();
+    await expect.element(image).toHaveClass('contour-icon');
     await expect.element(image).not.toHaveAttribute('aria-hidden');
+  });
+
+  test('draws every icon of the set', async () => {
+    const screen = await render(
+      <>
+        {ICON_SET.map((icon) => (
+          <Icon key={icon.name} icon={icon} label={icon.name} />
+        ))}
+      </>,
+    );
+    const images = screen.getByRole('img').elements();
+
+    expect(ICON_SET.length).toBeGreaterThan(0);
+    expect(images.map((image) => image.getAttribute('aria-label'))).toStrictEqual(
+      ICON_SET.map((icon) => icon.name),
+    );
+    expect(images.filter((image) => image.querySelector('path') === null)).toStrictEqual([]);
   });
 
   test('renders the class, the part attributes and the merged className', async () => {

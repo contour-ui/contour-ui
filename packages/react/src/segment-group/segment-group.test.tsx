@@ -121,6 +121,7 @@ describe('SegmentGroup', () => {
     await expect.poll(() => sameBox(indicator, day)).toBe(true);
 
     await userEvent.click(screen.getByText('Week'));
+    await expect.element(screen.getByRole('radio', { name: 'Week' })).toBeChecked();
     await expect.poll(() => sameBox(indicator, week)).toBe(true);
   });
 
@@ -144,6 +145,11 @@ describe('SegmentGroup', () => {
     expect(getComputedStyle(iconOf(part(screen.container, 'item', 'light'))).inlineSize).toBe(
       computed('inline-size', vars.size['icon-sm']),
     );
+
+    // Through the item, its label: the icon covers the hidden radio button.
+    await userEvent.click(part(screen.container, 'item', 'light'));
+    await expect.element(screen.getByRole('radio', { name: 'Light' })).toBeChecked();
+    await expect.element(screen.getByRole('radio', { name: 'Dark' })).not.toBeChecked();
   });
 
   it('shows a focus ring on an item reached by keyboard', async () => {

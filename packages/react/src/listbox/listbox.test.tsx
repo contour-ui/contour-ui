@@ -1,5 +1,5 @@
 import { vars } from '@contour-ui/tokens';
-import { createRef } from 'react';
+import { createRef, useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vite-plus/test';
 import { userEvent } from 'vite-plus/test/browser';
@@ -65,6 +65,72 @@ function Sounds(props: Partial<Listbox.RootProps<Sound>>): ReactElement {
       </Listbox.Content>
     </Listbox.Root>
   );
+}
+
+interface DocsResult {
+  readonly url: string;
+  readonly page: string;
+  readonly text: string;
+}
+
+const DOCS: readonly DocsResult[] = [
+  { url: '/docs/essentials/alert', page: 'Alert', text: 'Alert' },
+  { url: '/docs/essentials/alert#status', page: 'Alert', text: 'Status' },
+  { url: '/docs/essentials/button', page: 'Button', text: 'Button' },
+  { url: '/docs/essentials/button#variants', page: 'Button', text: 'Variants' },
+  { url: '/docs/essentials/button#sizes', page: 'Button', text: 'Sizes' },
+  { url: '/docs/essentials/button#icon-buttons', page: 'Button', text: 'Icon buttons' },
+  { url: '/docs/essentials/card', page: 'Card', text: 'Card' },
+  { url: '/docs/essentials/card#variants', page: 'Card', text: 'Variants' },
+  { url: '/docs/essentials/card#sizes', page: 'Card', text: 'Sizes' },
+  { url: '/docs/essentials/code-block', page: 'CodeBlock', text: 'CodeBlock' },
+  { url: '/docs/essentials/code-block#copy', page: 'CodeBlock', text: 'Copy' },
+  { url: '/docs/essentials/code-block#line-numbers', page: 'CodeBlock', text: 'Line numbers' },
+];
+
+/** The search of the docs: an input, and the results under it, grouped by page. */
+function DocsSearch(): ReactElement {
+  const [query, setQuery] = useState('');
+  const collection = useMemo(() => {
+    const words = query.trim().toLowerCase();
+    return createListCollection({
+      items: DOCS.filter((result) => `${result.page} ${result.text}`.toLowerCase().includes(words)),
+      itemToValue: (result) => result.url,
+      itemToString: (result) => result.text,
+      groupBy: (result) => result.page,
+    });
+  }, [query]);
+  return (
+    <Listbox.Root collection={collection} autoHighlight style={{ maxInlineSize: '24rem' }}>
+      <Listbox.Input
+        aria-label="Search the docs"
+        placeholder="Search the docs"
+        value={query}
+        onChange={(event) => {
+          setQuery(event.target.value);
+        }}
+      />
+      <Listbox.Content aria-label="Results" style={{ maxBlockSize: '14rem' }}>
+        {collection.groups.map((group) => (
+          <Listbox.ItemGroup key={group.key}>
+            <Listbox.ItemGroupLabel>{group.key}</Listbox.ItemGroupLabel>
+            {group.items.map((result) => (
+              <Listbox.Item key={result.url} item={result}>
+                <Listbox.ItemText>{result.text}</Listbox.ItemText>
+              </Listbox.Item>
+            ))}
+          </Listbox.ItemGroup>
+        ))}
+      </Listbox.Content>
+      <Listbox.Empty>No results</Listbox.Empty>
+    </Listbox.Root>
+  );
+}
+
+/** The text of the item that `input` points to as its active descendant, in `list`. */
+function activeText(input: Element, list: Element): string | null | undefined {
+  const id = input.getAttribute('aria-activedescendant');
+  return id === null ? null : list.querySelector(`[id="${CSS.escape(id)}"]`)?.textContent;
 }
 
 /** The element of a listbox part. */
@@ -140,6 +206,62 @@ describe('Listbox', () => {
       fontSize: computed('font-size', vars.text.label.fontSize),
       fontWeight: computed('font-weight', vars.text.label.fontWeight),
     });
+  });
+
+  it('marks the highlighted, selected and disabled items, the groups and a disabled listbox', async () => {
+    const screen = await render(
+      <>
+        <Sounds />
+        <Listbox.Root collection={sounds} defaultValue={['pad']} disabled>
+          <Listbox.Label>Sound (disabled)</Listbox.Label>
+          <Listbox.Content />
+        </Listbox.Root>
+      </>,
+    );
+    const sound = screen.getByRole('listbox', { name: 'Sound', exact: true });
+
+    await expect
+      .element(sound.getByRole('option', { name: 'Warm pad' }))
+      .toHaveAttribute('data-highlighted');
+    await expect
+      .element(sound.getByRole('option', { name: 'Kick' }))
+      .toHaveAttribute('aria-selected', 'true');
+    await expect
+      .element(sound.getByRole('option', { name: 'Bright lead' }))
+      .toHaveAttribute('data-disabled');
+    await expect
+      .element(sound.getByRole('group', { name: 'Drums' }))
+      .toHaveClass('contour-listbox__item-group');
+    await expect
+      .element(screen.getByRole('listbox', { name: 'Sound (disabled)' }))
+      .toHaveAttribute('aria-disabled', 'true');
+  });
+
+  it('moves the highlight from a search input, and scrolls the results within their height', async () => {
+    const screen = await render(<DocsSearch />);
+    const input = screen.getByRole('combobox', { name: 'Search the docs' });
+    const list = screen.getByRole('listbox', { name: 'Results' }).element();
+    const highlighted = () => activeText(input.element(), list);
+
+    await userEvent.click(input);
+    await expect.poll(highlighted).toBe('Alert');
+    await userEvent.keyboard('{ArrowUp}');
+    // Stays on the first result: no loop.
+    expect(highlighted()).toBe('Alert');
+    await userEvent.keyboard('{ArrowDown}'.repeat(11));
+    await expect.poll(highlighted).toBe('Line numbers');
+    // Scrolled to the end inside the list.
+    await expect.poll(() => list.scrollTop).toBeGreaterThan(0);
+    expect(list.scrollTop + list.clientHeight).toBeCloseTo(list.scrollHeight, 0);
+
+    await userEvent.type(input, 'size');
+    await expect.poll(highlighted).toBe('Sizes');
+    expect(screen.getByRole('option').elements()).toHaveLength(2);
+    expect(list.scrollTop).toBe(0);
+
+    // Every result again: the list scrolls.
+    await userEvent.clear(input);
+    await expect.poll(() => list.scrollHeight).toBeGreaterThan(list.clientHeight);
   });
 
   it('keeps the room of the indicator of an item that is not selected', async () => {

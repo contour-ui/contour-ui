@@ -90,6 +90,14 @@ describe('Tabs', () => {
     expect(outer[1]).toHaveAttribute('data-size', 'md');
   });
 
+  it('shows the panel of the trigger clicked', async () => {
+    const screen = await render(<Synth />);
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Filter' }));
+    await expect.element(screen.getByRole('tabpanel', { name: 'Filter' })).toBeVisible();
+    await expect.element(screen.getByText('Waveform')).not.toBeVisible();
+  });
+
   it('sizes the triggers with the control heights', async () => {
     await render(
       <>
@@ -118,7 +126,12 @@ describe('Tabs', () => {
     const withIndicator = at(triggers(), 2);
     expect(bar(plain)).toBe('block');
     await expect.poll(() => bar(withIndicator)).toBe('none');
-    const indicator = at([...document.querySelectorAll('.contour-tabs__indicator')], 0);
+    const indicator = at(
+      [...document.querySelectorAll<HTMLElement>('.contour-tabs__indicator')],
+      0,
+    );
+    // Measured and shown.
+    await expect.poll(() => indicator.hidden).toBe(false);
     expect(getComputedStyle(indicator).backgroundColor).toBe(
       computed('background-color', 'var(--ct-color-accent-fill)'),
     );

@@ -169,17 +169,20 @@ describe('Drawer', () => {
     ]);
 
     await screen.rerender(<Navigation defaultOpen placement="end" />);
+    expect(part('content')).toHaveAttribute('data-placement', 'end');
     box = restingContent().getBoundingClientRect();
     expect([box.right, box.top, box.width]).toStrictEqual([window.innerWidth, 0, 320]);
     const border = px(vars['border-width'].default);
     expect(borderWidths(part('content'))).toStrictEqual([border, '0px', '0px', '0px']);
 
     await screen.rerender(<Navigation defaultOpen placement="top" />);
+    expect(part('content')).toHaveAttribute('data-placement', 'top');
     box = restingContent().getBoundingClientRect();
     expect([box.left, box.top, box.width]).toStrictEqual([0, 0, window.innerWidth]);
     expect(box.height).toBeLessThan(window.innerHeight / 2);
 
     await screen.rerender(<Navigation defaultOpen placement="bottom" />);
+    expect(part('content')).toHaveAttribute('data-placement', 'bottom');
     box = restingContent().getBoundingClientRect();
     expect([box.left, box.bottom, box.width]).toStrictEqual([
       0,
@@ -205,6 +208,7 @@ describe('Drawer', () => {
   it('reaches in as far as its size, never further than the viewport', async () => {
     await page.viewport(1024, 768);
     const screen = await render(<Navigation defaultOpen size="md" />);
+    expect(part('content')).toHaveAttribute('data-size', 'md');
     expect(restingContent().getBoundingClientRect().width).toBe(448);
 
     await screen.rerender(<Navigation defaultOpen size="lg" />);
