@@ -149,15 +149,17 @@ Every published package maps its entry points to sources under the custom
   `@contour-ui/react/styles.css`.
 - A `.css` file in `libraryPack()`'s `entry` is bundled by `vp pack` into `dist/<name>.css`
   (Lightning CSS inlines its relative `@import`s and turns `layer()` into `@layer` blocks); files
-  passed as `css` (tokens) are copied verbatim, so their `@import`s stay external.
+  passed as `css` (tokens) are copied verbatim, so their `@import`s stay external, and so are
+  files passed as `copy` (the tokens' `docs.json`).
 
 ## Tokens
 
 `packages/tokens` holds DTCG 2025.10 sources (`contour.resolver.json` + `src/**/*.tokens.json`)
 built with **Style Dictionary** into `src/generated/tokens.css` (`--ct-*` custom properties),
 `src/generated/vars.ts` (typed `var(--ct-…)` references to semantic tokens) and
-`src/generated/docs.json` (every custom property with its value and alias per theme; the
-Storybook token tables read it, it is not published). The generated files are committed;
+`src/generated/docs.json` (every custom property with its value and alias per theme, published
+as `@contour-ui/tokens/docs.json`; the docs site's Tokens page and the Storybook token tables
+read it). The generated files are committed;
 `vp test` fails when they drift from the sources.
 
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
@@ -374,8 +376,11 @@ resolve to package sources like the rest of the app.
 boundary, `home.tsx`, `not-found.tsx`), `lib/source.ts`, the search index route
 (`routes/search.ts`), the Contour logo (`app/components/contour-logo.tsx`, the site's brand: the
 lockup, the mark alone below 30rem; its favicons are in `public/`), the parts of the home page
-(`app/components/home/`: the hero, the sequencer of the parts of contour-ui, the docs index), and
-its own CSS (`app/app.css`, unlayered, loaded after every package stylesheet).
+(`app/components/home/`: the hero, the sequencer of the parts of contour-ui, the docs index), the
+components of the Tokens page (`app/components/tokens/`: built from `@contour-ui/tokens/docs.json`
+as the page renders, each color group in a panel per theme with `data-theme`, the contrast of
+text roles computed from their `oklch()` values), and its own CSS (`app/app.css`, unlayered,
+loaded after every package stylesheet).
 
 - The home page is built from `@contour-ui/react` and the tokens only. A component that does not
   ship yet is the styled `Placeholder` in its clip of the sequencer; swap in the real one as it
