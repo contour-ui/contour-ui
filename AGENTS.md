@@ -136,7 +136,10 @@ Browser tests share a page with the files before them: the pointer stays where t
 Chrome gives `:hover` to whatever renders under it a frame or two later (a hovered label hovers its
 control too). A test that checks the resting look of an element with a `:hover` rule moves the
 pointer off first (`userEvent.unhover(element)`). `toHaveStyle` with camelCase keys reports
-"Expected styles could not be parsed" on a mismatch; kebab-case keys show the values.
+"Expected styles could not be parsed" on a mismatch; kebab-case keys show the values. A test
+that measures something as wide as its text loads `@contour-ui/tokens/fonts.css` and awaits
+`document.fonts.ready` first: the fallback fonts differ between machines, and CI's Linux draws
+text wider than macOS.
 
 ## Source export condition
 
