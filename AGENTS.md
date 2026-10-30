@@ -6,57 +6,62 @@ architecture. pnpm monorepo, single toolchain: **Vite+** (`vp`).
 ## Layers
 
 All published packages live under `@contour-ui/` in `packages/`. Dependencies
-point **down** the table only — never up, never sideways — with one exception:
-`audio → kit`.
+point **down** the table only — never up, never sideways.
 
-| Layer        | Package    | Purpose                                                                                                                        | May depend on (internal)             |
-| ------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
-| 0 foundation | `tokens`   | DTCG design tokens → CSS vars / TS (Style Dictionary)                                                                          | —                                    |
-| 0 foundation | `icons`    | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                        | —                                    |
-| 1 logic      | `core`     | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/` | —                                    |
-| 2 headless   | `headless` | unstyled React DOM components + hooks (Ark UI–like)                                                                            | `core`                               |
-| 3 kit        | `kit`      | styled general-purpose components                                                                                              | `headless`, `tokens`, `icons`        |
-| 3 kit        | `audio`    | styled audio components                                                                                                        | `headless`, `tokens`, `icons`, `kit` |
-| 4 docs       | `fumadocs` | documentation layout for fumadocs-core sites, built from Kit, in place of `fumadocs-ui`                                        | `kit`, `headless`, `tokens`, `icons` |
+| Layer        | Package          | Purpose                                                                                                                                | May depend on (internal)                     |
+| ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| 0 foundation | `tokens`         | DTCG design tokens → CSS vars / TS (Style Dictionary)                                                                                  | —                                            |
+| 0 foundation | `icons`          | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                | —                                            |
+| 1 logic      | `core`           | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`         | —                                            |
+| 2 headless   | `headless-react` | unstyled React DOM components + hooks (Ark UI–like)                                                                                    | `core`                                       |
+| 3 styled     | `react`          | styled React DOM components in two sections: **Essentials** (the everyday components) and **Audio** (the controls of audio-plugin UIs) | `headless-react`, `tokens`, `icons`          |
+| 4 docs       | `fumadocs`       | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui`                                            | `react`, `headless-react`, `tokens`, `icons` |
 
 Rules:
 
 - `core` has no React and no DOM (`lib` excludes `DOM`). The only exception is the
-  `@contour-ui/core/react` subpath (`src/react/`), with `react` as an **optional** peer. Its
-  tests run in Chromium and are the only core files type-checked with DOM types:
-  `packages/core/tsconfig.json` is solution-style and references `tsconfig.lib.json` (sources,
-  Node tests), `tsconfig.react-test.json` (browser tests) and `tsconfig.config.json` (`vite.config.ts`).
+  `@contour-ui/core/react` subpath (`src/react/`), with `react` as an **optional** peer. Its tests
+  run in Chromium and are the only core files type-checked with DOM types:
+  `packages/core/tsconfig.json` is solution-style and references `tsconfig.lib.json` (sources, Node
+  tests), `tsconfig.react-test.json` (browser tests) and `tsconfig.config.json` (`vite.config.ts`).
 - `core` also runs on Hermes (the Soundor runtime, built without `Intl`): no `Intl`, no
   locale-dependent methods (`toLocale*`, `localeCompare`), no `eval` / `new Function`, no
   `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`.
 - Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`,
   `collection/` and `positioning/`.
-- `headless` must not depend on `tokens`, `icons`, `kit`, `audio`. Peers: `react`, `react-dom`.
-- Kits (`kit`, `audio`) and `fumadocs` are styled with plain CSS + token CSS variables. **No Tailwind in packages.**
-  Use semantic roles only (`--ct-color-*`, `--ct-space-*`, `--ct-text-*`…), never `--ct-base-*`.
-- Kit CSS is one file per component (`src/<component>/<component>.css`) with plain rules, added to
-  `src/styles.css` as `@import './<component>/<component>.css' layer(contour.components);` (audio:
-  `layer(contour.audio)`; its entry declares `@layer contour.components, contour.audio;` so audio always
-  ranks above kit). Unlayered app CSS overrides both.
-- `react` / `react-dom` are never regular `dependencies`; in `headless`, the kits and `fumadocs` they are required
-  peers. `fumadocs` also takes `fumadocs-core` as a peer (`@types/mdx` as an optional one).
+- `headless-react` must not depend on `tokens`, `icons` or the styled package. Peers: `react`,
+  `react-dom`.
+- The styled package (`react`) and `fumadocs` are styled with plain CSS + token CSS variables. **No
+  Tailwind in packages.** Use semantic roles only (`--ct-color-*`, `--ct-space-*`, `--ct-text-*`…),
+  never `--ct-base-*`.
+- Styled CSS is one file per component (`src/<component>/<component>.css`) with plain rules, added
+  to `src/styles.css` as `@import './<component>/<component>.css' layer(contour.components);`.
+  Unlayered app CSS overrides it.
+- `react` / `react-dom` are never regular `dependencies`; in `headless-react`, the styled package
+  and `fumadocs` they are required peers. `fumadocs` also takes `fumadocs-core` as a peer
+  (`@types/mdx` as an optional one).
 
-**Enforcement.** The table lives as data in [`scripts/layers.ts`](scripts/layers.ts) — edit it there only.
+**Enforcement.** The table lives as data in [`scripts/layers.ts`](scripts/layers.ts) — edit it there
+only.
 
 - Lint: the root `vite.config.ts` generates oxlint `no-restricted-imports` overrides from it
-  (package imports, relative imports into sibling packages, React in core, `states/` ↔ `interactions/`, Tailwind).
-- `vp run boundaries` ([`scripts/check-boundaries.ts`](scripts/check-boundaries.ts)) checks what lint
-  cannot: declared dependencies in every `package.json` (even unused ones), React dependency kinds,
-  CSS `@import`s, `exports` ↔ `publishConfig.exports` sync, the Changesets `fixed` group, and a
-  copy of the root `LICENSE` (MIT) in every package, since npm packs each package's own file.
+  (package imports, relative imports into sibling packages, React in core, `states/` ↔
+  `interactions/`, Tailwind).
+- `vp run boundaries` ([`scripts/check-boundaries.ts`](scripts/check-boundaries.ts)) checks what
+  lint cannot: declared dependencies in every `package.json` (even unused ones), React dependency
+  kinds, CSS `@import`s, `exports` ↔ `publishConfig.exports` sync, the Changesets `fixed` group, and
+  a copy of the root `LICENSE` (MIT) in every package, since npm packs each package's own file.
 
 ### Naming
 
-`@contour-ui/{layer}[-{target}]`. The default target is React DOM, so `headless`,
-`kit`, `audio` are the React DOM packages. Reserved for the Soundor plugin UI
-runtime adapters (**do not create yet**): `headless-soundor`, `kit-soundor`, `audio-soundor`.
-An integration with another ecosystem is named after it, outside that scheme:
-`@contour-ui/fumadocs` is the docs layout for sites on fumadocs-core.
+`@contour-ui/[platform-][headless-]framework`. The web (React DOM) is the default platform:
+`@contour-ui/react` holds the styled components, `@contour-ui/headless-react` the unstyled ones.
+Another framework gets its pair (`vue`, `headless-vue`). The Soundor plugin UI runtime gets
+`@contour-ui/soundor` and `@contour-ui/soundor-headless` (**do not create yet**; no `-react` suffix
+while Soundor runs React only). Packages free of frameworks and platforms keep plain names
+(`tokens`, `icons`, `core`, whose machine hooks in `core/react` serve React DOM and Soundor alike),
+and an integration with another ecosystem is named after it: `@contour-ui/fumadocs` is the docs
+layout for sites on fumadocs-core.
 
 Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `configs/`
 (`@contour-ui/typescript-config`, `@contour-ui/vite-config`). Neither is ever published.
@@ -88,7 +93,7 @@ Run checks **one task at a time** (`vp check`, then `vp test`, then `vp run -r b
 narrow with `vp -C <dir>` or `--filter` for focused changes. First time on a machine:
 `vp exec playwright install chromium` for browser-mode tests.
 
-**Visual tests.** Every story of the `tokens`, `kit`, `audio` and `fumadocs` Storybooks is screenshotted in
+**Visual tests.** Every story of the `tokens`, `react` and `fumadocs` Storybooks is screenshotted in
 each theme (Playwright, `apps/storybook/visual/`, screenshots in `visual/__snapshots__/`), at
 1280×720; a story tagged `phone` at 390×844 (write `tags: ['phone']` and
 `globals: { viewport: { value: 'phone' } }` in the story's own literal: the indexer reads tags
@@ -133,14 +138,15 @@ Every published package maps its entry points to sources under the custom
 ```
 
 - TypeScript picks it up via `customConditions` (`configs/typescript/base.json`).
-- Vite (apps, Storybook, tests) via the `contourSource()` plugin from `@contour-ui/vite-config`.
-  So the playground, Storybook, docs and tests consume **sources** with HMR, without building packages first.
+- Vite (apps, Storybook, tests) via the `contourSource()` plugin from `@contour-ui/vite-config`. So
+  the playground, Storybook, docs and tests consume **sources** with HMR, without building packages
+  first.
 - pnpm swaps in `publishConfig.exports` on pack/publish, so published consumers never see the
   condition (and `types` comes first there). `vp run boundaries` keeps both maps in sync.
-- CSS entry points (`tokens.css`, `styles.css`) are separate exports. Vite's CSS `@import`
-  resolver ignores custom conditions, so package CSS does not `@import` other workspace packages: apps
-  load `@contour-ui/tokens/tokens.css` and `@contour-ui/tokens/fonts.css`, then
-  `@contour-ui/react/styles.css`, then `@contour-ui/audio/styles.css`.
+- CSS entry points (`tokens.css`, `styles.css`) are separate exports. Vite's CSS `@import` resolver
+  ignores custom conditions, so package CSS does not `@import` other workspace packages: apps load
+  `@contour-ui/tokens/tokens.css` and `@contour-ui/tokens/fonts.css`, then
+  `@contour-ui/react/styles.css`.
 - A `.css` file in `libraryPack()`'s `entry` is bundled by `vp pack` into `dist/<name>.css`
   (Lightning CSS inlines its relative `@import`s and turns `layer()` into `@layer` blocks); files
   passed as `css` (tokens) are copied verbatim, so their `@import`s stay external.
@@ -155,7 +161,8 @@ Storybook token tables read it, it is not published). The generated files are co
 `vp test` fails when they drift from the sources.
 
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
-- `@contour-ui/tokens/fonts.css` ships the font faces (IBM Plex Sans, JetBrains Mono; Fontsource, OFL).
+- `@contour-ui/tokens/fonts.css` ships the font faces (IBM Plex Sans, JetBrains Mono; Fontsource,
+  OFL).
 - After editing token JSON: `vp run --filter @contour-ui/tokens tokens` (or `dev` to watch).
 - The palette and the color roles are generated: edit `scripts/palette.ts` /
   `scripts/semantic-colors.ts`, then `vp run --filter @contour-ui/tokens generate`.
@@ -168,7 +175,7 @@ Storybook token tables read it, it is not published). The generated files are co
   label (`text.label-lg`), side padding (`space.control-inset-lg`) and icon gap
   (`space.control-gap-lg`), where `sm` and `md` share `text.label`, `space.control-inset` and
   `space.control-gap`. Overlays take component roles on the `base.size` scale:
-  `size.dialog-sm|md|lg`, `size.drawer-sm|md|lg` and `size.popover`. Kit CSS has no px literals:
+  `size.dialog-sm|md|lg`, `size.drawer-sm|md|lg` and `size.popover`. Styled CSS has no px literals:
   a new size is a token first.
 - Text styles come in three sets: dense plugin UI (`heading`, `body`, `label`, `label-lg`,
   `value`, `caption`), docs pages (`display`, `title`, `subtitle`, `prose`, `code`) and site pages
@@ -177,7 +184,8 @@ Storybook token tables read it, it is not published). The generated files are co
   (`base.font-size.*`, `base.line-height.*`, `base.letter-spacing.*`). `letter-spacing` is not part
   of the `font` shorthand: set `--ct-text-<style>-letter-spacing` beside it.
 - Every token stays expressible in Soundor (`packages/tokens/src/soundor.test.ts`): colors inside
-  sRGB, lengths in px, a named easing for every `cubicBezier`, no `calc()` / `color-mix()` in values.
+  sRGB, lengths in px, a named easing for every `cubicBezier`, no `calc()` / `color-mix()` in
+  values.
 
 See [`packages/tokens/README.md`](packages/tokens/README.md).
 
@@ -186,7 +194,7 @@ See [`packages/tokens/README.md`](packages/tokens/README.md).
 `packages/icons` compiles [Lucide](https://lucide.dev) icons (`lucide-static`) and brand logos from
 Simple Icons into `src/generated/icons.ts` (committed): paths with only absolute `M`, `L`, `C`,
 `Q`, `Z`, as `d` strings for SVG and numeric `commands` for Canvas 2D, one `<camelName>Icon` export
-each, plus `drawIcon` (a structural canvas context, no `Path2D`). No React here: kit's `Icon`
+each, plus `drawIcon` (a structural canvas context, no `Path2D`). No React here: the styled `Icon`
 renders the data as `<svg>` (`1em`, `currentColor`); components that hold icons size them in their
 CSS with `--ct-size-icon-*`.
 
@@ -200,35 +208,35 @@ CSS with `--ct-size-icon-*`.
 The guide's "Anatomy of a component" (`apps/docs/content/docs/guide/index.mdx`) is the public
 version of these rules.
 
-- **Where a component lives.** Behavior lives in `core` (state machines) and `headless` (DOM
-  parts with ARIA and keyboard handling); styles live in the kits. A component without behavior
-  (button, card, alert, kbd…) exists only in `kit` / `audio`.
+- **Where a component lives.** Behavior lives in `core` (state machines) and `headless-react` (DOM
+  parts with ARIA and keyboard handling); styles live in the styled package, `react`. A component
+  without behavior (button, card, alert, kbd…) exists only there.
 - **Exports.** A single-element component is a plain component (`Button`, `Kbd`). A multi-part
   component is a namespace of parts: `export * as Card from './card/index.ts'` gives `Card.Root`,
   `Card.Title`.
-- **Parts.** Each part renders one element through `Primitive.<element>` from `headless`, so it
-  supports `asChild`, and passes its element's props through. A part combines its own props with
+- **Parts.** Each part renders one element through `Primitive.<element>` from `headless-react`, so
+  it supports `asChild`, and passes its element's props through. A part combines its own props with
   the user's as `mergeProps(ownProps, props)` and refs with `useComposedRefs`. Every part, in
-  headless and in the kits, carries `data-scope` (component) and `data-part` (part; `root` for a
-  single-element component), and its state as `data-state` and the like. `Icon` is the exception
-  to `Primitive`: it renders its `<svg>` directly. Parts that point at each other by id
+  headless and styled, carries `data-scope` (component) and `data-part` (part; `root` for a
+  single-element component), and its state as `data-state` and the like. `Icon` is the exception to
+  `Primitive`: it renders its `<svg>` directly. Parts that point at each other by id
   (`aria-labelledby`, `aria-controls`) register through a stable ref callback that reads the
   element's `id`, so an `id` given to a part is followed.
 - **Behavior.** A machine names what it needs from its environment (platform actions and effects);
-  the `headless` hook implements them for the DOM. DOM-only options (part elements,
+  the `headless-react` hook implements them for the DOM. DOM-only options (part elements,
   `initialFocusEl`, `scrollEl`…) never enter the machine's schema: the hook creates its platform
   once per instance (`useState`) and hands it the latest options with `setOptions` in
   `useInsertionEffect`, since the React Compiler lint `react(refs)` rejects a ref passed to a
-  factory during render (see `headless/src/dialog/use-dialog.ts`). `watch` compares props by
+  factory during render (see `headless-react/src/dialog/use-dialog.ts`). `watch` compares props by
   identity: a hook passes arrays that owners rebuild on every render through a value comparison
   first.
-- **Platform modules.** `packages/headless-react/src/platform/` holds the DOM side of what machines ask
-  for: the clock, positioning (`trackPosition`), the overlay layer stack (`trackLayer`: Escape and
-  presses outside reach the top layer only; nested layers close with their parent), the focus
+- **Platform modules.** `packages/headless-react/src/platform/` holds the DOM side of what machines
+  ask for: the clock, positioning (`trackPosition`), the overlay layer stack (`trackLayer`: Escape
+  and presses outside reach the top layer only; nested layers close with their parent), the focus
   trap and focus moves, scroll lock, `inert` outside a modal layer, scrolling inside a container,
-  tabbable elements, the indicator of a selected element. They are internal, not exported, and
-  each waits for its element itself: effects start as the machine enters a state, often before
-  React has rendered it.
+  tabbable elements, the indicator of a selected element. They are internal, not exported, and each
+  waits for its element itself: effects start as the machine enters a state, often before React has
+  rendered it.
   - `trackIndicator` (`indicator.ts`, for Tabs and SegmentGroup) writes `--left`, `--top`,
     `--width` and `--height` (px, relative to the padding box of the indicator's parent, in its
     scrolled content) and owns the indicator's `hidden`: a part renders `hidden` and never these
@@ -237,7 +245,7 @@ version of these rules.
     it and still animates out, as inside it. An overlay that has its size as it renders reveals its
     initial focus inside its own scroll container (`moveFocusIn(…, { reveal: true })`, Dialog); a
     popover does it after its first position. The page never scrolls.
-- **React Server Components.** Kit, headless and fumadocs build with
+- **React Server Components.** `react`, `headless-react` and `fumadocs` build with
   `libraryPack({ unbundle: true })`, one file per module, so each module keeps its `'use client'`
   (a bundle drops directives). A module starts with `'use client'` when it imports from `react`
   what its server build lacks (state and effect hooks, `createContext`, `use`) or anything from
@@ -250,20 +258,20 @@ version of these rules.
   `describeClientBoundary()` (`@contour-ui/vite-config/client-boundary`) fails on missing and on
   needless directives, in each package's `<package>:node` Vitest project. `core` carries none:
   `core/react` holds hooks only, which run in client modules.
-- **Overlays.** Users compose `Portal` around the positioner, as in Ark (Kit re-exports it). One
-  `usePresence` in Root drives Positioner and Content, its ref on the animated Content; Backdrop
-  has its own. The layer stack writes `--layer-index` inline on the content, the positioner and
-  the backdrop, so parts never render it in `style`; kits stack them with
-  `z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0))`. The x of Kit's Dialog and
-  Drawer (`CloseTrigger`) is a `CloseButton` of size `md`: the 24px target of WCAG 2.2 (2.5.8).
+- **Overlays.** Users compose `Portal` around the positioner, as in Ark (the styled package
+  re-exports it). One `usePresence` in Root drives Positioner and Content, its ref on the animated
+  Content; Backdrop has its own. The layer stack writes `--layer-index` inline on the content, the
+  positioner and the backdrop, so parts never render it in `style`; the styled package stacks them
+  with `z-index: calc(var(--ct-layer-overlay) + var(--layer-index, 0))`. The x of the styled Dialog
+  and Drawer (`CloseTrigger`) is a `CloseButton` of size `md`: the 24px target of WCAG 2.2 (2.5.8).
 - **A field over a list** (`Listbox.Input`) is a combobox: `role="combobox"`, `aria-expanded`,
   `aria-controls` and `aria-activedescendant` on the field. Screen readers announce its options,
   and axe does not ask the list, which scrolls while the field keeps the focus, to take focus.
 - **A button that keeps its name** (an `aria-label` that stays while its state changes, as copy
   buttons do) keeps its visible text too: a state swaps an icon, not the text. axe's
   `label-content-name-mismatch` (WCAG 2.5.3) reads the text on screen, `aria-hidden` included, so
-  Kit Clipboard's trigger stays "Copy" while its icon turns into a check mark.
-- **Kit styles.** Classes `contour-<component>` on the root or the single element and
+  the styled Clipboard's trigger stays "Copy" while its icon turns into a check mark.
+- **Styles.** Classes `contour-<component>` on the root or the single element and
   `contour-<component>__<part>` on the other parts, joined with the user's `className` by `cx`
   (`packages/react/src/utils/cx.ts`). Variants and sizes are attributes, `data-variant` and
   `data-size`, always rendered with the resolved value (defaults included), so selectors read
@@ -273,7 +281,7 @@ version of these rules.
   margin (unless its element has a default one, as `<button>` may), so its container spaces it,
   even from a lower cascade layer, as the docs site's Prose does. Text takes `fg-default` or
   `fg-muted` (`fg-subtle` is 3:1, below what axe asks of text).
-- **Kit motion.** An overlay's closed state runs `@keyframes` of its own: Presence waits for it,
+- **Motion.** An overlay's closed state runs `@keyframes` of its own: Presence waits for it,
   and a reversed open animation keeps its name and does not run again. A part that sets `display`
   restores `[hidden] { display: none }`. Under `prefers-reduced-motion: reduce`, CSS drops
   movement (translate, scale, slides) and keeps opacity and color changes. Content that animates
@@ -284,12 +292,13 @@ version of these rules.
 ## Docs
 
 The docs site (`apps/docs`) documents what ships: a **Guide** (how the packages fit together,
-installation, themes, styling with tokens) and one section per shipped package — **Kit**,
-**Audio**, **Headless**, **Fumadocs** — as root folders under `content/docs/`. It runs on React
+installation, themes, styling with tokens) and a section per part — **Essentials** and **Audio**
+(the two sections of `@contour-ui/react`), **Headless**, **Fumadocs** — as root folders under
+`content/docs/` (`essentials/`, `audio/`, `headless/`, `fumadocs/`). It runs on React
 Router (prerendered) with `fumadocs-core` (page tree, search index, neighbours, TOC data) and
 `fumadocs-mdx` (content); its layout is the package `@contour-ui/fumadocs` (`packages/fumadocs/`),
 of which it is the first consumer. When a component lands, add
-`content/docs/<package>/<component>.mdx` (live example in `<Preview>`, anatomy, props, tokens) and
+`content/docs/<section>/<component>.mdx` (live example in `<Preview>`, anatomy, props, tokens) and
 list it in that section's `meta.json` and on the section's index page. Live examples import the
 component at the top of the page (`import { Button } from '@contour-ui/react';`); MDX imports
 resolve to package sources like the rest of the app.
@@ -303,55 +312,55 @@ resolve to package sources like the rest of the app.
   adapter. Links, the pathname and navigation come only from `fumadocs-core/framework`: the
   package never imports `react-router`. The layout root sets `--contour-docs-header-height` and
   `--contour-docs-toc-bar-height` (`0px` where a bar is gone): headings keep their sum free with
-  `scroll-margin-block-start`, and the TOC (`src/toc/`, Kit's `Toc`) observes the area below.
+  `scroll-margin-block-start`, and the TOC (`src/toc/`, the styled `Toc`) observes the area below.
   Classes are `contour-docs-<part>`, variables `--contour-docs-*`. Folders of the page tree open
-  and close on Kit's Collapsible (`page-tree-folder.tsx`: the name links to the index page, a
+  and close on the styled Collapsible (`page-tree-folder.tsx`: the name links to the index page, a
   button after it toggles; open with `defaultOpen` or while they hold the page);
   `"collapsible": false` keeps the static list. `ThemeToggle` takes `mode` (`light-dark`, a
-  button, by default; `light-dark-system`, Kit's SegmentGroup), by default the `themeToggle` of
+  button, by default; `light-dark-system`, the styled SegmentGroup), by default the `themeToggle` of
   `DocsProvider`.
 - **HomeLayout** (`src/layout/home-layout.*`, the `site` header): its root sets
   `--contour-docs-home-width` (80rem), `--contour-docs-page-inset` and
   `--contour-docs-header-height` (3rem on phones, as the docs header there; 4.5rem from 48rem). The
-  header has no divider and centers its content in that column with
-  `padding-inline: max(inset, (100% - width) / 2)`; a column of a page lines up with
-  `box-sizing: border-box`, `margin-inline: auto`, the inset as padding and
-  `max-inline-size: calc(width + 2 * inset)`. Its links are the navigation "Main", Kit's neutral
-  links in `text.nav` set to `fg-default` and underlined on hover; out of room, they scroll in
-  their own box. `search={false}` drops only the search triggers: the shortcut stays.
-- **Before hydration.** `docsScript()` (Kit's `themeScript()` from `@contour-ui/react/theme-script`,
+  header has no divider and centers its content in that column with `padding-inline: max(inset,
+  (100% - width) / 2)`; a column of a page lines up with `box-sizing: border-box`, `margin-inline:
+  auto`, the inset as padding and `max-inline-size: calc(width + 2 * inset)`. Its links are the
+  navigation "Main", the styled neutral links in `text.nav` set to `fg-default` and underlined on
+  hover; out of room, they scroll in their own box. `search={false}` drops only the search triggers:
+  the shortcut stays.
+- **Before hydration.** `docsScript()` (`themeScript()` from `@contour-ui/react/theme-script`,
   plus the sidebar) sets `data-theme` (key `contour-theme`) and
   `data-contour-docs-sidebar="collapsed"` (key `contour-docs-sidebar`) on `<html>` before the
   first paint. Components render both states and CSS shows one, as the theme toggle and the
   shortcut of the search button do. The three-way theme picker cannot (`data-theme` does not tell
   `system` from the theme it resolves to): it checks no item until the page has hydrated.
-- **Search** (`src/search/`): Kit's Dialog with a Kit Listbox whose Input is the field, on
+- **Search** (`src/search/`): the styled Dialog with a styled Listbox whose Input is the field, on
   fumadocs-core's static index (`search.from`, `/api/search` by default). A result opens with
   `useRouter().push`; one at the current address only scrolls.
 - **MDX** (`@contour-ui/fumadocs/mdx`, `src/mdx/`): `getMdxComponents(overrides?)` draws headings
   as links to themselves; links (a page of the site through the framework's `Link`, a `#fragment`
-  as is, another site in a new tab); tables and code blocks with Kit's `Table` and `CodeBlock`;
+  as is, another site in a new tab); tables and code blocks with the styled `Table` and `CodeBlock`;
   `<Callout>`, `<Card>` and `<Cards>` (Fumadocs props) with `Alert` and `Card` (a card's title is
   no heading); and registers `Kbd` and `<Preview>`. Images stay plain `img`.
 - **Tabs** (`src/mdx/tabs/`): the map holds Fumadocs' `Tabs` and `Tab` (and `TabsList`,
   `TabsTrigger`, `TabsContent`) and the `CodeBlockTabs*` that `remarkCodeTab` and `remarkNpm`
-  write, on Kit's `line` Tabs, controlled by `useDocsTabs`. A `groupId` group lives in a module
+  write, on the styled `line` Tabs, controlled by `useDocsTabs`. A `groupId` group lives in a module
   registry (`tab-groups.ts`) and is stored under its id in `sessionStorage` (and `localStorage`
   with `persist`), as in fumadocs-ui; the address opens the tab whose panel is or holds `#id`;
   `updateAnchor` writes with `replaceState(history.state, …)`. Values are the items as written.
-- **Styles.** `@contour-ui/fumadocs/styles.css` loads before Kit's: it starts with the layer order
-  `contour.fumadocs-base, contour.fumadocs-prose, contour.components, contour.audio, contour.fumadocs`.
-  The page base (no reset, so Kit renders as in Storybook) and Prose rank below the components, so
-  components inside the content keep their styles; the layout and the docs components rank above
-  the Kit parts they adjust. Prose relies on no reset either (it sets the margins, list markers and
-  fonts of what it styles); `contour-docs-not-prose` opts a subtree out, and `<Preview>` uses it.
-- **React Server Components** (the rule is under Components). `docsScript()`,
-  `getMdxComponents()`, `Prose`, `Preview`, `HomeLayout` and the entry barrels stay server
-  modules: they read Kit's parts from its namespaces and take the package's own client components
-  by name (on a server, an object exported by a client module is a client reference, and
-  spreading it yields nothing). The public layouts take serializable props only.
-  `src/client-boundary.test.ts` (`fumadocs:node`) runs the shared check with those server modules,
-  and checks that no module imports `react-router`.
+- **Styles.** `@contour-ui/fumadocs/styles.css` loads before `@contour-ui/react/styles.css`: it
+  starts with the layer order `contour.fumadocs-base, contour.fumadocs-prose, contour.components,
+  contour.fumadocs`. The page base (no reset, so the components render as in Storybook) and Prose
+  rank below the components, so components inside the content keep their styles; the layout and the
+  docs components rank above the styled parts they adjust. Prose relies on no reset either (it sets
+  the margins, list markers and fonts of what it styles); `contour-docs-not-prose` opts a subtree
+  out, and `<Preview>` uses it.
+- **React Server Components** (the rule is under Components). `docsScript()`, `getMdxComponents()`,
+  `Prose`, `Preview`, `HomeLayout` and the entry barrels stay server modules: they read the styled
+  parts from their namespaces and take the package's own client components by name (on a server, an
+  object exported by a client module is a client reference, and spreading it yields nothing). The
+  public layouts take serializable props only. `src/client-boundary.test.ts` (`fumadocs:node`) runs
+  the shared check with those server modules, and checks that no module imports `react-router`.
 - **Tests and stories** render the package as a docs site from `src/test-utils/`:
   `MemoryFramework` (fumadocs-core's `FrameworkProvider` with an in-memory pathname; `push`
   changes it in a transition, as routers do; `Link` is a plain `<a data-framework-link>`),
@@ -363,14 +372,14 @@ resolve to package sources like the rest of the app.
 
 **The site** (`apps/docs`) keeps its routes (`docs.tsx` with its loader, `clientLoader` and error
 boundary, `home.tsx`, `not-found.tsx`), `lib/source.ts`, the search index route
-(`routes/search.ts`), `app/components/mdx-placeholders.ts` (passed to `getMdxComponents()`), the
-Contour logo (`app/components/contour-logo.tsx`, the site's brand: the lockup, the mark alone below
-30rem; its favicons are in `public/`), the parts of the home page (`app/components/home/`: the
-hero, the sequencer of the parts of contour-ui, the docs index), and its own CSS (`app/app.css`,
-unlayered, loaded after every package stylesheet).
+(`routes/search.ts`), the Contour logo (`app/components/contour-logo.tsx`, the site's brand: the
+lockup, the mark alone below 30rem; its favicons are in `public/`), the parts of the home page
+(`app/components/home/`: the hero, the sequencer of the parts of contour-ui, the docs index), and
+its own CSS (`app/app.css`, unlayered, loaded after every package stylesheet).
 
-- The home page is built from Kit and the tokens only. A component that does not ship yet is Kit's
-  `Placeholder` in its clip of the sequencer; swap in the real one as it lands.
+- The home page is built from `@contour-ui/react` and the tokens only. A component that does not
+  ship yet is the styled `Placeholder` in its clip of the sequencer; swap in the real one as it
+  lands.
 
 - Code is highlighted at build time with Shiki's css-variables theme (`rehypeCodeOptions` in
   `vite.config.ts`); `CodeBlock` maps its variables to the syntax tokens. A lowercase JSX tag in
@@ -405,18 +414,19 @@ unlayered, loaded after every package stylesheet).
    `libraryPack({ unbundle: true })` and call `describeClientBoundary()` in
    `src/client-boundary.test.ts`, run by a `<package>:node` Vitest project (environment `node`,
    excluded from the browser project).
-4. New external dependencies go into the `catalog` in `pnpm-workspace.yaml` first (`catalogMode: strict`).
+4. New external dependencies go into the `catalog` in `pnpm-workspace.yaml` first (`catalogMode:
+   strict`).
 5. `vp install && vp check && vp run boundaries && vp test && vp run -r build`.
 
 ## Git
 
 - Code, comments, docs and commit messages are written in English.
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
-  `type(scope): subject`, imperative, starting lowercase, no trailing period, header within
-  72 characters, body separated by a blank line. Types: `feat`, `fix`, `docs`, `test`,
-  `refactor`, `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`,
-  `icons`, `core`, `headless`, `kit`, `audio`) or `docs`, `storybook`, `playground`, `config`,
-  `repo`; no scope when a change spans several packages.
+  `type(scope): subject`, imperative, starting lowercase, no trailing period, header within 72
+  characters, body separated by a blank line. Types: `feat`, `fix`, `docs`, `test`, `refactor`,
+  `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`, `icons`, `core`,
+  `headless-react`, `react`, `fumadocs`) or `docs`, `storybook`, `playground`, `config`, `repo`; no
+  scope when a change spans several packages.
 - Hooks live in `.vite-hooks/` (installed by `vp config` on `vp install`): `pre-commit` runs
   `vp staged` (`vp check --fix` on staged files), `commit-msg` runs
   [`scripts/check-commit-msg.ts`](scripts/check-commit-msg.ts).
