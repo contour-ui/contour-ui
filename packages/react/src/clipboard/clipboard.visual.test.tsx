@@ -24,8 +24,8 @@ beforeEach(() => {
 });
 
 /**
- * Copies as the story's play did, from the keyboard: its click focused the trigger with a ring.
- * Resolves once the trigger shows the copy.
+ * Copies from the keyboard rather than with a click: the trigger shows its focus ring, and the
+ * pointer hovers nothing. Resolves once the trigger shows the copy.
  */
 async function copy(): Promise<void> {
   await userEvent.tab();

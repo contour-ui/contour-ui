@@ -27,7 +27,7 @@ function Field({ label, value }: { readonly label: string; readonly value: strin
   );
 }
 
-/** The dialog of the Default story, open from the start over the page. */
+/** The dialog of the default state, open from the start over the page. */
 function ExportDialog(): ReactElement {
   return (
     <Dialog.Root defaultOpen>
@@ -149,9 +149,8 @@ visualStates({
       </Dialog.Root>
     ),
     target: 'page',
-    // As the story's play: once the dialog has focused the safe answer, a press on the backdrop,
-    // which leaves it open and takes the focus off the answer. Pressed at its corner: its middle
-    // is under the dialog.
+    // Once the dialog has focused the safe answer, a press on the backdrop, which leaves it open
+    // and takes the focus off the answer. Pressed at its corner: its middle is under the dialog.
     ready: async () => {
       const keep = page.getByRole('button', { name: 'Keep it' });
       await vi.waitFor(() => {

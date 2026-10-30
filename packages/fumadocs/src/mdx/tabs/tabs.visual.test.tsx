@@ -91,8 +91,8 @@ function Parts(): ReactElement {
   );
 }
 
-// Tabs of MDX content, with the props of Fumadocs' `Tabs`. The stories went back to the first tab
-// for the screenshot: each state shows it as it renders.
+// Tabs of MDX content, with the props of Fumadocs' `Tabs`. Each state shows the tabs as they
+// render, the first one selected: `tabs.test.tsx` selects the others.
 visualStates({
   items: {
     render: () => (

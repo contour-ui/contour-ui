@@ -244,7 +244,7 @@ describe('Portal', () => {
 describe('Portal accessibility', () => {
   it.for([
     {
-      story: 'Default',
+      name: 'Default',
       example: (
         <Portal>
           <p>Rendered at the end of the body</p>
@@ -252,9 +252,9 @@ describe('Portal accessibility', () => {
       ),
       text: 'Rendered at the end of the body',
     },
-    { story: 'Container', example: <LayerExample />, text: 'Rendered in the layer' },
+    { name: 'Container', example: <LayerExample />, text: 'Rendered in the layer' },
     {
-      story: 'Disabled',
+      name: 'Disabled',
       example: (
         <Portal disabled>
           <p>Rendered in place</p>
@@ -262,7 +262,7 @@ describe('Portal accessibility', () => {
       ),
       text: 'Rendered in place',
     },
-  ])('has no axe violations: $story', async ({ example, text }) => {
+  ])('has no axe violations: $name', async ({ example, text }) => {
     const screen = await render(example);
 
     await expect.element(screen.getByText(text)).toBeInTheDocument();

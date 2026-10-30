@@ -112,8 +112,8 @@ visualStates({
   },
   'as-child': {
     render: () => <AsChild />,
-    // The story's play clicked the disabled link, which took the focus and its ring: focused from
-    // the keyboard here, the click doing nothing else.
+    // The disabled link with the focus and its ring, focused from the keyboard rather than
+    // clicked: a click does nothing more, and the pointer hovers nothing.
     ready: () => userEvent.tab(),
     focused: () => page.getByRole('link', { name: 'Previous' }),
   },

@@ -36,8 +36,8 @@ beforeEach(() => {
 });
 
 /**
- * Copies as the story's play did, from the keyboard: its click focused the copy button with a
- * ring. Resolves once the button shows the copy.
+ * Copies from the keyboard rather than with a click: the copy button shows its focus ring, and
+ * the pointer hovers nothing. Resolves once the button shows the copy.
  */
 async function copy(): Promise<void> {
   await userEvent.tab();
@@ -79,7 +79,7 @@ function Example({ title, children }: ExampleProps): ReactElement {
   );
 }
 
-/** Story layout: two columns, as wide as a docs page column each. */
+/** Two columns, as wide as a docs page column each. */
 function Columns({ children }: { readonly children: ReactNode }): ReactElement {
   return (
     <div
@@ -167,8 +167,8 @@ visualStates({
       </Columns>
     ),
   },
-  // A line longer than the block scrolls inside the content, focused with Tab as in the story:
-  // the focus ring shows.
+  // A line longer than the block scrolls inside the content, focused with Tab, so it shows the
+  // focus ring.
   'long-line': {
     render: () => (
       <div style={{ maxInlineSize: '24rem' }}>

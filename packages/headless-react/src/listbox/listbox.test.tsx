@@ -75,7 +75,7 @@ function PresetSearch({ focusOnMount = false, onSubmit, ...rootProps }: SearchPr
       <Listbox.Root {...rootProps} collection={collection}>
         <Listbox.Label>Preset</Listbox.Label>
         <Listbox.Input
-          // oxlint-disable-next-line jsx-a11y/no-autofocus -- the story of a search dialog.
+          // oxlint-disable-next-line jsx-a11y/no-autofocus -- a search dialog focuses its field.
           autoFocus={focusOnMount}
           value={query}
           onChange={(event) => {

@@ -39,7 +39,7 @@ const sounds = createListCollection<Sound>({
 
 const none = createListCollection<Option>({ items: [] });
 
-/** Story layout: columns of the width of a sidebar or a small dialog. */
+/** Columns of the width of a sidebar or a small dialog. */
 const columns: CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fill, minmax(12rem, 1fr))',
@@ -171,12 +171,12 @@ visualStates({
       </div>
     ),
   },
-  // The search box of the docs, after the keys of the story: up and down the results, a query,
-  // then every result again, the first one highlighted.
+  // The search box of the docs, after a few keys: up and down the results, a query, then every
+  // result again, the first one highlighted.
   search: {
     render: () => <DocsSearch />,
     ready: async () => {
-      // Focused where the story clicked the field: the pointer stays off the list, whose highlight
+      // Focus the field rather than click it: the pointer stays off the list, whose highlight
       // follows it.
       searchField().element().focus();
       await userEvent.keyboard('{ArrowUp}');

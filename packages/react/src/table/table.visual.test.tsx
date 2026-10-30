@@ -133,8 +133,8 @@ visualStates({
       </div>
     ),
   },
-  // A table wider than its column scrolls inside `Table.ScrollArea`, focused with Tab as in the
-  // story, so it shows the focus ring.
+  // A table wider than its column scrolls inside `Table.ScrollArea`, focused with Tab, so it
+  // shows the focus ring.
   'scroll-area': {
     render: () => <Mixer />,
     ready: async () => {

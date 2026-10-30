@@ -33,7 +33,7 @@ export interface VisualContext {
 /** One state of a component, screenshotted in every theme. */
 export interface VisualState {
   readonly render: (context: VisualContext) => ReactElement;
-  /** Passed to `wrap` with the theme, as parameters were to the decorators of a story. */
+  /** Passed to `wrap` with the theme, such as the pathname of the page a state shows. */
   readonly params?: Readonly<Record<string, unknown>>;
   /**
    * What the screenshot shows: the canvas (the default), or the whole page, for overlays, which

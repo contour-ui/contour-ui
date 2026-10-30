@@ -11,8 +11,8 @@ function InContent({ children }: { readonly children: ReactNode }): ReactElement
 
 // Code block tabs, as Fumadocs' remark plugins write them into a page: one frame with the look of
 // a code block, the triggers where its header would be, and the code of the selected tab below,
-// with its copy button at the end of the row of triggers. The stories went back to the first tab
-// for the screenshot: each state shows it as it renders.
+// with its copy button at the end of the row of triggers. Each state shows the tabs as they
+// render, the first one selected: `code-block-tabs.test.tsx` selects the others.
 visualStates({
   // A ` ```package-install ` block (or ` ```npm `): the command of each package manager, as
   // `remarkNpm` makes it, npm first.

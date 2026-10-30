@@ -54,8 +54,8 @@ afterEach(() => {
 
 visualStates({
   start: {
-    // Open from the start rather than with a click on Menu, as the story does: focus that moves in
-    // after a click shows no ring, and the story's screenshot has one.
+    // Open from the start rather than with a click on Menu: focus that moves in after a click
+    // shows no ring, and the state shows the x with one.
     render: () => <Navigation defaultOpen />,
     target: 'page',
     focused: close,

@@ -12,7 +12,7 @@ const components = getMdxComponents();
  */
 export function mdx<T extends keyof JSX.IntrinsicElements>(tag: T): ElementType<ComponentProps<T>> {
   // MDX gives the component of an element the props of that element; the type of the map allows
-  // any element in its place, which a story never renders.
+  // any element in its place, which a test never renders.
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion
   return (components[tag] ?? tag) as ElementType<ComponentProps<T>>;
 }

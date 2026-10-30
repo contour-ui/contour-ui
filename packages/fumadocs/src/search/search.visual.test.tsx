@@ -15,7 +15,7 @@ const dialog = page.getByRole('dialog', { name: 'Search' });
 const field = dialog.getByRole('combobox', { name: 'Search the docs' });
 
 /**
- * Open the dialog from the keyboard, where the stories clicked the trigger, so that the pointer
+ * Open the dialog from the keyboard rather than with a click on the trigger, so that the pointer
  * hovers nothing; wait for the focus to move into its field, then search for `query`, all at once:
  * the results on screen are those of the whole query.
  */

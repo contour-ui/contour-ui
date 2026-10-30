@@ -152,14 +152,15 @@ visualStates({
       </Narrow>
     ),
   },
-  // The message once saved: the story's play pressed the button, which kept the focus.
+  // The message once saved: a press on the button, which keeps the focus.
   'status-message': {
     render: () => (
       <Narrow>
         <SavePreset />
       </Narrow>
     ),
-    // The press of the play, from the keyboard: its click focused the button with a ring.
+    // Press the button from the keyboard rather than click it: its focus ring shows, and the
+    // pointer hovers nothing.
     ready: async () => {
       await userEvent.tab();
       await userEvent.keyboard('{Enter}');

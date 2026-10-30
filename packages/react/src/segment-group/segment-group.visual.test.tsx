@@ -89,9 +89,8 @@ function SizeRow({ size }: { readonly size: (typeof sizes)[number] }): ReactElem
 }
 
 /**
- * Check the item whose radio button is named `name` from the keyboard, where the stories clicked
- * it: the focus shows its ring, as the stories' synthetic clicks left it, and the pointer hovers
- * nothing.
+ * Check the item whose radio button is named `name` from the keyboard rather than click it: the
+ * focus shows its ring, and the pointer hovers nothing.
  */
 async function check(name: string): Promise<void> {
   page.getByRole('radio', { name }).element().focus();
@@ -99,7 +98,7 @@ async function check(name: string): Promise<void> {
 }
 
 visualStates({
-  // A range picker: the indicator raises the checked item. The story clicks Month.
+  // A range picker: the indicator raises the checked item. Month is checked in place of Week.
   default: {
     render: () => (
       <SegmentGroup.Root defaultValue="week" aria-label="Range">
@@ -112,8 +111,8 @@ visualStates({
     },
     focused: () => page.getByRole('radio', { name: 'Month' }),
   },
-  // A theme picker: sun, moon and monitor icons, each named for screen readers. The story checks
-  // Dark.
+  // A theme picker: sun, moon and monitor icons, each named for screen readers. Dark is checked
+  // in place of System.
   'theme-picker': {
     render: () => (
       <SegmentGroup.Root defaultValue="system" aria-label="Theme">

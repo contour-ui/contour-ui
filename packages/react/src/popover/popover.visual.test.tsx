@@ -4,7 +4,7 @@ import type { CSSProperties, ReactElement, ReactNode } from 'react';
 import { Button, createListCollection, Listbox, Popover, Portal } from '../index.ts';
 import { visualStates } from '../test-utils/visual.ts';
 
-/** A field of the stories: a label over a text input, in the look of the page. */
+/** A label over a text input, in the look of the page. */
 function Field({ label, value }: { readonly label: string; readonly value: string }): ReactElement {
   return (
     <label style={{ display: 'grid', gap: vars.space['control-gap'] }}>

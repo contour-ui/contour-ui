@@ -44,7 +44,7 @@ function Channel({
   );
 }
 
-/** Wait until every indicator on the page is measured and shown (the play of Variants waits too). */
+/** Wait until every indicator on the page is measured and shown: each renders hidden at first. */
 async function indicatorsShown(count: number): Promise<void> {
   await vi.waitFor(() => {
     const shown = document.querySelectorAll('.contour-tabs__indicator:not([hidden])').length;
@@ -55,12 +55,12 @@ async function indicatorsShown(count: number): Promise<void> {
 }
 
 visualStates({
-  // The story selects Inserts with a click.
+  // Inserts selected in place of Mix, the first tab.
   default: {
     render: () => <Channel />,
     ready: async () => {
-      // From the keyboard, where the story clicked it: the focus shows its ring, as the story's
-      // synthetic click left it, and the pointer hovers nothing.
+      // From the keyboard rather than with a click: the focus shows its ring, and the pointer
+      // hovers nothing.
       page.getByRole('tab', { name: 'Inserts' }).element().focus();
       await userEvent.keyboard('{Enter}');
       await indicatorsShown(1);

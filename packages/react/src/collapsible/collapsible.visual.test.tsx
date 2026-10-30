@@ -65,8 +65,8 @@ function Folder(): ReactElement {
 }
 
 visualStates({
-  // The trigger after the story's play opened and closed the content: closed, with the focus ring
-  // its clicks left, here from the keyboard.
+  // The trigger once it has opened and closed the content: closed, with its focus ring. Pressed
+  // from the keyboard rather than clicked, so that the ring shows and the pointer hovers nothing.
   default: {
     render: () => <Shipping />,
     ready: async () => {
@@ -76,8 +76,8 @@ visualStates({
     },
     focused: () => page.getByRole('button', { name: 'Shipping' }),
   },
-  // Closed, open, disabled, and a sidebar folder whose name is a link next to the trigger, which
-  // the story's play closed and opened again, from the keyboard here.
+  // Closed, open, disabled, and a sidebar folder whose name is a link next to the trigger, closed
+  // and opened again from the keyboard.
   states: {
     render: () => (
       <div
@@ -106,7 +106,7 @@ visualStates({
       await userEvent.tab();
       await userEvent.tab();
       await userEvent.keyboard('{Enter}');
-      // Closed once its pages are gone, as the play waited before it opened the folder again.
+      // Wait until the folder has closed, its pages gone, so that it opens again from closed.
       await vi.waitFor(() => {
         if (page.getByRole('link', { name: 'Themes' }).query() !== null) {
           throw new Error('The folder is still open.');

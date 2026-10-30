@@ -21,8 +21,8 @@ function ButtonPage(): ReactElement {
 }
 
 /**
- * Press the button of `locator` from the keyboard, where the story clicked it: the focus it moves
- * shows its ring, as the story's synthetic click left it, and the pointer hovers nothing.
+ * Press the button of `locator` from the keyboard rather than click it: the focus it moves shows
+ * its ring, and the pointer hovers nothing.
  */
 async function press(locator: Locator): Promise<void> {
   locator.element().focus();

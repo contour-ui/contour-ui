@@ -13,7 +13,7 @@ const VARIANTS = [
 
 const SIZES = ['sm', 'md', 'lg'] as const;
 
-/** Story layout: three columns, so a single card is as wide as one column of the variant grid. */
+/** Three columns, so a single card is as wide as one column of the variant grid. */
 function Columns({ children }: { readonly children: ReactNode }): ReactElement {
   return (
     <div

@@ -117,7 +117,7 @@ function Contents(props: Partial<Toc.RootProps>): ReactElement {
   );
 }
 
-/** Story layout: the table of contents in a column of its own, as on a docs page. */
+/** The table of contents in a column of its own, as on a docs page. */
 function Layout({ children }: { readonly children: ReactElement }): ReactElement {
   return (
     <div style={{ display: 'flex', alignItems: 'flex-start', gap: vars.space['section-gap'] }}>
@@ -148,8 +148,8 @@ afterEach(() => {
 });
 
 visualStates({
-  // The table of contents beside an article that scrolls in its own container, after the story's
-  // click on Envelopes: the article scrolled to it, which is current, and focused its heading.
+  // The table of contents beside an article that scrolls in its own container, after a press on
+  // the link to Envelopes: the article scrolled to it, which is current, and focused its heading.
   default: {
     render: () => (
       <Layout>
@@ -162,8 +162,8 @@ visualStates({
           throw new Error('Oscillators is not current yet.');
         }
       });
-      // From the keyboard, where the story clicked the link: the focus that moves to the heading
-      // shows its ring, as the story's synthetic click left it, and the pointer hovers nothing.
+      // From the keyboard rather than with a click: the focus that moves to the heading shows its
+      // ring, and the pointer hovers nothing.
       link('Envelopes').element().focus();
       await userEvent.keyboard('{Enter}');
       // Until the smooth scroll is over: the article holds still between two checks.
@@ -185,8 +185,8 @@ visualStates({
     },
     focused: () => page.getByRole('heading', { name: 'Envelopes' }),
   },
-  // A long table of contents in a panel that scrolls, as in a narrow sidebar, after the story
-  // scrolled the article to its end: the panel keeps the first active link in view.
+  // A long table of contents in a panel that scrolls, as in a narrow sidebar, once the article is
+  // scrolled to its end: the panel keeps the first active link in view.
   'in-scrolling-panel': {
     render: () => (
       <Layout>

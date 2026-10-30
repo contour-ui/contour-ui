@@ -7,8 +7,8 @@ import { visualStates } from '../test-utils/visual.ts';
 visualStates({
   default: {
     render: () => <CloseButton />,
-    // The story's play clicked the button, which took the focus and its ring: focused from the
-    // keyboard here, the click calling only a spy.
+    // The button with the focus and its ring, focused from the keyboard rather than clicked: the
+    // pointer hovers nothing.
     ready: () => userEvent.tab(),
     focused: () => page.getByRole('button', { name: 'Close' }),
   },
