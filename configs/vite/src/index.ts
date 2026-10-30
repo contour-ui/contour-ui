@@ -37,6 +37,8 @@ export interface LibraryPackOptions {
   readonly entry: Record<string, string>;
   /** CSS entry points copied verbatim to `dist/` (kept unbundled so `@import`s stay external). */
   readonly css?: readonly string[];
+  /** Other files copied verbatim to `dist/`, such as JSON data exported as is. */
+  readonly copy?: readonly string[];
   /**
    * Emit one file per source module, mirroring `src/`, instead of bundles. Module-level directives
    * such as `'use client'` then stay with their modules: rolldown keeps a directive only on an
@@ -51,7 +53,12 @@ export interface LibraryPackOptions {
 }
 
 /** Shared `vp pack` settings for every published package: ESM-only, d.ts, publint + attw. */
-export function libraryPack({ entry, css = [], unbundle = false }: LibraryPackOptions): PackConfig {
+export function libraryPack({
+  entry,
+  css = [],
+  copy = [],
+  unbundle = false,
+}: LibraryPackOptions): PackConfig {
   return {
     entry,
     ...(unbundle ? { unbundle: true, checks: { moduleLevelDirective: false } } : {}),
@@ -62,7 +69,7 @@ export function libraryPack({ entry, css = [], unbundle = false }: LibraryPackOp
     // One stylesheet per CSS entry instead of a single merged `style.css`; the empty JS
     // chunk of a CSS-only entry is dropped.
     css: { splitting: true },
-    copy: css.map((from) => ({ from, to: 'dist' })),
+    copy: [...css, ...copy].map((from) => ({ from, to: 'dist' })),
     // Nothing from node_modules goes into dist: dependencies and peers stay imports, and a type
     // used in a public signature must come from a declared dependency or peer. Without this, a
     // devDependency such as @types/mdx would be copied into dist under its path in node_modules.
