@@ -1,8 +1,9 @@
 name: Release
 
+# By hand (Actions → Release → Run workflow) until the first release: on a push to main it would
+# open the version PR, and publishing needs the NPM_TOKEN secret.
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
 
 concurrency:
   group: release
