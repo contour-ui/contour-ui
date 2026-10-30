@@ -9,6 +9,7 @@
     "build": "react-router build"
   },
   "dependencies": {
+    "@contour-ui/fonts": "workspace:*",
     "@contour-ui/fumadocs": "workspace:*",
     "@contour-ui/headless-react": "workspace:*",
     "@contour-ui/icons": "workspace:*",

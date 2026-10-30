@@ -1,0 +1,66 @@
+{
+  "name": "@contour-ui/fonts",
+  "version": "0.0.0",
+  "description": "contour-ui fonts: IBM Plex Sans and JetBrains Mono as WOFF2 faces for the web and static TTF files for Soundor.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contour-ui/contour-ui.git",
+    "directory": "packages/fonts"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": [
+    "./dist/fonts.css",
+    "./src/fonts.css"
+  ],
+  "exports": {
+    ".": {
+      "@contour-ui/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./fonts.css": {
+      "@contour-ui/source": "./src/fonts.css",
+      "default": "./dist/fonts.css"
+    },
+    "./ttf/*": {
+      "@contour-ui/source": "./src/ttf/*",
+      "default": "./dist/ttf/*"
+    },
+    "./woff2/*": {
+      "@contour-ui/source": "./src/woff2/*",
+      "default": "./dist/woff2/*"
+    },
+    "./licenses/*": {
+      "@contour-ui/source": "./src/licenses/*",
+      "default": "./dist/licenses/*"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./fonts.css": "./dist/fonts.css",
+      "./ttf/*": "./dist/ttf/*",
+      "./woff2/*": "./dist/woff2/*",
+      "./licenses/*": "./dist/licenses/*",
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "fonts": "node scripts/build.ts"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@contour-ui/vite-config": "workspace:*",
+    "vite-plus": "catalog:"
+  }
+}

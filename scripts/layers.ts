@@ -51,6 +51,13 @@ export const LAYERS: readonly LayerPackage[] = [
     react: 'none',
   },
   {
+    name: 'fonts',
+    layer: 0,
+    purpose: 'font files: WOFF2 faces for the web, static TTF for Soundor',
+    allowed: [],
+    react: 'none',
+  },
+  {
     name: 'core',
     layer: 1,
     purpose: 'framework- and renderer-agnostic logic',
@@ -68,14 +75,14 @@ export const LAYERS: readonly LayerPackage[] = [
     name: 'react',
     layer: 3,
     purpose: 'styled React DOM components: Essentials and Audio',
-    allowed: ['headless-react', 'tokens', 'icons'],
+    allowed: ['headless-react', 'tokens', 'icons', 'fonts'],
     react: 'peer',
   },
   {
     name: 'fumadocs',
     layer: 4,
     purpose: 'documentation layout for fumadocs-core sites, built from @contour-ui/react',
-    allowed: ['react', 'headless-react', 'tokens', 'icons'],
+    allowed: ['react', 'headless-react', 'tokens', 'icons', 'fonts'],
     react: 'peer',
   },
 ];

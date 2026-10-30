@@ -11,15 +11,15 @@ description: Add a package, its peer dependencies, and its stylesheets.
 
 ## Install
 
-Your app imports the token stylesheet (and, for Fumadocs, the stylesheet of `@contour-ui/react`)
-directly, so list those packages as your own dependencies too: strict package managers such as
-pnpm do not expose dependencies of dependencies to your code. Pick your package manager in any
-block below: the others follow, and the site remembers it.
+Your app imports the token and font stylesheets (and, for Fumadocs, the stylesheet of
+`@contour-ui/react`) directly, so list those packages as your own dependencies too: strict package
+managers such as pnpm do not expose dependencies of dependencies to your code. Pick your package
+manager in any block below: the others follow, and the site remembers it.
 
 **The styled components**, everyday and Audio:
 
 ```package-install
-@contour-ui/react @contour-ui/tokens
+@contour-ui/react @contour-ui/tokens @contour-ui/fonts
 ```
 
 **Headless**, no styles and no tokens:
@@ -31,7 +31,7 @@ block below: the others follow, and the site remembers it.
 **Fumadocs**, a docs site on fumadocs-core:
 
 ```package-install
-@contour-ui/fumadocs @contour-ui/react @contour-ui/tokens fumadocs-core fumadocs-mdx
+@contour-ui/fumadocs @contour-ui/react @contour-ui/tokens @contour-ui/fonts fumadocs-core fumadocs-mdx
 ```
 
 A docs site on Fumadocs takes a few more steps: [Setup](/docs/fumadocs/setup) wires it into React
@@ -44,15 +44,17 @@ stylesheets once, in your app entry, in this order:
 
 ```tsx title="main.tsx"
 import '@contour-ui/tokens/tokens.css'; // tokens: --ct-* custom properties for every theme
-import '@contour-ui/tokens/fonts.css'; // IBM Plex Sans and JetBrains Mono
+import '@contour-ui/fonts/fonts.css'; // fonts: IBM Plex Sans and JetBrains Mono
 import '@contour-ui/react/styles.css';
 ```
 
 The stylesheets do not import each other, so your app decides what loads and when, and tokens
 load once.
 
-`fonts.css` declares the font faces the type tokens refer to (SIL Open Font License). Skip it if
-your app already provides these fonts; the token font stacks fall back to system fonts.
+`@contour-ui/fonts/fonts.css` declares the font faces the type tokens refer to (SIL Open Font
+License), split by script: the browser downloads only the files a page uses. Skip the package if
+your app already provides these fonts; the token font stacks fall back to system fonts. It also
+holds static TTF files of the same faces for runtimes that register fonts by file.
 
 Headless needs no stylesheet. A docs site on Fumadocs loads `@contour-ui/fumadocs/styles.css`
 after the tokens and before `@contour-ui/react/styles.css`, since its first rule sets the order of
@@ -122,7 +124,7 @@ import { Button } from '@contour-ui/react';
 import { createRoot } from 'react-dom/client';
 
 import '@contour-ui/tokens/tokens.css';
-import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fonts/fonts.css';
 import '@contour-ui/react/styles.css';
 import './app.css';
 

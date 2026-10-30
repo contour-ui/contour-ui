@@ -2,7 +2,7 @@ import { defaultTheme, themeAttribute, themes, vars } from '@contour-ui/tokens';
 import { defineVisualStates } from '@contour-ui/vite-config/visual';
 
 import '@contour-ui/tokens/tokens.css';
-import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fonts/fonts.css';
 import '../styles.css';
 
 /**
