@@ -1,6 +1,0 @@
-{
-  "title": "Audio",
-  "description": "Controls for audio-plugin UIs",
-  "root": true,
-  "pages": ["index"]
-}

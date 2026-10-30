@@ -2,7 +2,7 @@ import type { Folder } from 'fumadocs-core/page-tree';
 import { describe, expect, it } from 'vite-plus/test';
 
 import { pageTree } from '../test-utils/page-tree.ts';
-import { toPageUrl } from './page-url.ts';
+import { toPageUrl, toTreeUrl } from './page-url.ts';
 import { findSection, getSections, getSectionUrl } from './sections.ts';
 
 const sections = getSections(pageTree);
@@ -58,5 +58,23 @@ describe('toPageUrl', () => {
     expect(toPageUrl('/docs/essentials/')).toBe('/docs/essentials');
     expect(toPageUrl('/docs/essentials')).toBe('/docs/essentials');
     expect(toPageUrl('/')).toBe('/');
+  });
+});
+
+describe('toTreeUrl', () => {
+  it('keeps the URL of a page in the tree', () => {
+    expect(toTreeUrl(pageTree, '/docs/essentials/dialog')).toBe('/docs/essentials/dialog');
+    expect(toTreeUrl(pageTree, '/docs/essentials/forms')).toBe('/docs/essentials/forms');
+  });
+
+  it('gives a page left out of the tree the URL of its nearest ancestor in it', () => {
+    expect(toTreeUrl(pageTree, '/docs/essentials/dialog/headless')).toBe('/docs/essentials/dialog');
+    expect(toTreeUrl(pageTree, '/docs/essentials/forms/select/headless')).toBe(
+      '/docs/essentials/forms/select',
+    );
+  });
+
+  it('keeps a URL with no ancestor in the tree as it is', () => {
+    expect(toTreeUrl(pageTree, '/blog/post')).toBe('/blog/post');
   });
 });

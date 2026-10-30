@@ -38,7 +38,7 @@ export interface DocsPageProps {
  */
 export function DocsPage({ title, description, toc, children }: DocsPageProps): ReactElement {
   const tree = useDocsTree();
-  const url = usePageUrl();
+  const url = usePageUrl(tree);
   const hasToc = toc.length > 0;
 
   return (

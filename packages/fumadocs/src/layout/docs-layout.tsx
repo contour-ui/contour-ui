@@ -33,7 +33,7 @@ export interface DocsLayoutProps {
  * </DocsLayout>
  */
 export function DocsLayout({ tree, children }: DocsLayoutProps): ReactElement {
-  const url = usePageUrl();
+  const url = usePageUrl(tree);
   const sections = getSections(tree);
   const navigation: DocsNavigation = { tree, sections, section: findSection(sections, url), url };
 
