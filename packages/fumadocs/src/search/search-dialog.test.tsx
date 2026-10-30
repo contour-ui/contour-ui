@@ -61,6 +61,51 @@ describe('SearchTrigger', () => {
 
     expect(container.childElementCount).toBe(0);
   });
+
+  it('is a button for a dialog with the shortcut of the platform, as a field and as an icon', async () => {
+    await renderDocs(
+      <>
+        <SearchTrigger />
+        <SearchTrigger variant="icon" />
+      </>,
+      { search: { from } },
+    );
+    const triggers = page.getByRole('button', { name: 'Search' });
+    await expect.element(triggers.last()).toHaveAttribute('aria-keyshortcuts');
+
+    const attributes = (name: string): Array<string | null> =>
+      triggers.elements().map((trigger) => trigger.getAttribute(name));
+    expect(attributes('aria-haspopup')).toStrictEqual(['dialog', 'dialog']);
+    const [shortcut] = attributes('aria-keyshortcuts');
+    expect(shortcut).toMatch(/^(?:Meta|Control)\+K$/u);
+    expect(attributes('aria-keyshortcuts')).toStrictEqual([shortcut, shortcut]);
+  });
+});
+
+describe('the results', () => {
+  it('are grouped by page, each named by its title and section, the first one highlighted', async () => {
+    await renderDocs(<SearchTrigger />, { search: { from } });
+    await search('button');
+    const results = dialog.getByRole('listbox', { name: 'Results' });
+
+    await expect
+      .element(results.getByRole('group', { name: 'Button, Essentials, Components' }))
+      .toBeVisible();
+    await expect
+      .element(results.getByRole('group', { name: 'Dialog, Essentials, Components' }))
+      .toBeVisible();
+    // The first result is highlighted, for Enter to open it.
+    await expect
+      .element(field)
+      .toHaveAttribute('aria-activedescendant', results.getByRole('option').first().element().id);
+  });
+
+  it('say so when nothing matches', async () => {
+    await renderDocs(<SearchTrigger />, { search: { from } });
+    await search('xylophone');
+
+    await expect.element(dialog.getByText('No results for “xylophone”')).toBeVisible();
+  });
 });
 
 describe('a result', () => {

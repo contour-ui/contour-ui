@@ -37,6 +37,8 @@ describe('the section switcher', () => {
     const sections = page.getByRole('dialog', { name: 'Sections' });
     await expect.element(switcher).toHaveAttribute('aria-expanded', 'true');
     const guide = sections.getByRole('link', { name: 'Guide' });
+    // The focus moves into the popover, to the first section.
+    await expect.element(guide).toHaveFocus();
     await expect.element(guide).toHaveAttribute('href', '/docs/guide');
     await expect.element(guide).toHaveAttribute('aria-current', 'true');
     // The description follows the name and the state, rather than joining the name.

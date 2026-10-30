@@ -108,6 +108,15 @@ describe('a folder of the page tree', () => {
     await expect.element(docs.getByRole('link', { name: 'Checkbox' })).toBeVisible();
   });
 
+  it('starts open on one of its other pages, marked in its list', async () => {
+    await renderDocs(<PageTree root={essentials()} url="/docs/essentials/forms/checkbox" />);
+
+    await expect.element(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect
+      .element(docs.getByRole('list', { name: 'Forms' }).getByRole('link', { name: 'Checkbox' }))
+      .toHaveAttribute('aria-current', 'page');
+  });
+
   it('starts open with defaultOpen', async () => {
     await renderDocs(
       <PageTree root={essentials({ ...FORMS, defaultOpen: true })} url="/docs/essentials/button" />,

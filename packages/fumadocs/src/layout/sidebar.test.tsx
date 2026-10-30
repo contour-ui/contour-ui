@@ -49,6 +49,24 @@ afterEach(async () => {
 });
 
 describe('the sidebar', () => {
+  it('collapses to its toolbar, and the focus moves to the button that expands it', async () => {
+    await page.viewport(1280, 800);
+    await renderDocs(
+      <DocsLayout tree={pageTree}>
+        <DocsPage title="Page" toc={[]}>
+          <p>Content</p>
+        </DocsPage>
+      </DocsLayout>,
+      { pathname: '/docs/guide' },
+    );
+    const docs = page.getByRole('navigation', { name: 'Docs' });
+    await expect.element(docs).toBeVisible();
+
+    await userEvent.click(page.getByRole('button', { name: 'Collapse sidebar' }));
+    await expect.element(page.getByRole('button', { name: 'Expand sidebar' })).toHaveFocus();
+    await expect.element(docs).not.toBeInTheDocument();
+  });
+
   it('starts collapsed, from its first paint, where docsScript() found it collapsed', async () => {
     await page.viewport(1280, 800);
     localStorage.setItem('contour-docs-sidebar', 'collapsed');

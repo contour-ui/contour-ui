@@ -134,6 +134,17 @@ describe('DocsLayout', () => {
 });
 
 describe('the menu', () => {
+  it('opens with the focus on its close button, over the pages of the section with the page marked', async () => {
+    await renderDocs(<Docs />, { pathname: '/docs/essentials/button' });
+    await userEvent.click(page.getByRole('button', { name: 'Open menu' }));
+    const menu = page.getByRole('dialog', { name: 'Menu' });
+
+    await expect.element(menu.getByRole('button', { name: 'Close menu' })).toHaveFocus();
+    await expect
+      .element(menu.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Button' }))
+      .toHaveAttribute('aria-current', 'page');
+  });
+
   it('closes as a link in it is followed, a link to the page itself included', async () => {
     const onNavigate = vi.fn<(url: string) => void>();
     await renderDocs(<Docs />, { pathname: '/docs/guide/installation', onNavigate });

@@ -1,4 +1,5 @@
 import { fileTextIcon, githubIcon } from '@contour-ui/icons';
+import type { CSSProperties } from 'react';
 import { afterEach, beforeAll, describe, expect, it } from 'vite-plus/test';
 import { page, userEvent } from 'vite-plus/test/browser';
 
@@ -20,6 +21,19 @@ const SITE: DocsSite = {
     { label: 'GitHub', href: 'https://github.com/contour-ui/contour-ui', icon: githubIcon },
     { label: 'Changelog', href: '/changelog', icon: fileTextIcon },
   ],
+};
+
+/**
+ * A column of a page, laid out as the header lays out its own: `--contour-docs-home-width` wide,
+ * centered, with at least the page inset at the sides. `main` is a flex column, where the auto
+ * margins would shrink it to its content: it takes the width first.
+ */
+const COLUMN: CSSProperties = {
+  boxSizing: 'border-box',
+  inlineSize: '100%',
+  maxInlineSize: 'calc(var(--contour-docs-home-width) + 2 * var(--contour-docs-page-inset))',
+  marginInline: 'auto',
+  paddingInline: 'var(--contour-docs-page-inset)',
 };
 
 /** The URL of the search index of the fixtures. */
@@ -63,6 +77,12 @@ describe('HomeLayout', () => {
     await expect.element(brand).toHaveAttribute('href', '/');
     // The text links of the site are its navigation "Main", a list of neutral `Link`s.
     expect(nav.getByRole('listitem').elements()).toHaveLength(3);
+    expect(
+      nav
+        .getByRole('link')
+        .elements()
+        .map((link) => link.textContent),
+    ).toStrictEqual(['Docs', 'Guide', 'Essentials']);
     await expect.element(nav.getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs');
     await expect
       .element(nav.getByRole('link', { name: 'Essentials' }))
@@ -152,6 +172,43 @@ describe('the header of HomeLayout', () => {
     }
   });
 
+  it('lines its brand up with a column of the page laid out as its own, at any width', async () => {
+    await page.viewport(1280, 800);
+    await renderDocs(
+      <HomeLayout>
+        <div style={COLUMN}>
+          <h1>Home</h1>
+        </div>
+      </HomeLayout>,
+      { pathname: '/', search: { from } },
+    );
+    const heading = page.getByRole('heading', { level: 1 });
+    await expect.element(heading).toBeVisible();
+    const start = box(brand).left;
+    expect(box(heading).left).toBe(start);
+
+    // A narrower column, from the app's CSS: both move in.
+    const style = document.createElement('style');
+    style.textContent = '.contour-docs-home-layout { --contour-docs-home-width: 48rem; }';
+    document.head.append(style);
+    try {
+      expect(box(brand).left).toBeGreaterThan(start);
+      expect(box(heading).left).toBe(box(brand).left);
+    } finally {
+      style.remove();
+    }
+  });
+
+  it('shows the search as a field with its shortcut from 48rem, and as an icon below', async () => {
+    await page.viewport(1280, 800);
+    await renderHome();
+    await expect.element(searchButton).toHaveClass('contour-docs-search-trigger');
+
+    await page.viewport(390, 844);
+    await expect.element(searchButton).not.toHaveClass('contour-docs-search-trigger');
+    await expect.element(searchButton).toBeVisible();
+  });
+
   it('is 3rem high on phones, as the header of the docs pages there', async () => {
     await page.viewport(390, 844);
     await renderHome();
@@ -180,6 +237,34 @@ describe('the header of HomeLayout', () => {
     expect(box(nav.getByRole('link', { name: 'Essentials' })).right + 4).toBeLessThan(
       box(nav).right + 1,
     );
+  });
+
+  it('shows the three links in full on a phone without the search', async () => {
+    await page.viewport(390, 844);
+    await renderDocs(
+      <HomeLayout search={false}>
+        <h1>Home</h1>
+      </HomeLayout>,
+      { pathname: '/', search: { from } },
+    );
+    await expect.element(nav).toBeVisible();
+    const links = nav.element();
+    const header = banner.element();
+
+    expect(banner.getByRole('button', { name: 'Search' }).elements()).toHaveLength(0);
+    // Nothing scrolls, nothing runs past the end of the header.
+    expect(links.scrollWidth).toBeLessThanOrEqual(links.clientWidth);
+    expect(header.scrollWidth).toBeLessThanOrEqual(header.clientWidth);
+  });
+
+  it('fits the three-way theme picker in the header of a phone, next to the search', async () => {
+    await page.viewport(390, 844);
+    await renderHome({ themeToggle: { mode: 'light-dark-system' } });
+    const header = banner.element();
+
+    await expect.element(banner.getByRole('radiogroup', { name: 'Theme' })).toBeVisible();
+    await expect.element(searchButton).toBeVisible();
+    expect(header.scrollWidth).toBeLessThanOrEqual(header.clientWidth);
   });
 
   it('shows the three links in full at 360px next to a brand as small as a logo mark', async () => {

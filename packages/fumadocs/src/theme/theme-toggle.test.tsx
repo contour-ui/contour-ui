@@ -44,6 +44,14 @@ describe('ThemeToggle', () => {
       .toBeVisible();
     expect(root.dataset['theme']).toBe('light');
     expect(localStorage.getItem('contour-theme')).toBe('light');
+
+    // A second click switches back.
+    await userEvent.click(page.getByRole('button', { name: 'Switch to the dark theme' }));
+    await expect
+      .element(page.getByRole('button', { name: 'Switch to the light theme' }))
+      .toBeVisible();
+    expect(root.dataset['theme']).toBe('dark');
+    expect(localStorage.getItem('contour-theme')).toBe('dark');
   });
 
   it('offers the light, the dark and the system theme in the light-dark-system mode', async () => {
@@ -123,9 +131,11 @@ describe('the theme toggle of the layouts', () => {
       </DocsLayout>,
       { pathname: '/docs/essentials/button', themeToggle: { mode: 'light-dark-system' } },
     );
-    await expect
-      .element(page.getByRole('banner').getByRole('radiogroup', { name: 'Theme' }))
-      .toBeVisible();
+    const sidebarPicker = page.getByRole('banner').getByRole('radiogroup', { name: 'Theme' });
+    await expect.element(sidebarPicker).toBeVisible();
+    // At the foot of the sidebar, with its three choices.
+    expect(sidebarPicker.element().closest('.contour-docs-sidebar__footer')).not.toBeNull();
+    expect(sidebarPicker.getByRole('radio').elements()).toHaveLength(3);
 
     await screen.rerender(
       <MemoryFramework>
