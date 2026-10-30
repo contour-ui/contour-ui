@@ -1,4 +1,5 @@
 import type { tabs } from '@contour-ui/core';
+import { expectNoAxeViolations } from '@contour-ui/vite-config/visual';
 import { useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -135,6 +136,73 @@ function Moving(): ReactElement {
   );
 }
 
+/**
+ * The examples' own styles: just enough to see the selected trigger, the indicator and the
+ * panels, by the data attributes of the parts.
+ */
+const css = `
+  [data-scope='tabs'][data-part='list'] { position: relative; display: flex; gap: 4px; border-bottom: 1px solid; }
+  [data-scope='tabs'][data-part='list'][data-orientation='vertical'] { flex-direction: column; border-bottom: 0; border-right: 1px solid; }
+  [data-scope='tabs'][data-part='root'][data-orientation='vertical'] { display: flex; gap: 12px; }
+  [data-scope='tabs'][data-part='trigger'] { padding: 4px 8px; border: 0; background: none; font: inherit; }
+  [data-scope='tabs'][data-part='trigger'][data-selected] { font-weight: bold; }
+  [data-scope='tabs'][data-part='indicator'] {
+    position: absolute; left: var(--left); width: var(--width); bottom: -1px; height: 2px;
+    background: currentColor; transition: left 150ms, width 150ms;
+  }
+  [data-scope='tabs'][data-part='indicator'][data-orientation='vertical'] {
+    left: auto; right: -1px; width: 2px; top: var(--top); height: var(--height); bottom: auto;
+    transition: top 150ms, height 150ms;
+  }
+  [data-scope='tabs'][data-part='indicator'][hidden] { display: none; }
+  [data-scope='tabs'][data-part='content'] { padding: 8px 0; }
+`;
+
+/** The tabs of a channel strip: Sends is disabled. */
+function Channel(props: Tabs.RootProps): ReactElement {
+  return (
+    <Tabs.Root {...props}>
+      <style>{css}</style>
+      <Tabs.List aria-label="Channel">
+        <Tabs.Trigger value="mix">Mix</Tabs.Trigger>
+        <Tabs.Trigger value="sends" disabled>
+          Sends
+        </Tabs.Trigger>
+        <Tabs.Trigger value="inserts">Inserts</Tabs.Trigger>
+        <Tabs.Trigger value="meter">Meter</Tabs.Trigger>
+        <Tabs.Indicator />
+      </Tabs.List>
+      <Tabs.Content value="mix">Volume and pan.</Tabs.Content>
+      <Tabs.Content value="sends">Send levels.</Tabs.Content>
+      <Tabs.Content value="inserts">Effects in series.</Tabs.Content>
+      <Tabs.Content value="meter">Peak and loudness.</Tabs.Content>
+    </Tabs.Root>
+  );
+}
+
+/** Tabs whose value the owner keeps, and changes from outside too. */
+function OwnedChannel(): ReactElement {
+  const [value, setValue] = useState('meter');
+  return (
+    <>
+      <Channel
+        value={value}
+        onValueChange={(details) => {
+          setValue(details.value);
+        }}
+      />
+      <button
+        type="button"
+        onClick={() => {
+          setValue('mix');
+        }}
+      >
+        Back to the mix
+      </button>
+    </>
+  );
+}
+
 /** A part of one's own: shows the value and selects LFO. */
 function Current(): ReactElement {
   const { value, setValue } = useTabsContext();
@@ -191,6 +259,15 @@ describe('Tabs', () => {
     it('rolls the tab stop: only the selected trigger is in the tab order', async () => {
       const { tab } = await setup({ defaultValue: 'lfo' });
       expect(TABS.map((item) => tab(item.label).element().tabIndex)).toStrictEqual([-1, -1, -1, 0]);
+    });
+
+    it('reaches the selected trigger with Tab, and its panel with the next Tab', async () => {
+      const { tab, panel } = await setup({ defaultValue: 'filter' });
+
+      await userEvent.tab();
+      await expect.element(tab('Filter')).toHaveFocus();
+      await userEvent.tab();
+      await expect.element(panel('Filter')).toHaveFocus();
     });
 
     it('follows ids given to the triggers and the contents', async () => {
@@ -276,6 +353,20 @@ describe('Tabs', () => {
     });
   });
 
+  describe('controlled from outside', () => {
+    it('follows a value its owner changes on its own', async () => {
+      const screen = await render(<OwnedChannel />);
+
+      await userEvent.click(screen.getByRole('tab', { name: 'Inserts' }));
+      await expect.element(screen.getByRole('tabpanel', { name: 'Inserts' })).toBeVisible();
+      await userEvent.click(screen.getByRole('button', { name: 'Back to the mix' }));
+      await expect
+        .element(screen.getByRole('tab', { name: 'Mix' }))
+        .toHaveAttribute('aria-selected', 'true');
+      await expect.element(screen.getByRole('tabpanel', { name: 'Mix' })).toBeVisible();
+    });
+  });
+
   describe('keyboard', () => {
     it('moves and selects with the arrow keys, Home and End, past disabled triggers', async () => {
       const onValueChange = valueSpy();
@@ -313,7 +404,8 @@ describe('Tabs', () => {
     });
 
     it('selects with Enter and Space only, in the manual mode', async () => {
-      const { tab } = await setup({ defaultValue: 'osc', activationMode: 'manual' });
+      const onValueChange = valueSpy();
+      const { tab } = await setup({ defaultValue: 'osc', activationMode: 'manual', onValueChange });
       await userEvent.click(tab('Oscillator'));
       await userEvent.keyboard('{ArrowRight}');
       await expect.element(tab('Filter')).toHaveFocus();
@@ -323,6 +415,8 @@ describe('Tabs', () => {
       await expect.element(tab('Filter')).toHaveAttribute('aria-selected', 'true');
       await userEvent.keyboard('{ArrowRight} ');
       await expect.element(tab('LFO')).toHaveAttribute('aria-selected', 'true');
+      // Moves of the focus report nothing.
+      expect(onValueChange.mock.calls).toStrictEqual([[{ value: 'filter' }], [{ value: 'lfo' }]]);
     });
 
     it('moves with ↓ and ↑ in a vertical list', async () => {
@@ -421,5 +515,75 @@ describe('Tabs', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Now osc' }));
     await expect.element(screen.getByRole('button', { name: 'Now lfo' })).toBeVisible();
     expect(() => renderToStaticMarkup(<Current />)).toThrow('inside <Tabs.Root>');
+  });
+});
+
+describe('Tabs accessibility', () => {
+  it('has no axe violations: Default', async () => {
+    const screen = await render(<Channel defaultValue="mix" />);
+    const tab = (name: string) => screen.getByRole('tab', { name });
+
+    // Round the triggers with the arrow keys, then into the panel of Mix with Tab.
+    await userEvent.tab();
+    await expect.element(tab('Mix')).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect.element(tab('Inserts')).toHaveFocus();
+    await userEvent.keyboard('{End}{ArrowRight}');
+    await expect.element(tab('Mix')).toHaveFocus();
+    await userEvent.tab();
+    await expect.element(screen.getByRole('tabpanel', { name: 'Mix' })).toHaveFocus();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: ManualActivation', async () => {
+    const screen = await render(<Channel defaultValue="mix" activationMode="manual" />);
+    const tab = (name: string) => screen.getByRole('tab', { name });
+
+    // Inserts selected with Space, then Meter with Enter.
+    await userEvent.click(tab('Mix'));
+    await userEvent.keyboard('{ArrowRight}');
+    await expect.element(tab('Inserts')).toHaveFocus();
+    await userEvent.keyboard(' ');
+    await expect.element(tab('Inserts')).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{ArrowRight}{Enter}');
+    await expect.element(tab('Meter')).toHaveAttribute('aria-selected', 'true');
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Vertical', async () => {
+    const screen = await render(<Channel defaultValue="inserts" orientation="vertical" />);
+    const meter = screen.getByRole('tab', { name: 'Meter' });
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Inserts' }));
+    await userEvent.keyboard('{ArrowDown}');
+    await expect.element(meter).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}');
+    await expect.element(meter).toHaveFocus();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Controlled', async () => {
+    const screen = await render(<OwnedChannel />);
+
+    await userEvent.click(screen.getByRole('tab', { name: 'Inserts' }));
+    await expect.element(screen.getByRole('tabpanel', { name: 'Inserts' })).toBeVisible();
+    await userEvent.click(screen.getByRole('button', { name: 'Back to the mix' }));
+    await expect
+      .element(screen.getByRole('tab', { name: 'Mix' }))
+      .toHaveAttribute('aria-selected', 'true');
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Indicator', async () => {
+    const screen = await render(<Channel defaultValue="mix" />);
+    const indicator = partElement('indicator');
+
+    // The indicator under Meter.
+    await userEvent.click(screen.getByRole('tab', { name: 'Meter' }));
+    await expect
+      .poll(() => Math.abs(pixels(indicator, '--left') - tabElement('Meter').offsetLeft))
+      .toBeLessThan(1);
+    await expect.element(indicator).toBeVisible();
+    await expectNoAxeViolations();
   });
 });

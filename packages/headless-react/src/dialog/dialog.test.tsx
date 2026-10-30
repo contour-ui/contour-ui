@@ -1,4 +1,5 @@
 import type { dialog } from '@contour-ui/core';
+import { animationsDone, expectNoAxeViolations } from '@contour-ui/vite-config/visual';
 import { StrictMode, useState } from 'react';
 import type { MouseEvent, ReactElement, ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -212,6 +213,150 @@ function layerIndex(element: HTMLElement): string {
   return element.style.getPropertyValue('--layer-index');
 }
 
+/**
+ * The examples' own styles: just enough for an overlay. The backdrop and the positioner cover the
+ * viewport, the positioner lets presses through to the backdrop, and the content sits in the
+ * middle. Both fade in and out; the content also grows in, unless motion is reduced.
+ */
+const EXAMPLE_STYLES = `
+@keyframes dialog-example-fade-in { from { opacity: 0; } }
+@keyframes dialog-example-fade-out { to { opacity: 0; } }
+@keyframes dialog-example-in { from { opacity: 0; scale: 0.96; } }
+@keyframes dialog-example-out { to { opacity: 0; scale: 0.96; } }
+.dialog-example-backdrop { position: fixed; inset: 0; background: rgb(0 0 0 / 0.4); }
+.dialog-example-backdrop[data-state='open'] { animation: dialog-example-fade-in 150ms ease-out; }
+.dialog-example-backdrop[data-state='closed'] { animation: dialog-example-fade-out 100ms ease-in; }
+.dialog-example-positioner {
+  position: fixed; inset: 0; display: grid; place-items: center; padding: 16px;
+  pointer-events: none;
+}
+.dialog-example-positioner[hidden] { display: none; }
+.dialog-example-content {
+  display: flex; flex-direction: column; gap: 8px; inline-size: min(100%, 24rem);
+  padding: 16px; border: 1px solid; border-radius: 8px; background: white; color: black;
+  pointer-events: auto;
+}
+.dialog-example-content[hidden] { display: none; }
+.dialog-example-content[data-state='open'] { animation: dialog-example-in 150ms ease-out; }
+.dialog-example-content[data-state='closed'] { animation: dialog-example-out 100ms ease-in; }
+.dialog-example-content h2, .dialog-example-content p { margin: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .dialog-example-content[data-state='open'] { animation-name: dialog-example-fade-in; }
+  .dialog-example-content[data-state='closed'] { animation-name: dialog-example-fade-out; }
+}
+`;
+
+/** An example with the examples' styles. */
+function withStyles(example: ReactElement): ReactElement {
+  return (
+    <>
+      <style>{EXAMPLE_STYLES}</style>
+      {example}
+    </>
+  );
+}
+
+interface OverlayProps {
+  /** Whether to render the backdrop: a non-modal dialog has none. */
+  readonly backdrop?: boolean | undefined;
+  readonly children: ReactNode;
+}
+
+/** The overlay of a dialog in a portal: the backdrop, the positioner and the content. */
+function Overlay({ backdrop = true, children }: OverlayProps): ReactElement {
+  return (
+    <Portal>
+      {backdrop ? <Dialog.Backdrop className="dialog-example-backdrop" /> : null}
+      <Dialog.Positioner className="dialog-example-positioner">
+        <Dialog.Content className="dialog-example-content">{children}</Dialog.Content>
+      </Dialog.Positioner>
+    </Portal>
+  );
+}
+
+/** The content of the rename dialog: a field, and the buttons that close it. */
+function RenameContent(): ReactElement {
+  return (
+    <>
+      <Dialog.Title>Rename the track</Dialog.Title>
+      <Dialog.Description>The new name shows in the mixer.</Dialog.Description>
+      <label>
+        Name <input defaultValue="Drums" />
+      </label>
+      <div>
+        <Dialog.CloseTrigger>Cancel</Dialog.CloseTrigger>{' '}
+        <Dialog.CloseTrigger>Save</Dialog.CloseTrigger>
+      </div>
+    </>
+  );
+}
+
+/** The rename dialog, closed. */
+function RenameDialog(props: Dialog.RootProps): ReactElement {
+  return (
+    <Dialog.Root {...props}>
+      <Dialog.Trigger>Rename</Dialog.Trigger>
+      <Overlay>
+        <RenameContent />
+      </Overlay>
+    </Dialog.Root>
+  );
+}
+
+/** A controlled dialog: the owner keeps `open` in its state and opens it from elsewhere too. */
+function OwnedDialog({
+  onOpenChange,
+}: {
+  readonly onOpenChange: (details: dialog.OpenChangeDetails) => void;
+}): ReactElement {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Dialog.Root
+        open={open}
+        onOpenChange={(details) => {
+          onOpenChange(details);
+          setOpen(details.open);
+        }}
+      >
+        <Dialog.Trigger>Rename</Dialog.Trigger>
+        <Overlay>
+          <RenameContent />
+        </Overlay>
+      </Dialog.Root>{' '}
+      <button
+        type="button"
+        onClick={() => {
+          setOpen(true);
+        }}
+      >
+        Rename from the menu
+      </button>
+    </>
+  );
+}
+
+/** A dialog opened from another one, each in a portal: an alert dialog inside the settings. */
+function ProjectSettings(): ReactElement {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>Project settings</Dialog.Trigger>
+      <Overlay>
+        <Dialog.Title>Project settings</Dialog.Title>
+        <Dialog.Description>Sample rate, tempo and storage.</Dialog.Description>
+        <Dialog.Root role="alertdialog">
+          <Dialog.Trigger>Delete the project</Dialog.Trigger>
+          <Overlay>
+            <Dialog.Title>Delete the project?</Dialog.Title>
+            <Dialog.CloseTrigger>Keep it</Dialog.CloseTrigger>
+          </Overlay>
+        </Dialog.Root>
+        <Dialog.CloseTrigger>Done</Dialog.CloseTrigger>
+      </Overlay>
+    </Dialog.Root>
+  );
+}
+
 describe('Dialog', () => {
   it('renders its parts with their attributes, hidden while closed', async () => {
     const screen = await render(<Settings />);
@@ -248,6 +393,9 @@ describe('Dialog', () => {
     await openSettings(screen);
     await expect.element(trigger).toHaveAttribute('aria-expanded', 'true');
     await expect.element(screen.getByRole('dialog', { name: 'Settings' })).toBeVisible();
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Settings' }))
+      .toHaveAccessibleDescription('Changes apply at once.');
     for (const name of ['backdrop', 'positioner', 'content']) {
       expect(part(name)).toHaveAttribute('data-state', 'open');
       expect(part(name)).not.toHaveAttribute('hidden');
@@ -395,6 +543,21 @@ describe('Dialog', () => {
     expect(part('content')).toHaveAttribute('hidden');
   });
 
+  it('reports nothing when its owner opens it, and gives focus back to where it was', async () => {
+    const onOpenChange = openChangeSpy();
+    const screen = await render(withStyles(<OwnedDialog onOpenChange={onOpenChange} />));
+    const menuButton = screen.getByRole('button', { name: 'Rename from the menu' });
+
+    await userEvent.click(menuButton);
+    await expect.element(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus();
+    expect(onOpenChange).not.toHaveBeenCalled();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    expect(onOpenChange.mock.calls).toStrictEqual([[{ open: false }]]);
+    // Back on the button the owner opened it from, not on the trigger.
+    await expect.element(menuButton).toHaveFocus();
+  });
+
   it('focuses initialFocusEl when it opens, and finalFocusEl when it closes', async () => {
     const screen = await render(
       <Settings
@@ -473,6 +636,7 @@ describe('Dialog', () => {
 
     await expect.element(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus();
     expect(part('content')).toHaveAttribute('data-state', 'open');
+    expect(part('content')).not.toHaveAttribute('hidden');
   });
 
   it('mounts the overlay once it first opens with lazyMount, and unmounts it with unmountOnExit', async () => {
@@ -655,5 +819,109 @@ describe('Dialog', () => {
     expect(() => renderToStaticMarkup(<Dialog.Trigger />)).toThrow(
       'Dialog: render the parts inside <Dialog.Root>.',
     );
+  });
+});
+
+describe('Dialog accessibility', () => {
+  it('has no axe violations: Default', async () => {
+    const screen = await render(withStyles(<RenameDialog />));
+    const trigger = screen.getByRole('button', { name: 'Rename' });
+
+    // Opened, then closed with Escape.
+    await userEvent.click(trigger);
+    await expect.element(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await expect.element(trigger).toHaveFocus();
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Open', async () => {
+    const screen = await render(withStyles(<RenameDialog defaultOpen />));
+
+    await expect.element(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus();
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: AlertDialog', async () => {
+    const screen = await render(
+      withStyles(
+        <Dialog.Root role="alertdialog">
+          <Dialog.Trigger>Delete the take</Dialog.Trigger>
+          <Overlay>
+            <Dialog.Title>Delete the take?</Dialog.Title>
+            <Dialog.Description>It is gone for good.</Dialog.Description>
+            <div>
+              <Dialog.CloseTrigger>Keep it</Dialog.CloseTrigger>{' '}
+              <Dialog.CloseTrigger>Delete</Dialog.CloseTrigger>
+            </div>
+          </Overlay>
+        </Dialog.Root>,
+      ),
+    );
+
+    // Open, and still open after a press on the backdrop.
+    await userEvent.click(screen.getByRole('button', { name: 'Delete the take' }));
+    await expect.element(screen.getByRole('button', { name: 'Keep it' })).toHaveFocus();
+    await pressBackdrop();
+    expect(part('content')).toHaveAttribute('data-state', 'open');
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Controlled', async () => {
+    const screen = await render(withStyles(<OwnedDialog onOpenChange={openChangeSpy()} />));
+    const menuButton = screen.getByRole('button', { name: 'Rename from the menu' });
+
+    // Opened by the owner, then closed with Cancel.
+    await userEvent.click(menuButton);
+    await expect.element(screen.getByRole('textbox', { name: 'Name' })).toHaveFocus();
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+    await expect.element(menuButton).toHaveFocus();
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Nested', async () => {
+    const screen = await render(withStyles(<ProjectSettings />));
+    const inner = screen.getByRole('button', { name: 'Delete the project' });
+
+    // Both open, then the inner one closed with Escape.
+    await userEvent.click(screen.getByRole('button', { name: 'Project settings' }));
+    await expect.element(inner).toHaveFocus();
+    await userEvent.click(inner);
+    await expect.element(screen.getByRole('button', { name: 'Keep it' })).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await expect.element(inner).toHaveFocus();
+    expect(contentOf('Project settings')).toHaveAttribute('data-state', 'open');
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: NonModal', async () => {
+    const screen = await render(
+      withStyles(
+        <Dialog.Root modal={false}>
+          <Dialog.Trigger>Inspector</Dialog.Trigger> <button type="button">Play</button>
+          <Overlay backdrop={false}>
+            <Dialog.Title>Inspector</Dialog.Title>
+            <Dialog.Description>Gain −3 dB, pan center.</Dialog.Description>
+            <Dialog.CloseTrigger>Close</Dialog.CloseTrigger>
+          </Overlay>
+        </Dialog.Root>,
+      ),
+    );
+    const trigger = screen.getByRole('button', { name: 'Inspector' });
+
+    // Opened, focus moved out to the page, then closed by the trigger.
+    await userEvent.click(trigger);
+    await expect.element(screen.getByRole('button', { name: 'Close' })).toHaveFocus();
+    await userEvent.click(screen.getByRole('button', { name: 'Play' }));
+    await expect.element(screen.getByRole('button', { name: 'Play' })).toHaveFocus();
+    await userEvent.click(trigger);
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+    await animationsDone();
+    await expectNoAxeViolations();
   });
 });

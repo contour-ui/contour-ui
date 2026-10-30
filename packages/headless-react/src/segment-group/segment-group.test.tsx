@@ -1,4 +1,5 @@
 import type { segmentGroup } from '@contour-ui/core';
+import { expectNoAxeViolations } from '@contour-ui/vite-config/visual';
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -118,6 +119,63 @@ function formOf(container: HTMLElement): HTMLFormElement {
 
 const valueSpy = () => vi.fn<(details: segmentGroup.ValueChangeDetails) => void>();
 
+/**
+ * The examples' own styles: just enough to see the items, the focus ring and the indicator, by
+ * the data attributes of the parts.
+ */
+const css = `
+  [data-scope='segment-group'][data-part='root'] {
+    position: relative; display: inline-flex; align-items: center; gap: 2px;
+    border: 1px solid; padding: 2px;
+  }
+  [data-scope='segment-group'][data-part='root'][data-orientation='vertical'] {
+    flex-direction: column; align-items: stretch;
+  }
+  [data-scope='segment-group'][data-part='label'] { padding-inline: 6px; }
+  [data-scope='segment-group'][data-part='item'] { position: relative; padding: 2px 10px; }
+  [data-scope='segment-group'][data-part='item'][data-state='checked'] { font-weight: bold; }
+  [data-scope='segment-group'][data-part='item'][data-disabled] { color: #6b6b6b; }
+  [data-scope='segment-group'][data-part='item'][data-focus-visible] { outline: 2px solid; }
+  [data-scope='segment-group'][data-part='indicator'] {
+    position: absolute; left: var(--left); top: var(--top);
+    width: var(--width); height: var(--height);
+    background: #d6d6d6; transition: left 150ms, top 150ms, width 150ms;
+  }
+`;
+
+/** The ranges of a report: the last one is disabled. */
+const REPORT_RANGES = [
+  { value: 'day', label: 'Day' },
+  { value: 'week', label: 'Week' },
+  { value: 'month', label: 'Month' },
+  { value: 'year', label: 'Year', disabled: true },
+];
+
+/** The ranges of a report, as items with their text and native radio button. */
+function ReportRanges(): ReactElement {
+  return (
+    <>
+      {REPORT_RANGES.map((range) => (
+        <SegmentGroup.Item key={range.value} value={range.value} disabled={range.disabled}>
+          <SegmentGroup.ItemText>{range.label}</SegmentGroup.ItemText>
+          <SegmentGroup.ItemHiddenInput />
+        </SegmentGroup.Item>
+      ))}
+    </>
+  );
+}
+
+/** The props of the icons of the examples, hidden from assistive technology. */
+const glyph = {
+  'aria-hidden': true,
+  width: 16,
+  height: 16,
+  viewBox: '0 0 16 16',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.5,
+} as const;
+
 describe('SegmentGroup', () => {
   it('renders a labelled radio group of native radio buttons', async () => {
     const screen = await render(<Range defaultValue="week" />);
@@ -179,6 +237,34 @@ describe('SegmentGroup', () => {
 
     await userEvent.keyboard('{Tab}');
     expect(part(screen.container, 'item', 'day')).not.toHaveAttribute('data-focus');
+  });
+
+  it('wraps around with the arrow keys, past a disabled last item', async () => {
+    const screen = await render(
+      <SegmentGroup.Root aria-label="Range" defaultValue="month">
+        <ReportRanges />
+      </SegmentGroup.Root>,
+    );
+    const day = screen.getByRole('radio', { name: 'Day' });
+
+    await userEvent.click(screen.getByText('Month'));
+    await userEvent.keyboard('{ArrowRight}');
+    // Year is disabled: the check wraps around to Day.
+    await expect.element(day).toBeChecked();
+    await expect.element(day).toHaveFocus();
+    await expect.element(screen.getByRole('radio', { name: 'Year' })).toBeDisabled();
+  });
+
+  it('moves the check with the arrow keys of the block axis in a vertical group', async () => {
+    const screen = await render(
+      <SegmentGroup.Root aria-label="Range" defaultValue="day" orientation="vertical">
+        <ReportRanges />
+      </SegmentGroup.Root>,
+    );
+
+    await userEvent.click(screen.getByText('Day'));
+    await userEvent.keyboard('{ArrowDown}');
+    await expect.element(screen.getByRole('radio', { name: 'Week' })).toBeChecked();
   });
 
   it('submits the value under its name with the form', async () => {
@@ -295,5 +381,110 @@ describe('SegmentGroup', () => {
     expect(() => renderToStaticMarkup(<SegmentGroup.Label>Lost</SegmentGroup.Label>)).toThrow(
       /SegmentGroup\.Root/u,
     );
+  });
+});
+
+describe('SegmentGroup accessibility', () => {
+  it('has no axe violations: Default', async () => {
+    const screen = await render(
+      <>
+        <style>{css}</style>
+        <SegmentGroup.Root defaultValue="week">
+          <SegmentGroup.Label>Range</SegmentGroup.Label>
+          <SegmentGroup.Indicator />
+          <ReportRanges />
+        </SegmentGroup.Root>
+      </>,
+    );
+
+    // Day checked with a click, then with the arrow keys, which wrap around past Year.
+    await userEvent.click(screen.getByText('Day'));
+    await userEvent.keyboard('{ArrowRight}');
+    await expect.element(screen.getByRole('radio', { name: 'Week' })).toHaveFocus();
+    await userEvent.keyboard('{ArrowRight}{ArrowRight}');
+    await expect.element(screen.getByRole('radio', { name: 'Day' })).toBeChecked();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Vertical', async () => {
+    const screen = await render(
+      <>
+        <style>{css}</style>
+        <SegmentGroup.Root defaultValue="day" orientation="vertical" aria-label="Range">
+          <SegmentGroup.Indicator />
+          <ReportRanges />
+        </SegmentGroup.Root>
+      </>,
+    );
+
+    await userEvent.click(screen.getByText('Day'));
+    await userEvent.keyboard('{ArrowDown}');
+    await expect.element(screen.getByRole('radio', { name: 'Week' })).toBeChecked();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: IconOnly', async () => {
+    const screen = await render(
+      <>
+        <style>{css}</style>
+        <SegmentGroup.Root defaultValue="system" aria-label="Theme">
+          <SegmentGroup.Indicator />
+          <SegmentGroup.Item value="light">
+            <svg {...glyph}>
+              <circle cx="8" cy="8" r="3" />
+            </svg>
+            <SegmentGroup.ItemHiddenInput aria-label="Light" />
+          </SegmentGroup.Item>
+          <SegmentGroup.Item value="dark">
+            <svg {...glyph}>
+              <path d="M12 10a5 5 0 0 1-6-6 5 5 0 1 0 6 6Z" />
+            </svg>
+            <SegmentGroup.ItemHiddenInput aria-label="Dark" />
+          </SegmentGroup.Item>
+          <SegmentGroup.Item value="system">
+            <svg {...glyph}>
+              <rect x="2" y="3" width="12" height="8" rx="1" />
+              <path d="M6 14h4" />
+            </svg>
+            <SegmentGroup.ItemHiddenInput aria-label="System" />
+          </SegmentGroup.Item>
+        </SegmentGroup.Root>
+      </>,
+    );
+
+    // Through the item: the icon covers the hidden radio button.
+    await userEvent.click(part(screen.container, 'item', 'dark'));
+    await expect.element(screen.getByRole('radio', { name: 'Dark' })).toBeChecked();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: InForm', async () => {
+    const screen = await render(
+      <form aria-label="Report">
+        <style>{css}</style>
+        <SegmentGroup.Root name="range" defaultValue="month" aria-label="Range">
+          <ReportRanges />
+        </SegmentGroup.Root>
+      </form>,
+    );
+
+    await userEvent.click(screen.getByText('Day'));
+    await expect.poll(() => new FormData(formOf(screen.container)).get('range')).toBe('day');
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Disabled', async () => {
+    const screen = await render(
+      <>
+        <style>{css}</style>
+        <SegmentGroup.Root defaultValue="week" disabled aria-label="Range">
+          <SegmentGroup.Indicator />
+          <ReportRanges />
+        </SegmentGroup.Root>
+      </>,
+    );
+
+    await expect.element(screen.getByRole('radio', { name: 'Week' })).toBeDisabled();
+    await expectNoAxeViolations();
   });
 });

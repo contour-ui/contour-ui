@@ -1,4 +1,5 @@
 import type { listbox } from '@contour-ui/core';
+import { expectNoAxeViolations } from '@contour-ui/vite-config/visual';
 import { useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -118,6 +119,152 @@ function Selection(): ReactElement {
   return <output>{api.value.join(', ')}</output>;
 }
 
+/**
+ * The examples' own styles: just enough to see the list, the highlight and the selection, by the
+ * data attributes of the parts.
+ */
+const css = `
+  [data-scope='listbox'][data-part='content'] {
+    display: flex; flex-direction: column; max-block-size: 12rem; overflow-y: auto;
+    border: 1px solid; padding: 2px;
+  }
+  [data-scope='listbox'][data-part='item'] { padding: 2px 6px; cursor: default; }
+  [data-scope='listbox'][data-part='item'][data-highlighted] { background: #d6d6d6; }
+  [data-scope='listbox'][data-part='item'][data-disabled] { color: #6b6b6b; }
+  [data-scope='listbox'][data-part='item-group-label'] { font-weight: bold; padding: 6px 6px 2px; }
+`;
+
+interface Waveform {
+  readonly value: string;
+  readonly label: string;
+  readonly disabled?: boolean;
+}
+
+/** Waveforms: the last one is disabled. */
+const WAVEFORMS: readonly Waveform[] = [
+  { value: 'sine', label: 'Sine' },
+  { value: 'triangle', label: 'Triangle' },
+  { value: 'sawtooth', label: 'Sawtooth' },
+  { value: 'square', label: 'Square' },
+  { value: 'pulse', label: 'Pulse' },
+  { value: 'noise', label: 'Noise', disabled: true },
+];
+
+const waveforms = createListCollection({ items: WAVEFORMS });
+
+/** One waveform: its text and a check mark while it is selected. */
+function Item({ item }: { readonly item: Waveform }): ReactElement {
+  return (
+    <Listbox.Item item={item}>
+      <Listbox.ItemText>{item.label}</Listbox.ItemText>{' '}
+      <Listbox.ItemIndicator>✓</Listbox.ItemIndicator>
+    </Listbox.Item>
+  );
+}
+
+/** A single selection of a waveform, with a label. */
+function Waveforms(props: Partial<Listbox.RootProps<Waveform>>): ReactElement {
+  return (
+    <Listbox.Root {...props} collection={waveforms}>
+      <style>{css}</style>
+      <Listbox.Label>Waveform</Listbox.Label>
+      <Listbox.Content>
+        {waveforms.items.map((item) => (
+          <Item key={item.value} item={item} />
+        ))}
+      </Listbox.Content>
+    </Listbox.Root>
+  );
+}
+
+interface DocsResult {
+  /** The URL of the page or of its heading. */
+  readonly url: string;
+  readonly page: string;
+  readonly text: string;
+}
+
+const DOCS: readonly DocsResult[] = [
+  { url: '/docs/essentials/button', page: 'Button', text: 'Button' },
+  { url: '/docs/essentials/button#variants', page: 'Button', text: 'Variants' },
+  { url: '/docs/essentials/button#sizes', page: 'Button', text: 'Sizes' },
+  { url: '/docs/essentials/card', page: 'Card', text: 'Card' },
+  { url: '/docs/essentials/card#variants', page: 'Card', text: 'Variants' },
+  { url: '/docs/essentials/card#as-a-link', page: 'Card', text: 'As a link' },
+  { url: '/docs/essentials/code-block', page: 'CodeBlock', text: 'CodeBlock' },
+  { url: '/docs/essentials/code-block#copy', page: 'CodeBlock', text: 'Copy' },
+  { url: '/docs/essentials/code-block#line-numbers', page: 'CodeBlock', text: 'Line numbers' },
+];
+
+/**
+ * The search box of the docs: the results of a query, the pages and headings whose text has it,
+ * grouped by page under the input, the first one highlighted as the user types.
+ */
+function DocsSearch({
+  onSelect,
+}: {
+  readonly onSelect?: (details: listbox.SelectDetails) => void;
+}): ReactElement {
+  const [query, setQuery] = useState('');
+  const collection = useMemo(() => {
+    const words = query.trim().toLowerCase();
+    return createListCollection({
+      items: DOCS.filter((result) => `${result.page} ${result.text}`.toLowerCase().includes(words)),
+      itemToValue: (result) => result.url,
+      itemToString: (result) => result.text,
+      groupBy: (result) => result.page,
+    });
+  }, [query]);
+  return (
+    <Listbox.Root collection={collection} autoHighlight onSelect={onSelect}>
+      <style>{css}</style>
+      <Listbox.Input
+        aria-label="Search the docs"
+        placeholder="Search"
+        value={query}
+        onChange={(event) => {
+          setQuery(event.target.value);
+        }}
+      />
+      <Listbox.Content aria-label="Results">
+        {collection.groups.map((group) => (
+          <Listbox.ItemGroup key={group.key}>
+            <Listbox.ItemGroupLabel>{group.key}</Listbox.ItemGroupLabel>
+            {group.items.map((result) => (
+              <Listbox.Item key={result.url} item={result}>
+                <Listbox.ItemText>{result.text}</Listbox.ItemText>
+              </Listbox.Item>
+            ))}
+          </Listbox.ItemGroup>
+        ))}
+      </Listbox.Content>
+      <Listbox.Empty>No results</Listbox.Empty>
+    </Listbox.Root>
+  );
+}
+
+const EFFECTS = createListCollection({
+  items: ['Chorus', 'Delay', 'Distortion', 'Phaser', 'Reverb'],
+});
+
+/** A multiple selection of effects, Delay selected to start with. */
+function Effects(): ReactElement {
+  return (
+    <Listbox.Root collection={EFFECTS} selectionMode="multiple" defaultValue={['Delay']}>
+      <style>{css}</style>
+      <Listbox.Label>Effects</Listbox.Label>
+      <Listbox.Content>
+        {EFFECTS.items.map((effect) => (
+          <Listbox.Item key={effect} item={effect}>
+            <Listbox.ItemText>{effect}</Listbox.ItemText>{' '}
+            <Listbox.ItemIndicator>✓</Listbox.ItemIndicator>
+          </Listbox.Item>
+        ))}
+      </Listbox.Content>
+    </Listbox.Root>
+  );
+}
+
 describe('Listbox', () => {
   it('renders its parts with their roles and the references between them', async () => {
     const screen = await render(<PresetSearch />);
@@ -213,6 +360,46 @@ describe('Listbox', () => {
       await userEvent.tab();
       await userEvent.keyboard('g');
       expect(activeOption(list.element())).toBe('Glass bells✓');
+    });
+
+    it('moves on to the next match with each press of the same letter', async () => {
+      const screen = await render(<Waveforms />);
+      const list = screen.getByRole('listbox', { name: 'Waveform' });
+
+      await userEvent.tab();
+      expect(activeOption(list.element())).toBe('Sine ✓');
+      await userEvent.keyboard('s');
+      expect(activeOption(list.element())).toBe('Sawtooth ✓');
+      await userEvent.keyboard('s');
+      expect(activeOption(list.element())).toBe('Square ✓');
+    });
+
+    it('moves to the first and the last enabled item with Home and End', async () => {
+      const screen = await render(<Waveforms />);
+      const list = screen.getByRole('listbox', { name: 'Waveform' });
+
+      await userEvent.tab();
+      await userEvent.keyboard('{End}');
+      // Noise, the last item, is disabled.
+      expect(activeOption(list.element())).toBe('Pulse ✓');
+      await userEvent.keyboard('{Home}');
+      expect(activeOption(list.element())).toBe('Sine ✓');
+    });
+
+    it('shows the indicator of the selected item only, and replaces a single selection', async () => {
+      const screen = await render(<Waveforms />);
+      const option = (name: string) => screen.getByRole('option', { name });
+      const indicator = (name: string) =>
+        option(name).element().querySelector('[data-part="item-indicator"]');
+
+      await userEvent.click(option('Square'));
+      await expect.element(option('Square')).toHaveAttribute('aria-selected', 'true');
+      expect(indicator('Square')).toBeVisible();
+
+      await userEvent.click(option('Triangle'));
+      await expect.element(option('Triangle')).toHaveAttribute('aria-selected', 'true');
+      await expect.element(option('Square')).toHaveAttribute('aria-selected', 'false');
+      expect(indicator('Square')).not.toBeVisible();
     });
 
     it('takes a space typed between letters as part of the query, not as a selection', async () => {
@@ -350,6 +537,31 @@ describe('Listbox', () => {
       await expect.element(input).not.toHaveAttribute('aria-activedescendant');
     });
 
+    it('moves the highlight across groups, and reports the value of the selected item', async () => {
+      const onSelect = selectSpy();
+      const screen = await render(<DocsSearch onSelect={onSelect} />);
+      const input = screen.getByRole('combobox', { name: 'Search the docs' });
+      const option = (name: string, group: string) =>
+        screen.getByRole('group', { name: group }).getByRole('option', { name });
+
+      await userEvent.click(input);
+      await userEvent.keyboard('variants');
+      expect(screen.getByRole('option').elements()).toHaveLength(2);
+      await expect
+        .element(input)
+        .toHaveAttribute('aria-activedescendant', option('Variants', 'Button').element().id);
+      await userEvent.keyboard('{ArrowDown}');
+      // On to the first item of the next group.
+      await expect
+        .element(input)
+        .toHaveAttribute('aria-activedescendant', option('Variants', 'Card').element().id);
+      await userEvent.keyboard('{Enter}');
+      // The value of the item is its URL (`itemToValue`).
+      expect(onSelect.mock.calls).toStrictEqual([
+        [{ value: '/docs/essentials/card#variants', item: DOCS[4] }],
+      ]);
+    });
+
     it('highlights the first item of an input that had focus before the listbox started', async () => {
       const screen = await render(<PresetSearch focusOnMount autoHighlight />);
       const input = screen.getByRole('combobox');
@@ -482,6 +694,24 @@ describe('Listbox', () => {
       .toHaveAttribute('aria-selected', 'true');
   });
 
+  it('toggles the items of a multiple selection with clicks and Enter', async () => {
+    const screen = await render(<Effects />);
+    await expect
+      .element(screen.getByRole('listbox', { name: 'Effects' }))
+      .toHaveAttribute('aria-multiselectable', 'true');
+
+    await userEvent.click(screen.getByRole('option', { name: 'Reverb' }));
+    // Selected to start with: the click unselects it.
+    await userEvent.click(screen.getByRole('option', { name: 'Delay' }));
+    await userEvent.keyboard('{Home}{Enter}');
+    const selected = screen
+      .getByRole('option')
+      .elements()
+      .filter((option) => option.getAttribute('aria-selected') === 'true')
+      .map((option) => option.textContent);
+    expect(selected).toStrictEqual(['Chorus ✓', 'Reverb ✓']);
+  });
+
   it('shows Empty only while the collection has no items', async () => {
     const empty: ListCollection<Preset> = createListCollection<Preset>({ items: [] });
     const screen = await render(<Presets />);
@@ -551,5 +781,50 @@ describe('Listbox', () => {
         </Listbox.Root>,
       ),
     ).toThrow('Listbox: render the parts of an item inside <Listbox.Item>.');
+  });
+});
+
+describe('Listbox accessibility', () => {
+  it('has no axe violations: Default', async () => {
+    const screen = await render(<Waveforms />);
+    const option = (name: string) => screen.getByRole('option', { name });
+
+    // Square selected with the keys, then Triangle with a click.
+    await userEvent.tab();
+    await userEvent.keyboard('{ArrowDown}{ArrowDown}{End}{Home}ss{Enter}');
+    await expect.element(option('Square')).toHaveAttribute('aria-selected', 'true');
+    await userEvent.click(option('Triangle'));
+    await expect.element(option('Triangle')).toHaveAttribute('aria-selected', 'true');
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Search', async () => {
+    const screen = await render(<DocsSearch />);
+    const input = screen.getByRole('combobox', { name: 'Search the docs' });
+
+    // Two results selected, then a query that finds nothing.
+    await userEvent.click(input);
+    await userEvent.keyboard('variants');
+    await userEvent.keyboard('{ArrowDown}{Enter}');
+    await userEvent.clear(input);
+    await userEvent.keyboard('copy');
+    await userEvent.click(screen.getByRole('option', { name: 'Copy' }));
+    await userEvent.clear(input);
+    await userEvent.keyboard('zzz');
+    await expect.element(screen.getByText('No results')).toBeVisible();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Multiple', async () => {
+    const screen = await render(<Effects />);
+
+    // Reverb and Chorus selected, Delay unselected.
+    await userEvent.click(screen.getByRole('option', { name: 'Reverb' }));
+    await userEvent.click(screen.getByRole('option', { name: 'Delay' }));
+    await userEvent.keyboard('{Home}{Enter}');
+    await expect
+      .element(screen.getByRole('option', { name: 'Chorus' }))
+      .toHaveAttribute('aria-selected', 'true');
+    await expectNoAxeViolations();
   });
 });

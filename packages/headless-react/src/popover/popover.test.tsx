@@ -1,4 +1,5 @@
 import type { popover } from '@contour-ui/core';
+import { animationsDone, expectNoAxeViolations } from '@contour-ui/vite-config/visual';
 import { useRef, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -131,6 +132,111 @@ function Focused({ restoreFocus }: { readonly restoreFocus: boolean }): ReactEle
 function OpenState(): ReactElement {
   const api = usePopoverContext();
   return <output>{api.open ? 'Open' : 'Closed'}</output>;
+}
+
+/**
+ * The examples' own styles: a framed content that fades and grows from the edge next to its
+ * trigger (`--transform-origin`), above the page (`--layer-index`).
+ */
+const EXAMPLE_STYLES = `
+@keyframes popover-example-in { from { opacity: 0; scale: 0.96; } }
+@keyframes popover-example-out { to { opacity: 0; scale: 0.96; } }
+.popover-example-positioner { z-index: calc(1000 + var(--layer-index, 0)); }
+.popover-example-content {
+  display: grid;
+  gap: 8px;
+  max-inline-size: 18rem;
+  padding: 12px;
+  border: 1px solid;
+  border-radius: 6px;
+  background: Canvas;
+  color: CanvasText;
+  transform-origin: var(--transform-origin);
+}
+.popover-example-content[hidden] { display: none; }
+.popover-example-content[data-state='open'] { animation: popover-example-in 150ms ease-out; }
+.popover-example-content[data-state='closed'] { animation: popover-example-out 100ms ease-in; }
+.popover-example-content:focus-visible { outline: 2px solid; }
+.popover-example-title { font-weight: 600; }
+@media (prefers-reduced-motion: reduce) {
+  .popover-example-content { animation-duration: 1ms; }
+}
+`;
+
+/** An example with the examples' styles. */
+function withStyles(example: ReactElement): ReactElement {
+  return (
+    <>
+      <style>{EXAMPLE_STYLES}</style>
+      {example}
+    </>
+  );
+}
+
+/**
+ * The content of a share popover, portalled to the end of the page: a title, a description, a
+ * field and a close trigger.
+ */
+function ShareContent(): ReactElement {
+  return (
+    <Portal>
+      <Popover.Positioner className="popover-example-positioner">
+        <Popover.Content className="popover-example-content">
+          <Popover.Title className="popover-example-title">Share this page</Popover.Title>
+          <Popover.Description>Anyone with the link can view it.</Popover.Description>
+          <input aria-label="Link" defaultValue="https://contour-ui.dev/docs" />
+          <Popover.CloseTrigger>Done</Popover.CloseTrigger>
+        </Popover.Content>
+      </Popover.Positioner>
+    </Portal>
+  );
+}
+
+/** The owner keeps `open` in its state: the popover only reports requests, and follows it. */
+function ControlledPopover(): ReactElement {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Popover.Root
+        open={open}
+        onOpenChange={(details) => {
+          setOpen(details.open);
+        }}
+      >
+        <Popover.Trigger>Share</Popover.Trigger>
+        <ShareContent />
+      </Popover.Root>{' '}
+      <output>{open ? 'Open' : 'Closed'}</output>
+    </>
+  );
+}
+
+/** A popover opened from another one, each in a portal. */
+function SnapSettings(): ReactElement {
+  return (
+    <Popover.Root>
+      <Popover.Trigger>Settings</Popover.Trigger>
+      <Portal>
+        <Popover.Positioner className="popover-example-positioner">
+          <Popover.Content className="popover-example-content" aria-label="Settings">
+            <label>
+              <input type="checkbox" /> Snap to grid
+            </label>
+            <Popover.Root positioning={{ placement: 'right-start' }}>
+              <Popover.Trigger>Advanced</Popover.Trigger>
+              <Portal>
+                <Popover.Positioner className="popover-example-positioner">
+                  <Popover.Content className="popover-example-content" aria-label="Advanced">
+                    <button type="button">Reset all</button>
+                  </Popover.Content>
+                </Popover.Positioner>
+              </Portal>
+            </Popover.Root>
+          </Popover.Content>
+        </Popover.Positioner>
+      </Portal>
+    </Popover.Root>
+  );
 }
 
 describe('Popover', () => {
@@ -374,6 +480,25 @@ describe('Popover', () => {
     await expect.element(advanced).not.toBeVisible();
   });
 
+  it('closes nested popovers one at a time with Escape, the top-most first', async () => {
+    const screen = await render(<Nested />);
+    const settings = screen.getByRole('dialog', { name: 'Settings', includeHidden: true });
+    const advanced = screen.getByRole('dialog', { name: 'Advanced', includeHidden: true });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Settings', exact: true }));
+    await userEvent.click(screen.getByRole('button', { name: 'Advanced' }));
+    await expect.element(screen.getByRole('button', { name: 'Reset' })).toHaveFocus();
+
+    await userEvent.keyboard('{Escape}');
+    await expect.element(advanced).not.toBeVisible();
+    await expect.element(settings).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect.element(settings).not.toBeVisible();
+    await expect
+      .element(screen.getByRole('button', { name: 'Settings', exact: true }))
+      .toHaveFocus();
+  });
+
   it('mounts the content on the first opening with lazyMount, and unmounts it with unmountOnExit', async () => {
     const lazy = await render(<Share lazyMount />);
     expect(hasPart('content')).toBe(false);
@@ -415,6 +540,9 @@ describe('Popover', () => {
   it('leaves focus alone when it starts open, and when autoFocus is off', async () => {
     const screen = await render(<Share defaultOpen />);
     await expect.element(screen.getByRole('dialog')).toBeVisible();
+    await expect
+      .element(screen.getByRole('button', { name: 'Share' }))
+      .toHaveAttribute('aria-expanded', 'true');
     await nextFrame();
     await nextFrame();
     expect(document.activeElement).toBe(document.body);
@@ -569,5 +697,148 @@ describe('Popover', () => {
       </Popover.Root>,
     );
     expect(inPlace).toContain('role="dialog"');
+  });
+});
+
+describe('Popover accessibility', () => {
+  it('has no axe violations: Default', async () => {
+    const screen = await render(
+      withStyles(
+        <>
+          <Popover.Root>
+            <Popover.Trigger>Share</Popover.Trigger>
+            <ShareContent />
+          </Popover.Root>{' '}
+          <button type="button">Next</button>
+        </>,
+      ),
+    );
+    const trigger = screen.getByRole('button', { name: 'Share' });
+    const link = screen.getByRole('textbox', { name: 'Link' });
+
+    // Opened and left with Tab, opened again and closed with Escape.
+    await userEvent.click(trigger);
+    await expect.element(link).toHaveFocus();
+    await userEvent.tab();
+    await userEvent.tab();
+    await expect.element(screen.getByRole('button', { name: 'Next' })).toHaveFocus();
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+    await userEvent.click(trigger);
+    await expect.element(link).toHaveFocus();
+    await userEvent.keyboard('{Escape}');
+    await expect.element(trigger).toHaveFocus();
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: DefaultOpen', async () => {
+    const screen = await render(
+      withStyles(
+        <div style={{ paddingBlockStart: '10rem' }}>
+          <Popover.Root defaultOpen positioning={{ placement: 'top-start' }}>
+            <Popover.Trigger>Share</Popover.Trigger>
+            <ShareContent />
+          </Popover.Root>
+        </div>,
+      ),
+    );
+
+    // Placed above its trigger.
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Share this page' }))
+      .toHaveAttribute('data-placement', 'top-start');
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Controlled', async () => {
+    const screen = await render(withStyles(<ControlledPopover />));
+
+    // Opened by the trigger, closed by Done.
+    await userEvent.click(screen.getByRole('button', { name: 'Share' }));
+    await expect.element(screen.getByText('Open')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }));
+    await expect.element(screen.getByText('Closed')).toBeInTheDocument();
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Modal', async () => {
+    const screen = await render(
+      withStyles(
+        <>
+          <button type="button">Before</button>{' '}
+          <Popover.Root modal>
+            <Popover.Trigger>Share</Popover.Trigger>
+            <ShareContent />
+          </Popover.Root>
+        </>,
+      ),
+    );
+    const trigger = screen.getByRole('button', { name: 'Share' });
+    const before = screen.getByRole('button', { name: 'Before' }).element();
+
+    // Opened, Tab around the content, closed by the trigger: the page is in reach again.
+    await userEvent.click(trigger);
+    await expect.element(screen.getByRole('textbox', { name: 'Link' })).toHaveFocus();
+    await expect.poll(() => before.closest('[inert]')).not.toBeNull();
+    await userEvent.tab();
+    await userEvent.tab();
+    await expect.element(screen.getByRole('textbox', { name: 'Link' })).toHaveFocus();
+    await userEvent.click(trigger);
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(before.closest('[inert]')).toBeNull();
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Nested', async () => {
+    const screen = await render(withStyles(<SnapSettings />));
+    const settings = screen.getByRole('dialog', { name: 'Settings', includeHidden: true });
+    const advanced = screen.getByRole('dialog', { name: 'Advanced', includeHidden: true });
+
+    // Both opened, a press inside the inner one, then both closed with Escape.
+    await userEvent.click(screen.getByRole('button', { name: 'Settings' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Advanced' }));
+    const reset = screen.getByRole('button', { name: 'Reset all' });
+    await expect.element(reset).toHaveFocus();
+    await userEvent.click(reset);
+    await expect.element(advanced).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect.element(advanced).not.toBeVisible();
+    await expect.element(settings).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect.element(settings).not.toBeVisible();
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: WithAnchor', async () => {
+    const screen = await render(
+      withStyles(
+        <Popover.Root positioning={{ placement: 'bottom-end' }}>
+          <Popover.Anchor style={{ display: 'inline-flex', gap: 4 }}>
+            <input aria-label="Color" defaultValue="#3b82f6" />
+            <Popover.Trigger>Pick</Popover.Trigger>
+          </Popover.Anchor>
+          <Portal>
+            <Popover.Positioner className="popover-example-positioner">
+              <Popover.Content className="popover-example-content" aria-label="Colors">
+                <button type="button">Blue</button>
+                <button type="button">Green</button>
+              </Popover.Content>
+            </Popover.Positioner>
+          </Portal>
+        </Popover.Root>,
+      ),
+    );
+
+    // Open, placed below the end of the anchor.
+    await userEvent.click(screen.getByRole('button', { name: 'Pick' }));
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Colors' }))
+      .toHaveAttribute('data-placement', 'bottom-end');
+    await animationsDone();
+    await expectNoAxeViolations();
   });
 });

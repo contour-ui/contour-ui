@@ -1,8 +1,10 @@
-import { createRef, StrictMode } from 'react';
+import { animationsDone, expectNoAxeViolations } from '@contour-ui/vite-config/visual';
+import { createRef, StrictMode, useState } from 'react';
 import type { ReactElement } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
 import { afterEach, beforeAll, describe, expect, it, vi } from 'vite-plus/test';
+import { userEvent } from 'vite-plus/test/browser';
 import { render, renderHook } from 'vitest-browser-react';
 
 import { Presence, usePresence } from '../index.ts';
@@ -126,6 +128,62 @@ function Layer({ present }: { readonly present: boolean }): ReactElement | null 
       </div>
     </div>
   );
+}
+
+/**
+ * The examples' own styles: the element fades and slides in while open, and out once closed;
+ * with reduced motion, it only fades.
+ */
+const EXAMPLE_STYLES = `
+@keyframes presence-example-in { from { opacity: 0; translate: 0 -4px; } }
+@keyframes presence-example-out { to { opacity: 0; translate: 0 -4px; } }
+@keyframes presence-example-fade-in { from { opacity: 0; } }
+@keyframes presence-example-fade-out { to { opacity: 0; } }
+.presence-example { margin-block: 8px 0; padding: 8px 12px; border: 1px solid; border-radius: 4px; }
+.presence-example[data-state='open'] { animation: presence-example-in 200ms ease-out; }
+.presence-example[data-state='closed'] { animation: presence-example-out 150ms ease-in; }
+@media (prefers-reduced-motion: reduce) {
+  .presence-example[data-state='open'] { animation-name: presence-example-fade-in; }
+  .presence-example[data-state='closed'] { animation-name: presence-example-fade-out; }
+}
+`;
+
+/** An example with the examples' styles. */
+function withStyles(example: ReactElement): ReactElement {
+  return (
+    <>
+      <style>{EXAMPLE_STYLES}</style>
+      {example}
+    </>
+  );
+}
+
+/** A button that shows and hides the details, as the owner of a `Presence` would. */
+function Disclosure(props: Omit<PresenceProps, 'present'>): ReactElement {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <button
+        type="button"
+        aria-expanded={open}
+        onClick={() => {
+          setOpen(!open);
+        }}
+      >
+        Shipping
+      </button>
+      <Presence {...props} present={open} />
+    </div>
+  );
+}
+
+/** Show the details of a `Disclosure`, then hide them again. */
+async function showAndHide(screen: Awaited<ReturnType<typeof render>>): Promise<void> {
+  const button = screen.getByRole('button', { name: 'Shipping' });
+  await userEvent.click(button);
+  await expect.element(button).toHaveAttribute('aria-expanded', 'true');
+  await userEvent.click(button);
+  await expect.element(button).toHaveAttribute('aria-expanded', 'false');
 }
 
 const CLOSED: UsePresenceProps = { present: false };
@@ -475,5 +533,58 @@ describe('usePresence', () => {
 
     await rerender({ present: true });
     expect(result.current.ref).toBe(ref);
+  });
+});
+
+describe('Presence accessibility', () => {
+  it('has no axe violations: Default', async () => {
+    const screen = await render(
+      withStyles(
+        <Presence present className="presence-example">
+          Ships in two days.
+        </Presence>,
+      ),
+    );
+
+    await expect.element(screen.getByText('Ships in two days.')).toBeVisible();
+    await animationsDone();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: ExitAnimation', async () => {
+    const screen = await render(
+      withStyles(<Disclosure className="presence-example">Ships in two days.</Disclosure>),
+    );
+
+    // Hidden once its exit animation is over.
+    await showAndHide(screen);
+    await expect.poll(() => isHidden(presenceOf(screen.container))).toBe(true);
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: UnmountOnExit', async () => {
+    const screen = await render(
+      withStyles(
+        <Disclosure className="presence-example" lazyMount unmountOnExit>
+          Ships in two days.
+        </Disclosure>,
+      ),
+    );
+
+    // Unmounted once its exit animation is over.
+    await showAndHide(screen);
+    await expect.poll(() => statusOf(screen.container)).toBe('unmounted');
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: WithoutAnimation', async () => {
+    const screen = await render(
+      withStyles(<Disclosure style={{ marginBlockStart: 8 }}>Ships in two days.</Disclosure>),
+    );
+
+    // Hidden as soon as it closes.
+    await showAndHide(screen);
+    expect(presenceOf(screen.container)).toHaveAttribute('hidden');
+    await expectNoAxeViolations();
   });
 });

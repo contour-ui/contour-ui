@@ -1,4 +1,5 @@
 import type { collapsible } from '@contour-ui/core';
+import { expectNoAxeViolations } from '@contour-ui/vite-config/visual';
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -98,6 +99,109 @@ function Growing(): ReactElement {
   );
 }
 
+/**
+ * The examples' own styles, since Headless has none: content that grows to its height
+ * (`--height`) as it opens and shrinks back as it closes, and a chevron that turns.
+ */
+const EXAMPLE_STYLES = `
+@keyframes collapsible-example-expand { from { height: 0; } to { height: var(--height); } }
+@keyframes collapsible-example-collapse { from { height: var(--height); } to { height: 0; } }
+.collapsible-example { max-inline-size: 24rem; }
+.collapsible-example-trigger { display: inline-flex; gap: 6px; align-items: center; }
+.collapsible-example-indicator { display: inline-block; transition: rotate 150ms; }
+.collapsible-example-indicator[data-state='open'] { rotate: 90deg; }
+.collapsible-example-content { overflow: hidden; }
+.collapsible-example-content[data-state='open'] { animation: collapsible-example-expand 200ms ease-out; }
+.collapsible-example-content[data-state='closed'] { animation: collapsible-example-collapse 150ms ease-in; }
+.collapsible-example-body { margin: 0; padding-block: 8px; }
+.collapsible-example-folder { display: flex; gap: 4px; align-items: center; }
+@media (prefers-reduced-motion: reduce) {
+  .collapsible-example-content { animation-duration: 1ms; }
+  .collapsible-example-indicator { transition: none; }
+}
+`;
+
+/** A chevron, drawn for the examples: Headless has no icons. */
+function Chevron(): ReactElement {
+  return (
+    <Collapsible.Indicator className="collapsible-example-indicator">
+      <svg
+        width="12"
+        height="12"
+        viewBox="0 0 12 12"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+      >
+        <path d="M4.5 2.5 8 6l-3.5 3.5" />
+      </svg>
+    </Collapsible.Indicator>
+  );
+}
+
+/**
+ * A trigger with a chevron, and content that grows to its height as it opens. Once closed, the
+ * content stays mounted, `hidden`, after its animation.
+ */
+function ShippingExample(props: Collapsible.RootProps): ReactElement {
+  return (
+    <Collapsible.Root {...props} className="collapsible-example">
+      <Collapsible.Trigger className="collapsible-example-trigger">
+        <Chevron />
+        Shipping
+      </Collapsible.Trigger>
+      <Collapsible.Content className="collapsible-example-content">
+        <p className="collapsible-example-body">
+          Orders ship within two business days. Tracking arrives by email once the parcel leaves the
+          warehouse.
+        </p>
+      </Collapsible.Content>
+    </Collapsible.Root>
+  );
+}
+
+/** An example with the examples' styles. */
+function withStyles(example: ReactElement): ReactElement {
+  return (
+    <>
+      <style>{EXAMPLE_STYLES}</style>
+      {example}
+    </>
+  );
+}
+
+/** A folder of a sidebar: its name links to its index page, and a button next to it toggles it. */
+function Folder(): ReactElement {
+  const [open, setOpen] = useState(true);
+  return (
+    <Collapsible.Root
+      open={open}
+      onOpenChange={(details) => {
+        setOpen(details.open);
+      }}
+      unmountOnExit
+      className="collapsible-example"
+    >
+      <div className="collapsible-example-folder">
+        <a href="#guide">Guide</a>
+        <Collapsible.Trigger className="collapsible-example-trigger" aria-label="Guide pages">
+          <Chevron />
+        </Collapsible.Trigger>
+      </div>
+      <Collapsible.Content className="collapsible-example-content">
+        <ul>
+          <li>
+            <a href="#installation">Installation</a>
+          </li>
+          <li>
+            <a href="#themes">Themes</a>
+          </li>
+        </ul>
+      </Collapsible.Content>
+    </Collapsible.Root>
+  );
+}
+
 /** Labels of the button of `Summary`, by state. */
 const label: Readonly<Record<string, string>> = { true: 'Hide', false: 'Show' };
 
@@ -175,6 +279,7 @@ describe('Collapsible', () => {
     const content = part('content');
 
     await screen.getByRole('button').click();
+    await expect.element(screen.getByRole('button')).toHaveAttribute('aria-expanded', 'false');
     expect(content).toHaveAttribute('data-state', 'closed');
     expect(content).not.toHaveAttribute('hidden');
     expect(content).toHaveAttribute('inert');
@@ -189,11 +294,12 @@ describe('Collapsible', () => {
 
   it('does not animate content that starts open, and animates it after it first closes', async () => {
     const screen = await render(<Shipping defaultOpen contentClassName="animated" />);
+    const trigger = screen.getByRole('button');
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'true');
     const content = part('content');
     expect(content.style.animationName).toBe('none');
     expect(runningAnimations(content)).toStrictEqual([]);
 
-    const trigger = screen.getByRole('button');
     await trigger.click();
     expect(content.style.animationName).toBe('');
     finishAnimations(content);
@@ -256,6 +362,19 @@ describe('Collapsible', () => {
     expect(part('content')).not.toHaveAttribute('hidden');
   });
 
+  it('opens and closes with the state of its owner, and unmounts the content on exit', async () => {
+    const screen = await render(<Folder />);
+    const trigger = screen.getByRole('button', { name: 'Guide pages' });
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect.element(screen.getByRole('link', { name: 'Themes' })).toBeVisible();
+
+    await trigger.click();
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'false');
+    await expect.poll(() => partIn('content')).toBeNull();
+    // The link next to the trigger stays.
+    await expect.element(screen.getByRole('link', { name: 'Guide' })).toBeVisible();
+  });
+
   it('keeps the state when a click handler of the owner prevents the default', async () => {
     const screen = await render(
       <Collapsible.Root>
@@ -289,5 +408,42 @@ describe('Collapsible', () => {
     expect(html).toContain('aria-expanded="true"');
     expect(html).toContain('animation-name:none');
     expect(html).not.toMatch(/ hidden/u);
+  });
+});
+
+describe('Collapsible accessibility', () => {
+  it('has no axe violations: Default', async () => {
+    const screen = await render(withStyles(<ShippingExample />));
+    const trigger = screen.getByRole('button', { name: 'Shipping' });
+
+    // Opened, then closed: hidden once the closing animation is over.
+    await trigger.click();
+    await expect.element(trigger).toHaveAttribute('aria-expanded', 'true');
+    await trigger.click();
+    await expect.element(screen.getByText(/Orders ship/u)).not.toBeVisible();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: DefaultOpen', async () => {
+    const screen = await render(withStyles(<ShippingExample defaultOpen />));
+
+    await expect.element(screen.getByText(/Orders ship/u)).toBeVisible();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Disabled', async () => {
+    const screen = await render(withStyles(<ShippingExample disabled />));
+
+    await expect.element(screen.getByRole('button', { name: 'Shipping' })).toBeDisabled();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: LinkAndTrigger', async () => {
+    const screen = await render(withStyles(<Folder />));
+
+    // Closed: the pages unmount once the closing animation is over.
+    await screen.getByRole('button', { name: 'Guide pages' }).click();
+    await expect.poll(() => partIn('content')).toBeNull();
+    await expectNoAxeViolations();
   });
 });

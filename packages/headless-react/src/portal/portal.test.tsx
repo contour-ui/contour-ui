@@ -1,3 +1,4 @@
+import { expectNoAxeViolations } from '@contour-ui/vite-config/visual';
 import { createContext, use, useRef } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import { hydrateRoot } from 'react-dom/client';
@@ -46,6 +47,23 @@ function Portalled({ container }: { readonly container: PortalProps['container']
     <Portal container={container}>
       <p>In the container</p>
     </Portal>
+  );
+}
+
+/** A region, and a portal into it through a ref: the text comes after the region's own. */
+function LayerExample(): ReactElement {
+  const layerRef = useRef<HTMLElement>(null);
+  return (
+    <>
+      <section ref={layerRef} aria-label="Layer" style={{ padding: 8, border: '1px dashed' }}>
+        <p style={{ margin: 0 }}>The layer</p>
+      </section>
+      <p>Before the portal</p>
+      <Portal container={layerRef}>
+        <p style={{ margin: 0 }}>Rendered in the layer</p>
+      </Portal>
+      <p>After the portal</p>
+    </>
   );
 }
 
@@ -220,5 +238,34 @@ describe('Portal', () => {
     } finally {
       root.unmount();
     }
+  });
+});
+
+describe('Portal accessibility', () => {
+  it.for([
+    {
+      story: 'Default',
+      example: (
+        <Portal>
+          <p>Rendered at the end of the body</p>
+        </Portal>
+      ),
+      text: 'Rendered at the end of the body',
+    },
+    { story: 'Container', example: <LayerExample />, text: 'Rendered in the layer' },
+    {
+      story: 'Disabled',
+      example: (
+        <Portal disabled>
+          <p>Rendered in place</p>
+        </Portal>
+      ),
+      text: 'Rendered in place',
+    },
+  ])('has no axe violations: $story', async ({ example, text }) => {
+    const screen = await render(example);
+
+    await expect.element(screen.getByText(text)).toBeInTheDocument();
+    await expectNoAxeViolations();
   });
 });

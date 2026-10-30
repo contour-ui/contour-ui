@@ -1,4 +1,6 @@
 import type { clipboard } from '@contour-ui/core';
+import { expectNoAxeViolations } from '@contour-ui/vite-config/visual';
+import { useState } from 'react';
 import type { MouseEvent, ReactElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { afterEach, describe, expect, it, vi } from 'vite-plus/test';
@@ -306,6 +308,10 @@ describe('Clipboard label, control and value text', () => {
     expect(part(screen.container, 'control')).not.toHaveAttribute('role');
     expect(part(screen.container, 'value-text').tagName).toBe('SPAN');
     expect(part(screen.container, 'value-text').textContent).toBe('npm i');
+    // The control renders its children in place: the value text sits right inside it.
+    expect(part(screen.container, 'value-text').parentElement).toBe(
+      part(screen.container, 'control'),
+    );
     for (const name of ['label', 'control', 'value-text']) {
       expect(part(screen.container, name)).not.toHaveAttribute('data-copied');
     }
@@ -408,5 +414,149 @@ describe('Clipboard label, control and value text', () => {
     for (const name of ['root', 'label', 'control', 'value-text', 'trigger', 'indicator']) {
       expect(part(screen.container, name)).toHaveAttribute('data-copied', '');
     }
+  });
+});
+
+/** The props of the icons of the examples, hidden from assistive technology. */
+const glyph = {
+  'aria-hidden': true,
+  width: 16,
+  height: 16,
+  viewBox: '0 0 16 16',
+  fill: 'none',
+  stroke: 'currentColor',
+  strokeWidth: 1.5,
+  strokeLinecap: 'round',
+  strokeLinejoin: 'round',
+} as const;
+
+/** Two squares, drawn for the examples: Headless has no icons. */
+function CopyGlyph(): ReactElement {
+  return (
+    <svg {...glyph} data-glyph="copy">
+      <rect x="5" y="5" width="8" height="8" rx="1.5" />
+      <path d="M3 11V4.5A1.5 1.5 0 0 1 4.5 3H11" />
+    </svg>
+  );
+}
+
+/** A check mark, drawn for the examples. */
+function CheckGlyph(): ReactElement {
+  return (
+    <svg {...glyph} data-glyph="check">
+      <path d="M3.5 8.5 6.5 11.5 12.5 4.5" />
+    </svg>
+  );
+}
+
+const commands = new Map([
+  ['npm', 'npm install @contour-ui/headless-react'],
+  ['pnpm', 'pnpm add @contour-ui/headless-react'],
+  ['yarn', 'yarn add @contour-ui/headless-react'],
+  ['bun', 'bun add @contour-ui/headless-react'],
+]);
+
+/** The owner keeps the command in its state and passes it as `value`. */
+function InstallCommand(): ReactElement {
+  const [manager, setManager] = useState('npm');
+  const command = commands.get(manager) ?? '';
+  return (
+    <Clipboard.Root value={command} timeout={1000}>
+      <label>
+        Package manager{' '}
+        <select
+          value={manager}
+          onChange={(event) => {
+            setManager(event.target.value);
+          }}
+        >
+          {[...commands.keys()].map((name) => (
+            <option key={name}>{name}</option>
+          ))}
+        </select>
+      </label>{' '}
+      <code>{command}</code> <Clipboard.Trigger>Copy</Clipboard.Trigger>
+    </Clipboard.Root>
+  );
+}
+
+describe('Clipboard accessibility', () => {
+  it('has no axe violations: Default', async () => {
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+    acceptingClipboard();
+    const value = 'pnpm add @contour-ui/headless-react';
+    const screen = await render(
+      <Clipboard.Root value={value} timeout={1000}>
+        <code>{value}</code> <Clipboard.Trigger>Copy</Clipboard.Trigger>{' '}
+        <Clipboard.Indicator copied="Copied" />
+      </Clipboard.Root>,
+    );
+    const trigger = screen.getByRole('button', { name: 'Copy to clipboard' });
+
+    // A copy, then the end of the copied state: the indicator next to the trigger is empty again.
+    await userEvent.click(trigger);
+    await expect.element(trigger).toHaveAttribute('data-copied');
+    vi.advanceTimersByTime(1000);
+    await expect.element(trigger).not.toHaveAttribute('data-copied');
+    vi.useRealTimers();
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Anatomy', async () => {
+    acceptingClipboard();
+    const screen = await render(
+      <Clipboard.Root value="pnpm add @contour-ui/headless-react">
+        <Clipboard.Label>Install command</Clipboard.Label>
+        <Clipboard.Control style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Clipboard.ValueText style={{ fontFamily: 'monospace' }} />
+          <Clipboard.Trigger>Copy</Clipboard.Trigger>
+          <Clipboard.Indicator copied="Copied" />
+        </Clipboard.Control>
+      </Clipboard.Root>,
+    );
+
+    // In the copied state, every part shows it.
+    await userEvent.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+    await expect
+      .element(screen.getByRole('group', { name: 'Install command' }))
+      .toHaveAttribute('data-copied');
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: WithIcons', async () => {
+    acceptingClipboard();
+    const value = 'npm install @contour-ui/headless-react';
+    const screen = await render(
+      <Clipboard.Root value={value}>
+        <code>{value}</code>{' '}
+        <Clipboard.Trigger>
+          <Clipboard.Indicator copied={<CheckGlyph />}>
+            <CopyGlyph />
+          </Clipboard.Indicator>
+        </Clipboard.Trigger>
+      </Clipboard.Root>,
+    );
+    const trigger = screen.getByRole('button', { name: 'Copy to clipboard' });
+
+    // In the copied state: the trigger, with only an icon, shows the check mark.
+    await userEvent.click(trigger);
+    await expect.poll(() => trigger.element().querySelector('svg')?.dataset['glyph']).toBe('check');
+    await expectNoAxeViolations();
+  });
+
+  it('has no axe violations: Controlled', async () => {
+    const writeText = acceptingClipboard();
+    const screen = await render(<InstallCommand />);
+
+    await userEvent.selectOptions(
+      screen.getByRole('combobox', { name: 'Package manager' }),
+      'pnpm',
+    );
+    await userEvent.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
+    expect(writeText.mock.calls).toStrictEqual([['pnpm add @contour-ui/headless-react']]);
+    await expect
+      .element(screen.getByRole('button', { name: 'Copy to clipboard' }))
+      .toHaveAttribute('data-copied');
+    await expectNoAxeViolations();
   });
 });
