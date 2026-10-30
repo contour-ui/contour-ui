@@ -45,7 +45,7 @@ export function ThemeExample() {
 </Preview>
 
 ThemeProvider keeps the theme of the page on `<html>`, as the `data-theme` attribute the token
-stylesheet reads, so every Kit and Audio component follows it ([Themes](/docs/guide/themes)). It
+stylesheet reads, so every styled component follows it ([Themes](/docs/guide/themes)). It
 starts from the color scheme of the operating system, stores the user's choice in `localStorage`
 and restores it on the next visit. `useTheme` reads the theme and changes it, and `themeScript()`
 sets it before the first paint of a page rendered on the server.
@@ -126,8 +126,8 @@ const themeOptions = {
 <ThemeProvider {...themeOptions}>{children}</ThemeProvider>;
 ```
 
-The source is the same for the same options and version of Kit, so a Content Security Policy can
-allow the script by its hash, or by a nonce on the `<script>` element.
+The source is the same for the same options and version of `@contour-ui/react`, so a Content
+Security Policy can allow the script by its hash, or by a nonce on the `<script>` element.
 
 `themeScript` also comes from `@contour-ui/react/theme-script`, an entry point without React: import
 it from there where the code runs before React does, such as the root layout of Next.js, a React

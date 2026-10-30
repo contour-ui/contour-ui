@@ -4,9 +4,9 @@ description: The cascade layers of the stylesheet, the classes and the layout va
 ---
 
 `@contour-ui/fumadocs/styles.css` holds every style of the package: the base of the page, Prose,
-the MDX components and the layout. Like Kit's, it is plain CSS that reads the
-[tokens](/docs/guide/styling), so it follows the [theme](/docs/guide/themes), and it relies on no
-reset.
+the MDX components and the layout. Like `@contour-ui/react/styles.css`, it is plain CSS that reads
+the [tokens](/docs/guide/styling), so it follows the [theme](/docs/guide/themes), and it relies on
+no reset.
 
 ## Cascade layers
 
@@ -16,15 +16,16 @@ The stylesheet starts with the order of every cascade layer of contour-ui:
 @layer contour.fumadocs-base, contour.fumadocs-prose, contour.components, contour.fumadocs;
 ```
 
-| Layer                    | Holds                                                  | Ranks                                                    |
-| ------------------------ | ------------------------------------------------------ | -------------------------------------------------------- |
-| `contour.fumadocs-base`  | the page itself: the background and the text of `body` | lowest                                                   |
-| `contour.fumadocs-prose` | the typography of the content, `Prose`                 | above the page                                           |
-| `contour.components`     | the components of Kit                                  | above Prose: components in the content keep their styles |
-| `contour.fumadocs`       | the MDX components and the layout                      | above Kit: they adjust the Kit parts they are made of    |
+| Layer                    | Holds                                                  | Ranks                                                        |
+| ------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
+| `contour.fumadocs-base`  | the page itself: the background and the text of `body` | lowest                                                       |
+| `contour.fumadocs-prose` | the typography of the content, `Prose`                 | above the page                                               |
+| `contour.components`     | the components of `@contour-ui/react`                  | above Prose: components in the content keep their styles     |
+| `contour.fumadocs`       | the MDX components and the layout                      | above the components: they adjust the parts they are made of |
 
 A layer ranks where it first appears, so this order holds only when the stylesheet loads after the
-tokens and **before** Kit's styles ([Load the stylesheets](/docs/fumadocs#load-the-stylesheets)).
+tokens and **before** `@contour-ui/react/styles.css`
+([Load the stylesheets](/docs/fumadocs#load-the-stylesheets)).
 
 Every layer sits inside `contour`, so your CSS outside any layer overrides them all, whatever its
 selectors:
@@ -45,14 +46,14 @@ which the layers keep the order of this stylesheet.
 
 The base styles the page and nothing more: `body` gets the background, the color and the font of
 the tokens, is at least as high as the viewport, and loses its margin. Every other element keeps the
-defaults of the browser, as in Storybook, so Kit and Audio components look the same in your pages
-as there; Prose styles the content.
+defaults of the browser, as in Storybook, so the styled components look the same in your pages as
+there; Prose styles the content.
 
 ## Classes
 
 Each part of the layouts has a class, `contour-docs-<part>`, and its elements
-`contour-docs-<part>__<element>`. They are public: style them from your CSS. Kit components inside
-the parts keep their own classes, such as `contour-button`, next to these.
+`contour-docs-<part>__<element>`. They are public: style them from your CSS. The styled components
+inside the parts keep their own classes, such as `contour-button`, next to these.
 
 | Class                                     | Element                                                                                             |
 | ----------------------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -166,7 +167,7 @@ them too, so it is right from the first paint:
 
 The styles of the package read semantic tokens only, so the layouts follow the theme of the
 tokens: dark by default, light with `data-theme="light"` ([Themes](/docs/guide/themes)). The theme
-toggle of the layouts switches it through Kit's [ThemeProvider](/docs/kit/theme-provider), which
+toggle of the layouts switches it through the [ThemeProvider](/docs/essentials/theme-provider) that
 `DocsProvider` renders; give `DocsProvider` and `docsScript()` the same `theme` to start in another
 one:
 

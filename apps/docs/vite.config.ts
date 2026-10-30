@@ -6,8 +6,8 @@ import { defineConfig } from 'vite-plus';
 
 /**
  * Code blocks are highlighted at build time with Shiki's css-variables theme: every token is
- * colored with a `--shiki-*` variable, which Kit's CodeBlock maps to the syntax colors of the
- * tokens. One theme serves both color themes, since the tokens switch with `data-theme`.
+ * colored with a `--shiki-*` variable, which the styled CodeBlock maps to the syntax colors of
+ * the tokens. One theme serves both color themes, since the tokens switch with `data-theme`.
  */
 const codeTheme = createCssVariablesTheme();
 

@@ -1,12 +1,13 @@
 ---
 title: Fumadocs
-description: A documentation layout for sites on fumadocs-core, built from Kit and installed in place of fumadocs-ui.
+description: A documentation layout for sites on fumadocs-core, built from @contour-ui/react and installed in place of fumadocs-ui.
 ---
 
 `@contour-ui/fumadocs` is the interface of a documentation site on [Fumadocs](https://fumadocs.dev),
-built from [Kit](/docs/kit): the sidebar and the header, the search, the table of contents, the
-parts of a page and the components of its MDX. It takes the place of `fumadocs-ui`, the interface
-Fumadocs ships: install one or the other, not both. This site runs on it.
+built from the [styled components](/docs/essentials): the sidebar and the header, the search, the
+table of contents, the parts of a page and the components of its MDX. It takes the place of
+`fumadocs-ui`, the interface Fumadocs ships: install one or the other, not both. This site runs
+on it.
 
 ## What comes from where
 
@@ -18,9 +19,9 @@ Fumadocs ships: install one or the other, not both. This site runs on it.
 - **`fumadocs-mdx`** compiles the pages: their frontmatter, ids for their headings, code
   highlighted by Shiki, and the text the search indexes. Another content source of `fumadocs-core`
   works too: the layouts need its page tree and the table of contents of each page.
-- **`@contour-ui/fumadocs`** draws it with Kit's components and the [tokens](/docs/guide/styling):
-  the provider and the layouts from `@contour-ui/fumadocs`, the MDX components from
-  `@contour-ui/fumadocs/mdx`, and one stylesheet, `@contour-ui/fumadocs/styles.css`.
+- **`@contour-ui/fumadocs`** draws it with the styled components and the
+  [tokens](/docs/guide/styling): the provider and the layouts from `@contour-ui/fumadocs`, the MDX
+  components from `@contour-ui/fumadocs/mdx`, and one stylesheet, `@contour-ui/fumadocs/styles.css`.
 
 ## What you get
 
@@ -34,9 +35,9 @@ Fumadocs ships: install one or the other, not both. This site runs on it.
   query highlighted, <Kbd>⌘</Kbd> <Kbd>K</Kbd> or <Kbd>Ctrl</Kbd> <Kbd>K</Kbd> from anywhere. See
   [Search](/docs/fumadocs/search).
 - **MDX components.** Headings that link to themselves; links, tables and code blocks drawn by
-  Kit; code block tabs, and install commands for every package manager; `Callout`, `Cards`,
-  `Kbd`, `Preview` and `Tabs` on every page without an import; and `Prose` for the text. See
-  [MDX components](/docs/fumadocs/mdx).
+  the styled Link, Table and CodeBlock; code block tabs, and install commands for every package
+  manager; `Callout`, `Cards`, `Kbd`, `Preview` and `Tabs` on every page without an import; and
+  `Prose` for the text. See [MDX components](/docs/fumadocs/mdx).
 - **Themes.** Dark and light from the tokens, a toggle in the layouts, with the theme of the
   operating system as a third choice if you want it, the user's choice remembered and in place
   before the first paint. See [Styling](/docs/fumadocs/styling).
@@ -65,10 +66,11 @@ import '@contour-ui/fumadocs/styles.css';
 import '@contour-ui/react/styles.css';
 ```
 
-<Callout type="warn" title="Before Kit's styles">
+<Callout type="warn" title="Before the component styles">
   `@contour-ui/fumadocs/styles.css` starts with the order of every cascade layer of contour-ui, and
-  a layer ranks where it first appears. Loaded after Kit's styles, the base of the page and the
-  typography of the content would rank above Kit, and restyle the components in your pages.
+  a layer ranks where it first appears. Loaded after `@contour-ui/react/styles.css`, the base of the
+  page and the typography of the content would rank above the components, and restyle them in your
+  pages.
 </Callout>
 
 Your own CSS comes last, outside any layer: it overrides every style of contour-ui. The layers,

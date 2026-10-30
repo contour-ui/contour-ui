@@ -3,7 +3,7 @@ import { expect, openPage, test } from './fixtures.ts';
 // The browser reports the 404 responses: the page's, and for a docs path, its data's.
 test.use({ expectedConsole: [/the server responded with a status of 404/u] });
 
-for (const url of ['/nope', '/docs/nope', '/docs/kit/nope']) {
+for (const url of ['/nope', '/docs/nope', '/docs/essentials/nope']) {
   test(`${url} shows the 404 page`, async ({ page }) => {
     const response = await openPage(page, url);
     expect(response?.status()).toBe(404);

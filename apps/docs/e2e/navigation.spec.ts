@@ -10,7 +10,7 @@ test('the home page leads to the guide and to each part of contour-ui', async ({
   );
   const parts = [
     ['Audio', '/docs/audio'],
-    ['Kit', '/docs/kit'],
+    ['Essentials', '/docs/essentials'],
     ['Headless', '/docs/headless'],
   ] as const;
   await Promise.all(
@@ -104,12 +104,12 @@ test('the section switcher goes to another section', async ({ page }) => {
     'true',
   );
 
-  await sections.getByRole('link', { name: 'Kit', exact: true }).click();
-  await expect(page).toHaveURL('/docs/kit');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Kit');
+  await sections.getByRole('link', { name: 'Essentials', exact: true }).click();
+  await expect(page).toHaveURL('/docs/essentials');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Essentials');
   await expect(sections).toBeHidden();
   // The switcher now shows the new section, and has the focus back.
-  await expect(banner.getByRole('button', { name: 'Kit', exact: true })).toBeFocused();
+  await expect(banner.getByRole('button', { name: 'Essentials', exact: true })).toBeFocused();
 });
 
 test('the previous and next links follow the order of the section', async ({ page }) => {

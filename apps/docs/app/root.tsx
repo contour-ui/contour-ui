@@ -15,8 +15,8 @@ import {
 import { ContourLogo } from './components/contour-logo.tsx';
 import { NotFound, PageMessage } from './routes/not-found.tsx';
 
-// The stylesheet of @contour-ui/fumadocs before Kit's: its first rule is the order of every
-// cascade layer of contour-ui. The app's own CSS comes last.
+// The stylesheet of @contour-ui/fumadocs before the styled package's: its first rule is the order
+// of every cascade layer of contour-ui. The app's own CSS comes last.
 import '@contour-ui/tokens/tokens.css';
 import '@contour-ui/tokens/fonts.css';
 import '@contour-ui/fumadocs/styles.css';
@@ -28,7 +28,7 @@ const SITE: DocsSite = {
   name: <ContourLogo />,
   nav: [
     { label: 'Docs', href: '/docs' },
-    { label: 'Kit', href: '/docs/kit' },
+    { label: 'Essentials', href: '/docs/essentials' },
     { label: 'Audio', href: '/docs/audio' },
   ],
   links: [{ label: 'GitHub', href: 'https://github.com/contour-ui/contour-ui', icon: githubIcon }],

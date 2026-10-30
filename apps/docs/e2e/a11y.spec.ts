@@ -8,7 +8,7 @@ import type { Page } from '@playwright/test';
 
 import { expect, openPage, test } from './fixtures.ts';
 
-const PAGES = ['/', '/docs/guide', '/docs/kit/button', '/docs/fumadocs/mdx'];
+const PAGES = ['/', '/docs/guide', '/docs/essentials/button', '/docs/fumadocs/mdx'];
 
 /**
  * The rules to run: WCAG 2.0, 2.1 and 2.2 at levels A and AA, the level the site is built to,

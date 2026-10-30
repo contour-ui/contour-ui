@@ -16,7 +16,7 @@ test('the shortcut opens the search, and Enter goes to the first result', async 
   await searchField(page).fill('button');
   await expect(searchDialog(page).getByRole('option').first()).toContainText('Button');
   await searchField(page).press('Enter');
-  await expect(page).toHaveURL('/docs/kit/button');
+  await expect(page).toHaveURL('/docs/essentials/button');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Button');
   await expect(searchDialog(page)).toBeHidden();
 });

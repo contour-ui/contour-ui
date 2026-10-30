@@ -4,8 +4,8 @@ description: What ships, which package to pick, and how the packages fit togethe
 ---
 
 <Callout title="Pre-release">
-  The packages are not on npm yet. Kit and Headless have their first components and Fumadocs runs
-  this site; the Audio controls come next, and more components arrive section by section.
+  The packages are not on npm yet. Essentials and Headless have their first components and Fumadocs
+  runs this site; the Audio controls come next, and more components arrive section by section.
 </Callout>
 
 ## Pick a package
@@ -13,33 +13,42 @@ description: What ships, which package to pick, and how the packages fit togethe
 contour-ui ships three React packages. Pick by what you build and how much of the look you want to
 own:
 
-| Package                      | What you get                                        | Use it when                                     |
-| ---------------------------- | --------------------------------------------------- | ----------------------------------------------- |
-| `@contour-ui/react`          | Styled general-purpose components                   | you build an app in the contour-ui look         |
-| `@contour-ui/headless-react` | Unstyled components: structure and behavior         | you want contour-ui behavior with your own look |
-| `@contour-ui/fumadocs`       | A documentation layout for Fumadocs, built from Kit | you build a docs site on Fumadocs               |
+| Package                      | What you get                                                        | Use it when                                            |
+| ---------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------ |
+| `@contour-ui/react`          | Styled components, everyday and for audio-plugin UIs                | you build an app or a plugin UI in the contour-ui look |
+| `@contour-ui/headless-react` | Unstyled components: structure and behavior                         | you want contour-ui behavior with your own look        |
+| `@contour-ui/fumadocs`       | A documentation layout for Fumadocs, built from `@contour-ui/react` | you build a docs site on Fumadocs                      |
 
-Kit holds both the everyday components and the controls of audio-plugin UIs (the Audio section),
-so a plugin needs one package for its whole window. A docs site on Fumadocs shows Kit components
-in its pages.
+`@contour-ui/react` holds both the everyday components, in [Essentials](/docs/essentials), and the
+controls of audio-plugin UIs, in [Audio](/docs/audio), so a plugin needs one package for its whole
+window. A docs site on Fumadocs shows the same components in its pages.
 
 ## How the packages fit together
 
-- **Headless** renders the structure and behavior of interactive components (popovers, dialogs,
-  listboxes…), with no styles. It also exports `Primitive`, the elements every part renders
-  through, so you can build parts of your own.
-- **Kit** styles them: an interactive Kit component is its Headless component plus class names
-  and the CSS behind them, with the same props. Components without behavior, such as buttons,
-  cards and alerts, exist only in Kit.
-- **Audio** builds on Kit: its controls reuse Kit parts and add audio-specific styles, such as
-  monospace numeric readouts whose digits do not shift while the value changes.
-- **Fumadocs** builds a documentation site from Kit on [Fumadocs](https://fumadocs.dev): the
-  layout, the search and the components of MDX pages, in place of `fumadocs-ui`. This site runs on
-  it, see [Fumadocs](/docs/fumadocs).
+From the foundation up:
+
 - **Tokens** (`@contour-ui/tokens`) are the design decisions as CSS custom properties: colors,
-  spacing, sizes, radii, type and motion, for every theme. Kit and Audio styles read them. You load
-  `tokens.css` once and can use the same variables in your own CSS, see
+  spacing, sizes, radii, type and motion, for every theme. The styled components read them. You
+  load `tokens.css` once and can use the same variables in your own CSS, see
   [Styling with tokens](/docs/guide/styling).
+- **Icons** (`@contour-ui/icons`) are the icon set as data, with no React: Lucide icons and brand
+  logos as paths for SVG and Canvas 2D. The [Icon](/docs/essentials/icon) component draws them as
+  SVG.
+- **Core** (`@contour-ui/core`) is the logic of the components, with no React and no DOM: state
+  machines, collections, positioning, scales and the formatting of values.
+- **Headless** (`@contour-ui/headless-react`) runs that logic in React: it renders the structure
+  and behavior of interactive components (popovers, dialogs, listboxes…), with no styles. It also
+  exports `Primitive`, the elements every part renders through, so you can build parts of your
+  own.
+- **The styled package** (`@contour-ui/react`) styles them: an interactive styled component is
+  its Headless component plus class names and the CSS behind them, with the same props.
+  Components without behavior, such as buttons, cards and alerts, exist only here. Its
+  components come in two sections: [Essentials](/docs/essentials), the everyday parts of any
+  interface, and [Audio](/docs/audio), the controls of audio-plugin UIs, with audio-specific
+  styles such as monospace numeric readouts whose digits do not shift while the value changes.
+- **Fumadocs** (`@contour-ui/fumadocs`) builds a documentation site from the styled components on
+  [Fumadocs](https://fumadocs.dev): the layout, the search and the components of MDX pages, in
+  place of `fumadocs-ui`. This site runs on it, see [Fumadocs](/docs/fumadocs).
 
 All packages are released together under one version: keep their versions equal.
 
@@ -69,10 +78,10 @@ import { Button, Card } from '@contour-ui/react';
   event handlers and ref into it. Use it to render your router's link in place of an `<a>`, for
   example.
 - Every part is marked with `data-scope` (the component) and `data-part` (the part), for example
-  `data-scope="card" data-part="title"`. Headless users style with these attributes; in Kit
-  and Audio they are stable hooks for tests and overrides.
-- Kit and Audio add class names: `contour-<component>` on the root or the single element, and
-  `contour-<component>__<part>` on the other parts. Your `className` is merged with them.
+  `data-scope="card" data-part="title"`. Headless users style with these attributes; on styled
+  components they are stable hooks for tests and overrides.
+- Styled components add class names: `contour-<component>` on the root or the single element,
+  and `contour-<component>__<part>` on the other parts. Your `className` is merged with them.
 - Variants and sizes are attributes next to the state ones: `data-variant`, `data-size`,
   `data-state`. A selector such as `.contour-button[data-variant='solid']` targets one variant.
 

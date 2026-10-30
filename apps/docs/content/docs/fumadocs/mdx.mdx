@@ -3,9 +3,9 @@ title: MDX components
 description: What each Markdown element of a page becomes, Prose for the typography of the content, code block tabs, and Callout, Cards, Kbd, Preview and Tabs on every page.
 ---
 
-`@contour-ui/fumadocs/mdx` draws the MDX of a page with Kit. `getMdxComponents()` returns the
-components that the Markdown elements render with, and `Prose` gives the text around them its
-typography:
+`@contour-ui/fumadocs/mdx` draws the MDX of a page with the styled components. `getMdxComponents()`
+returns the components that the Markdown elements render with, and `Prose` gives the text around
+them its typography:
 
 ```tsx
 import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
@@ -17,21 +17,21 @@ import { getMdxComponents, Prose } from '@contour-ui/fumadocs/mdx';
 
 ## The components
 
-| In the MDX                    | Renders as                                                                                 |
-| ----------------------------- | ------------------------------------------------------------------------------------------ |
-| headings, `#` to `######`     | the heading, whose text links to its own `#id`, with a hash that shows on hover and focus  |
-| a link to a page of the site  | Kit's [Link](/docs/kit/link), underlined, through the `Link` of the framework              |
-| a link to a `#heading`        | Kit's `Link`, as a plain link                                                              |
-| a link to another site        | Kit's `Link`, which opens in a new tab, with an arrow named "opens in a new tab"           |
-| tables                        | Kit's [Table](/docs/kit/table), outlined, scrolling sideways when wider than the column    |
-| fenced code                   | Kit's [CodeBlock](/docs/kit/code-block): the title, the highlighted code and a copy button |
-| fenced code with a `tab`      | the tabs of one code block, see [Code block tabs](#code-block-tabs)                        |
-| ` ```npm `, `package-install` | the command of each package manager, see [Package managers](#package-managers)             |
-| `<Tabs>`, `<Tab>`             | Kit's [Tabs](/docs/kit/tabs) in a frame, see [Tabs](#tabs)                                 |
-| `<Callout>`                   | Kit's [Alert](/docs/kit/alert), see [Callout](#callout)                                    |
-| `<Cards>`, `<Card>`           | a grid of Kit's [Card](/docs/kit/card), see [Cards](#cards)                                |
-| `<Kbd>`                       | Kit's [Kbd](/docs/kit/kbd): <Kbd>⌘</Kbd> <Kbd>K</Kbd>                                      |
-| `<Preview>`                   | the frame of a live example, see [Preview](#preview)                                       |
+| In the MDX                    | Renders as                                                                                    |
+| ----------------------------- | --------------------------------------------------------------------------------------------- |
+| headings, `#` to `######`     | the heading, whose text links to its own `#id`, with a hash that shows on hover and focus     |
+| a link to a page of the site  | the styled [Link](/docs/essentials/link), underlined, through the `Link` of the framework     |
+| a link to a `#heading`        | the styled `Link`, as a plain link                                                            |
+| a link to another site        | the styled `Link`, which opens in a new tab, with an arrow named "opens in a new tab"         |
+| tables                        | a [Table](/docs/essentials/table), outlined, scrolling sideways when wider than the column    |
+| fenced code                   | a [CodeBlock](/docs/essentials/code-block): the title, the highlighted code and a copy button |
+| fenced code with a `tab`      | the tabs of one code block, see [Code block tabs](#code-block-tabs)                           |
+| ` ```npm `, `package-install` | the command of each package manager, see [Package managers](#package-managers)                |
+| `<Tabs>`, `<Tab>`             | the styled [Tabs](/docs/essentials/tabs) in a frame, see [Tabs](#tabs)                        |
+| `<Callout>`                   | an [Alert](/docs/essentials/alert), see [Callout](#callout)                                   |
+| `<Cards>`, `<Card>`           | a grid of styled [cards](/docs/essentials/card), see [Cards](#cards)                          |
+| `<Kbd>`                       | a [Kbd](/docs/essentials/kbd): <Kbd>⌘</Kbd> <Kbd>K</Kbd>                                      |
+| `<Preview>`                   | the frame of a live example, see [Preview](#preview)                                          |
 
 The components in angle brackets need no import in a page. Other elements, such as lists, quotes
 and images, render as they are, and Prose styles them. A lowercase tag in MDX, such as `<kbd>`, is
@@ -59,7 +59,7 @@ export function App() {
 ````
 
 The notation comments of Shiki, such as `// [!code highlight]` and `// [!code ++]`, mark lines as
-Kit's [CodeBlock](/docs/kit/code-block#notations) shows.
+the [CodeBlock](/docs/essentials/code-block#notations) page shows.
 
 ## Code block tabs
 
@@ -143,11 +143,12 @@ is: `CodeBlockTabs` (`defaultValue`, and `groupId`, `persist` and `updateAnchor`
 </Tabs>
 ```
 
-`Tabs` shows sections of content one at a time: Kit's [Tabs](/docs/kit/tabs) in a frame, the row of
-triggers at the top and the selected panel under it, with the props of the `Tabs` of Fumadocs.
-`items` makes a trigger for each name, and each `Tab` holds the content of one: its `value` is the
-item, as written, or, without one, the item of its place among the children. A code block alone in
-a `Tab` fills it, and its copy button moves up into the row of triggers.
+`Tabs` shows sections of content one at a time: the styled [Tabs](/docs/essentials/tabs) in a
+frame, the row of triggers at the top and the selected panel under it, with the props of the
+`Tabs` of Fumadocs. `items` makes a trigger for each name, and each `Tab` holds the content of
+one: its `value` is the item, as written, or, without one, the item of its place among the
+children. A code block alone in a `Tab` fills it, and its copy button moves up into the row of
+triggers.
 
 | Prop           | Type                                                               | Default |
 | -------------- | ------------------------------------------------------------------ | ------- |
@@ -160,8 +161,8 @@ a `Tab` fills it, and its copy button moves up into the row of triggers.
 | `updateAnchor` | `boolean`: a tab the reader selects puts its `id` in the address   | `false` |
 
 `Tab` takes `value` and the props of its `div`, such as `id`. Other props of `Tabs` go to its root,
-a `div`. The keyboard is Kit's: the arrow keys move along the triggers and select, Home and End go
-to the ends.
+a `div`. The keys are those of the styled Tabs: the arrow keys move along the triggers and select,
+Home and End go to the ends.
 
 ### Groups and storage
 
@@ -216,9 +217,10 @@ import { Steps } from './steps';
 
 `getMdxComponents()`, `Prose` and `Preview` are server modules, and the components of the map that
 need the browser are client modules (`'use client'`): the MDX of a page renders as a React Server
-Component too, as on Next.js. There, overrides are server components, Kit's components, or named
-exports of client modules: a map built on the server cannot read inside an export of a client
-module of your own ([Kit in server components](/docs/fumadocs/setup#kit-in-server-components)).
+Component too, as on Next.js. There, overrides are server components, the components of
+`@contour-ui/react`, or named exports of client modules: a map built on the server cannot read
+inside an export of a client module of your own
+([contour-ui in server components](/docs/fumadocs/setup#contour-ui-in-server-components)).
 
 ## Prose
 
@@ -227,8 +229,8 @@ and the code, the space between blocks, the markers of lists. It relies on no re
 margins, paddings and fonts of the elements it styles over the defaults of the browser.
 
 - **Components keep their styles.** Every rule of Prose has zero specificity (`:where()`) and sits
-  in a cascade layer below Kit's, so a Kit or Audio component in the content keeps its own look, and
-  any rule of yours overrides Prose.
+  in a cascade layer below that of the components, so a styled component in the content keeps its
+  own look, and any rule of yours overrides Prose.
 - **Fonts** are set on the root, the headings, inline code and captions only: text inside a
   component keeps the component's font.
 - **Opting out.** Prose leaves alone whatever is inside an element with the
@@ -244,7 +246,8 @@ margins, paddings and fonts of the elements it styles over the defaults of the b
 ```
 
 `Prose` renders a `div` and takes its props; your `className` joins `contour-docs-prose`. It
-imports nothing from Kit, so it renders on the server and adds nothing to the code of the browser.
+imports nothing from `@contour-ui/react`, so it renders on the server and adds nothing to the code
+of the browser.
 
 ## Preview
 
@@ -262,19 +265,20 @@ import { Button } from '@contour-ui/react';
 ```
 
 `Preview` renders a `div` and takes its props, and renders on the server too. On Next.js, the
-examples inside come from client modules ([Setup](/docs/fumadocs/setup#kit-in-server-components)).
+examples inside come from client modules
+([Setup](/docs/fumadocs/setup#contour-ui-in-server-components)).
 
 ## Callout
 
 ```mdx
-<Callout type="warn" title="Before Kit's styles">
+<Callout type="warn" title="Before the component styles">
   Load the stylesheet of this package first.
 </Callout>
 ```
 
-`Callout` is Kit's [Alert](/docs/kit/alert): the icon of its status, the title, then the content,
-which may hold paragraphs. Its props are those of the callout of Fumadocs, so pages written for
-`fumadocs-ui` render as they are:
+`Callout` is an [Alert](/docs/essentials/alert): the icon of its status, the title, then the
+content, which may hold paragraphs. Its props are those of the callout of Fumadocs, so pages
+written for `fumadocs-ui` render as they are:
 
 | Prop    | Type                                                              | Default  |
 | ------- | ----------------------------------------------------------------- | -------- |
@@ -303,8 +307,8 @@ Other props go to the root of the alert, a `div`.
 </Cards>
 ```
 
-`Cards` lays its cards out in a grid: one column on phones, two from 40rem. `Card` is Kit's
-[Card](/docs/kit/card), with the props of the card of Fumadocs:
+`Cards` lays its cards out in a grid: one column on phones, two from 40rem. `Card` is the styled
+[Card](/docs/essentials/card), with the props of the card of Fumadocs:
 
 | Prop          | Type                                                   | Default                                |
 | ------------- | ------------------------------------------------------ | -------------------------------------- |
@@ -314,6 +318,6 @@ Other props go to the root of the alert, a `div`.
 | `external`    | `boolean`: opens `href` in a new tab, a path too       | a URL with a scheme opens in a new tab |
 | `icon`        | `ReactNode`: shown above the title                     | —                                      |
 
-A path goes through the `Link` of the framework. The title looks like the title of Kit's card but
-is no heading: cards follow a heading of the page, and a level of their own would break the outline
-of the page.
+A path goes through the `Link` of the framework. The title looks like the title of the styled Card
+but is no heading: cards follow a heading of the page, and a level of their own would break the
+outline of the page.

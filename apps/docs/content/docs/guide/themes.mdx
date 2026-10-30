@@ -4,8 +4,8 @@ description: Dark by default; switch the page or any part of it to light with on
 ---
 
 `tokens.css` defines every token for the dark theme on `:root` and redefines the ones that differ
-for the light theme under `[data-theme="light"]`. Kit and Audio only read tokens, so they follow
-the theme with no extra setup.
+for the light theme under `[data-theme="light"]`. The styled components only read tokens, so they
+follow the theme with no extra setup.
 
 ## Choose a theme
 
@@ -29,7 +29,7 @@ Set the theme on `<html>` rather than on an app wrapper: components that render 
 
 ## Switch at runtime
 
-Kit's [ThemeProvider](/docs/kit/theme-provider) keeps the theme on `<html>` for you: the system
+[ThemeProvider](/docs/essentials/theme-provider) keeps the theme on `<html>` for you: the system
 theme until the user chooses one, then their choice, stored in `localStorage` and restored on the
 next visit. Render it once, around the app:
 
@@ -73,9 +73,9 @@ export function ThemeSwitch() {
 
 A page rendered on the server also needs the script of `themeScript()` at the top of its
 `<head>`, so the browser paints it in the right theme before the app runs: see
-[Set up](/docs/kit/theme-provider#set-up). For code of your own, `@contour-ui/tokens` exports the
-theme names (`themes`, `defaultTheme`) and the attribute (`themeAttribute`), so it stays in sync
-with the stylesheet.
+[Set up](/docs/essentials/theme-provider#set-up). For code of your own, `@contour-ui/tokens`
+exports the theme names (`themes`, `defaultTheme`) and the attribute (`themeAttribute`), so it
+stays in sync with the stylesheet.
 
 ## Headless
 

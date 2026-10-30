@@ -68,11 +68,11 @@ import { Button, Dialog, Portal } from '@contour-ui/react';
 </Dialog.Root>;
 ```
 
-Dialog is the [Headless Dialog](/docs/headless/dialog) with the look of Kit: the scrim of the
-overlay over the page, and a raised panel with a border, a shadow and the corners of a panel. It
-grows in when it opens and fades out when it closes. While it is open, focus stays inside it, the
-page does not scroll and the rest of it is out of reach; Escape, a press on the scrim, the x and
-the other close triggers close it, and focus goes back to the trigger.
+Dialog is the [Headless Dialog](/docs/headless/dialog) with the look of contour-ui: the scrim of
+the overlay over the page, and a raised panel with a border, a shadow and the corners of a panel.
+It grows in when it opens and fades out when it closes. While it is open, focus stays inside it,
+the page does not scroll and the rest of it is out of reach; Escape, a press on the scrim, the x
+and the other close triggers close it, and focus goes back to the trigger.
 
 ## The parts
 
@@ -197,10 +197,10 @@ among the open overlays, so a dialog opened from another one goes above it. The
 | `placement` | `'center'`, `'top'`    | `'center'` |
 | `size`      | `'sm'`, `'md'`, `'lg'` | `'md'`     |
 
-`Dialog.CloseTrigger` takes the props of [`CloseButton`](/docs/kit/button), `label` (`'Close'`),
-`variant` (`'ghost'`) and `size` (`'md'`) among them, or, with `asChild`, renders its child. Every
-other part takes `asChild` and the props of its element, such as `className`, `style` and `ref`;
-`className` is merged with the part's class.
+`Dialog.CloseTrigger` takes the props of [`CloseButton`](/docs/essentials/button), `label`
+(`'Close'`), `variant` (`'ghost'`) and `size` (`'md'`) among them, or, with `asChild`, renders its
+child. Every other part takes `asChild` and the props of its element, such as `className`, `style`
+and `ref`; `className` is merged with the part's class.
 
 ## Keyboard
 

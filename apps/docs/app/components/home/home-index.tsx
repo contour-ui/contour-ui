@@ -15,7 +15,9 @@ interface IndexColumn {
   readonly entries: readonly IndexEntry[];
 }
 
-/** The docs index of the home page: the way into the guide, the kits and the foundations. */
+/**
+ * The docs index of the home page: the way into the guide, Essentials, Audio and the foundations.
+ */
 const INDEX: readonly IndexColumn[] = [
   {
     title: 'Getting started',
@@ -29,14 +31,14 @@ const INDEX: readonly IndexColumn[] = [
     ],
   },
   {
-    title: 'Kit',
+    title: 'Essentials',
     subtitle: 'The everyday parts of any interface',
     entries: [
-      { label: 'Button', href: '/docs/kit/button' },
+      { label: 'Button', href: '/docs/essentials/button' },
       { label: 'Switch' },
       { label: 'RadioGroup' },
       { label: 'Select' },
-      { label: 'Tabs', href: '/docs/kit/tabs' },
+      { label: 'Tabs', href: '/docs/essentials/tabs' },
       { label: 'Menu' },
       { label: 'Tooltip' },
     ],
@@ -60,7 +62,7 @@ const INDEX: readonly IndexColumn[] = [
     entries: [
       { label: 'Tokens', href: '/docs/guide/styling' },
       { label: 'Themes', href: '/docs/guide/themes' },
-      { label: 'Icons', href: '/docs/kit/icon' },
+      { label: 'Icons', href: '/docs/essentials/icon' },
       { label: 'Headless', href: '/docs/headless' },
       { label: 'Soundor' },
     ],

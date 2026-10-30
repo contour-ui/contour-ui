@@ -1,6 +1,6 @@
 import { expect, openPage, reloadPage, test } from './fixtures.ts';
 
-/** The `localStorage` key of the theme choice (Kit's `ThemeProvider` default). */
+/** The `localStorage` key of the theme choice (the default of the styled `ThemeProvider`). */
 const STORAGE_KEY = 'contour-theme';
 
 test('the toggle switches the theme, and the choice outlives a reload', async ({ page }) => {

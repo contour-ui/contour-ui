@@ -1,6 +1,6 @@
 {
   "title": "Fumadocs",
-  "description": "Documentation sites on Fumadocs, built from Kit",
+  "description": "Documentation sites on Fumadocs, built from @contour-ui/react",
   "root": true,
   "pages": ["index", "setup", "---Reference---", "layouts", "mdx", "search", "styling"]
 }

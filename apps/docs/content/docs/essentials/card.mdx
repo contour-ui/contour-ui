@@ -80,10 +80,10 @@ a focus ring. Use your router's link in place of `<a>`:
 <Preview>
   <div style={{ maxWidth: '20rem' }}>
     <Card.Root asChild>
-      <a href="/docs/kit">
+      <a href="/docs/essentials">
         <Card.Body>
-          <Card.Title>Kit</Card.Title>
-          <Card.Description>Styled general-purpose components.</Card.Description>
+          <Card.Title>Essentials</Card.Title>
+          <Card.Description>The everyday components of contour-ui.</Card.Description>
         </Card.Body>
       </a>
     </Card.Root>
@@ -94,10 +94,10 @@ a focus ring. Use your router's link in place of `<a>`:
 import { Link } from 'react-router';
 
 <Card.Root asChild>
-  <Link to="/docs/kit">
+  <Link to="/docs/essentials">
     <Card.Body>
-      <Card.Title>Kit</Card.Title>
-      <Card.Description>Styled general-purpose components.</Card.Description>
+      <Card.Title>Essentials</Card.Title>
+      <Card.Description>The everyday components of contour-ui.</Card.Description>
     </Card.Body>
   </Link>
 </Card.Root>;
@@ -136,7 +136,7 @@ Every part takes `asChild` and the props of its element, such as `className`, `s
 
 - `Card.Root` is a `div` without a role: it groups content visually. `Card.Title` is an `h3`; to
   fit the headings of your page, pass another level with `asChild`:
-  `<Card.Title asChild><h2>Kit</h2></Card.Title>`.
+  `<Card.Title asChild><h2>Essentials</h2></Card.Title>`.
 - A link card is one link, named by its text: the title first, then the description. Keep the
   description short, and put no other links or buttons inside: interactive elements cannot nest.
 - A button may only contain phrasing content: in a button card, render the parts as `span`s with

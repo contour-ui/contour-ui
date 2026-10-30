@@ -13,7 +13,7 @@ test.describe('the column, on wide screens', () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test('marks the heading scrolled to as current', async ({ page }) => {
-    await openPage(page, '/docs/kit/button');
+    await openPage(page, '/docs/essentials/button');
     const toc = page.getByRole('navigation', { name: 'On this page' });
     const anatomy = toc.getByRole('link', { name: 'Anatomy' });
     const props = toc.getByRole('link', { name: 'Props' });
@@ -26,7 +26,7 @@ test.describe('the column, on wide screens', () => {
   });
 
   test('a link scrolls to its heading and moves the focus there', async ({ page }) => {
-    await openPage(page, '/docs/kit/button');
+    await openPage(page, '/docs/essentials/button');
     const props = page
       .getByRole('navigation', { name: 'On this page' })
       .getByRole('link', { name: 'Props' });
@@ -43,7 +43,7 @@ test.describe('the bar, on narrow screens', () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
   test('lists the headings, and a link goes to its heading', async ({ page }) => {
-    await openPage(page, '/docs/kit/button');
+    await openPage(page, '/docs/essentials/button');
     // Its name goes on with the current heading.
     const bar = page.getByRole('button', { name: 'On this page' });
     await bar.click();

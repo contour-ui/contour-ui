@@ -45,10 +45,10 @@ import { SegmentGroup } from '@contour-ui/react';
 ```
 
 SegmentGroup is a set of options of which one is checked, as a group of radio buttons drawn as one
-control. It is the [Headless SegmentGroup](/docs/headless/segment-group) with the look of Kit: the
-options sit on an inset track, and the indicator, a raised surface with a border and a shadow,
-slides under the checked one. The checked text takes the default color and the others are muted,
-but the raised surface marks the choice without relying on color.
+control. It is the [Headless SegmentGroup](/docs/headless/segment-group) with the look of
+contour-ui: the options sit on an inset track, and the indicator, a raised surface with a border
+and a shadow, slides under the checked one. The checked text takes the default color and the
+others are muted, but the raised surface marks the choice without relying on color.
 
 Every item holds a native radio button (`SegmentGroup.ItemHiddenInput`), out of sight: it takes
 the focus and the keys, and a form submits its value. Put the indicator first in the root.
@@ -109,7 +109,7 @@ An icon next to a text takes the same `Icon`; the item then keeps its padding.
 ## Sizes
 
 `size` is `sm`, `md` (the default) or `lg`: the height of the control tokens, as for
-[Button](/docs/kit/button). In `lg`, the labels are larger and the sides wider.
+[Button](/docs/essentials/button). In `lg`, the labels are larger and the sides wider.
 
 <Preview>
   {
@@ -155,7 +155,7 @@ An icon next to a text takes the same `Icon`; the item then keeps its padding.
 | `SegmentGroup.ItemControl`     | `span`  | `contour-segment-group__item-control`      | `data-part="item-control"`, `aria-hidden="true"`, the state of the item                                                                                                      |
 | `SegmentGroup.ItemHiddenInput` | `input` | `contour-segment-group__item-hidden-input` | `data-part="item-hidden-input"`, `type="radio"`, `name`, `value`, `checked`, `disabled`, `form`, visually hidden                                                             |
 
-`ItemControl` is a slot for a mark of your own next to the text; Kit gives it no look.
+`ItemControl` is a slot for a mark of your own next to the text, with no look of its own.
 
 ## Props
 

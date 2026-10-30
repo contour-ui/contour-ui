@@ -11,9 +11,9 @@ export function meta(): Array<Record<string, string>> {
 }
 
 /**
- * The home page (`home.css`, `home-tracks.css`), built from Kit and the tokens only: the hero,
- * the sequencer of the parts of contour-ui, the docs index and the foot of the page. Its header
- * leaves the search out: the search lives in the docs, and its shortcut works here too.
+ * The home page (`home.css`, `home-tracks.css`), built from @contour-ui/react and the tokens only:
+ * the hero, the sequencer of the parts of contour-ui, the docs index and the foot of the page. Its
+ * header leaves the search out: the search lives in the docs, and its shortcut works here too.
  */
 export default function Home(): ReactElement {
   return (

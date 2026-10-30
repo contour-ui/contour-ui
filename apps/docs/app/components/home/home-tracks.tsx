@@ -16,14 +16,14 @@ const SYNTH_SECTIONS = [
 ] as const;
 
 /**
- * A component that contour-ui does not ship yet: Kit's placeholder in its place, until the real
- * one renders here.
+ * A component that contour-ui does not ship yet: the styled Placeholder in its place, until the
+ * real one renders here.
  */
 function Planned(): ReactElement {
   return <Placeholder.Root className="docs-clip__placeholder">Planned</Placeholder.Root>;
 }
 
-/** The Button clip: Kit's buttons as a plugin's preset bar has them. */
+/** The Button clip: the styled buttons as a plugin's preset bar has them. */
 function ButtonsClip(): ReactElement {
   return (
     <div className="docs-clip__stack">
@@ -39,7 +39,7 @@ function ButtonsClip(): ReactElement {
   );
 }
 
-/** The Tabs clip: Kit's tabs over the sections of a synth. */
+/** The Tabs clip: the styled tabs over the sections of a synth. */
 function TabsClip(): ReactElement {
   return (
     <Tabs.Root defaultValue="filter" className="docs-clip__tabs">
@@ -60,7 +60,7 @@ function TabsClip(): ReactElement {
   );
 }
 
-/** What a clip shows: a component of Kit, or a placeholder for one not shipped yet. */
+/** What a clip shows: a styled component, or a placeholder for one not shipped yet. */
 const CLIP_CONTENT: Readonly<Record<string, () => ReactElement>> = {
   button: ButtonsClip,
   tabs: TabsClip,
@@ -141,7 +141,7 @@ const PLAYHEAD_START_STYLE: CSSProperties & Record<typeof PLAYHEAD_PROPERTY, num
 /**
  * The sequencer of the home page (`home-tracks.css`): each track is a part of contour-ui, each
  * clip on it a component of that part, and a playhead loops over the bars, outlining the clips
- * it crosses. Kit's components render in their clips; the others are placeholders until they
+ * it crosses. The styled components render in their clips; the others are placeholders until they
  * ship. It scrolls sideways on narrow screens.
  */
 export function HomeTracks(): ReactElement {

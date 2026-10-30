@@ -33,10 +33,10 @@ import { Clipboard } from '@contour-ui/react';
 </Clipboard.Root>;
 ```
 
-Clipboard is the [Headless Clipboard](/docs/headless/clipboard) with the look of Kit: the value in
-mono in a row with a border, and the trigger at the end of the row. A click writes `value` to the
-clipboard. Once the browser has written it, the copy icon turns into a check mark for `timeout`
-milliseconds (3 seconds by default), and screen readers hear "Copied to clipboard".
+Clipboard is the [Headless Clipboard](/docs/headless/clipboard) with the look of contour-ui: the
+value in mono in a row with a border, and the trigger at the end of the row. A click writes `value`
+to the clipboard. Once the browser has written it, the copy icon turns into a check mark for
+`timeout` milliseconds (3 seconds by default), and screen readers hear "Copied to clipboard".
 
 ## The parts
 
@@ -48,7 +48,7 @@ milliseconds (3 seconds by default), and screen readers hear "Copied to clipboar
   draws a mark before the value in the muted color, such as `$` before a shell command. CSS draws
   it: it is not part of the value, a selection of the text leaves it out, and screen readers skip
   it.
-- **The trigger.** `Clipboard.Trigger` is a Kit [Button](/docs/kit/button), `ghost` by default,
+- **The trigger.** `Clipboard.Trigger` is a [Button](/docs/essentials/button), `ghost` by default,
   which stays muted next to the value until it is hovered. With children it is a text button;
   without, a square icon button. It takes the `size` of the root unless you give it one.
 - **The indicator.** `Clipboard.Indicator` shows its children, and `copied` in their place while
@@ -64,7 +64,7 @@ copies with `aria-label`:
 <Preview>
   {
     <Clipboard.Root
-      value="https://contour-ui.dev/docs/kit/clipboard"
+      value="https://contour-ui.dev/docs/essentials/clipboard"
       style={{ inlineSize: '22rem' }}
     >
       <Clipboard.Label>Share link</Clipboard.Label>
@@ -99,8 +99,8 @@ indicator next to the trigger, outside it.
 ## Sizes
 
 `size` is `sm`, `md` (the default) or `lg`: the height of the control tokens, as for
-[Button](/docs/kit/button), so a clipboard lines up with a button of the same size in a row. In
-`lg`, the value, the label and the trigger are larger, with wider sides.
+[Button](/docs/essentials/button), so a clipboard lines up with a button of the same size in a
+row. In `lg`, the value, the label and the trigger are larger, with wider sides.
 
 <Preview>
   {
@@ -186,7 +186,7 @@ its icons. `data-copied` is present while the value is copied.
 | `copiedMessage`  | `string`: what screen readers announce   | `'Copied to clipboard'` |
 | `size`           | `'sm'`, `'md'`, `'lg'`                   | `'md'`                  |
 
-`Clipboard.Trigger` takes the props of [Button](/docs/kit/button) but `asChild`: `variant`
+`Clipboard.Trigger` takes the props of [Button](/docs/essentials/button) but `asChild`: `variant`
 (`'ghost'` by default), `size` (the root's by default), `disabled`, and `aria-label` (`'Copy to
 clipboard'` by default). Your `onClick` runs before the copy: call `event.preventDefault()` in it
 to cancel the copy.
@@ -238,4 +238,4 @@ place of the value when it has them.
 | `--ct-color-border-focus`, `--ct-border-width-focus`                                                             | the focus ring of the trigger              |
 | `--ct-motion-enter`                                                                                              | the pop of what the indicator shows copied |
 
-The trigger takes the rest of its look from [Button](/docs/kit/button).
+The trigger takes the rest of its look from [Button](/docs/essentials/button).

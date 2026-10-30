@@ -1,6 +1,6 @@
 {
-  "title": "Kit",
-  "description": "Styled general-purpose components",
+  "title": "Essentials",
+  "description": "The everyday components of @contour-ui/react",
   "root": true,
   "pages": [
     "index",

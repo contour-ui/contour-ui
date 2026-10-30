@@ -22,8 +22,8 @@ npm install fumadocs-core fumadocs-mdx
 npm install -D @types/mdx shiki
 ```
 
-- **Kit and Tokens** are dependencies of your own: your app imports their stylesheets itself
-  ([Installation](/docs/guide/installation#install) says why).
+- **`@contour-ui/react` and `@contour-ui/tokens`** are dependencies of your own: your app imports
+  their stylesheets itself ([Installation](/docs/guide/installation#install) says why).
 - **Icons** gives the icons of the site's links, such as GitHub's. **Shiki** gives the theme of
   the code blocks, below: take the major version `fumadocs-core` depends on.
 - **Coming from `fumadocs-ui`**, uninstall it, and drop its stylesheet, its `RootProvider`, its
@@ -31,7 +31,7 @@ npm install -D @types/mdx shiki
 
 ## Highlight the code
 
-Kit's [CodeBlock](/docs/kit/code-block#highlight-with-shiki) colors code from Shiki's
+[CodeBlock](/docs/essentials/code-block#highlight-with-shiki) colors code from Shiki's
 css-variables theme, so one theme serves the dark and the light theme. `rehypeCode`, the
 highlighter of Fumadocs, takes it in the MDX options of `fumadocs-mdx`, with two more settings for
 the `pre` that CodeBlock renders:
@@ -443,23 +443,23 @@ export const revalidate = false;
 export const { staticGET: GET } = createFromSource(source, { language: 'english' });
 ```
 
-### Kit in server components
+### contour-ui in server components
 
 Props that go from a server component to a client one must be serializable: data, React nodes
 and components of client modules, never functions. `DocsSite` is: its `name` is a string or an
 element, and its icons are plain data.
 
-Kit and headless are built one file per module, and the modules that need the browser start with
-`'use client'`. A server component, an MDX page included, imports `@contour-ui/react` directly: the
-parts that only render markup (`Button`, `Kbd`, `Card`, `Table`…) render on the server, the others
-are client components it renders by reference, and a namespace such as `Card` is a server module,
-so `Card.Root` works:
+`@contour-ui/react` and `@contour-ui/headless-react` are built one file per module, and the
+modules that need the browser start with `'use client'`. A server component, an MDX page included,
+imports `@contour-ui/react` directly: the parts that only render markup (`Button`, `Kbd`, `Card`,
+`Table`…) render on the server, the others are client components it renders by reference, and a
+namespace such as `Card` is a server module, so `Card.Root` works:
 
 ```tsx title="app/docs/[[...slug]]/page.tsx"
 import { Button, Card } from '@contour-ui/react';
 
 <Card.Root>
-  <Card.Title>Kit on the server</Card.Title>
+  <Card.Title>Rendered on the server</Card.Title>
   <Button asChild>
     <a href="/docs">Read the docs</a>
   </Button>
@@ -468,9 +468,9 @@ import { Button, Card } from '@contour-ui/react';
 
 Code with handlers or state, such as a dialog that opens on `onClick`, goes in a module of your own
 that starts with `'use client'`. Such a module hands a server only references: export its
-components by name, since a server component cannot read inside an object it exports. Kit's
-`themeScript()` also comes without React from `@contour-ui/react/theme-script`; `docsScript()` holds
-it already.
+components by name, since a server component cannot read inside an object it exports.
+`themeScript()` also comes without React from `@contour-ui/react/theme-script`; `docsScript()`
+holds it already.
 
 ## Other frameworks
 

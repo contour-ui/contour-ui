@@ -34,15 +34,15 @@ import { Collapsible } from '@contour-ui/react';
 </Collapsible.Root>;
 ```
 
-Collapsible is the [Headless Collapsible](/docs/headless/collapsible) with the look of Kit, which
-is mostly motion: the content grows to its height as it opens and shrinks back as it closes, and
-the chevron turns down with it. Content open on the first render shows at once. Under reduced
+Collapsible is the [Headless Collapsible](/docs/headless/collapsible) with the look of contour-ui,
+which is mostly motion: the content grows to its height as it opens and shrinks back as it closes,
+and the chevron turns down with it. Content open on the first render shows at once. Under reduced
 motion, the content only fades and the chevron turns without a transition.
 
 ## The parts
 
 - **The trigger.** `Collapsible.Trigger` is a plain label in the text color, with the focus ring
-  of Kit. For the look of a button, pass a `Button` with `asChild`.
+  of the other controls. For the look of a button, pass a `Button` with `asChild`.
 - **The indicator.** `Collapsible.Indicator` draws a chevron that points to the end while closed
   and down while open. Pass children to draw something else; they turn the same way.
 - **The content.** `Collapsible.Content` adds no spacing: put your own around what it holds,

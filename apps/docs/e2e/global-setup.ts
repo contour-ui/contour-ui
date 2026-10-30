@@ -6,7 +6,8 @@ import { PORT, STATIC_DIR } from './site.ts';
 
 const CONTENT_TYPES: Readonly<Record<string, string>> = {
   '.css': 'text/css; charset=utf-8',
-  // React Router's single-fetch payloads, loaded on client navigations (`/docs/kit/button.data`).
+  // React Router's single-fetch payloads, loaded on client navigations
+  // (`/docs/essentials/button.data`).
   '.data': 'text/x-script',
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',

@@ -11,7 +11,7 @@ export interface TrackClip {
 
 /** A track: one part of contour-ui, with a clip per component of it. */
 export interface Track {
-  readonly id: 'audio' | 'kit' | 'headless';
+  readonly id: 'audio' | 'essentials' | 'headless';
   readonly name: string;
   /** The package it ships in. */
   readonly pkg: string;
@@ -41,11 +41,11 @@ export const TRACKS: readonly Track[] = [
     ],
   },
   {
-    id: 'kit',
-    name: 'Kit',
+    id: 'essentials',
+    name: 'Essentials',
     pkg: '@contour-ui/react',
     description: 'The everyday parts of any interface',
-    href: '/docs/kit',
+    href: '/docs/essentials',
     clips: [
       { id: 'button', title: 'Button', start: 0.4, width: 18.3 },
       { id: 'select', title: 'Select', start: 18.9, width: 18.3 },
@@ -58,7 +58,7 @@ export const TRACKS: readonly Track[] = [
     id: 'headless',
     name: 'Headless',
     pkg: '@contour-ui/headless-react',
-    description: 'Behavior, ARIA and host callbacks for both kits. No styles',
+    description: 'Behavior, ARIA and host callbacks for Essentials and Audio. No styles',
     href: '/docs/headless',
     clips: [
       { id: 'headless-knob', title: 'Knob, unstyled', start: 0.4, width: 37 },

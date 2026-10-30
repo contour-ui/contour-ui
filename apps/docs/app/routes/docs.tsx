@@ -6,7 +6,6 @@ import type { ReactElement } from 'react';
 import { isRouteErrorResponse, useLoaderData } from 'react-router';
 import type { ClientLoaderFunctionArgs, LoaderFunctionArgs } from 'react-router';
 
-import { mdxPlaceholderComponents } from '../components/mdx-placeholders.ts';
 import { docs, source } from '../lib/source.ts';
 import { NotFound } from './not-found.tsx';
 
@@ -38,7 +37,7 @@ export function clientLoader({ serverLoader }: ClientLoaderFunctionArgs) {
 }
 
 interface ContentProps {
-  /** The path of the page's file, as the collection knows it (`kit/button.mdx`). */
+  /** The path of the page's file, as the collection knows it (`essentials/button.mdx`). */
   readonly path: string;
   readonly title: string;
   readonly description: string | undefined;
@@ -56,7 +55,7 @@ function Content({ path, title, description }: ContentProps): ReactElement {
   return (
     <DocsPage title={title} description={description} toc={toc}>
       <Prose>
-        <Mdx components={getMdxComponents(mdxPlaceholderComponents)} />
+        <Mdx components={getMdxComponents()} />
       </Prose>
     </DocsPage>
   );

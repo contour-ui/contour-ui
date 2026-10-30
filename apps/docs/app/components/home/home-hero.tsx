@@ -15,7 +15,7 @@ export const HOME_DESCRIPTION =
 /**
  * The hero of the home page (`home.css`): the title on the left; the description, the way into
  * the guide and the install command on the right, both columns as high as each other. The
- * install command is Kit's Clipboard, as high as the button beside it.
+ * install command is the styled Clipboard, as high as the button beside it.
  */
 export function HomeHero(): ReactElement {
   return (

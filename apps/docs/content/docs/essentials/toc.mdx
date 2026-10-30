@@ -8,31 +8,31 @@ import { vars } from '@contour-ui/tokens';
 
 export const manual = [
   {
-    value: 'kit-toc-oscillators',
+    value: 'essentials-toc-oscillators',
     depth: 2,
     title: 'Oscillators',
     text: 'Two oscillators make the raw sound. Each one plays a saw, a square or a sine wave, and the second one can be detuned against the first for a wider tone.',
   },
   {
-    value: 'kit-toc-filter',
+    value: 'essentials-toc-filter',
     depth: 2,
     title: 'Filter',
     text: 'The filter takes away the high end of the sound. Turn the cutoff down for a darker tone, and the resonance up to make the cutoff sing.',
   },
   {
-    value: 'kit-toc-envelopes',
+    value: 'essentials-toc-envelopes',
     depth: 2,
     title: 'Envelopes',
     text: 'An envelope shapes a sound over time, from the moment a key goes down until the sound fades out after the key is released.',
   },
   {
-    value: 'kit-toc-attack',
+    value: 'essentials-toc-attack',
     depth: 3,
     title: 'Attack and decay',
     text: 'The attack sets how fast the sound rises; the decay, how fast it falls to the sustain level that it keeps while the key is held.',
   },
   {
-    value: 'kit-toc-effects',
+    value: 'essentials-toc-effects',
     depth: 2,
     title: 'Effects',
     text: 'A chorus, a delay and a reverb follow the filter. Each one has a mix control: at zero the effect is off, at full only the effect is heard.',
@@ -51,7 +51,7 @@ export const manual = [
     >
       <Toc.Root
         items={manual}
-        scrollEl={() => document.getElementById('kit-toc-manual')}
+        scrollEl={() => document.getElementById('essentials-toc-manual')}
         style={{ inlineSize: '10rem', flexShrink: 0 }}
       >
         <Toc.Title>Contents</Toc.Title>
@@ -65,7 +65,7 @@ export const manual = [
         </Toc.List>
       </Toc.Root>
       <section
-        id="kit-toc-manual"
+        id="essentials-toc-manual"
         aria-label="Synthesizer manual"
         tabIndex={0}
         style={{
@@ -133,8 +133,8 @@ When no heading is there, the last one scrolled past stays active, since its sec
 view. A click on a link scrolls to the heading and puts its id in the address. Scroll the manual
 above, or click its contents.
 
-Toc is the [Headless Toc](/docs/headless/toc) with the Kit styles: the behavior and every prop are
-described there.
+Toc is the [Headless Toc](/docs/headless/toc) with the look of contour-ui: the behavior and every
+prop are described there.
 
 ## With Fumadocs
 
