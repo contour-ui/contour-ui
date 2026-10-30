@@ -108,3 +108,29 @@ jobs:
           path: |
             apps/docs/playwright-report
             apps/docs/test-results
+      # From main, the tested build goes to GitHub Pages (contour-ui.com). A path the build has no
+      # file for gets 404.html, the app without prerendered content, which shows the 404 page with
+      # status 404, as the end-to-end server serves it.
+      - name: Add the 404 page of a static host
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: cp apps/docs/build/client/__spa-fallback.html apps/docs/build/client/404.html
+      - uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        with:
+          path: apps/docs/build/client
+
+  pages:
+    name: Deploy the docs to GitHub Pages
+    # Only a fully green run deploys: the docs and their e2e tests, and the screenshots.
+    needs: [sites, visual]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
