@@ -168,7 +168,7 @@ export const PANEL: readonly ShikiLine[] = [
 /** The stylesheet imports of an app; the tests highlight the one of `@contour-ui/react`. */
 export const STYLESHEETS: readonly ShikiLine[] = [
   "'@contour-ui/tokens/tokens.css'",
-  "'@contour-ui/tokens/fonts.css'",
+  "'@contour-ui/fonts/fonts.css'",
   "'@contour-ui/react/styles.css'",
   "'./app.css'",
 ].map((path): ShikiLine => [
