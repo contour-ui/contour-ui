@@ -15,7 +15,7 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-const SECTIONS = ['Guide', 'Kit', 'Headless', 'Audio'] as const;
+const SECTIONS = ['Guide', 'Essentials', 'Audio', 'Headless', 'Fumadocs'] as const;
 
 /** The navigation of the docs, as a phone shows it: the menu button and the drawer it opens. */
 function Navigation(props: Drawer.RootProps): ReactElement {

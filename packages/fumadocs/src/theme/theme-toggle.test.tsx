@@ -121,7 +121,7 @@ describe('the theme toggle of the layouts', () => {
           <p>Content</p>
         </DocsPage>
       </DocsLayout>,
-      { pathname: '/docs/kit/button', themeToggle: { mode: 'light-dark-system' } },
+      { pathname: '/docs/essentials/button', themeToggle: { mode: 'light-dark-system' } },
     );
     await expect
       .element(page.getByRole('banner').getByRole('radiogroup', { name: 'Theme' }))

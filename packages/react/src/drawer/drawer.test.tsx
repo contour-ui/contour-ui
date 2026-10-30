@@ -88,7 +88,7 @@ function Navigation(props: Drawer.RootProps): ReactElement {
             </Drawer.Header>
             <Drawer.Body>
               <a href="#guide">Guide</a>
-              <a href="#kit">Kit</a>
+              <a href="#essentials">Essentials</a>
             </Drawer.Body>
             <Drawer.Footer>Version 1.0</Drawer.Footer>
           </Drawer.Content>

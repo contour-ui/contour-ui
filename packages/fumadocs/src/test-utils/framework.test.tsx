@@ -16,10 +16,10 @@ function Location(): ReactElement {
       <button
         type="button"
         onClick={() => {
-          void router.push('/docs/kit?tab=css#usage');
+          void router.push('/docs/essentials?tab=css#usage');
         }}
       >
-        Kit
+        Essentials
       </button>
       <Link href="/docs/guide/themes">Themes</Link>
       <Link href="#usage">Usage</Link>
@@ -63,10 +63,10 @@ describe('MemoryFramework', () => {
     const pathname = page.getByRole('status', { name: 'Pathname' });
     await expect.element(pathname).toHaveTextContent('/docs/guide');
 
-    await userEvent.click(page.getByRole('button', { name: 'Kit' }));
+    await userEvent.click(page.getByRole('button', { name: 'Essentials' }));
     // The pathname alone: no query, no fragment.
-    await expect.poll(() => pathname.element().textContent).toBe('/docs/kit');
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit?tab=css#usage');
+    await expect.poll(() => pathname.element().textContent).toBe('/docs/essentials');
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/essentials?tab=css#usage');
   });
 
   it('renders Link as a plain link that goes to a page of the site through push', async () => {

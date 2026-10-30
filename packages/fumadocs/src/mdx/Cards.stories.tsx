@@ -35,8 +35,12 @@ export const Links: Story = {
       <Card title="Guide" href="/docs/guide">
         How contour-ui works: packages, installation, themes, styling with tokens.
       </Card>
-      <Card title="Kit" href="/docs/kit" description="Styled general-purpose components." />
-      <Card title="Forms" href="/docs/kit/forms" description="Checkbox and Select." />
+      <Card
+        title="Essentials"
+        href="/docs/essentials"
+        description="Styled general-purpose components."
+      />
+      <Card title="Forms" href="/docs/essentials/forms" description="Checkbox and Select." />
       <Card
         title="GitHub"
         href="https://github.com/contour-ui/contour-ui"

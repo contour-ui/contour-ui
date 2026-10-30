@@ -13,7 +13,7 @@ describe('Cards', () => {
   it('lays its cards out on a grid', async () => {
     const screen = await render(
       <Cards className="custom" data-testid="cards">
-        <Card title="Kit" />
+        <Card title="Essentials" />
         <Card title="Audio" />
       </Cards>,
     );
@@ -27,7 +27,11 @@ describe('Cards', () => {
 describe('Card', () => {
   it('renders the styled Card, size `lg`, with the title and the description', async () => {
     const screen = await render(
-      <Card title="Kit" description="Styled general-purpose components." data-testid="card" />,
+      <Card
+        title="Essentials"
+        description="Styled general-purpose components."
+        data-testid="card"
+      />,
     );
     const card = screen.getByTestId('card');
 
@@ -35,8 +39,10 @@ describe('Card', () => {
     expect(card.element().tagName).toBe('DIV');
     await expect.element(card).toHaveAttribute('data-size', 'lg');
     // The title is the styled Card's but no heading, so cards keep the outline of the page.
-    expect(screen.getByText('Kit').element()).toHaveClass('contour-card__title', { exact: true });
-    expect(screen.getByText('Kit').element().tagName).toBe('SPAN');
+    expect(screen.getByText('Essentials').element()).toHaveClass('contour-card__title', {
+      exact: true,
+    });
+    expect(screen.getByText('Essentials').element().tagName).toBe('SPAN');
     expect(card.element().querySelector('h1, h2, h3, h4, h5, h6')).toBeNull();
     expect(screen.getByText('Styled general-purpose components.').element().tagName).toBe('P');
     expect(card.element().querySelector('.contour-card__header')).toBeNull();
@@ -44,7 +50,7 @@ describe('Card', () => {
 
   it('wraps its children, which MDX puts in paragraphs, in the description', async () => {
     const screen = await render(
-      <Card title="Kit" data-testid="card">
+      <Card title="Essentials" data-testid="card">
         <p>First.</p>
         <p>Second.</p>
       </Card>,
@@ -59,7 +65,7 @@ describe('Card', () => {
 
   it('shows its icon in the header, above the title', async () => {
     const screen = await render(
-      <Card title="Kit" icon={<svg data-testid="icon" />} data-testid="card" />,
+      <Card title="Essentials" icon={<svg data-testid="icon" />} data-testid="card" />,
     );
     const icon = screen.getByTestId('icon');
     await expect.element(icon).toBeInTheDocument();
@@ -73,18 +79,18 @@ describe('Card', () => {
     const onNavigate = vi.fn<(url: string) => void>();
     await render(
       <MemoryFramework pathname="/docs" onNavigate={onNavigate}>
-        <Card title="Kit" description="Styled components." href="/docs/kit" />
+        <Card title="Essentials" description="Styled components." href="/docs/essentials" />
       </MemoryFramework>,
     );
-    const link = page.getByRole('link', { name: 'Kit Styled components.' });
+    const link = page.getByRole('link', { name: 'Essentials Styled components.' });
 
     await expect.element(link).toHaveClass('contour-card contour-docs-card', { exact: true });
-    await expect.element(link).toHaveAttribute('href', '/docs/kit');
+    await expect.element(link).toHaveAttribute('href', '/docs/essentials');
     await expect.element(link).toHaveAttribute('data-framework-link');
     await expect.element(link).not.toHaveAttribute('target');
 
     await userEvent.click(link);
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit');
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/essentials');
   });
 
   it('opens another site in a new tab, and a path too when it is `external`', async () => {

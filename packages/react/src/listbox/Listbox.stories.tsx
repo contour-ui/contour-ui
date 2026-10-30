@@ -148,18 +148,18 @@ interface DocsResult {
 }
 
 const DOCS: readonly DocsResult[] = [
-  { url: '/docs/kit/alert', page: 'Alert', text: 'Alert' },
-  { url: '/docs/kit/alert#status', page: 'Alert', text: 'Status' },
-  { url: '/docs/kit/button', page: 'Button', text: 'Button' },
-  { url: '/docs/kit/button#variants', page: 'Button', text: 'Variants' },
-  { url: '/docs/kit/button#sizes', page: 'Button', text: 'Sizes' },
-  { url: '/docs/kit/button#icon-buttons', page: 'Button', text: 'Icon buttons' },
-  { url: '/docs/kit/card', page: 'Card', text: 'Card' },
-  { url: '/docs/kit/card#variants', page: 'Card', text: 'Variants' },
-  { url: '/docs/kit/card#sizes', page: 'Card', text: 'Sizes' },
-  { url: '/docs/kit/code-block', page: 'CodeBlock', text: 'CodeBlock' },
-  { url: '/docs/kit/code-block#copy', page: 'CodeBlock', text: 'Copy' },
-  { url: '/docs/kit/code-block#line-numbers', page: 'CodeBlock', text: 'Line numbers' },
+  { url: '/docs/essentials/alert', page: 'Alert', text: 'Alert' },
+  { url: '/docs/essentials/alert#status', page: 'Alert', text: 'Status' },
+  { url: '/docs/essentials/button', page: 'Button', text: 'Button' },
+  { url: '/docs/essentials/button#variants', page: 'Button', text: 'Variants' },
+  { url: '/docs/essentials/button#sizes', page: 'Button', text: 'Sizes' },
+  { url: '/docs/essentials/button#icon-buttons', page: 'Button', text: 'Icon buttons' },
+  { url: '/docs/essentials/card', page: 'Card', text: 'Card' },
+  { url: '/docs/essentials/card#variants', page: 'Card', text: 'Variants' },
+  { url: '/docs/essentials/card#sizes', page: 'Card', text: 'Sizes' },
+  { url: '/docs/essentials/code-block', page: 'CodeBlock', text: 'CodeBlock' },
+  { url: '/docs/essentials/code-block#copy', page: 'CodeBlock', text: 'Copy' },
+  { url: '/docs/essentials/code-block#line-numbers', page: 'CodeBlock', text: 'Line numbers' },
 ];
 
 /** The search of the docs: an input, and the results under it, grouped by page. */

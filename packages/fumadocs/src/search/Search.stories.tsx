@@ -75,11 +75,11 @@ export const Results: Story = {
     const results = await screen.findByRole('listbox', { name: 'Results' });
     await waitFor(async () => {
       await expect(
-        within(results).getByRole('group', { name: 'Button, Kit, Components' }),
+        within(results).getByRole('group', { name: 'Button, Essentials, Components' }),
       ).toBeVisible();
     });
     await expect(
-      within(results).getByRole('group', { name: 'Dialog, Kit, Components' }),
+      within(results).getByRole('group', { name: 'Dialog, Essentials, Components' }),
     ).toBeVisible();
     // The first result is highlighted, for Enter to open it.
     await expect(field).toHaveAttribute('aria-activedescendant');

@@ -15,10 +15,10 @@ interface SearchPage {
 /** Pages of `pageTree` (`page-tree.ts`): "button" finds each of them, and a row of a table. */
 const SEARCH_PAGES: readonly SearchPage[] = [
   {
-    url: '/docs/kit',
-    title: 'Kit',
+    url: '/docs/essentials',
+    title: 'Essentials',
     description: 'Styled general-purpose components.',
-    breadcrumbs: ['Docs', 'Kit'],
+    breadcrumbs: ['Docs', 'Essentials'],
     markdown: [
       '## Components',
       '',
@@ -26,10 +26,10 @@ const SEARCH_PAGES: readonly SearchPage[] = [
     ].join('\n'),
   },
   {
-    url: '/docs/kit/button',
+    url: '/docs/essentials/button',
     title: 'Button',
     description: 'A button that runs an action.',
-    breadcrumbs: ['Docs', 'Kit', 'Components'],
+    breadcrumbs: ['Docs', 'Essentials', 'Components'],
     markdown: [
       '## Usage',
       '',
@@ -49,10 +49,10 @@ const SEARCH_PAGES: readonly SearchPage[] = [
     ].join('\n'),
   },
   {
-    url: '/docs/kit/dialog',
+    url: '/docs/essentials/dialog',
     title: 'Dialog',
     description: 'A window over the page.',
-    breadcrumbs: ['Docs', 'Kit', 'Components'],
+    breadcrumbs: ['Docs', 'Essentials', 'Components'],
     markdown: [
       '## Closing',
       '',

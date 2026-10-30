@@ -90,7 +90,7 @@ function InstallCommand(props: Clipboard.RootProps): ReactElement {
 /** A labeled link with an icon trigger. */
 function ShareLink(props: Clipboard.RootProps): ReactElement {
   return (
-    <Clipboard.Root value="https://contour-ui.dev/docs/kit/clipboard" {...props}>
+    <Clipboard.Root value="https://contour-ui.dev/docs/essentials/clipboard" {...props}>
       <Clipboard.Label>Share link</Clipboard.Label>
       <Clipboard.Control>
         <Clipboard.ValueText />

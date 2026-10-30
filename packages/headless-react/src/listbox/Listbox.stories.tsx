@@ -126,15 +126,15 @@ interface DocsResult {
 }
 
 const DOCS: readonly DocsResult[] = [
-  { url: '/docs/kit/button', page: 'Button', text: 'Button' },
-  { url: '/docs/kit/button#variants', page: 'Button', text: 'Variants' },
-  { url: '/docs/kit/button#sizes', page: 'Button', text: 'Sizes' },
-  { url: '/docs/kit/card', page: 'Card', text: 'Card' },
-  { url: '/docs/kit/card#variants', page: 'Card', text: 'Variants' },
-  { url: '/docs/kit/card#as-a-link', page: 'Card', text: 'As a link' },
-  { url: '/docs/kit/code-block', page: 'CodeBlock', text: 'CodeBlock' },
-  { url: '/docs/kit/code-block#copy', page: 'CodeBlock', text: 'Copy' },
-  { url: '/docs/kit/code-block#line-numbers', page: 'CodeBlock', text: 'Line numbers' },
+  { url: '/docs/essentials/button', page: 'Button', text: 'Button' },
+  { url: '/docs/essentials/button#variants', page: 'Button', text: 'Variants' },
+  { url: '/docs/essentials/button#sizes', page: 'Button', text: 'Sizes' },
+  { url: '/docs/essentials/card', page: 'Card', text: 'Card' },
+  { url: '/docs/essentials/card#variants', page: 'Card', text: 'Variants' },
+  { url: '/docs/essentials/card#as-a-link', page: 'Card', text: 'As a link' },
+  { url: '/docs/essentials/code-block', page: 'CodeBlock', text: 'CodeBlock' },
+  { url: '/docs/essentials/code-block#copy', page: 'CodeBlock', text: 'Copy' },
+  { url: '/docs/essentials/code-block#line-numbers', page: 'CodeBlock', text: 'Line numbers' },
 ];
 
 /** The results of a query: the pages and headings whose text has it, grouped by page. */
@@ -202,7 +202,7 @@ export const Search: Story = {
     await userEvent.keyboard('{Enter}');
     await expect(onSelect).toHaveBeenCalledTimes(1);
     await expect(onSelect).toHaveBeenCalledWith({
-      value: '/docs/kit/card#variants',
+      value: '/docs/essentials/card#variants',
       item: DOCS[4],
     });
 
@@ -210,7 +210,7 @@ export const Search: Story = {
     await userEvent.keyboard('copy');
     await userEvent.click(canvas.getByRole('option', { name: 'Copy' }));
     await expect(onSelect).toHaveBeenLastCalledWith({
-      value: '/docs/kit/code-block#copy',
+      value: '/docs/essentials/code-block#copy',
       item: DOCS[7],
     });
     // A click keeps the focus in the input.

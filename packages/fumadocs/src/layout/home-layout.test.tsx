@@ -65,7 +65,7 @@ describe('HomeLayout', () => {
     expect(nav.getByRole('listitem').elements()).toHaveLength(3);
     await expect.element(nav.getByRole('link', { name: 'Docs' })).toHaveAttribute('href', '/docs');
     await expect
-      .element(nav.getByRole('link', { name: 'Kit' }))
+      .element(nav.getByRole('link', { name: 'Essentials' }))
       .toHaveAttribute('data-variant', 'neutral');
     await expect.element(searchButton).toBeVisible();
     // A link to another site opens in a new tab, and says so.
@@ -172,11 +172,13 @@ describe('the header of HomeLayout', () => {
     expect(box(themeToggle).right).toBeLessThanOrEqual(360 - 16);
     await expect.element(searchButton).toBeVisible();
     // Out of room, the links scroll in their own box: at its end, the last one shows in full,
-    // with room for its focus ring (twice the 2px of the ring's width).
+    // with room for its focus ring (twice the 2px of the ring's width). The scroll range is in
+    // whole pixels (`scrollWidth`, `clientWidth`) and the width of the text is not: the end may
+    // fall short of it by less than a pixel.
     const links = nav.element();
     links.scrollLeft = links.scrollWidth;
-    expect(box(nav.getByRole('link', { name: 'Kit' })).right + 4).toBeLessThanOrEqual(
-      box(nav).right,
+    expect(box(nav.getByRole('link', { name: 'Essentials' })).right + 4).toBeLessThan(
+      box(nav).right + 1,
     );
   });
 

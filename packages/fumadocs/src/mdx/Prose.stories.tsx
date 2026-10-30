@@ -72,7 +72,7 @@ export const EveryElement: Story = {
       <ul>
         <li>Tokens, the design decisions as CSS variables.</li>
         <li>
-          Kit, the styled components:
+          Essentials, the everyday styled components:
           <ul>
             <li>Button, Card and Dialog.</li>
             <li>Table and Code block.</li>
@@ -144,7 +144,7 @@ export const EveryElement: Story = {
       <Callout title="A callout">Callouts keep their own look inside Prose.</Callout>
       <Cards>
         <Card title="Guide" href="/docs/guide" description="How it works." />
-        <Card title="Kit" href="/docs/kit" description="Styled components." />
+        <Card title="Essentials" href="/docs/essentials" description="Styled components." />
       </Cards>
       <Preview>
         <Button>A live example</Button>
@@ -183,8 +183,8 @@ export const Text: Story = {
   render: () => (
     <Prose>
       <p>
-        Kit styles its components with plain CSS and the semantic tokens. Load its stylesheet after
-        the tokens, then use the components.
+        <code>@contour-ui/react</code> styles its components with plain CSS and the semantic tokens.
+        Load its stylesheet after the tokens, then use the components.
       </p>
       <H2 id="install">Install</H2>
       <p>Add the packages with the package manager of the project.</p>

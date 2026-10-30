@@ -18,7 +18,7 @@ describe('isExternalHref', () => {
   });
 
   it('keeps paths, relative links, fragments and queries on the site', () => {
-    const hrefs = ['/docs/kit', 'button', './button', '../guide', '#usage', '?tab=css', ''];
+    const hrefs = ['/docs/essentials', 'button', './button', '../guide', '#usage', '?tab=css', ''];
 
     expect(hrefs.filter((href) => isExternalHref(href))).toStrictEqual([]);
   });

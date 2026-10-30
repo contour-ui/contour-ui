@@ -38,7 +38,7 @@ const caption: CSSProperties = {
 };
 
 const INSTALL = 'pnpm add @contour-ui/react';
-const LINK = 'https://contour-ui.dev/docs/kit/clipboard';
+const LINK = 'https://contour-ui.dev/docs/essentials/clipboard';
 
 /** An install command: a `$` prompt, the command, and a trigger with an icon and "Copy". */
 function InstallCommand(props: Clipboard.RootProps): ReactElement {
@@ -89,7 +89,7 @@ export const Default: Story = {
 export const LabelAndIcon: Story = {
   args: { value: LINK },
   render: (args) => (
-    <Clipboard.Root {...args} style={{ inlineSize: '22rem' }}>
+    <Clipboard.Root {...args} style={{ inlineSize: '25rem' }}>
       <Clipboard.Label>Share link</Clipboard.Label>
       <Clipboard.Control>
         <Clipboard.ValueText />

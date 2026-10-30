@@ -6,8 +6,8 @@ import type { Root } from 'fumadocs-core/page-tree';
  * their `meta.json`) with a description, their index page listed first.
  *
  * - Guide: four pages, a separator ("Styling") and two more pages.
- * - Kit: a separator ("Components"), two pages, the folder Forms with an index page of its own
- *   and two pages, then a separator ("Resources") and an external link.
+ * - Essentials: a separator ("Components"), two pages, the folder Forms with an index page of
+ *   its own and two pages, then a separator ("Resources") and an external link.
  */
 export const pageTree: Root = {
   $id: 'root',
@@ -36,38 +36,48 @@ export const pageTree: Root = {
       ],
     },
     {
-      $id: 'kit',
+      $id: 'essentials',
       type: 'folder',
-      name: 'Kit',
+      name: 'Essentials',
       description: 'Styled general-purpose components',
       root: true,
       children: [
-        { $id: 'kit/index.mdx', type: 'page', name: 'Kit', url: '/docs/kit' },
+        { $id: 'essentials/index.mdx', type: 'page', name: 'Essentials', url: '/docs/essentials' },
         { $id: '_1', type: 'separator', name: 'Components' },
-        { $id: 'kit/button.mdx', type: 'page', name: 'Button', url: '/docs/kit/button' },
-        { $id: 'kit/dialog.mdx', type: 'page', name: 'Dialog', url: '/docs/kit/dialog' },
         {
-          $id: 'kit/forms',
+          $id: 'essentials/button.mdx',
+          type: 'page',
+          name: 'Button',
+          url: '/docs/essentials/button',
+        },
+        {
+          $id: 'essentials/dialog.mdx',
+          type: 'page',
+          name: 'Dialog',
+          url: '/docs/essentials/dialog',
+        },
+        {
+          $id: 'essentials/forms',
           type: 'folder',
           name: 'Forms',
           index: {
-            $id: 'kit/forms/index.mdx',
+            $id: 'essentials/forms/index.mdx',
             type: 'page',
             name: 'Forms',
-            url: '/docs/kit/forms',
+            url: '/docs/essentials/forms',
           },
           children: [
             {
-              $id: 'kit/forms/checkbox.mdx',
+              $id: 'essentials/forms/checkbox.mdx',
               type: 'page',
               name: 'Checkbox',
-              url: '/docs/kit/forms/checkbox',
+              url: '/docs/essentials/forms/checkbox',
             },
             {
-              $id: 'kit/forms/select.mdx',
+              $id: 'essentials/forms/select.mdx',
               type: 'page',
               name: 'Select',
-              url: '/docs/kit/forms/select',
+              url: '/docs/essentials/forms/select',
             },
           ],
         },

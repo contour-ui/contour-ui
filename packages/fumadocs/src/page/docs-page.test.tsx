@@ -53,7 +53,7 @@ describe('DocsPage', () => {
           <p>Content</p>
         </DocsPage>
       </DocsLayout>,
-      { pathname: '/docs/kit/button' },
+      { pathname: '/docs/essentials/button' },
     );
     const column = page.getByRole('navigation', { name: 'On this page' });
     await expect.element(column).toBeVisible();

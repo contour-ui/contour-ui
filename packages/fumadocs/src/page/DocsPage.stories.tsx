@@ -24,7 +24,7 @@ const meta: Meta<typeof DocsPage> = {
     </DocsLayout>
   ),
   // A page fills the viewport, edge to edge.
-  parameters: { pathname: '/docs/kit/button', canvasPadding: false },
+  parameters: { pathname: '/docs/essentials/button', canvasPadding: false },
   globals: { viewport: { value: 'desktop' } },
 };
 
@@ -84,7 +84,7 @@ export const TocPopover: Story = {
 /** A page without headings has no table of contents, neither a bar nor a column. */
 export const WithoutToc: Story = {
   args: { title: 'Dialog', description: 'A window over the page.', toc: [] },
-  parameters: { pathname: '/docs/kit/dialog' },
+  parameters: { pathname: '/docs/essentials/dialog' },
   render: (args) => (
     <DocsLayout tree={pageTree}>
       <DocsPage {...args}>

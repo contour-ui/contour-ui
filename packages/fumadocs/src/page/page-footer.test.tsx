@@ -52,18 +52,18 @@ describe('PageFooter', () => {
   });
 
   it('goes into a folder by its index page, and on to its pages', async () => {
-    await renderFooter('/docs/kit/forms');
+    await renderFooter('/docs/essentials/forms');
 
-    await expect.element(previousLink).toHaveAttribute('href', '/docs/kit/dialog');
-    await expect.element(nextLink).toHaveAttribute('href', '/docs/kit/forms/checkbox');
+    await expect.element(previousLink).toHaveAttribute('href', '/docs/essentials/dialog');
+    await expect.element(nextLink).toHaveAttribute('href', '/docs/essentials/forms/checkbox');
   });
 
   it('keeps to the section of the page', async () => {
-    await renderFooter('/docs/kit');
+    await renderFooter('/docs/essentials');
 
     // Not the last page of Guide, the section before.
     await expect.element(previousLink).not.toBeInTheDocument();
-    await expect.element(nextLink).toHaveAttribute('href', '/docs/kit/button');
+    await expect.element(nextLink).toHaveAttribute('href', '/docs/essentials/button');
   });
 
   it('renders nothing for a page alone in its section', async () => {
@@ -88,13 +88,13 @@ describe('PageFooter', () => {
   it('goes to a neighbour through the framework', async () => {
     const onNavigate = vi.fn<(url: string) => void>();
     await render(
-      <MemoryFramework pathname="/docs/kit/button" onNavigate={onNavigate}>
-        <PageFooter tree={pageTree} url="/docs/kit/button" />
+      <MemoryFramework pathname="/docs/essentials/button" onNavigate={onNavigate}>
+        <PageFooter tree={pageTree} url="/docs/essentials/button" />
       </MemoryFramework>,
     );
 
     await expect.element(nextLink).toHaveAttribute('data-framework-link');
     await userEvent.click(nextLink);
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit/dialog');
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/essentials/dialog');
   });
 });

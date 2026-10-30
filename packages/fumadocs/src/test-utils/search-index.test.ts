@@ -10,14 +10,18 @@ describe('createSearchIndexUrl', () => {
 
     const pages = results.filter((result) => result.type === 'page').map((result) => result.url);
     expect(pages).toStrictEqual(
-      expect.arrayContaining(['/docs/kit', '/docs/kit/button', '/docs/kit/dialog']),
+      expect.arrayContaining([
+        '/docs/essentials',
+        '/docs/essentials/button',
+        '/docs/essentials/dialog',
+      ]),
     );
     expect(results).toContainEqual(
-      expect.objectContaining({ type: 'text', url: '/docs/kit/button#usage' }),
+      expect.objectContaining({ type: 'text', url: '/docs/essentials/button#usage' }),
     );
     // A row of the table of props, with its header row: the search client groups the rows of a
     // table by `table`.
-    const row = results.find((result) => result.url === '/docs/kit/button#props');
+    const row = results.find((result) => result.url === '/docs/essentials/button#props');
     expect(row?.table).toBeTypeOf('string');
     expect(row?.content).toContain('| Prop');
   });

@@ -48,7 +48,7 @@ export const LiveExample: Story = {
           <Card.Body>
             <Card.Title>Plugin preset</Card.Title>
             <Card.Description>
-              A card from Kit, with a <Link href="#cards">link</Link> in its text.
+              A styled card, with a <Link href="#cards">link</Link> in its text.
             </Card.Description>
           </Card.Body>
         </Card.Root>

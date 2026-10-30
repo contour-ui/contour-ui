@@ -69,13 +69,13 @@ describe('DocsLayout', () => {
       .element(docs.getByRole('link', { name: 'Introduction' }))
       .toHaveAttribute('aria-current', 'page');
     await expect
-      .element(docs.getByRole('link', { name: 'Kit', exact: true }))
-      .toHaveAttribute('href', '/docs/kit');
+      .element(docs.getByRole('link', { name: 'Essentials', exact: true }))
+      .toHaveAttribute('href', '/docs/essentials');
     await expect.element(page.getByRole('button', { name: 'Sections' })).toBeVisible();
   });
 
   it('names a page on another site with the label of its arrow, as a separate word', async () => {
-    await renderDocs(<Docs />, { pathname: '/docs/kit' });
+    await renderDocs(<Docs />, { pathname: '/docs/essentials' });
     const docs = page.getByRole('navigation', { name: 'Docs' });
 
     await expect
@@ -170,16 +170,16 @@ describe('the menu', () => {
 
   it('leaves a section chosen in the switcher to the pathname, and then gives the focus back to the menu button', async () => {
     const router = createRef<Router>();
-    await renderDocs(<Docs router={router} />, { pathname: '/docs/kit' });
+    await renderDocs(<Docs router={router} />, { pathname: '/docs/essentials' });
     const open = page.getByRole('button', { name: 'Open menu' });
     await userEvent.click(open);
     const menu = page.getByRole('dialog', { name: 'Menu' });
-    const switcher = menu.getByRole('button', { name: 'Kit', exact: true });
+    const switcher = menu.getByRole('button', { name: 'Essentials', exact: true });
     await userEvent.click(switcher);
     const sections = page.getByRole('dialog', { name: 'Sections' });
 
     // The section of the page: the pathname stays, the popover closes, and the menu stays.
-    await userEvent.click(sections.getByRole('link', { name: 'Kit', exact: true }));
+    await userEvent.click(sections.getByRole('link', { name: 'Essentials', exact: true }));
     await expect.element(sections).not.toBeInTheDocument();
     await expect.element(switcher).toHaveFocus();
     await expect.element(menu).toBeVisible();

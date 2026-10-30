@@ -71,7 +71,7 @@ export const Desktop: Story = {
       within(nav)
         .getAllByRole('link')
         .map((link) => link.textContent),
-    ).toEqual(['Docs', 'Guide', 'Kit']);
+    ).toEqual(['Docs', 'Guide', 'Essentials']);
     await expect(canvas.getByRole('link', { name: 'GitHub (opens in a new tab)' })).toHaveAttribute(
       'target',
       '_blank',

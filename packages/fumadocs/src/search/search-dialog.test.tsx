@@ -66,29 +66,29 @@ describe('SearchTrigger', () => {
 describe('a result', () => {
   it('on another page goes there through the framework, and takes the focus there', async () => {
     const onNavigate = vi.fn<(url: string) => void>();
-    await renderButtonPage('/docs/kit', onNavigate);
+    await renderButtonPage('/docs/essentials', onNavigate);
     await search('label');
     await userEvent.click(dialog.getByRole('option', { name: /give it a label/u }));
 
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit/button#usage');
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/essentials/button#usage');
     await expect.element(dialog).not.toBeInTheDocument();
     await expect.element(page.getByRole('heading', { level: 2, name: 'Usage' })).toHaveFocus();
   });
 
   it('on the page goes to its heading, and moves the focus there', async () => {
     const onNavigate = vi.fn<(url: string) => void>();
-    await renderButtonPage('/docs/kit/button', onNavigate);
+    await renderButtonPage('/docs/essentials/button', onNavigate);
     await search('label');
     await userEvent.click(dialog.getByRole('option', { name: /give it a label/u }));
 
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit/button#usage');
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/essentials/button#usage');
     await expect.element(dialog).not.toBeInTheDocument();
     await expect.element(page.getByRole('heading', { level: 2, name: 'Usage' })).toHaveFocus();
   });
 
   it('at the address of the page stays there, and moves the focus to the page', async () => {
     const onNavigate = vi.fn<(url: string) => void>();
-    await renderButtonPage('/docs/kit/button', onNavigate);
+    await renderButtonPage('/docs/essentials/button', onNavigate);
     await search('button');
     // The page itself: no heading, and the test page has no `#hash`.
     await userEvent.click(dialog.getByRole('option', { name: /^Button/u }).first());

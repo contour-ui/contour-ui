@@ -41,9 +41,9 @@ describe('the section switcher', () => {
     await expect.element(guide).toHaveAttribute('aria-current', 'true');
     // The description follows the name and the state, rather than joining the name.
     await expect.element(guide).toHaveAccessibleDescription('How it works and how to set it up');
-    const kit = sections.getByRole('link', { name: 'Kit' });
-    await expect.element(kit).toHaveAttribute('href', '/docs/kit');
-    await expect.element(kit).not.toHaveAttribute('aria-current');
+    const essentials = sections.getByRole('link', { name: 'Essentials' });
+    await expect.element(essentials).toHaveAttribute('href', '/docs/essentials');
+    await expect.element(essentials).not.toHaveAttribute('aria-current');
   });
 
   it('goes to the section chosen through the framework, and then shows it', async () => {
@@ -53,13 +53,17 @@ describe('the section switcher', () => {
     await userEvent.click(page.getByRole('button', { name: 'Guide', exact: true }));
     const sections = page.getByRole('dialog', { name: 'Sections' });
 
-    await userEvent.click(sections.getByRole('link', { name: 'Kit' }));
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit');
+    await userEvent.click(sections.getByRole('link', { name: 'Essentials' }));
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/essentials');
     await expect.element(sections).not.toBeInTheDocument();
     // The switcher names the new section and has the focus back; the navigation lists its pages.
-    await expect.element(page.getByRole('button', { name: 'Kit', exact: true })).toHaveFocus();
     await expect
-      .element(page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Kit' }))
+      .element(page.getByRole('button', { name: 'Essentials', exact: true }))
+      .toHaveFocus();
+    await expect
+      .element(
+        page.getByRole('navigation', { name: 'Docs' }).getByRole('link', { name: 'Essentials' }),
+      )
       .toHaveAttribute('aria-current', 'page');
   });
 
@@ -73,9 +77,9 @@ describe('the section switcher', () => {
 
     await userEvent.click(menu.getByRole('button', { name: 'Guide', exact: true }));
     await userEvent.click(
-      page.getByRole('dialog', { name: 'Sections' }).getByRole('link', { name: 'Kit' }),
+      page.getByRole('dialog', { name: 'Sections' }).getByRole('link', { name: 'Essentials' }),
     );
-    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/kit');
+    expect(onNavigate).toHaveBeenCalledExactlyOnceWith('/docs/essentials');
     // The popover closes with the click, the menu as the next page renders.
     await expect.element(menu).not.toBeInTheDocument();
     await expect.element(open).toHaveFocus();

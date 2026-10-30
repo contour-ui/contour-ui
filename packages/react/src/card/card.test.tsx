@@ -35,10 +35,10 @@ function LinkCard(): ReactElement {
     <Card.Root asChild>
       {/* The link text is in the title and the description, where lint does not look. */}
       {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label */}
-      <a href="/docs/kit">
+      <a href="/docs/essentials">
         <Card.Body>
-          <Card.Title>Kit</Card.Title>
-          <Card.Description>Styled general-purpose components.</Card.Description>
+          <Card.Title>Essentials</Card.Title>
+          <Card.Description>The everyday components.</Card.Description>
         </Card.Body>
       </a>
     </Card.Root>
@@ -179,11 +179,11 @@ describe('Card', () => {
     const screen = await render(
       <Card.Root>
         <Card.Title asChild>
-          <h2>Kit</h2>
+          <h2>Essentials</h2>
         </Card.Title>
       </Card.Root>,
     );
-    const title = screen.getByRole('heading', { level: 2, name: 'Kit' });
+    const title = screen.getByRole('heading', { level: 2, name: 'Essentials' });
 
     await expect.element(title).toHaveClass('contour-card__title');
     await expect.element(title).toHaveAttribute('data-part', 'title');
@@ -237,14 +237,14 @@ describe('Card', () => {
     it('is one link, named by its content with the title first', async () => {
       const screen = await render(<LinkCard />);
       const link = screen.getByRole('link', {
-        name: 'Kit Styled general-purpose components.',
+        name: 'Essentials The everyday components.',
         exact: true,
       });
 
       expect(screen.getByRole('link').elements()).toHaveLength(1);
       await expect.element(link).toHaveClass('contour-card', { exact: true });
       await expect.element(link).toHaveAttribute('data-part', 'root');
-      await expect.element(link).toHaveAttribute('href', '/docs/kit');
+      await expect.element(link).toHaveAttribute('href', '/docs/essentials');
       await expect.element(link).toHaveStyle({
         color: computed('color', vars.color.fg.default),
         textDecorationLine: 'none',

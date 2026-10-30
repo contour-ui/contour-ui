@@ -79,10 +79,10 @@ export const AsLink: Story = {
       <Card.Root asChild>
         {/* The link text is in the title and the description, where lint does not look. */}
         {/* oxlint-disable-next-line jsx-a11y/control-has-associated-label */}
-        <a href="/docs/kit">
+        <a href="/docs/essentials">
           <Card.Body>
-            <Card.Title>Kit</Card.Title>
-            <Card.Description>Styled general-purpose components.</Card.Description>
+            <Card.Title>Essentials</Card.Title>
+            <Card.Description>The everyday components.</Card.Description>
           </Card.Body>
         </a>
       </Card.Root>
@@ -90,7 +90,7 @@ export const AsLink: Story = {
   ),
   play: async ({ canvas, userEvent }) => {
     await expect(canvas.getAllByRole('link')).toHaveLength(1);
-    const link = canvas.getByRole('link', { name: /^Kit\b/u });
+    const link = canvas.getByRole('link', { name: /^Essentials\b/u });
     await expect(link).toHaveClass('contour-card');
 
     await userEvent.tab();

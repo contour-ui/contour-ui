@@ -10,8 +10,8 @@ import { toc } from '../test-utils/toc.ts';
 
 /**
  * The layout of the docs pages around a `DocsPage`: the navigation of the page's section, in the
- * sidebar from 48rem and in the menu of the header below. The page here is Button, in the Kit
- * section of the fixtures' page tree.
+ * sidebar from 48rem and in the menu of the header below. The page here is Button, in the
+ * Essentials section of the fixtures' page tree.
  */
 const meta: Meta<typeof DocsLayout> = {
   title: 'Fumadocs/DocsLayout',
@@ -25,7 +25,7 @@ const meta: Meta<typeof DocsLayout> = {
     </DocsLayout>
   ),
   // A page fills the viewport, edge to edge.
-  parameters: { pathname: '/docs/kit/button', canvasPadding: false },
+  parameters: { pathname: '/docs/essentials/button', canvasPadding: false },
   globals: { viewport: { value: 'desktop' } },
 };
 
@@ -64,7 +64,7 @@ async function focusedIn(name: string): Promise<HTMLElement> {
 export const Desktop: Story = {
   play: async ({ canvas }) => {
     // The section switcher.
-    await expect(canvas.getByRole('button', { name: 'Kit' })).toBeVisible();
+    await expect(canvas.getByRole('button', { name: 'Essentials' })).toBeVisible();
     const docs = canvas.getByRole('navigation', { name: 'Docs' });
     await expect(within(docs).getByRole('link', { name: 'Button' })).toHaveAttribute(
       'aria-current',
@@ -127,9 +127,9 @@ export const PhoneMenu: Story = {
  */
 export const SectionSwitcher: Story = {
   play: async ({ canvas }) => {
-    await userEvent.click(canvas.getByRole('button', { name: 'Kit' }));
+    await userEvent.click(canvas.getByRole('button', { name: 'Essentials' }));
     const sections = await focusedIn('Sections');
-    await expect(within(sections).getByRole('link', { name: 'Kit' })).toHaveAttribute(
+    await expect(within(sections).getByRole('link', { name: 'Essentials' })).toHaveAttribute(
       'aria-current',
       'true',
     );
@@ -159,7 +159,7 @@ export const CollapsedSidebar: Story = {
  * its pages under it, and the separators of the section name the groups around it.
  */
 export const NestedPage: Story = {
-  parameters: { pathname: '/docs/kit/forms/checkbox' },
+  parameters: { pathname: '/docs/essentials/forms/checkbox' },
   render: ({ tree }) => (
     <DocsLayout tree={tree}>
       <DocsPage title="Checkbox" description="A choice that is on or off." toc={[]}>

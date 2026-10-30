@@ -110,14 +110,14 @@ describe('Link', () => {
           </Link>
         </li>
         <li>
-          <Link variant="neutral" href="/kit">
-            Kit
+          <Link variant="neutral" href="/docs/essentials">
+            Essentials
           </Link>
         </li>
       </ul>,
     );
     const docs = screen.getByRole('link', { name: 'Docs' });
-    const kit = screen.getByRole('link', { name: 'Kit' });
+    const essentials = screen.getByRole('link', { name: 'Essentials' });
     const muted = computed('color', vars.color.fg.muted);
     const bright = computed('color', vars.color.fg.default);
     // Off both links first, wherever earlier tests on the page left the pointer.
@@ -137,7 +137,7 @@ describe('Link', () => {
 
     await userEvent.hover(docs);
     await expect.element(docs).toHaveStyle({ color: bright, textDecorationLine: 'none' });
-    await expect.element(kit).toHaveStyle({ color: muted });
+    await expect.element(essentials).toHaveStyle({ color: muted });
   });
 
   it.each(['plain', 'underline', 'neutral'] as const)(

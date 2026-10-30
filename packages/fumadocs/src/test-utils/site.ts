@@ -8,7 +8,7 @@ export const site: DocsSite = {
   nav: [
     { label: 'Docs', href: '/docs' },
     { label: 'Guide', href: '/docs/guide' },
-    { label: 'Kit', href: '/docs/kit' },
+    { label: 'Essentials', href: '/docs/essentials' },
   ],
   links: [{ label: 'GitHub', href: 'https://github.com/contour-ui/contour-ui', icon: githubIcon }],
 };

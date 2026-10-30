@@ -52,7 +52,7 @@ export const Types: Story = {
         The sidebar state is stored in <code>localStorage</code>.
       </Callout>
       <Callout type="warning" title="Warning">
-        Load the stylesheet of the layout before Kit&apos;s.
+        Load the stylesheet of the layout before <code>@contour-ui/react/styles.css</code>.
       </Callout>
       <Callout type="error" title="Error">
         A page outside the page tree has no neighbours.
@@ -89,7 +89,7 @@ export const Content: Story = {
       <>
         <p>The packages are not on npm yet.</p>
         <ul>
-          <li>Kit and Headless have their first components.</li>
+          <li>Essentials and Headless have their first components.</li>
           <li>Audio still shows a placeholder.</li>
         </ul>
       </>

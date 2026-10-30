@@ -164,9 +164,9 @@ export const Top: Story = {
           <Dialog.Content aria-label="Search the docs">
             <Field label="Search" value="dialog" />
             <Dialog.Body>
-              <p style={{ margin: 0 }}>Dialog — Kit</p>
+              <p style={{ margin: 0 }}>Dialog — Essentials</p>
               <p style={{ margin: 0 }}>Dialog — Headless</p>
-              <p style={{ margin: 0 }}>Drawer — Kit</p>
+              <p style={{ margin: 0 }}>Drawer — Essentials</p>
             </Dialog.Body>
           </Dialog.Content>
         </Dialog.Positioner>

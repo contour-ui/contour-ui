@@ -67,7 +67,9 @@ export const LabelAndCode: Story = {
         <CodeExample lines={INSTALL_CODE} />
       </Tab>
       <Tab>
-        <p>Install the tokens with Kit: the app imports their stylesheet.</p>
+        <p>
+          Install the tokens with <code>@contour-ui/react</code>: the app imports their stylesheet.
+        </p>
       </Tab>
     </Tabs>
   ),

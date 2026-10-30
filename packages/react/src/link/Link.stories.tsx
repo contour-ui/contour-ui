@@ -83,7 +83,7 @@ export const Navigation: Story = {
           listStyle: 'none',
         }}
       >
-        {['Docs', 'Kit', 'Audio', 'Tokens'].map((label) => (
+        {['Docs', 'Essentials', 'Audio', 'Tokens'].map((label) => (
           <li key={label}>
             <Link variant="neutral" href="#">
               {label}

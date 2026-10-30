@@ -14,44 +14,59 @@ import '@contour-ui/tokens/tokens.css';
 import '../styles.css';
 import '@contour-ui/react/styles.css';
 
-/** The folder Forms of the Kit section, without its index page: two pages. */
+/** The folder Forms of the Essentials section, without its index page: two pages. */
 const FORMS_PAGES: Folder = {
-  $id: 'kit/forms',
+  $id: 'essentials/forms',
   type: 'folder',
   name: 'Forms',
   children: [
     {
-      $id: 'kit/forms/checkbox.mdx',
+      $id: 'essentials/forms/checkbox.mdx',
       type: 'page',
       name: 'Checkbox',
-      url: '/docs/kit/forms/checkbox',
+      url: '/docs/essentials/forms/checkbox',
     },
-    { $id: 'kit/forms/select.mdx', type: 'page', name: 'Select', url: '/docs/kit/forms/select' },
+    {
+      $id: 'essentials/forms/select.mdx',
+      type: 'page',
+      name: 'Select',
+      url: '/docs/essentials/forms/select',
+    },
   ],
 };
 
 /** The folder Forms, with its index page. */
 const FORMS: Folder = {
   ...FORMS_PAGES,
-  index: { $id: 'kit/forms/index.mdx', type: 'page', name: 'Forms', url: '/docs/kit/forms' },
+  index: {
+    $id: 'essentials/forms/index.mdx',
+    type: 'page',
+    name: 'Forms',
+    url: '/docs/essentials/forms',
+  },
 };
 
-/** The section Kit: a page, then the folder `forms`. */
-function kit(forms: Folder = FORMS): Folder {
+/** The section Essentials: a page, then the folder `forms`. */
+function essentials(forms: Folder = FORMS): Folder {
   return {
-    $id: 'kit',
+    $id: 'essentials',
     type: 'folder',
-    name: 'Kit',
+    name: 'Essentials',
     root: true,
     children: [
-      { $id: 'kit/button.mdx', type: 'page', name: 'Button', url: '/docs/kit/button' },
+      {
+        $id: 'essentials/button.mdx',
+        type: 'page',
+        name: 'Button',
+        url: '/docs/essentials/button',
+      },
       forms,
     ],
   };
 }
 
-/** The page tree of the section Kit. */
-const tree: Root = { $id: 'root', type: 'root', name: 'Docs', children: [kit()] };
+/** The page tree of the section Essentials. */
+const tree: Root = { $id: 'root', type: 'root', name: 'Docs', children: [essentials()] };
 
 const docs = page.getByRole('navigation', { name: 'Docs' });
 const toggle = docs.getByRole('button', { name: 'Forms pages' });
@@ -64,11 +79,11 @@ afterEach(async () => {
 
 describe('a folder of the page tree', () => {
   it('is closed unless it holds the page: its name links to its index page, its toggle opens it', async () => {
-    await renderDocs(<PageTree root={kit()} url="/docs/kit/button" />);
+    await renderDocs(<PageTree root={essentials()} url="/docs/essentials/button" />);
 
     await expect
       .element(docs.getByRole('link', { name: 'Forms' }))
-      .toHaveAttribute('href', '/docs/kit/forms');
+      .toHaveAttribute('href', '/docs/essentials/forms');
     await expect.element(toggle).toHaveAttribute('aria-expanded', 'false');
     await expect.element(docs.getByRole('link', { name: 'Checkbox' })).not.toBeInTheDocument();
 
@@ -84,7 +99,7 @@ describe('a folder of the page tree', () => {
   });
 
   it('starts open on a page of it, its index page marked there', async () => {
-    await renderDocs(<PageTree root={kit()} url="/docs/kit/forms" />);
+    await renderDocs(<PageTree root={essentials()} url="/docs/essentials/forms" />);
 
     await expect.element(toggle).toHaveAttribute('aria-expanded', 'true');
     await expect
@@ -95,7 +110,7 @@ describe('a folder of the page tree', () => {
 
   it('starts open with defaultOpen', async () => {
     await renderDocs(
-      <PageTree root={kit({ ...FORMS, defaultOpen: true })} url="/docs/kit/button" />,
+      <PageTree root={essentials({ ...FORMS, defaultOpen: true })} url="/docs/essentials/button" />,
     );
 
     await expect.element(toggle).toHaveAttribute('aria-expanded', 'true');
@@ -103,7 +118,7 @@ describe('a folder of the page tree', () => {
   });
 
   it('makes the whole row its toggle without an index page', async () => {
-    await renderDocs(<PageTree root={kit(FORMS_PAGES)} url="/docs/kit/button" />);
+    await renderDocs(<PageTree root={essentials(FORMS_PAGES)} url="/docs/essentials/button" />);
     const row = docs.getByRole('button', { name: 'Forms', exact: true });
 
     await expect.element(row).toHaveAttribute('aria-expanded', 'false');
@@ -116,7 +131,10 @@ describe('a folder of the page tree', () => {
 
   it('stays open under its name with "collapsible": false, its index page first', async () => {
     await renderDocs(
-      <PageTree root={kit({ ...FORMS, collapsible: false })} url="/docs/kit/button" />,
+      <PageTree
+        root={essentials({ ...FORMS, collapsible: false })}
+        url="/docs/essentials/button"
+      />,
     );
     const forms = docs.getByRole('list', { name: 'Forms' });
 
@@ -143,10 +161,10 @@ describe('a folder in the sidebar', () => {
   it('opens as the reader goes to one of its pages, and stays as they left it otherwise', async () => {
     await page.viewport(1280, 800);
     const router = createRef<Router>();
-    await renderDocs(<Docs router={router} />, { pathname: '/docs/kit/button' });
+    await renderDocs(<Docs router={router} />, { pathname: '/docs/essentials/button' });
     await expect.element(toggle).toHaveAttribute('aria-expanded', 'false');
 
-    await router.current?.push('/docs/kit/forms/checkbox');
+    await router.current?.push('/docs/essentials/forms/checkbox');
     await expect.element(toggle).toHaveAttribute('aria-expanded', 'true');
     await expect
       .element(docs.getByRole('link', { name: 'Checkbox' }))
@@ -154,17 +172,17 @@ describe('a folder in the sidebar', () => {
 
     // Closed by the reader, it stays closed on another page of it, and outside it.
     await userEvent.click(toggle);
-    await router.current?.push('/docs/kit/forms/select');
+    await router.current?.push('/docs/essentials/forms/select');
     await expect.element(docs.getByRole('link', { name: 'Forms' })).toBeVisible();
     await expect.element(toggle).toHaveAttribute('aria-expanded', 'false');
-    await router.current?.push('/docs/kit/button');
+    await router.current?.push('/docs/essentials/button');
     await expect
       .element(docs.getByRole('link', { name: 'Button' }))
       .toHaveAttribute('aria-current', 'page');
     await expect.element(toggle).toHaveAttribute('aria-expanded', 'false');
 
     // Back into it from elsewhere, it opens.
-    await router.current?.push('/docs/kit/forms');
+    await router.current?.push('/docs/essentials/forms');
     await expect.element(toggle).toHaveAttribute('aria-expanded', 'true');
   });
 });

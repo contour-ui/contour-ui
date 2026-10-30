@@ -9,7 +9,7 @@ import { createSearchIndexUrl } from './search-index.ts';
 import { site } from './site.ts';
 
 /** The page a story shows, unless its `pathname` parameter names another one. */
-const DEFAULT_PATHNAME = '/docs/kit/button';
+const DEFAULT_PATHNAME = '/docs/essentials/button';
 
 /** The `localStorage` keys `DocsProvider` keeps the theme and the sidebar under, by default. */
 const STORAGE_KEYS = ['contour-theme', 'contour-docs-sidebar'] as const;

@@ -20,7 +20,10 @@ export interface RenderDocsOptions
  *
  * @example
  * const onNavigate = vi.fn();
- * await renderDocs(<DocsLayout tree={pageTree}>…</DocsLayout>, { pathname: '/docs/kit', onNavigate });
+ * await renderDocs(<DocsLayout tree={pageTree}>…</DocsLayout>, {
+ *   pathname: '/docs/essentials',
+ *   onNavigate,
+ * });
  */
 export function renderDocs(
   ui: ReactNode,
