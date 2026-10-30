@@ -1,5 +1,3 @@
-import path from 'node:path';
-
 import {
   chromium,
   contourSource,
@@ -7,7 +5,6 @@ import {
   VISUAL_TESTS,
   visualProjects,
 } from '@contour-ui/vite-config';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import react from '@vitejs/plugin-react';
 import { configDefaults, defineConfig } from 'vite-plus';
 
@@ -42,14 +39,6 @@ export default defineConfig({
       {
         extends: true,
         test: { name: 'react:node', environment: 'node', include: NODE_TESTS },
-      },
-      {
-        extends: true,
-        plugins: [storybookTest({ configDir: path.join(import.meta.dirname, '.storybook') })],
-        test: {
-          name: 'react:storybook',
-          browser: chromium(),
-        },
       },
     ],
   },

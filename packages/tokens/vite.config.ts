@@ -1,12 +1,11 @@
-import path from 'node:path';
-
 import { chromium, contourSource, libraryPack } from '@contour-ui/vite-config';
-import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
-import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite-plus';
+import { configDefaults, defineConfig } from 'vite-plus';
+
+/** Tests that need a browser: the font faces of `fonts.css`. */
+const BROWSER_TESTS = ['src/**/*.browser.test.ts'];
 
 export default defineConfig({
-  plugins: [contourSource(), react()],
+  plugins: [contourSource()],
   pack: libraryPack({
     entry: { index: 'src/index.ts' },
     css: ['src/generated/tokens.css', 'src/fonts.css'],
@@ -16,15 +15,16 @@ export default defineConfig({
     projects: [
       {
         extends: true,
-        test: { name: 'tokens', environment: 'node', include: ['src/**/*.test.ts'] },
+        test: {
+          name: 'tokens',
+          environment: 'node',
+          include: ['src/**/*.test.ts'],
+          exclude: [...configDefaults.exclude, ...BROWSER_TESTS],
+        },
       },
       {
         extends: true,
-        plugins: [storybookTest({ configDir: path.join(import.meta.dirname, '.storybook') })],
-        test: {
-          name: 'tokens:storybook',
-          browser: chromium(),
-        },
+        test: { name: 'tokens:browser', include: BROWSER_TESTS, browser: chromium() },
       },
     ],
   },

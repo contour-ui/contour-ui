@@ -8,13 +8,10 @@
   "exports": {
     ".": "./src/index.ts",
     "./client-boundary": "./src/client-boundary.ts",
-    "./storybook": "./src/storybook.ts",
-    "./storybook-preview": "./src/storybook-preview.tsx",
     "./visual": "./src/visual.tsx"
   },
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",
-    "@storybook/react-vite": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

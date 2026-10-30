@@ -117,7 +117,7 @@ export interface MemoryFrameworkProps {
  * The framework of fumadocs-core (`fumadocs-core/framework`) for stories and tests, in place of an
  * app's adapter (`ReactRouterProvider`…): the pathname lives in memory, `useRouter().push` changes
  * it (`#fragment` and query left out) in a transition, as a router does, and `Link` is
- * {@link MemoryLink}. The page never leaves the Storybook canvas or the test.
+ * {@link MemoryLink}. The page never leaves the test.
  */
 export function MemoryFramework({
   pathname: initialPathname = '/docs',

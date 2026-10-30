@@ -12,11 +12,9 @@
   "scripts": {
     "prepare": "vp config",
     "ready": "vp check && vp run boundaries && vp test && vp run -r build",
-    "storybook": "vp run -r --parallel storybook",
     "changeset": "changeset",
     "version-packages": "changeset version && vp fmt",
     "release": "vp run -r --filter './packages/*' build && changeset publish",
-    "build-storybook": "vp run @contour-ui/app-storybook#build-storybook",
     "visual": "node scripts/visual.ts",
     "visual:update": "node scripts/visual.ts --update",
     "visual:ci": "node scripts/visual.ts --ci"

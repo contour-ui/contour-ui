@@ -8,7 +8,7 @@
  *   `[data-theme="<default>"]`, other themes only redeclare what differs), a
  *   typed `vars.ts` with `var(--ct-…)` references to the semantic tokens, and
  *   `docs.json` with every custom property's value per theme (published for token
- *   references: the Tokens page of the docs site, the Storybook tables).
+ *   references such as the Tokens page of the docs site).
  *
  * Aliases are printed as `var(--ct-…)` references, so semantic roles stay
  * linked to the base palette in the CSS output.

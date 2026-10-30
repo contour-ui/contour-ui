@@ -1,5 +1,5 @@
 /**
- * Highlighted code in the shape of Shiki's output with its css-variables theme, for the stories
+ * Highlighted code in the shape of Shiki's output with its css-variables theme, for the tests
  * and the tests (not exported by the package): `pre.shiki > code > span.line > span`, every token
  * colored with a `--shiki-*` variable, lines separated by `\n`. The samples are Shiki's tokens of
  * real code; the notation classes are the ones `@shikijs/transformers` adds.
@@ -165,7 +165,7 @@ export const PANEL: readonly ShikiLine[] = [
   [['foreground', '}']],
 ];
 
-/** The stylesheet imports of an app; the stories highlight the one of `@contour-ui/react`. */
+/** The stylesheet imports of an app; the tests highlight the one of `@contour-ui/react`. */
 export const STYLESHEETS: readonly ShikiLine[] = [
   "'@contour-ui/tokens/tokens.css'",
   "'@contour-ui/tokens/fonts.css'",
@@ -204,7 +204,7 @@ export const RADIUS_CHANGE: readonly ShikiLine[] = [
   [['foreground', '}']],
 ];
 
-/** Rendering an app; line 2 is focused in the stories. */
+/** Rendering an app; line 2 is focused in the tests. */
 export const RENDER_ROOT: readonly ShikiLine[] = [
   [
     ['keyword', 'const'],

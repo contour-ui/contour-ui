@@ -18,7 +18,7 @@ export const SOURCE_CONDITION = '@contour-ui/source';
 
 /** How a package may declare `react` / `react-dom`. */
 export type ReactPolicy =
-  /** Not in `dependencies` or `peerDependencies` (dev-only use, e.g. stories, is fine). */
+  /** Not in `dependencies` or `peerDependencies` (dev-only use, e.g. tests, is fine). */
   | 'none'
   /** `react` only as an optional peer; `react-dom` not at all. */
   | 'optional-peer'

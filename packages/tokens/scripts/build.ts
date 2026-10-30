@@ -4,7 +4,7 @@
  *
  *   vp run --filter @contour-ui/tokens tokens
  *
- * The generated files are committed so apps, Storybook and tests consume tokens
+ * The generated files are committed so apps and tests consume tokens
  * from source without a build step; `src/generated.test.ts` fails when they are stale.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';

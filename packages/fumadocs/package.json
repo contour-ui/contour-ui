@@ -50,9 +50,7 @@
   },
   "scripts": {
     "build": "vp pack",
-    "dev": "vp pack --watch",
-    "storybook": "storybook dev --port 6105 --no-open",
-    "build-storybook": "storybook build --output-dir storybook-static"
+    "dev": "vp pack --watch"
   },
   "dependencies": {
     "@contour-ui/headless-react": "workspace:*",
@@ -63,10 +61,6 @@
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",
-    "@storybook/addon-a11y": "catalog:",
-    "@storybook/addon-docs": "catalog:",
-    "@storybook/addon-vitest": "catalog:",
-    "@storybook/react-vite": "catalog:",
     "@types/mdx": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
@@ -75,7 +69,6 @@
     "fumadocs-core": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "storybook": "catalog:",
     "vite-plus": "catalog:",
     "vitest-browser-react": "catalog:"
   },

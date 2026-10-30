@@ -50,7 +50,6 @@ export default defineConfig({
     ignorePatterns: [
       '**/dist/**',
       '**/build/**',
-      '**/storybook-static/**',
       '**/playwright-report/**',
       '**/coverage/**',
       '**/.react-router/**',
@@ -144,7 +143,6 @@ export default defineConfig({
           'packages/react/**',
           'apps/**',
           '**/*.tsx',
-          '**/.storybook/**',
         ],
         plugins: ['react', 'jsx-a11y'],
         rules: {
@@ -160,12 +158,7 @@ export default defineConfig({
         // Tools discover these modules through their default export.
         files: [
           '**/vite.config.ts',
-          '**/*.stories.tsx',
-          '**/.storybook/main.ts',
-          '**/.storybook/preview.ts',
-          '**/.storybook/preview.tsx',
           '**/playwright.config.ts',
-          'apps/storybook/visual/global-setup.ts',
           'apps/docs/e2e/global-setup.ts',
           'apps/docs/react-router.config.ts',
           'apps/docs/app/root.tsx',
@@ -188,7 +181,7 @@ export default defineConfig({
 
   test: {
     // Each package owns its Vitest setup (node for core/tokens/icons, Chromium
-    // browser mode + Storybook stories for UI packages).
+    // browser mode for UI packages, their screenshot tests with `vp run visual`).
     projects: ['packages/*/vite.config.ts'],
   },
 

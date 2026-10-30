@@ -19,21 +19,22 @@ runtimeOnFail: ignore
 
 catalog:
   # Toolchain. `vite` is aliased to the Vite core that Vite+ ships, so tools
-  # that import `vite` directly (Storybook, React Router, plugins) get the same
+  # that import `vite` directly (React Router, plugins) get the same
   # build as `vp`. Keep both entries on the same Vite+ version.
   vite-plus: 1.4.0
   vite: npm:@voidzero-dev/vite-plus-core@1.4.0
   # Same version Vite+ bundles; needed directly by third-party Vitest plugins
-  # (Storybook addon-vitest, vitest-browser-react) that import `vitest`.
+  # (vitest-browser-react) that import `vitest`.
   vitest: 5.0.5
   '@vitest/browser-playwright': 5.0.5
+  # The screenshot tests run Chromium of mcr.microsoft.com/playwright:v<this version>-noble
+  # (scripts/visual.ts): keep the image tag in .github/workflows/ci.yml equal to it.
   playwright: 1.64.1
-  # Visual tests (apps/storybook). They run in mcr.microsoft.com/playwright:v<this version>-noble:
-  # keep it equal to `playwright` and to the image tag in .github/workflows/ci.yml.
+  # End-to-end tests of the docs (apps/docs/e2e). Keep it equal to `playwright`.
   '@playwright/test': 1.64.1
   # Accessibility checks of the docs pages in the end-to-end tests (apps/docs/e2e). axe-core is
   # MPL-2.0, allowed as a test-only dependency (2026-10-26): it never ships in a package or the
-  # site. Keep its axe-core on the version @storybook/addon-a11y brings, so one copy is installed.
+  # site.
   '@axe-core/playwright': 4.14.0
   # The screenshot tests check each state with axe in the browser (@contour-ui/vite-config/visual):
   # the axe-core @axe-core/playwright brings, so one copy is installed. Test-only, as above.
@@ -54,13 +55,6 @@ catalog:
   # with the DOM platform. Keep both on the same version: dom depends on core.
   '@floating-ui/core': 1.8.0
   '@floating-ui/dom': 1.8.0
-
-  # Storybook
-  storybook: 10.6.3
-  '@storybook/react-vite': 10.6.3
-  '@storybook/addon-a11y': 10.6.3
-  '@storybook/addon-docs': 10.6.3
-  '@storybook/addon-vitest': 10.6.3
 
   # Design tokens (packages/tokens build-time tooling)
   style-dictionary: 5.7.0
@@ -103,10 +97,6 @@ peerDependencyRules:
     - vite
   allowedVersions:
     vite: '*'
-    # storybook@10.6 declares an optional peer `vite-plus@^0.1.15 || ^0.2.0`
-    # and predates Vite+ 1.x. Verified working with the pinned Vite+; drop
-    # this once Storybook widens the range.
-    storybook>vite-plus: 1.4.0
 minimumReleaseAgeExclude:
   - '@voidzero-dev/vite-plus-core@1.4.0'
   - '@voidzero-dev/vite-plus-darwin-arm64@1.4.0'

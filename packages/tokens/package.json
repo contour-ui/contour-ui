@@ -56,9 +56,7 @@
     "dev": "node --watch-path=src/base --watch-path=src/semantic --watch-path=contour.resolver.json scripts/build.ts",
     "tokens": "node scripts/build.ts",
     "generate": "node scripts/generate.ts && node scripts/build.ts",
-    "design-system": "node scripts/to-design-system.ts",
-    "storybook": "storybook dev --port 6101 --no-open",
-    "build-storybook": "storybook build --output-dir storybook-static"
+    "design-system": "node scripts/to-design-system.ts"
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans": "catalog:",
@@ -67,18 +65,8 @@
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",
-    "@storybook/addon-a11y": "catalog:",
-    "@storybook/addon-docs": "catalog:",
-    "@storybook/addon-vitest": "catalog:",
-    "@storybook/react-vite": "catalog:",
     "@types/culori": "catalog:",
-    "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
-    "@vitejs/plugin-react": "catalog:",
     "culori": "catalog:",
-    "react": "catalog:",
-    "react-dom": "catalog:",
-    "storybook": "catalog:",
     "style-dictionary": "catalog:",
     "vite-plus": "catalog:"
   }

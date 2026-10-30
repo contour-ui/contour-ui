@@ -8,7 +8,7 @@ export const SOURCE_CONDITION = '@contour-ui/source';
 /**
  * Resolve `@contour-ui/*` workspace packages to their TypeScript sources (HMR,
  * no prior build) by prepending the source condition in every environment.
- * Only for workspace consumers (apps, Storybook, tests); published consumers
+ * Only for workspace consumers (apps, tests); published consumers
  * never see the condition.
  */
 export function contourSource(): Plugin {

@@ -19,7 +19,7 @@ const PAGES = [
 /**
  * The rules to run: WCAG 2.0, 2.1 and 2.2 at levels A and AA, the level the site is built to,
  * and axe's best practices, which judge the page as a whole: landmarks, one `main`, one `h1`,
- * the order of headings. That is every rule axe runs by default, as the Storybook a11y checks of
+ * the order of headings. That is every rule axe runs by default, as the screenshot tests check every
  * the packages do, plus WCAG 2.2's target size (2.5.8), which axe leaves off by default. Rules
  * for AAA stay off: the site does not aim at that level.
  */

@@ -4,7 +4,7 @@
  *
  *   vp run --filter @contour-ui/icons icons
  *
- * The generated file is committed so apps, Storybook and tests use the icons from
+ * The generated file is committed so apps and tests use the icons from
  * source without a build step; `src/generated.test.ts` fails when it is stale.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';

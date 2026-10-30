@@ -84,7 +84,7 @@ async function fitViewportToPage(width: number, height: number, round = 0): Prom
 
 /**
  * Checks the page with every rule axe runs by default, but `region`: a component alone sits in no
- * landmark (the Storybook a11y checks skipped it too).
+ * landmark.
  */
 export async function expectNoAxeViolations(context: Element = document.body): Promise<void> {
   const { violations } = await axe.run(context, { rules: { region: { enabled: false } } });
