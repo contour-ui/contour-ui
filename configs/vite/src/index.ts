@@ -1,4 +1,4 @@
-import type { Plugin, UserConfig } from 'vite-plus';
+import type { Plugin, TestProjectInlineConfiguration, UserConfig } from 'vite-plus';
 import { defaultClientConditions, defaultServerConditions } from 'vite-plus';
 import { playwright } from 'vite-plus/test/browser-playwright';
 
@@ -88,4 +88,56 @@ export function chromium(): NonNullable<NonNullable<UserConfig['test']>['browser
     headless: true,
     instances: [{ browser: 'chromium' }],
   };
+}
+
+/** The screenshot tests of a package (`vp run visual`): exclude them from its other projects. */
+export const VISUAL_TESTS = ['src/**/*.visual.test.tsx'];
+
+/**
+ * Chromium of the screenshot tests. `vp run visual` starts `playwright run-server` from the
+ * pinned Playwright Linux image in Docker and passes its address as `CONTOUR_VISUAL_SERVER`, so
+ * screenshots compare pixel for pixel on any machine. Inside that image (CI) the image's own
+ * Chromium launches. Anywhere else the local Chromium launches, only to try tests out: its
+ * screenshots are not comparable with the committed ones.
+ */
+function visualChromium(): NonNullable<NonNullable<UserConfig['test']>['browser']> {
+  const server = process.env['CONTOUR_VISUAL_SERVER'];
+  return {
+    enabled: true,
+    provider:
+      server === undefined
+        ? playwright()
+        : playwright({
+            connectOptions: {
+              wsEndpoint: server,
+              // The browser in the container reaches the Vitest server on this machine's loopback.
+              exposeNetwork: '<loopback>',
+            },
+          }),
+    headless: true,
+    instances: [{ browser: 'chromium', viewport: { width: 1280, height: 720 } }],
+    expect: {
+      toMatchScreenshot: {
+        // `__visual__/<test file>/<state>-<theme>.png`, committed (git ignores `__screenshots__`).
+        // One browser on one platform, so the name carries neither.
+        resolveScreenshotPath: ({ arg, ext, root, testFileDirectory, testFileName }) =>
+          `${root}/${testFileDirectory}/__visual__/${testFileName}/${arg}${ext}`,
+      },
+    },
+  };
+}
+
+/**
+ * The project of a package's screenshot tests, `<name>:visual`, only while `CONTOUR_VISUAL` is set
+ * (`vp run visual`), so that plain `vp test` needs no Docker.
+ */
+export function visualProjects(name: string): TestProjectInlineConfiguration[] {
+  return process.env['CONTOUR_VISUAL'] === undefined
+    ? []
+    : [
+        {
+          extends: true,
+          test: { name: `${name}:visual`, include: VISUAL_TESTS, browser: visualChromium() },
+        },
+      ];
 }

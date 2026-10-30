@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./client-boundary": "./src/client-boundary.ts",
     "./storybook": "./src/storybook.ts",
-    "./storybook-preview": "./src/storybook-preview.tsx"
+    "./storybook-preview": "./src/storybook-preview.tsx",
+    "./visual": "./src/visual.tsx"
   },
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",
@@ -18,9 +19,11 @@
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
     "@vitest/browser-playwright": "catalog:",
+    "axe-core": "catalog:",
     "playwright": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "vite-plus": "catalog:"
+    "vite-plus": "catalog:",
+    "vitest-browser-react": "catalog:"
   }
 }

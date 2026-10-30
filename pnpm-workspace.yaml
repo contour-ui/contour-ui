@@ -35,6 +35,9 @@ catalog:
   # MPL-2.0, allowed as a test-only dependency (2026-10-26): it never ships in a package or the
   # site. Keep its axe-core on the version @storybook/addon-a11y brings, so one copy is installed.
   '@axe-core/playwright': 4.14.0
+  # The screenshot tests check each state with axe in the browser (@contour-ui/vite-config/visual):
+  # the axe-core @axe-core/playwright brings, so one copy is installed. Test-only, as above.
+  axe-core: 4.14.0
   typescript: 7.0.2
   '@types/node': 24.19.2
 

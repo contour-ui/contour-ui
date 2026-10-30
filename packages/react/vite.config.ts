@@ -1,6 +1,12 @@
 import path from 'node:path';
 
-import { chromium, contourSource, libraryPack } from '@contour-ui/vite-config';
+import {
+  chromium,
+  contourSource,
+  libraryPack,
+  VISUAL_TESTS,
+  visualProjects,
+} from '@contour-ui/vite-config';
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import react from '@vitejs/plugin-react';
 import { configDefaults, defineConfig } from 'vite-plus';
@@ -27,10 +33,12 @@ export default defineConfig({
         test: {
           name: 'react',
           include: ['src/**/*.test.{ts,tsx}'],
-          exclude: [...configDefaults.exclude, ...NODE_TESTS],
+          exclude: [...configDefaults.exclude, ...NODE_TESTS, ...VISUAL_TESTS],
           browser: chromium(),
         },
       },
+      // Screenshot tests, with `vp run visual` only: they need the browser in Docker.
+      ...visualProjects('react'),
       {
         extends: true,
         test: { name: 'react:node', environment: 'node', include: NODE_TESTS },

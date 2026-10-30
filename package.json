@@ -17,8 +17,9 @@
     "version-packages": "changeset version && vp fmt",
     "release": "vp run -r --filter './packages/*' build && changeset publish",
     "build-storybook": "vp run @contour-ui/app-storybook#build-storybook",
-    "visual": "vp run @contour-ui/app-storybook#visual",
-    "visual:update": "vp run @contour-ui/app-storybook#visual:update"
+    "visual": "node scripts/visual.ts",
+    "visual:update": "node scripts/visual.ts --update",
+    "visual:ci": "node scripts/visual.ts --ci"
   },
   "devDependencies": {
     "@arethetypeswrong/core": "catalog:",
