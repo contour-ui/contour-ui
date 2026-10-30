@@ -8,14 +8,15 @@ architecture. pnpm monorepo, single toolchain: **Vite+** (`vp`).
 All published packages live under `@contour-ui/` in `packages/`. Dependencies
 point **down** the table only — never up, never sideways.
 
-| Layer        | Package          | Purpose                                                                                                                                | May depend on (internal)                     |
-| ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| 0 foundation | `tokens`         | DTCG design tokens → CSS vars / TS (Style Dictionary)                                                                                  | —                                            |
-| 0 foundation | `icons`          | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                | —                                            |
-| 1 logic      | `core`           | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`         | —                                            |
-| 2 headless   | `headless-react` | unstyled React DOM components + hooks (Ark UI–like)                                                                                    | `core`                                       |
-| 3 styled     | `react`          | styled React DOM components in two sections: **Essentials** (the everyday components) and **Audio** (the controls of audio-plugin UIs) | `headless-react`, `tokens`, `icons`          |
-| 4 docs       | `fumadocs`       | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui`                                            | `react`, `headless-react`, `tokens`, `icons` |
+| Layer        | Package          | Purpose                                                                                                                                | May depend on (internal)                              |
+| ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| 0 foundation | `tokens`         | DTCG design tokens → CSS vars / TS (Style Dictionary)                                                                                  | —                                                     |
+| 0 foundation | `icons`          | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                | —                                                     |
+| 0 foundation | `fonts`          | font files: WOFF2 faces + `fonts.css` for the web, static TTF for Soundor (Fontsource)                                                 | —                                                     |
+| 1 logic      | `core`           | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`         | —                                                     |
+| 2 headless   | `headless-react` | unstyled React DOM components + hooks (Ark UI–like)                                                                                    | `core`                                                |
+| 3 styled     | `react`          | styled React DOM components in two sections: **Essentials** (the everyday components) and **Audio** (the controls of audio-plugin UIs) | `headless-react`, `tokens`, `icons`, `fonts`          |
+| 4 docs       | `fumadocs`       | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui`                                            | `react`, `headless-react`, `tokens`, `icons`, `fonts` |
 
 Rules:
 
@@ -29,8 +30,8 @@ Rules:
   `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`.
 - Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`,
   `collection/` and `positioning/`.
-- `headless-react` must not depend on `tokens`, `icons` or the styled package. Peers: `react`,
-  `react-dom`.
+- `headless-react` must not depend on `tokens`, `icons`, `fonts` or the styled package. Peers:
+  `react`, `react-dom`.
 - The styled package (`react`) and `fumadocs` are styled with plain CSS + token CSS variables. **No
   Tailwind in packages.** Use semantic roles only (`--ct-color-*`, `--ct-space-*`, `--ct-text-*`…),
   never `--ct-base-*`.
@@ -137,7 +138,7 @@ Chrome gives `:hover` to whatever renders under it a frame or two later (a hover
 control too). A test that checks the resting look of an element with a `:hover` rule moves the
 pointer off first (`userEvent.unhover(element)`). `toHaveStyle` with camelCase keys reports
 "Expected styles could not be parsed" on a mismatch; kebab-case keys show the values. A test
-that measures something as wide as its text loads `@contour-ui/tokens/fonts.css` and awaits
+that measures something as wide as its text loads `@contour-ui/fonts/fonts.css` and awaits
 `document.fonts.ready` first: the fallback fonts differ between machines, and CI's Linux draws
 text wider than macOS.
 
@@ -160,14 +161,15 @@ Every published package maps its entry points to sources under the custom
   playground, docs and tests consume **sources** with HMR, without building packages first.
 - pnpm swaps in `publishConfig.exports` on pack/publish, so published consumers never see the
   condition (and `types` comes first there). `vp run boundaries` keeps both maps in sync.
-- CSS entry points (`tokens.css`, `styles.css`) are separate exports. Vite's CSS `@import` resolver
-  ignores custom conditions, so package CSS does not `@import` other workspace packages: apps load
-  `@contour-ui/tokens/tokens.css` and `@contour-ui/tokens/fonts.css`, then
+- CSS entry points (`tokens.css`, `fonts.css`, `styles.css`) are separate exports. Vite's CSS
+  `@import` resolver ignores custom conditions, so package CSS does not `@import` other workspace
+  packages: apps load `@contour-ui/tokens/tokens.css` and `@contour-ui/fonts/fonts.css`, then
   `@contour-ui/react/styles.css`.
 - A `.css` file in `libraryPack()`'s `entry` is bundled by `vp pack` into `dist/<name>.css`
   (Lightning CSS inlines its relative `@import`s and turns `layer()` into `@layer` blocks); files
-  passed as `css` (tokens) are copied verbatim, so their `@import`s stay external, and so are
-  files passed as `copy` (the tokens' `docs.json`).
+  passed as `css` (`tokens.css`, `fonts.css`) are copied verbatim, so their `@import`s and
+  `url()`s stay as written, and so are files and folders passed as `copy` (the tokens' `docs.json`,
+  the font files).
 
 ## Tokens
 
@@ -180,8 +182,7 @@ committed;
 `vp test` fails when they drift from the sources.
 
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
-- `@contour-ui/tokens/fonts.css` ships the font faces (IBM Plex Sans, JetBrains Mono; Fontsource,
-  OFL).
+- The tokens name the font families; the files are in `@contour-ui/fonts` (see "Fonts").
 - After editing token JSON: `vp run --filter @contour-ui/tokens tokens` (or `dev` to watch).
 - The palette and the color roles are generated: edit `scripts/palette.ts` /
   `scripts/semantic-colors.ts`, then `vp run --filter @contour-ui/tokens generate`.
@@ -207,6 +208,22 @@ committed;
   values.
 
 See [`packages/tokens/README.md`](packages/tokens/README.md).
+
+## Fonts
+
+`packages/fonts` holds the files of the token font families (IBM Plex Sans, JetBrains Mono) at
+every `base.font-weight` (400, 500, 600), committed: WOFF2 for the web in every Fontsource subset
+(`src/woff2/`, declared by `src/fonts.css` with `unicode-range`, Cyrillic included), static Latin
+TTF for Soundor (`src/ttf/`; `registerFont()` takes TTF or OTF, one file per face), the
+`fontFaces` manifest of the TTF faces (`src/generated/faces.ts`), and each family's OFL license,
+unmodified (`src/licenses/`). Exports: `./fonts.css`, `./ttf/*`, `./woff2/*`, `./licenses/*`.
+
+- Both formats come from one Fontsource release (the npm tarball and its CDN), pinned with
+  checksums in `scripts/sources.ts`, so the web and Soundor draw the same build.
+  `vp run --filter @contour-ui/fonts fonts` downloads and writes everything (network needed);
+  `vp test` checks the committed files offline and loads every face in Chromium.
+- A test of the styled package (`packages/react/src/fonts.test.ts`) checks that every
+  `base.font-family` × `base.font-weight` token has a TTF and a web face.
 
 ## Icons
 

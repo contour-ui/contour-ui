@@ -17,13 +17,13 @@ is, and on the Next.js App Router.
 ## Install
 
 ```npm
-npm install @contour-ui/fumadocs @contour-ui/react @contour-ui/tokens @contour-ui/icons
+npm install @contour-ui/fumadocs @contour-ui/react @contour-ui/tokens @contour-ui/fonts @contour-ui/icons
 npm install fumadocs-core fumadocs-mdx
 npm install -D @types/mdx shiki
 ```
 
-- **`@contour-ui/react` and `@contour-ui/tokens`** are dependencies of your own: your app imports
-  their stylesheets itself ([Installation](/docs/guide/installation#install) says why).
+- **`@contour-ui/react`, `@contour-ui/tokens` and `@contour-ui/fonts`** are dependencies of your
+  own: your app imports their stylesheets itself ([Installation](/docs/guide/installation#install) says why).
 - **Icons** gives the icons of the site's links, such as GitHub's. **Shiki** gives the theme of
   the code blocks, below: take the major version `fumadocs-core` depends on.
 - **Coming from `fumadocs-ui`**, uninstall it, and drop its stylesheet, its `RootProvider`, its
@@ -125,7 +125,7 @@ import type { ReactNode } from 'react';
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
 
 import '@contour-ui/tokens/tokens.css';
-import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fonts/fonts.css';
 import '@contour-ui/fumadocs/styles.css';
 import '@contour-ui/react/styles.css';
 
@@ -353,7 +353,7 @@ import { NextProvider } from 'fumadocs-core/framework/next';
 import type { ReactNode } from 'react';
 
 import '@contour-ui/tokens/tokens.css';
-import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fonts/fonts.css';
 import '@contour-ui/fumadocs/styles.css';
 import '@contour-ui/react/styles.css';
 

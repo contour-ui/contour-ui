@@ -12,7 +12,6 @@ properties and typed TS references.
 
 ```ts
 import '@contour-ui/tokens/tokens.css'; // once, before @contour-ui/react/styles.css
-import '@contour-ui/tokens/fonts.css'; // IBM Plex Sans + JetBrains Mono, 400/500/600
 import { vars } from '@contour-ui/tokens';
 
 vars.color.bg.surface; // 'var(--ct-color-bg-surface)'
@@ -33,10 +32,9 @@ vars.color.bg.surface; // 'var(--ct-color-bg-surface)'
 - **Base vs semantic:** `--ct-base-*` (raw palette and scales) is emitted because semantic
   roles reference it, but it is internal: components use semantic roles only, and
   `vars` exposes only those.
-- **Fonts:** `fonts.css` declares the faces for `--ct-base-font-family-*` and every
-  `--ct-base-font-weight-*` (Fontsource packages, SIL OFL 1.1; scripts load via `unicode-range`).
-  A browser test (`src/fonts.browser.test.ts`) checks that every family × weight of the tokens
-  loads.
+- **Fonts:** `--ct-base-font-family-*` names IBM Plex Sans and JetBrains Mono; the font files,
+  for every `--ct-base-font-weight-*`, are in `@contour-ui/fonts` (`@contour-ui/fonts/fonts.css`
+  on the web), so this package downloads none.
 - **Typography:** each text style is `--ct-text-<style>` (`font` shorthand) plus
   `--ct-text-<style>-font-family | -font-size | -font-weight | -line-height | -letter-spacing`.
   The dense plugin styles (`heading`, `body`, `label`, `label-lg`, `value`, `caption`) have

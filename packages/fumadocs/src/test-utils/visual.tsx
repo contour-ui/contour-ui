@@ -9,7 +9,7 @@ import { createSearchIndexUrl } from './search-index.ts';
 import { site } from './site.ts';
 
 import '@contour-ui/tokens/tokens.css';
-import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fonts/fonts.css';
 // Before the styled components: its first rule is the order of the cascade layers, theirs included.
 import '../styles.css';
 import '@contour-ui/react/styles.css';

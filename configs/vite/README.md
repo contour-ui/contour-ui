@@ -9,8 +9,9 @@ Private, never published. Shared Vite / Vitest / pack helpers for the workspace.
   package (ESM only, `.d.ts`, publint + attw). A `.css` file in `entry` is bundled
   into `dist/<name>.css`: Lightning CSS inlines its `@import`s, `layer()` included
   (`styles.css` of `react` and `fumadocs`). Files in `css` are copied verbatim, so their
-  `@import`s stay external (tokens `fonts.css` keeps importing Fontsource). Files in `copy`
-  are copied verbatim too: data exported as is, such as tokens `docs.json`.
+  `@import`s and `url()`s stay as written (`fonts.css` points at the font files next to it).
+  Files and folders in `copy` are copied verbatim too: data exported as is, such as tokens
+  `docs.json`, and the font files.
 - `chromium()` — Vitest browser-mode settings (Playwright, headless Chromium).
 - `VISUAL_TESTS`, `visualProjects(name)` — the screenshot tests of a package
   (`src/**/*.visual.test.tsx`): exclude the first from the package's browser project, spread the

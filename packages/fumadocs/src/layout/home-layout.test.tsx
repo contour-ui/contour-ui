@@ -11,7 +11,7 @@ import { createSearchIndexUrl } from '../test-utils/search-index.ts';
 import { site } from '../test-utils/site.ts';
 
 import '@contour-ui/tokens/tokens.css';
-import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fonts/fonts.css';
 import '../styles.css';
 import '@contour-ui/react/styles.css';
 

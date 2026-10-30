@@ -58,6 +58,7 @@
     "@contour-ui/tokens": "workspace:*"
   },
   "devDependencies": {
+    "@contour-ui/fonts": "workspace:*",
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",
     "@types/node": "catalog:",

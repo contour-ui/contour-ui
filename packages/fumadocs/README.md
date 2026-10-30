@@ -25,7 +25,7 @@ import { githubIcon } from '@contour-ui/icons';
 import { ReactRouterProvider } from 'fumadocs-core/framework/react-router';
 
 import '@contour-ui/tokens/tokens.css';
-import '@contour-ui/tokens/fonts.css';
+import '@contour-ui/fonts/fonts.css';
 import '@contour-ui/fumadocs/styles.css'; // before the styled components: it sets the layer order
 import '@contour-ui/react/styles.css';
 

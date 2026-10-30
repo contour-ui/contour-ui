@@ -6,6 +6,7 @@
     [
       "@contour-ui/tokens",
       "@contour-ui/icons",
+      "@contour-ui/fonts",
       "@contour-ui/core",
       "@contour-ui/headless-react",
       "@contour-ui/react",

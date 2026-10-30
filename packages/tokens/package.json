@@ -14,9 +14,7 @@
   "type": "module",
   "sideEffects": [
     "./dist/tokens.css",
-    "./dist/fonts.css",
-    "./src/generated/tokens.css",
-    "./src/fonts.css"
+    "./src/generated/tokens.css"
   ],
   "exports": {
     ".": {
@@ -27,10 +25,6 @@
     "./tokens.css": {
       "@contour-ui/source": "./src/generated/tokens.css",
       "default": "./dist/tokens.css"
-    },
-    "./fonts.css": {
-      "@contour-ui/source": "./src/fonts.css",
-      "default": "./dist/fonts.css"
     },
     "./docs.json": {
       "@contour-ui/source": "./src/generated/docs.json",
@@ -45,7 +39,6 @@
         "default": "./dist/index.js"
       },
       "./tokens.css": "./dist/tokens.css",
-      "./fonts.css": "./dist/fonts.css",
       "./docs.json": "./dist/docs.json",
       "./package.json": "./package.json"
     },
@@ -57,10 +50,6 @@
     "tokens": "node scripts/build.ts",
     "generate": "node scripts/generate.ts && node scripts/build.ts",
     "design-system": "node scripts/to-design-system.ts"
-  },
-  "dependencies": {
-    "@fontsource/ibm-plex-sans": "catalog:",
-    "@fontsource/jetbrains-mono": "catalog:"
   },
   "devDependencies": {
     "@contour-ui/typescript-config": "workspace:*",

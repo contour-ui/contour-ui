@@ -60,11 +60,6 @@ catalog:
   style-dictionary: 5.7.0
   culori: 4.0.2
   '@types/culori': 4.0.1
-  # Fonts referenced by --ct-base-font-family-* (OFL-1.1), shipped via tokens/fonts.css.
-  # Ranges, not pins: these are published runtime dependencies of @contour-ui/tokens.
-  '@fontsource/ibm-plex-sans': ^5.3.0
-  '@fontsource/jetbrains-mono': ^5.3.0
-
   # Icons (packages/icons build-time tooling). Lucide paths (ISC) and the Simple
   # Icons logos (CC0) are compiled into committed data by scripts/build-icons.ts.
   lucide-static: 1.61.0

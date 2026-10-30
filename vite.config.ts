@@ -39,6 +39,8 @@ export default defineConfig({
       'packages/tokens/src/generated/**',
       // Icon data written by scripts/build-icons.ts, compared byte-for-byte by a freshness test.
       'packages/icons/src/generated/**',
+      // Font faces written by packages/fonts/scripts/build.ts with Fontsource's unicode ranges.
+      'packages/fonts/src/fonts.css',
     ],
   },
 
