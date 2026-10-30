@@ -202,8 +202,11 @@ describe('Clipboard', () => {
       color: computed('color', vars.color.fg.default),
       fontSize: computed('font-size', vars.text.label.fontSize),
     });
-    // A ghost trigger stays muted next to the value until it is hovered.
-    expect(getComputedStyle(trigger.element()).color).toBe(computed('color', vars.color.fg.muted));
+    // A ghost trigger stays muted next to the value until it is hovered. If the pointer was over
+    // it before `unhover`, its color takes the length of its transition to come back.
+    await expect
+      .poll(() => getComputedStyle(trigger.element()).color)
+      .toBe(computed('color', vars.color.fg.muted));
   });
 
   it('takes the control height of its size, with a larger value, label and inset in lg', async () => {
