@@ -60,6 +60,10 @@ describe('CodeBlockTabs', () => {
     await userEvent.click(page.getByRole('tab', { name: 'pnpm' }));
     await expect.element(page.getByText('pnpm add @contour-ui/react')).toBeVisible();
     await expect.element(page.getByText('npm install @contour-ui/react')).not.toBeVisible();
+    // The panel shown: the others are hidden, out of the accessibility tree.
+    await expect
+      .element(page.getByRole('tabpanel'))
+      .toHaveTextContent('pnpm add @contour-ui/react');
   });
 
   it('draws one frame, the code under the row of triggers without a border of its own', async () => {
@@ -132,6 +136,12 @@ describe('CodeBlockTabs', () => {
       .element(page.getByRole('tab', { name: 'Next.js' }).last())
       .toHaveAttribute('aria-selected', 'true');
     expect(localStorage.getItem('framework')).toBe('Next.js');
+
+    // Either block leads.
+    await userEvent.click(page.getByRole('tab', { name: 'React Router' }).last());
+    await expect
+      .element(page.getByRole('tab', { name: 'React Router' }).first())
+      .toHaveAttribute('aria-selected', 'true');
   });
 });
 

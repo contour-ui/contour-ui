@@ -3,6 +3,10 @@ import { render } from 'vitest-browser-react';
 
 import { MdxPre } from './pre.tsx';
 
+import '@contour-ui/tokens/tokens.css';
+import '../styles.css';
+import '@contour-ui/react/styles.css';
+
 /** Highlighted code as Shiki's css-variables theme renders a line of it. */
 const CODE = (
   <code>
@@ -28,6 +32,8 @@ describe('MdxPre', () => {
     expect(header).toHaveClass('contour-code-block__header');
     expect(header?.textContent).toContain('gain.ts');
     expect(header?.querySelector('button')).toHaveAccessibleName('Copy code');
+    await expect.element(screen.getByText('gain.ts')).toBeVisible();
+    await expect.element(screen.getByRole('button', { name: 'Copy code' })).toBeVisible();
     // The `pre` keeps Shiki's class and style and the other props, but not the title.
     expect(pre).toHaveClass('shiki css-variables', { exact: true });
     expect(pre).toHaveAttribute('style', 'color: red;');

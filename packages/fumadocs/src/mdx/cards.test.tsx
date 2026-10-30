@@ -36,7 +36,9 @@ describe('Card', () => {
     const card = screen.getByTestId('card');
 
     await expect.element(card).toHaveClass('contour-card contour-docs-card', { exact: true });
+    // Without `href`, a plain panel: no link.
     expect(card.element().tagName).toBe('DIV');
+    expect(screen.getByRole('link').query()).toBeNull();
     await expect.element(card).toHaveAttribute('data-size', 'lg');
     // The title is the styled Card's but no heading, so cards keep the outline of the page.
     expect(screen.getByText('Essentials').element()).toHaveClass('contour-card__title', {
