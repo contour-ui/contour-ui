@@ -234,15 +234,15 @@ after a pull or a branch switch, `vp run ready` and CI before anything else.
   package has no tests of its own.
 - A description lives only in `$description`, in both theme files for a color role: the typed
   entries carry it as JSDoc and `docs.json` as `description`. The export for the Design System
-  page (`vp run --filter @contour-ui/tokens design-system <out-dir>`, `tools/design-system.ts`)
+  page (`vp run --filter @contour-ui/tokens design-system <out-dir>`, `scripts/design-system.ts`)
   reads it from the same model, and the contrast targets from `contrast.json`.
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
 - The tokens name the font families; the files are in `@contour-ui/fonts` (see "Fonts").
 - Every `*.tokens.json` is a source, edited by hand; nothing generates them. A color is oklch, three
   numbers (`hex` is left out: the build derives what a platform needs). The palette follows a
   formula, every hue on one lightness curve and inside sRGB: for a change across it,
-  `node packages/tokens/tools/palette.ts` rewrites `src/base/color.tokens.json` from
-  `tools/palette.ts`; review that diff like any edit.
+  `node packages/tokens/scripts/palette.ts` rewrites `src/base/color.tokens.json` from
+  `scripts/palette.ts`; review that diff like any edit.
 - Color roles and shadows are per theme (`src/semantic/{color,shadow}.<theme>.tokens.json`): a role
   is in both theme files, with the same description. DTCG aliases cannot change alpha, so a
   translucent role (`overlay.scrim`) copies its palette color with an alpha: keep the copy equal to

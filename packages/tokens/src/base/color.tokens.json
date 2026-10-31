@@ -1,7 +1,7 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "base": {
-    "$description": "Base palette. Every hue follows one lightness curve and stays inside sRGB; tools/palette.ts rewrites this file from that formula.",
+    "$description": "Base palette. Every hue follows one lightness curve and stays inside sRGB; scripts/palette.ts rewrites this file from that formula.",
     "color": {
       "$type": "color",
       "neutral": {
