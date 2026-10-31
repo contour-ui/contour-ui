@@ -2,7 +2,7 @@
  * WCAG 2 contrast for the semantic color pairs components actually use, in both
  * themes. Fails when a palette or role change breaks a target ratio.
  */
-import { wcagContrast } from 'culori';
+import { formatHex, wcagContrast } from 'culori';
 import { describe, expect, it } from 'vite-plus/test';
 
 import {
@@ -56,11 +56,16 @@ function hexOf(theme: Theme, role: string): string {
   if (target?.[0] !== 'base' || target[1] !== 'color') {
     throw new Error(`${theme} ${role}: expected an alias to base.color, got ${String(ref)}.`);
   }
-  const color = parseColor(tokenValue(getPath(palette, target.slice(2), role), role), role);
-  if (color.hex === undefined) {
-    throw new Error(`${target.join('.')}: missing hex fallback.`);
-  }
-  return color.hex;
+  const { components } = parseColor(
+    tokenValue(getPath(palette, target.slice(2), role), role),
+    role,
+  );
+  // `none` behaves as 0 when a color is converted.
+  const [l = 0, c = 0, h = 0] = components.map((component) =>
+    component === 'none' ? 0 : component,
+  );
+  // The sRGB color the oklch value is drawn as, rounded to 8 bits per channel.
+  return formatHex({ mode: 'oklch', l, c, h });
 }
 
 describe.each(themes)('%s theme', (theme) => {

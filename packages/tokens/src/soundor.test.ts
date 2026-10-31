@@ -5,7 +5,7 @@
  * A translucent color keeps its alpha separate (DTCG `alpha`), so it becomes
  * an 8-digit hex there.
  */
-import { displayable, formatHex } from 'culori';
+import { displayable } from 'culori';
 import type { Oklch } from 'culori';
 import type { TransformedToken } from 'style-dictionary/types';
 import { describe, expect, it } from 'vite-plus/test';
@@ -81,7 +81,7 @@ function lengthsOf(token: TransformedToken): Entry[] {
 
 /** Why a DTCG color cannot become a hex color as is, or `undefined` when it can. */
 function colorProblem(where: string, value: unknown): string | undefined {
-  const { colorSpace, components, alpha, hex } = parseColor(value, where);
+  const { colorSpace, components, alpha } = parseColor(value, where);
   if (colorSpace !== 'oklch') {
     return `${where}: ${colorSpace} is not converted (only oklch).`;
   }
@@ -95,9 +95,6 @@ function colorProblem(where: string, value: unknown): string | undefined {
   }
   if (alpha < 0 || alpha > 1) {
     return `${where}: alpha ${alpha} is not between 0 and 1.`;
-  }
-  if (hex !== undefined && hex !== formatHex(color)) {
-    return `${where}: hex fallback ${hex} is not the color itself (${formatHex(color)}).`;
   }
   return undefined;
 }

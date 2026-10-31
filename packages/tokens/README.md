@@ -119,20 +119,22 @@ file is generated with the CSS, so it changes with it.
 
 ```
 contour.resolver.json          DTCG resolver: sets (base, semantic) + theme modifier (dark default)
-src/base/*.tokens.json         raw values — color.tokens.json is generated
-src/semantic/*.tokens.json     roles — color.{dark,light}.tokens.json are generated;
-                               color and shadow files per theme, the rest theme-independent
+src/base/*.tokens.json         raw values: the palette and the scales
+src/semantic/*.tokens.json     roles: color and shadow files per theme, the rest theme-independent
 src/generated/                 Style Dictionary output (committed): tokens.css, vars.ts, docs.json,
                                soundor.ts
-scripts/                       build and generators
+scripts/                       the build
+tools/palette.ts               the formula of the palette, run by hand for changes across it
 ```
 
-| Command (`vp run --filter @contour-ui/tokens …`) | What it does                                                                                           |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `tokens`                                         | Style Dictionary build → `src/generated/tokens.css`, `vars.ts`, `docs.json`, `soundor.ts`              |
-| `dev`                                            | the same, re-run on every source change                                                                |
-| `generate`                                       | regenerate the palette and color roles from `scripts/palette.ts` / `semantic-colors.ts`, then `tokens` |
-| `design-system <out-dir>`                        | export `tokens.json` for the Design System page                                                        |
+Every `*.tokens.json` is a source, edited by hand. A color is oklch, three numbers; `hex` is left
+out, since the build derives what each platform needs.
+
+| Command (`vp run --filter @contour-ui/tokens …`) | What it does                                                                              |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| `tokens`                                         | Style Dictionary build → `src/generated/tokens.css`, `vars.ts`, `docs.json`, `soundor.ts` |
+| `dev`                                            | the same, re-run on every source change                                                   |
+| `design-system <out-dir>`                        | export `tokens.json` for the Design System page                                           |
 
 Style Dictionary does not read DTCG resolvers yet, so `scripts/resolver.ts` expands
 `contour.resolver.json` into one Style Dictionary run per theme: sets become `include`
@@ -142,10 +144,12 @@ CSS (aliases stay `var()` references), `vars.ts`, and `docs.json`: one line per 
 with its resolved value and alias in each theme, published as `@contour-ui/tokens/docs.json`;
 `scripts/build-soundor.ts` prints `soundor.ts` from the resolved values.
 
-Palette colors are gamut-mapped into sRGB and written with the mapped color's own oklch
-coordinates, so the CSS value and the `hex` fallback are the same color. DTCG aliases cannot
-change alpha, so a translucent role (`overlay.scrim`) is a copy of its palette color with an
-alpha, regenerated with the palette.
+The palette follows a formula: every hue shares one lightness curve, so a stop is equally light in
+every hue and contrast pairs transfer between hues, and every color is gamut-mapped into sRGB and
+written with the mapped color's own oklch coordinates. For a change across the palette,
+`node packages/tokens/tools/palette.ts` rewrites `src/base/color.tokens.json` from it; review
+the diff like any other edit. DTCG aliases cannot change alpha, so a translucent role
+(`overlay.scrim`) is a copy of its palette color with an alpha: keep it equal to that color.
 
 Generated files are committed so apps and tests use tokens without a build
 step. `vp test` checks that they match their sources (`src/generated.test.ts`), that

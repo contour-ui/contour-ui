@@ -8,29 +8,7 @@ import { describe, expect, it } from 'vite-plus/test';
 
 import { buildSoundorTokens } from '../scripts/build-soundor.ts';
 import { buildTokens } from '../scripts/build-tokens.ts';
-import { readJson } from '../scripts/dtcg.ts';
-import { generatePalette } from '../scripts/palette.ts';
-import {
-  CSS_FILE,
-  DOCS_FILE,
-  PALETTE_FILE,
-  SOUNDOR_FILE,
-  TS_FILE,
-  semanticColorFile,
-} from '../scripts/paths.ts';
-import { semanticColors } from '../scripts/semantic-colors.ts';
-import { themes } from './index.ts';
-
-// Test titles carry the fix, since a failure only shows the diff.
-describe('generated DTCG sources (if stale: vp run --filter @contour-ui/tokens generate)', () => {
-  it('base palette matches scripts/palette.ts', () => {
-    expect(readJson(PALETTE_FILE)).toStrictEqual(generatePalette());
-  });
-
-  it.each(themes)('%s color roles match scripts/semantic-colors.ts', (theme) => {
-    expect(readJson(semanticColorFile(theme))).toStrictEqual(semanticColors(theme));
-  });
-});
+import { CSS_FILE, DOCS_FILE, SOUNDOR_FILE, TS_FILE } from '../scripts/paths.ts';
 
 const { css, ts, docs } = await buildTokens();
 const soundor = await buildSoundorTokens();
