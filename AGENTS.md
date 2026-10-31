@@ -85,7 +85,8 @@ and an integration with another ecosystem is named after it: `@contour-ui/fumado
 layout for sites on fumadocs-core.
 
 Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `configs/`
-(`@contour-ui/typescript-config`, `@contour-ui/vite-config`). Neither is ever published.
+(`@contour-ui/typescript-config`, `@contour-ui/vite-config`, `@contour-ui/tokens-compiler`).
+Neither is ever published.
 
 ## Commands
 

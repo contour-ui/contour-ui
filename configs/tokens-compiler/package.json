@@ -1,0 +1,21 @@
+{
+  "name": "@contour-ui/tokens-compiler",
+  "version": "0.0.0",
+  "private": true,
+  "description": "The compiler of @contour-ui/tokens: DTCG sources into CSS, typed TS and JSON, with checks of the design rules, as a plugin of vp pack. Never published.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "culori": "catalog:",
+    "style-dictionary": "catalog:"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@types/culori": "catalog:",
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}
