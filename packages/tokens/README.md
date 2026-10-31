@@ -123,8 +123,8 @@ src/base/*.tokens.json         raw values: the palette and the scales
 src/semantic/*.tokens.json     roles: color and shadow files per theme, the rest theme-independent
 contrast.json                  the WCAG contrast targets of the color roles
 vite.config.ts                 what the package ships and the checks of its build
-tools/design-system.ts         export for the Design System page
-tools/palette.ts               the formula of the palette, run by hand for changes across it
+scripts/design-system.ts       export for the Design System page
+scripts/palette.ts             the formula of the palette, run by hand for changes across it
 ```
 
 Every `*.tokens.json` is a source, edited by hand. A color is oklch, three numbers; `hex` is left
@@ -144,7 +144,7 @@ hooks), and first in `vp run ready` and CI.
 | `vp run @contour-ui/tokens#build`                            | build `dist`; a cache hit when no source changed    |
 | `vp -C packages/tokens pack --watch`                         | rebuild on every source change, beside a dev server |
 | `vp run --filter @contour-ui/tokens design-system <out-dir>` | export `tokens.json` for the Design System page     |
-| `node packages/tokens/tools/palette.ts`                      | rewrite the palette from its formula                |
+| `node packages/tokens/scripts/palette.ts`                    | rewrite the palette from its formula                |
 
 The build is the test: it fails with every problem at once, each with its token and theme. Built
 in: aliases point at tokens, every theme has the same tokens with the same types and descriptions,
@@ -157,6 +157,6 @@ cannot take: a length not in px, a curve without a named easing.
 The palette follows a formula: every hue shares one lightness curve, so a stop is equally light in
 every hue and contrast pairs transfer between hues, and every color is gamut-mapped into sRGB and
 written with the mapped color's own oklch coordinates. For a change across the palette,
-`node packages/tokens/tools/palette.ts` rewrites `src/base/color.tokens.json` from it; review
+`node packages/tokens/scripts/palette.ts` rewrites `src/base/color.tokens.json` from it; review
 the diff like any other edit. DTCG aliases cannot change alpha, so a translucent role
 (`overlay.scrim`) is a copy of its palette color with an alpha: keep it equal to that color.

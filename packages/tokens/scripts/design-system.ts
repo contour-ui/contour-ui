@@ -13,7 +13,7 @@ import type { ModelToken, TokenModel } from '@contour-ui/tokens-compiler';
 
 const [outDir] = process.argv.slice(2);
 if (outDir === undefined) {
-  throw new Error('Usage: node tools/design-system.ts <out-dir>');
+  throw new Error('Usage: node scripts/design-system.ts <out-dir>');
 }
 
 const web = webPlatform({ prefix: 'ct', themeAttribute: 'data-theme' });

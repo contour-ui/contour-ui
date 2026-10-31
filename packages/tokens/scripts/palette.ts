@@ -3,7 +3,7 @@
  * from the hues and the lightness curve below. The palette is edited by hand otherwise; review
  * the diff this writes like any other edit.
  *
- *   node packages/tokens/tools/palette.ts
+ *   node packages/tokens/scripts/palette.ts
  *
  * Every chromatic hue shares one lightness curve, so `blue.500` and `red.500` have the same
  * perceived lightness and contrast pairs transfer between hues. Every color is inside sRGB, so it
@@ -17,7 +17,7 @@ import { displayable, oklch, toGamut } from 'culori';
 const FILE = path.resolve(import.meta.dirname, '..', 'src', 'base', 'color.tokens.json');
 
 const DESCRIPTION =
-  'Base palette. Every hue follows one lightness curve and stays inside sRGB; tools/palette.ts rewrites this file from that formula.';
+  'Base palette. Every hue follows one lightness curve and stays inside sRGB; scripts/palette.ts rewrites this file from that formula.';
 
 /** Shared lightness curve (OKLCH L) for all hues: [stop, L]. */
 const STOPS: ReadonlyArray<readonly [number, number]> = [

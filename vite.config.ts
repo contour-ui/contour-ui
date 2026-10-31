@@ -176,7 +176,7 @@ export default defineConfig({
       },
       {
         // Repo scripts are CLIs: printing is their output.
-        files: ['scripts/**', 'apps/*/scripts/**', 'packages/*/scripts/**', 'packages/*/tools/**'],
+        files: ['scripts/**', 'apps/*/scripts/**', 'packages/*/scripts/**'],
         rules: {
           'no-console': 'off',
         },
