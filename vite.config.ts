@@ -187,9 +187,9 @@ export default defineConfig({
   },
 
   test: {
-    // Each package owns its Vitest setup (node for core/tokens/icons, Chromium
+    // Each package owns its Vitest setup (node for core/icons and the tokens compiler, Chromium
     // browser mode for UI packages, their screenshot tests with `vp run visual`).
-    projects: ['packages/*/vite.config.ts'],
+    projects: ['packages/*/vite.config.ts', 'configs/tokens-compiler/vite.config.ts'],
   },
 
   run: {

@@ -1,4 +1,5 @@
 import type { Plugin, TestProjectInlineConfiguration, UserConfig } from 'vite-plus';
+import type { TsdownPluginOption } from 'vite-plus/pack';
 import { defaultClientConditions, defaultServerConditions } from 'vite-plus';
 import { playwright } from 'vite-plus/test/browser-playwright';
 
@@ -33,8 +34,9 @@ export interface LibraryPackOptions {
   /**
    * tsdown entries, e.g. `{ index: 'src/index.ts', styles: 'src/styles.css' }`. A CSS entry is
    * bundled into `dist/<name>.css`: Lightning CSS inlines its `@import`s (`layer()` included).
+   * Left out when a plugin adds the entries (the tokens' `designTokens`).
    */
-  readonly entry: Record<string, string>;
+  readonly entry?: Record<string, string>;
   /** CSS entry points copied verbatim to `dist/` (kept unbundled so `@import`s stay external). */
   readonly css?: readonly string[];
   /** Other files copied verbatim to `dist/`, such as JSON data exported as is. */
@@ -55,6 +57,11 @@ export interface LibraryPackOptions {
    * runtime provides: without this, the bundler warns that it cannot find them.
    */
   readonly external?: readonly RegExp[];
+  /**
+   * tsdown or Rolldown plugins, such as `designTokens` of `@contour-ui/tokens-compiler`. A list:
+   * Vite+ appends a declarations plugin to `pack.plugins` and keeps only what was an array.
+   */
+  readonly plugins?: readonly TsdownPluginOption[];
 }
 
 /** Shared `vp pack` settings for every published package: ESM-only, d.ts, publint + attw. */
@@ -64,9 +71,11 @@ export function libraryPack({
   copy = [],
   unbundle = false,
   external = [],
+  plugins = [],
 }: LibraryPackOptions): PackConfig {
   return {
-    entry,
+    ...(entry === undefined ? {} : { entry }),
+    ...(plugins.length > 0 ? { plugins: [...plugins] } : {}),
     ...(unbundle ? { unbundle: true, checks: { moduleLevelDirective: false } } : {}),
     format: 'esm',
     platform: 'neutral',

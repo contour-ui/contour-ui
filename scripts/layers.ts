@@ -100,7 +100,11 @@ export const LAYERS: readonly LayerPackage[] = [
  * Private workspace tooling (under `configs/`). Any package may list these in
  * `devDependencies`, never in `dependencies` or `peerDependencies`.
  */
-export const TOOLING_PACKAGES: readonly string[] = ['typescript-config', 'vite-config'];
+export const TOOLING_PACKAGES: readonly string[] = [
+  'typescript-config',
+  'vite-config',
+  'tokens-compiler',
+];
 
 /** External packages no published package may depend on or import. */
 export const FORBIDDEN_EXTERNALS: readonly string[] = ['tailwindcss', '@tailwindcss/*'];
@@ -111,10 +115,29 @@ export const FORBIDDEN_EXTERNALS: readonly string[] = ['tailwindcss', '@tailwind
  */
 export interface InternalRule {
   readonly pkg: string;
+  /** The package directory: `packages/<pkg>` when left out. */
+  readonly root?: string;
   readonly dir: string;
   readonly forbid: readonly string[];
   readonly message: string;
 }
+
+/**
+ * The layers of the tokens compiler (`configs/tokens-compiler`, D22 in the plan): the model is the
+ * contract; only `resolve/` reads the sources, checks read the model alone, outputs write it
+ * through a platform.
+ */
+const tokensCompilerRule = (
+  dir: string,
+  forbid: readonly string[],
+  message: string,
+): InternalRule => ({
+  pkg: 'tokens-compiler',
+  root: 'configs/tokens-compiler',
+  dir: `src/${dir}`,
+  forbid,
+  message: `tokens-compiler: ${message}`,
+});
 
 export const INTERNAL_RULES: readonly InternalRule[] = [
   {
@@ -129,6 +152,31 @@ export const INTERNAL_RULES: readonly InternalRule[] = [
     forbid: ['states', 'react'],
     message: 'core: interactions/ must not import states/ (both may import machine/).',
   },
+  tokensCompilerRule(
+    'model',
+    ['resolve', 'platforms', 'outputs', 'checks'],
+    'model/ is the contract and imports no other layer.',
+  ),
+  tokensCompilerRule(
+    'resolve',
+    ['platforms', 'outputs', 'checks'],
+    'resolve/ turns the sources into the model and knows nothing above it.',
+  ),
+  tokensCompilerRule(
+    'platforms',
+    ['resolve', 'outputs', 'checks'],
+    'platforms/ read the model, never the sources, the outputs or the checks.',
+  ),
+  tokensCompilerRule(
+    'outputs',
+    ['resolve', 'checks'],
+    'outputs/ read the model through a platform, never the sources or the checks.',
+  ),
+  tokensCompilerRule(
+    'checks',
+    ['resolve', 'platforms', 'outputs'],
+    'checks/ read the model alone.',
+  ),
 ];
 
 /** The only place in `core` allowed to import React. */
@@ -241,11 +289,13 @@ export function boundaryLintOverrides(): OxlintOverride[] {
   }
 
   for (const rule of INTERNAL_RULES) {
-    const base = [...internalPatterns(rule.pkg), tailwindPattern];
+    // Tooling has no layer: its directory rules stand alone.
+    const base =
+      getLayer(rule.pkg) === undefined ? [] : [...internalPatterns(rule.pkg), tailwindPattern];
     const extra = rule.pkg === 'core' ? [reactPattern] : [];
     overrides.push(
       restrict(
-        [`packages/${rule.pkg}/${rule.dir}/**`],
+        [`${rule.root ?? `packages/${rule.pkg}`}/${rule.dir}/**`],
         [...base, ...extra, relativeDirPattern(rule.forbid, rule.message)],
       ),
     );
