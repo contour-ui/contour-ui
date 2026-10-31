@@ -111,8 +111,9 @@ function labelStyle(tokens: SoundorTokens, variant: Variant, size: Size, disable
  */
 function ringStyle(tokens: SoundorTokens): Style {
   const width = tokens['border-width'].focus;
-  // The offset, then the ring, outside the border.
-  const reach = 2 * width + tokens['border-width'].default;
+  // An absolute view is placed in the padding box: past the border, then the offset and the ring.
+  const border = tokens['border-width'].default;
+  const reach = border + 2 * width;
   return {
     position: 'absolute',
     top: -reach,
@@ -121,7 +122,8 @@ function ringStyle(tokens: SoundorTokens): Style {
     left: -reach,
     borderWidth: width,
     borderColor: tokens.color.border.focus,
-    borderRadius: tokens.radius.control + reach,
+    // Round as the outline of the web: the button's corner grown by the offset and the ring.
+    borderRadius: tokens.radius.control + reach - border,
     pointerEvents: 'none',
   };
 }
