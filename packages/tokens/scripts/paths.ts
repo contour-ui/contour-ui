@@ -13,3 +13,4 @@ export const semanticColorFile = (theme: 'dark' | 'light'): string =>
 export const CSS_FILE = path.join(PACKAGE_DIR, 'src', 'generated', 'tokens.css');
 export const TS_FILE = path.join(PACKAGE_DIR, 'src', 'generated', 'vars.ts');
 export const DOCS_FILE = path.join(PACKAGE_DIR, 'src', 'generated', 'docs.json');
+export const SOUNDOR_FILE = path.join(PACKAGE_DIR, 'src', 'generated', 'soundor.ts');

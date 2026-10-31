@@ -6,10 +6,18 @@ import { readFileSync } from 'node:fs';
 
 import { describe, expect, it } from 'vite-plus/test';
 
+import { buildSoundorTokens } from '../scripts/build-soundor.ts';
 import { buildTokens } from '../scripts/build-tokens.ts';
 import { readJson } from '../scripts/dtcg.ts';
 import { generatePalette } from '../scripts/palette.ts';
-import { CSS_FILE, DOCS_FILE, PALETTE_FILE, TS_FILE, semanticColorFile } from '../scripts/paths.ts';
+import {
+  CSS_FILE,
+  DOCS_FILE,
+  PALETTE_FILE,
+  SOUNDOR_FILE,
+  TS_FILE,
+  semanticColorFile,
+} from '../scripts/paths.ts';
 import { semanticColors } from '../scripts/semantic-colors.ts';
 import { themes } from './index.ts';
 
@@ -25,6 +33,7 @@ describe('generated DTCG sources (if stale: vp run --filter @contour-ui/tokens g
 });
 
 const { css, ts, docs } = await buildTokens();
+const soundor = await buildSoundorTokens();
 
 describe('Style Dictionary outputs (if stale: vp run --filter @contour-ui/tokens tokens)', () => {
   it('src/generated/tokens.css', () => {
@@ -37,5 +46,9 @@ describe('Style Dictionary outputs (if stale: vp run --filter @contour-ui/tokens
 
   it('src/generated/docs.json', () => {
     expect(readFileSync(DOCS_FILE, 'utf8')).toBe(docs);
+  });
+
+  it('src/generated/soundor.ts', () => {
+    expect(readFileSync(SOUNDOR_FILE, 'utf8')).toBe(soundor);
   });
 });

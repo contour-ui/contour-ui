@@ -177,7 +177,10 @@ Every published package maps its entry points to sources under the custom
 built with **Style Dictionary** into `src/generated/tokens.css` (`--ct-*` custom properties),
 `src/generated/vars.ts` (typed `var(--ct-…)` references to semantic tokens) and
 `src/generated/docs.json` (every custom property with its value and alias per theme, published
-as `@contour-ui/tokens/docs.json`; the docs site's Tokens page reads it). The generated files are
+as `@contour-ui/tokens/docs.json`; the docs site's Tokens page reads it) and
+`src/generated/soundor.ts` (the values of the semantic tokens per theme for Soundor styles:
+hex colors, px and ms as numbers, named easings, text styles as `Text` styles, no shadows;
+`@contour-ui/tokens/soundor`, printed by `scripts/build-soundor.ts`). The generated files are
 committed;
 `vp test` fails when they drift from the sources.
 

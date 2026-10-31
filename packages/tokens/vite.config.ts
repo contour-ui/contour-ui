@@ -4,7 +4,7 @@ import { defineConfig } from 'vite-plus';
 export default defineConfig({
   plugins: [contourSource()],
   pack: libraryPack({
-    entry: { index: 'src/index.ts' },
+    entry: { index: 'src/index.ts', soundor: 'src/soundor.ts' },
     css: ['src/generated/tokens.css'],
     copy: ['src/generated/docs.json'],
   }),

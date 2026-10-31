@@ -2,7 +2,7 @@
 
 **Layer 0 — foundation.** Design tokens in [DTCG 2025.10](https://www.designtokens.org/tr/2025.10/)
 format, built with [Style Dictionary](https://styledictionary.com) into CSS custom
-properties and typed TS references.
+properties, typed TS references and, for Soundor, the values themselves.
 
 - **May depend on (internal):** nothing.
 - **Token reference:** the Tokens page of the docs (`/docs/guide/tokens`) shows every custom
@@ -50,6 +50,28 @@ vars.color.bg.surface; // 'var(--ct-color-bg-surface)'
   background.
 - **Shadows, layers:** `--ct-shadow-<name>` is a `box-shadow` list (DTCG `shadow`, stronger in the
   dark theme); `--ct-layer-<name>` is a `z-index`.
+
+## Soundor
+
+Soundor styles are objects without CSS, so `@contour-ui/tokens/soundor` holds the values of every
+semantic token per theme, as they take them:
+
+```ts
+import { soundorTokens } from '@contour-ui/tokens/soundor';
+
+const { color, radius, text } = soundorTokens.dark;
+color.bg.surface; // '#16191c'
+radius.panel; // 8
+text.label; // { fontFamily: 'IBM Plex Sans', fontSize: 11, fontWeight: 500, lineHeight: 13.2, letterSpacing: 0.5 }
+```
+
+- **Colors** are hex, with 8 digits for a translucent role (`overlay.scrim`).
+- **Lengths** are px and **durations** ms, as numbers.
+- **Text styles** are the style properties of a Soundor `Text`: the first family of the stack
+  (Soundor takes one) and the line height in px.
+- **Transitions** are `{ duration, easing, delay }`, with the named easing closest to the curve
+  (Soundor has no `cubic-bezier()`).
+- **Shadows** have no Soundor equivalent and are left out.
 
 ## Token data
 
@@ -100,13 +122,14 @@ contour.resolver.json          DTCG resolver: sets (base, semantic) + theme modi
 src/base/*.tokens.json         raw values — color.tokens.json is generated
 src/semantic/*.tokens.json     roles — color.{dark,light}.tokens.json are generated;
                                color and shadow files per theme, the rest theme-independent
-src/generated/                 Style Dictionary output (committed): tokens.css, vars.ts, docs.json
+src/generated/                 Style Dictionary output (committed): tokens.css, vars.ts, docs.json,
+                               soundor.ts
 scripts/                       build and generators
 ```
 
 | Command (`vp run --filter @contour-ui/tokens …`) | What it does                                                                                           |
 | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
-| `tokens`                                         | Style Dictionary build → `src/generated/tokens.css`, `vars.ts`, `docs.json`                            |
+| `tokens`                                         | Style Dictionary build → `src/generated/tokens.css`, `vars.ts`, `docs.json`, `soundor.ts`              |
 | `dev`                                            | the same, re-run on every source change                                                                |
 | `generate`                                       | regenerate the palette and color roles from `scripts/palette.ts` / `semantic-colors.ts`, then `tokens` |
 | `design-system <out-dir>`                        | export `tokens.json` for the Design System page                                                        |
@@ -116,7 +139,8 @@ Style Dictionary does not read DTCG resolvers yet, so `scripts/resolver.ts` expa
 files, the theme context becomes `source` files. Style Dictionary merges, resolves and
 validates aliases and transforms primitive values; `scripts/build-tokens.ts` prints the
 CSS (aliases stay `var()` references), `vars.ts`, and `docs.json`: one line per custom property
-with its resolved value and alias in each theme, published as `@contour-ui/tokens/docs.json`.
+with its resolved value and alias in each theme, published as `@contour-ui/tokens/docs.json`;
+`scripts/build-soundor.ts` prints `soundor.ts` from the resolved values.
 
 Palette colors are gamut-mapped into sRGB and written with the mapped color's own oklch
 coordinates, so the CSS value and the `hex` fallback are the same color. DTCG aliases cannot

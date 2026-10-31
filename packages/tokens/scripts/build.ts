@@ -1,5 +1,5 @@
 /**
- * Regenerate `src/generated/tokens.css`, `vars.ts` and `docs.json` from the DTCG
+ * Regenerate `src/generated/tokens.css`, `vars.ts`, `docs.json` and `soundor.ts` from the DTCG
  * sources with Style Dictionary. Run after editing any `*.tokens.json`:
  *
  *   vp run --filter @contour-ui/tokens tokens
@@ -10,16 +10,19 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
+import { buildSoundorTokens } from './build-soundor.ts';
 import { buildTokens } from './build-tokens.ts';
-import { CSS_FILE, DOCS_FILE, PACKAGE_DIR, TS_FILE } from './paths.ts';
+import { CSS_FILE, DOCS_FILE, PACKAGE_DIR, SOUNDOR_FILE, TS_FILE } from './paths.ts';
 
 const { css, ts, docs } = await buildTokens();
+const soundor = await buildSoundorTokens();
 
 mkdirSync(path.dirname(CSS_FILE), { recursive: true });
 writeFileSync(CSS_FILE, css);
 writeFileSync(TS_FILE, ts);
 writeFileSync(DOCS_FILE, docs);
+writeFileSync(SOUNDOR_FILE, soundor);
 
-for (const file of [CSS_FILE, TS_FILE, DOCS_FILE]) {
+for (const file of [CSS_FILE, TS_FILE, DOCS_FILE, SOUNDOR_FILE]) {
   console.log(`wrote ${path.relative(PACKAGE_DIR, file)}`);
 }

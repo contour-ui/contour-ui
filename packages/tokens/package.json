@@ -22,6 +22,11 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./soundor": {
+      "@contour-ui/source": "./src/soundor.ts",
+      "types": "./dist/soundor.d.ts",
+      "default": "./dist/soundor.js"
+    },
     "./tokens.css": {
       "@contour-ui/source": "./src/generated/tokens.css",
       "default": "./dist/tokens.css"
@@ -37,6 +42,10 @@
       ".": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
+      },
+      "./soundor": {
+        "types": "./dist/soundor.d.ts",
+        "default": "./dist/soundor.js"
       },
       "./tokens.css": "./dist/tokens.css",
       "./docs.json": "./dist/docs.json",

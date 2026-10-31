@@ -1,28 +1,20 @@
 /**
- * Every token can be expressed in Soundor, the plugin UI runtime the future
- * `*-soundor` packages target. Its styles take sRGB colors (hex, `rgb()`),
+ * Every token can be expressed in Soundor, the plugin UI runtime of `@contour-ui/soundor`, which
+ * reads them from `src/generated/soundor.ts`. Its styles take sRGB colors (hex, `rgb()`),
  * lengths in px and only named easing curves; they cannot evaluate CSS functions.
  * A translucent color keeps its alpha separate (DTCG `alpha`), so it becomes
- * `rgba()` or an 8-digit hex there.
+ * an 8-digit hex there.
  */
 import { displayable, formatHex } from 'culori';
 import type { Oklch } from 'culori';
 import type { TransformedToken } from 'style-dictionary/types';
 import { describe, expect, it } from 'vite-plus/test';
 
+import { NAMED_EASING } from '../scripts/build-soundor.ts';
 import { resolvedTokens } from '../scripts/build-tokens.ts';
 import { aliasPath, expectRecord, parseColor, parseUnitValue } from '../scripts/dtcg.ts';
 import docs from './generated/docs.json' with { type: 'json' };
 import { themes } from './index.ts';
-
-type SoundorEasing = 'linear' | 'ease' | 'ease-in' | 'ease-out' | 'ease-in-out';
-
-/** Soundor has no `cubic-bezier()`: each curve maps to the named easing closest to it. */
-const NAMED_EASING: Readonly<Record<string, SoundorEasing>> = {
-  'base.easing.standard': 'ease-in-out',
-  'base.easing.out': 'ease-out',
-  'base.easing.in': 'ease-in',
-};
 
 /** Shadow sub-values that are lengths. */
 const SHADOW_LENGTHS = ['offsetX', 'offsetY', 'blur', 'spread'] as const;
