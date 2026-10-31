@@ -4,5 +4,6 @@
  */
 export { Button } from './button/index.ts';
 export type { ButtonProps, ButtonState } from './button/index.ts';
+export { registerFonts } from './fonts/register-fonts.ts';
 export { ThemeProvider, useTheme } from './theme-provider/index.ts';
 export type { ThemeProviderProps, UseThemeReturn } from './theme-provider/index.ts';

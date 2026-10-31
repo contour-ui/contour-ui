@@ -6,6 +6,8 @@
 `@contour-ui/react`, where Soundor can draw them. No DOM and no CSS: styles are objects, per theme.
 
 - **May depend on (internal):** `@contour-ui/tokens`, `@contour-ui/icons`, `@contour-ui/fonts`.
+- **Fonts:** `registerFonts()` registers the TTF faces of `@contour-ui/fonts` (IBM Plex Sans,
+  JetBrains Mono) with Soundor's `registerFont`; uncalled, Soundor's bundler ships none of them.
 - **Peers:** `react`, `@soundor/react`.
 - **Runs on:** every Soundor runtime: natively on Hermes, and in the browser (the web runtime).
 
@@ -18,7 +20,7 @@
 ## Usage
 
 ```tsx
-import { Button, ThemeProvider, useTheme } from '@contour-ui/soundor';
+import { Button, registerFonts, ThemeProvider, useTheme } from '@contour-ui/soundor';
 import { render, Text, View } from '@soundor/react';
 
 function Panel() {
@@ -34,6 +36,9 @@ function Panel() {
     </View>
   );
 }
+
+// Before the first render, so text is laid out in the token fonts from the first frame.
+void registerFonts();
 
 render(
   <ThemeProvider defaultTheme="dark">

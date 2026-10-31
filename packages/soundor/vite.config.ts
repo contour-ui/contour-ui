@@ -9,6 +9,8 @@ export default defineConfig({
     entry: { index: 'src/index.ts' },
     // One file per module, as in the other UI packages.
     unbundle: true,
+    // The runtime's own modules: every Soundor runtime provides them to the plugin.
+    external: [/^soundor:/u],
   }),
   // In Node, on Soundor's simulated runtime: the node tree, input, focus and accessibility, but
   // no layout or pixels. The plugin reads the environment here, not inside `projects`.

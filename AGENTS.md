@@ -53,6 +53,10 @@ Rules:
   layout stays), shown while `useFocusVisible()` (`src/utils/focus-visible.ts`, the last input
   was a key) says so, and the state passes to `style` as `focusVisible`. Strings in a label are
   set in a `Text` of the component's text style; Soundor allows no text outside a `Text`.
+- `registerFonts()` (`packages/soundor/src/fonts/`) registers the TTF faces of `@contour-ui/fonts`
+  with `registerFont`, one static import per file (a test keeps them equal to `fontFaces`). The
+  imports stay imports in `dist`, as do `soundor:*` (`libraryPack({ external })`): the plugin's
+  bundler resolves them and ships the files.
 - `react` / `react-dom` are never regular `dependencies`; in `headless-react`, the styled package
   and `fumadocs` they are required peers. `fumadocs` also takes `fumadocs-core` as a peer
   (`@types/mdx` as an optional one).

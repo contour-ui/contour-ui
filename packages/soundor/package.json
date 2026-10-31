@@ -36,6 +36,7 @@
     "dev": "vp pack --watch"
   },
   "dependencies": {
+    "@contour-ui/fonts": "workspace:*",
     "@contour-ui/tokens": "workspace:*"
   },
   "devDependencies": {

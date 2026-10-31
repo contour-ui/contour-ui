@@ -532,6 +532,9 @@ importers:
 
   packages/soundor:
     dependencies:
+      '@contour-ui/fonts':
+        specifier: workspace:*
+        version: link:../fonts
       '@contour-ui/tokens':
         specifier: workspace:*
         version: link:../tokens

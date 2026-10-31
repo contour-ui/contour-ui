@@ -50,6 +50,11 @@ export interface LibraryPackOptions {
    * @defaultValue false
    */
   readonly unbundle?: boolean;
+  /**
+   * Imports that are no npm packages yet stay imports, such as the `soundor:*` modules a Soundor
+   * runtime provides: without this, the bundler warns that it cannot find them.
+   */
+  readonly external?: readonly RegExp[];
 }
 
 /** Shared `vp pack` settings for every published package: ESM-only, d.ts, publint + attw. */
@@ -58,6 +63,7 @@ export function libraryPack({
   css = [],
   copy = [],
   unbundle = false,
+  external = [],
 }: LibraryPackOptions): PackConfig {
   return {
     entry,
@@ -73,7 +79,7 @@ export function libraryPack({
     // Nothing from node_modules goes into dist: dependencies and peers stay imports, and a type
     // used in a public signature must come from a declared dependency or peer. Without this, a
     // devDependency such as @types/mdx would be copied into dist under its path in node_modules.
-    deps: { onlyBundle: [] },
+    deps: { onlyBundle: [], ...(external.length > 0 ? { neverBundle: [...external] } : {}) },
     publint: { level: 'suggestion' },
     // CSS entry points have no types by design; attw only checks the JS entries.
     attw: { profile: 'esm-only', level: 'error', excludeEntrypoints: [/\.css$/u] },
