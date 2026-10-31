@@ -1,7 +1,7 @@
 {
   "name": "@contour-ui/tokens",
   "version": "0.0.0",
-  "description": "contour-ui design tokens: DTCG sources built with Style Dictionary into CSS custom properties and typed TS references.",
+  "description": "contour-ui design tokens: DTCG sources compiled into CSS custom properties, typed TS references, token data and the values Soundor styles take.",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -13,28 +13,19 @@
   ],
   "type": "module",
   "sideEffects": [
-    "./dist/tokens.css",
-    "./src/generated/tokens.css"
+    "./dist/tokens.css"
   ],
   "exports": {
     ".": {
-      "@contour-ui/source": "./src/index.ts",
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
     "./soundor": {
-      "@contour-ui/source": "./src/soundor.ts",
       "types": "./dist/soundor.d.ts",
       "default": "./dist/soundor.js"
     },
-    "./tokens.css": {
-      "@contour-ui/source": "./src/generated/tokens.css",
-      "default": "./dist/tokens.css"
-    },
-    "./docs.json": {
-      "@contour-ui/source": "./src/generated/docs.json",
-      "default": "./dist/docs.json"
-    },
+    "./tokens.css": "./dist/tokens.css",
+    "./docs.json": "./dist/docs.json",
     "./package.json": "./package.json"
   },
   "publishConfig": {
@@ -54,17 +45,14 @@
     "access": "public"
   },
   "scripts": {
-    "build": "vp pack",
-    "dev": "node --watch-path=src/base --watch-path=src/semantic --watch-path=contour.resolver.json scripts/build.ts",
-    "tokens": "node scripts/build.ts",
     "design-system": "node scripts/to-design-system.ts"
   },
   "devDependencies": {
+    "@contour-ui/tokens-compiler": "workspace:*",
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",
     "@types/culori": "catalog:",
     "culori": "catalog:",
-    "style-dictionary": "catalog:",
     "vite-plus": "catalog:"
   }
 }

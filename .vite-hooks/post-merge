@@ -1,0 +1,4 @@
+# The workspace reads @contour-ui/tokens from dist: rebuild it after a merge or a pull, which may
+# change its sources (a cache hit when they did not). Nothing to build before the first install.
+[ -d node_modules ] || exit 0
+vp run @contour-ui/tokens#build > /dev/null || echo 'Run `vp run @contour-ui/tokens#build` to see why @contour-ui/tokens does not build.'

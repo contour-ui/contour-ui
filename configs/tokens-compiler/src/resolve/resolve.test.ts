@@ -72,6 +72,13 @@ describe('built-in checks', () => {
     ]);
   });
 
+  it('name an alias broken in every theme once', async () => {
+    const { problems } = await build({ semantic: { 'space.gap': { $value: '{base.space.5}' } } });
+    expect(problems).toEqual([
+      { source: 'model', token: 'space.gap', message: '{base.space.5} does not resolve.' },
+    ]);
+  });
+
   it('report a token missing in a theme', async () => {
     const { problems } = await build({
       dark: { 'color.fg.muted': { $value: '{base.color.gray.100}' } },

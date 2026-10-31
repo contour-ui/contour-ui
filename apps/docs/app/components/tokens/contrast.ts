@@ -1,7 +1,8 @@
 /**
  * WCAG 2 contrast of the color roles, from their values in `docs.json`: `oklch()` colors inside
- * sRGB, converted to linear sRGB for the relative luminance. `packages/tokens/src/contrast.test.ts`
- * measures the same pairs with culori and fails when a role misses its target.
+ * sRGB, converted to linear sRGB for the relative luminance. The pairs are those of
+ * `packages/tokens/contrast.json`, which the token build measures with culori, failing when a role
+ * misses its target.
  */
 
 interface Oklch {
@@ -99,7 +100,7 @@ const FOREGROUNDS: Readonly<Record<string, TextContrast>> = {
 };
 
 /**
- * The text pairs of `contrast.test.ts` for a color role (`fg.muted`, `danger.fg`,
+ * The text pairs of `packages/tokens/contrast.json` for a color role (`fg.muted`, `danger.fg`,
  * `syntax.keyword`): the foregrounds on their layers, a status color's text on its own background
  * and on a surface, its label on its fill, and code on the code block background. `undefined` for
  * a role that is not text.

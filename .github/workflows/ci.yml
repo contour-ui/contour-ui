@@ -28,6 +28,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: true
+      # The workspace reads @contour-ui/tokens from dist, which its compiler writes.
+      - run: vp run @contour-ui/tokens#build
       - name: Verify pinned pnpm
         run: test "$(pnpm --version)" = "$PNPM_VERSION"
       - run: vp check --deny-warnings
@@ -43,6 +45,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: true
+      # The workspace reads @contour-ui/tokens from dist, which its compiler writes.
+      - run: vp run @contour-ui/tokens#build
       - run: vp exec playwright install --with-deps chromium
       - run: vp test
 
@@ -62,6 +66,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: true
+      # The workspace reads @contour-ui/tokens from dist, which its compiler writes.
+      - run: vp run @contour-ui/tokens#build
       - run: vp run visual:ci
       - name: Upload the screenshots and diffs of failed tests
         if: failure()
@@ -92,6 +98,8 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: true
+      # The workspace reads @contour-ui/tokens from dist, which its compiler writes.
+      - run: vp run @contour-ui/tokens#build
       - run: vp run --filter @contour-ui/app-docs build
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:

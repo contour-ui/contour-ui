@@ -13,6 +13,7 @@ import type { ModelToken, ThemeValue, Tier, TokenModel, TokenType } from '../mod
 import { attemptBuild, messageOf } from '../model/problem.ts';
 import type { Report } from '../model/problem.ts';
 import { loadResolver } from './resolver.ts';
+import type { ThemeResolver } from './resolver.ts';
 
 /** What the model's own checks report as. */
 const SOURCE = 'model';
@@ -48,35 +49,50 @@ function collectTokens(node: unknown, path: readonly string[], into: Map<string,
   }
 }
 
-/**
- * Report every alias that points at no token. Style Dictionary fails on them too, but its error
- * names neither the token nor the alias.
- */
-function checkAliases(
+/** The aliases of one theme context that point at no token, as `[token id, alias]`. */
+function brokenAliases(
   files: readonly string[],
-  theme: string,
   reader: SourceReader,
-  report: Report,
-): boolean {
+): Array<readonly [string, string]> {
   const tokens = new Map<string, unknown>();
   for (const file of files) {
     collectTokens(reader.readJson(file), [], tokens);
   }
-  let resolved = true;
-  for (const [id, value] of tokens) {
-    for (const alias of aliasesIn(value)) {
-      if (!tokens.has(alias.join('.'))) {
-        report({
-          source: SOURCE,
-          token: id,
-          theme,
-          message: `{${alias.join('.')}} does not resolve.`,
-        });
-        resolved = false;
+  return [...tokens].flatMap(([id, value]) =>
+    aliasesIn(value)
+      .map((alias) => alias.join('.'))
+      .filter((alias) => !tokens.has(alias))
+      .map((alias) => [id, alias] as const),
+  );
+}
+
+/**
+ * Report every alias that points at no token: once for an alias broken in every theme, per theme
+ * otherwise. Style Dictionary fails on them too, but its error names neither the token nor the
+ * alias.
+ */
+function checkAliases(resolver: ThemeResolver, reader: SourceReader, report: Report): boolean {
+  const broken = new Map<string, { id: string; alias: string; themes: string[] }>();
+  for (const theme of resolver.contexts) {
+    const { include, source } = resolver.files(theme);
+    for (const [id, alias] of brokenAliases([...include, ...source], reader)) {
+      const key = `${id} ${alias}`;
+      const entry = broken.get(key) ?? { id, alias, themes: [] };
+      entry.themes.push(theme);
+      broken.set(key, entry);
+    }
+  }
+  for (const { id, alias, themes } of broken.values()) {
+    const message = `{${alias}} does not resolve.`;
+    if (themes.length === resolver.contexts.length) {
+      report({ source: SOURCE, token: id, message });
+    } else {
+      for (const theme of themes) {
+        report({ source: SOURCE, token: id, theme, message });
       }
     }
   }
-  return resolved;
+  return broken.size === 0;
 }
 
 /** Every token of one theme context, aliases resolved and values left as DTCG data. */
@@ -108,13 +124,7 @@ export async function resolveModel(
     return undefined;
   }
   const themes = resolver.contexts;
-  const aliasesResolve = themes
-    .map((theme) => {
-      const { include, source } = resolver.files(theme);
-      return checkAliases([...include, ...source], theme, reader, report);
-    })
-    .every(Boolean);
-  if (!aliasesResolve) {
+  if (!checkAliases(resolver, reader, report)) {
     return undefined;
   }
 
