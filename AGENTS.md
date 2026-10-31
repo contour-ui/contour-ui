@@ -46,6 +46,13 @@ Rules:
   values of `@contour-ui/tokens/soundor`, per theme from its `ThemeProvider`; components read
   them with `useTokens()` (the default theme outside a provider). Peers: `react`,
   `@soundor/react`.
+- A Soundor component keeps the names, variants and sizes of its web counterpart; where the
+  platforms differ it follows Soundor (`onPress`, a `style` object or function of the state in
+  place of `className` and `asChild`). Soundor has no `outline` and no `:focus-visible`: a
+  focus ring is a view outside the border (as far out as the web's outline and its offset, so the
+  layout stays), shown while `useFocusVisible()` (`src/utils/focus-visible.ts`, the last input
+  was a key) says so, and the state passes to `style` as `focusVisible`. Strings in a label are
+  set in a `Text` of the component's text style; Soundor allows no text outside a `Text`.
 - `react` / `react-dom` are never regular `dependencies`; in `headless-react`, the styled package
   and `fumadocs` they are required peers. `fumadocs` also takes `fumadocs-core` as a peer
   (`@types/mdx` as an optional one).
