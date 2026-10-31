@@ -646,6 +646,9 @@ importers:
 
   packages/tokens:
     devDependencies:
+      '@contour-ui/tokens-compiler':
+        specifier: workspace:*
+        version: link:../../configs/tokens-compiler
       '@contour-ui/typescript-config':
         specifier: workspace:*
         version: link:../../configs/typescript
@@ -658,9 +661,6 @@ importers:
       culori:
         specifier: 'catalog:'
         version: 4.0.2
-      style-dictionary:
-        specifier: 'catalog:'
-        version: 5.7.0
       vite-plus:
         specifier: 'catalog:'
         version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)

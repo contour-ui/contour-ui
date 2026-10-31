@@ -35,8 +35,6 @@ export default defineConfig({
       // Token data keeps its authored layout.
       'packages/tokens/contour.resolver.json',
       'packages/tokens/src/**/*.tokens.json',
-      // Style Dictionary output, compared byte-for-byte by src/generated.test.ts.
-      'packages/tokens/src/generated/**',
       // Icon data written by scripts/build-icons.ts, compared byte-for-byte by a freshness test.
       'packages/icons/src/generated/**',
       // Font faces written by packages/fonts/scripts/build.ts with Fontsource's unicode ranges.
@@ -188,8 +186,13 @@ export default defineConfig({
 
   test: {
     // Each package owns its Vitest setup (node for core/icons and the tokens compiler, Chromium
-    // browser mode for UI packages, their screenshot tests with `vp run visual`).
-    projects: ['packages/*/vite.config.ts', 'configs/tokens-compiler/vite.config.ts'],
+    // browser mode for UI packages, their screenshot tests with `vp run visual`). The tokens have
+    // none: their rules are checks of their build.
+    projects: [
+      'packages/*/vite.config.ts',
+      '!packages/tokens/vite.config.ts',
+      'configs/tokens-compiler/vite.config.ts',
+    ],
   },
 
   run: {

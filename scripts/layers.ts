@@ -35,6 +35,11 @@ export interface LayerPackage {
   /** Internal packages (unscoped names) this package may depend on. */
   readonly allowed: readonly string[];
   readonly react: ReactPolicy;
+  /**
+   * Where the workspace reads the package from: its sources under the `@contour-ui/source`
+   * condition (the default), or `dist`, for a package whose files a compiler writes at build time.
+   */
+  readonly source?: 'src' | 'dist';
 }
 
 export const LAYERS: readonly LayerPackage[] = [
@@ -44,6 +49,8 @@ export const LAYERS: readonly LayerPackage[] = [
     purpose: 'DTCG design tokens -> CSS variables / TS',
     allowed: [],
     react: 'none',
+    // Built by @contour-ui/tokens-compiler: its outputs exist only in dist.
+    source: 'dist',
   },
   {
     name: 'icons',

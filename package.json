@@ -10,8 +10,8 @@
   },
   "type": "module",
   "scripts": {
-    "prepare": "vp config",
-    "ready": "vp check && vp run boundaries && vp test && vp run -r build",
+    "prepare": "vp config && vp run @contour-ui/tokens#build",
+    "ready": "vp run @contour-ui/tokens#build && vp check && vp run boundaries && vp test && vp run -r build",
     "changeset": "changeset",
     "version-packages": "changeset version && vp fmt",
     "release": "vp run -r --filter './packages/*' build && changeset publish",

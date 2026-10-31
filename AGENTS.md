@@ -10,7 +10,7 @@ point **down** the table only — never up, never sideways.
 
 | Layer        | Package          | Purpose                                                                                                                                | May depend on (internal)                              |
 | ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| 0 foundation | `tokens`         | DTCG design tokens → CSS vars / TS (Style Dictionary)                                                                                  | —                                                     |
+| 0 foundation | `tokens`         | DTCG design tokens → CSS vars / TS, compiled by `@contour-ui/tokens-compiler`                                                          | —                                                     |
 | 0 foundation | `icons`          | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                | —                                                     |
 | 0 foundation | `fonts`          | font files: WOFF2 faces + `fonts.css` for the web, static TTF for Soundor (Fontsource)                                                 | —                                                     |
 | 1 logic      | `core`           | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`         | —                                                     |
@@ -98,6 +98,7 @@ built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` tas
 | `vp install`                                          | install (pnpm 12, pinned via `packageManager`)                                                                                                                                               |
 | `vp check` / `vp check --fix`                         | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                                                                               |
 | `vp run boundaries`                                   | layer boundary check for `package.json` / CSS                                                                                                                                                |
+| `vp run @contour-ui/tokens#build`                     | build `@contour-ui/tokens` (cached), which the workspace reads from `dist`; `vp -C packages/tokens pack --watch` rebuilds on every token edit                                                |
 | `vp test`                                             | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages); screenshot tests only with `vp run visual`                                   |
 | `vp -C packages/react test`                           | one package's tests                                                                                                                                                                          |
 | `vp run -r build`                                     | build everything (`vp pack` + publint + attw for packages, apps)                                                                                                                             |
@@ -188,6 +189,10 @@ Every published package maps its entry points to sources under the custom
 }
 ```
 
+- **Except `tokens`**, whose files its compiler writes at build time (see "Tokens"): its
+  `exports` equal `publishConfig.exports`, and the workspace reads its `dist`, built first
+  (`vp run @contour-ui/tokens#build`). `source: 'dist'` in `scripts/layers.ts` marks it, and
+  `vp run boundaries` holds both rules.
 - TypeScript picks it up via `customConditions` (`configs/typescript/base.json`).
 - Vite (apps, tests) via the `contourSource()` plugin from `@contour-ui/vite-config`. So the
   playground, docs and tests consume **sources** with HMR, without building packages first.
@@ -199,26 +204,35 @@ Every published package maps its entry points to sources under the custom
   `@contour-ui/react/styles.css`.
 - A `.css` file in `libraryPack()`'s `entry` is bundled by `vp pack` into `dist/<name>.css`
   (Lightning CSS inlines its relative `@import`s and turns `layer()` into `@layer` blocks); files
-  passed as `css` (`tokens.css`, `fonts.css`) are copied verbatim, so their `@import`s and
-  `url()`s stay as written, and so are files and folders passed as `copy` (the tokens' `docs.json`,
-  the font files).
+  passed as `css` (`fonts.css`) are copied verbatim, so their `@import`s and `url()`s stay as
+  written, and so are files and folders passed as `copy` (the font files).
 
 ## Tokens
 
-`packages/tokens` holds DTCG 2025.10 sources (`contour.resolver.json` + `src/**/*.tokens.json`)
-built with **Style Dictionary** into `src/generated/tokens.css` (`--ct-*` custom properties),
-`src/generated/vars.ts` (typed `var(--ct-…)` references to semantic tokens) and
-`src/generated/docs.json` (every custom property with its value and alias per theme, published
-as `@contour-ui/tokens/docs.json`; the docs site's Tokens page reads it) and
-`src/generated/soundor.ts` (the values of the semantic tokens per theme for Soundor styles:
-hex colors, px and ms as numbers, named easings, text styles as `Text` styles, no shadows;
-`@contour-ui/tokens/soundor`, printed by `scripts/build-soundor.ts`). The generated files are
-committed;
-`vp test` fails when they drift from the sources.
+`packages/tokens` holds DTCG 2025.10 sources: `contour.resolver.json` (the themes and the files
+they read), `src/**/*.tokens.json`, and `contrast.json` (the contrast targets of the color roles).
+Everything it ships is written by `vp pack` alone, through the `designTokens` plugin of
+`@contour-ui/tokens-compiler` (`configs/tokens-compiler`, see its README) as
+`packages/tokens/vite.config.ts` configures it: `tokens.css` (`--ct-*` custom properties), the
+`index` entry (typed `var(--ct-…)` references to semantic tokens, the themes), `docs.json` (every
+custom property with its value and alias per theme; the docs site's Tokens page reads it) and the
+`soundor` entry (`@contour-ui/tokens/soundor`: the values of the semantic tokens per theme for
+Soundor styles, hex colors, px and ms as numbers, named easings, text styles as `Text` styles, no
+shadows). These files exist only in `dist`, which the workspace reads (see "Source export
+condition"): `prepare` builds it after an install, the `post-merge` and `post-checkout` hooks
+after a pull or a branch switch, `vp run ready` and CI before anything else.
 
+- After editing token JSON: `vp run @contour-ui/tokens#build` (a cache hit when nothing changed),
+  or keep `vp -C packages/tokens pack --watch` running beside a dev server, which then reloads
+  `tokens.css` in place.
+- The build is the test: it fails with every problem at once, each with its token and theme. Built
+  in: aliases point at tokens, every theme has the same tokens with the same types and
+  descriptions, names are kebab-case. Configured: the WCAG contrast pairs of `contrast.json` in
+  every theme (a foreground `color.syntax.*` stands for every syntax role, each at least 4.5:1 on
+  `bg.inset`, the code block background), a palette stop as light in every hue (`paletteSteps`),
+  every color inside sRGB (`gamut`). The package has no tests of its own.
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
 - The tokens name the font families; the files are in `@contour-ui/fonts` (see "Fonts").
-- After editing token JSON: `vp run --filter @contour-ui/tokens tokens` (or `dev` to watch).
 - Every `*.tokens.json` is a source, edited by hand; nothing generates them. A color is oklch, three
   numbers (`hex` is left out: the build derives what a platform needs). The palette follows a
   formula, every hue on one lightness curve and inside sRGB: for a change across it,
@@ -228,8 +242,6 @@ committed;
   is in both theme files, with the same description. DTCG aliases cannot change alpha, so a
   translucent role (`overlay.scrim`) copies its palette color with an alpha: keep the copy equal to
   the palette color.
-- Contrast targets for the color roles are tests (`packages/tokens/src/contrast.test.ts`); every
-  `syntax.*` role is at least 4.5:1 on `bg.inset`, the code block background.
 - Sizes are per-size roles: `size.control-sm|md|lg` are control heights, and `lg` has its own
   label (`text.label-lg`), side padding (`space.control-inset-lg`) and icon gap
   (`space.control-gap-lg`), where `sm` and `md` share `text.label`, `space.control-inset` and
@@ -242,9 +254,9 @@ committed;
   header). A size, line height or letter spacing a style needs is a base step first
   (`base.font-size.*`, `base.line-height.*`, `base.letter-spacing.*`). `letter-spacing` is not part
   of the `font` shorthand: set `--ct-text-<style>-letter-spacing` beside it.
-- Every token stays expressible in Soundor (`packages/tokens/src/soundor.test.ts`): colors inside
-  sRGB, lengths in px, a named easing for every `cubicBezier`, no `calc()` / `color-mix()` in
-  values.
+- Every token stays expressible in Soundor: the compiler's Soundor platform fails the build on a
+  color outside sRGB, a length not in px or a curve without a named easing (`easing` in
+  `packages/tokens/vite.config.ts`).
 
 See [`packages/tokens/README.md`](packages/tokens/README.md).
 

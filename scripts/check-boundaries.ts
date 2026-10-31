@@ -9,6 +9,8 @@
  *   right kind per package;
  * - CSS `@import` / `@plugin` / `@reference` must not reach forbidden packages;
  * - the dev `exports` map and `publishConfig.exports` must stay in sync;
+ * - every entry maps to its source under the source condition, except in a package the workspace
+ *   reads from `dist` (`source: 'dist'`), which maps none;
  * - every package ships a copy of the root `LICENSE`.
  *
  * Run: `vp run boundaries` (or `node scripts/check-boundaries.ts`).
@@ -229,6 +231,33 @@ function checkExports(file: string, json: PackageJson): void {
   checkTypesFirst(file, published, '');
 }
 
+/**
+ * Every entry maps to its source under the source condition, its first one, so the workspace
+ * builds nothing first; a package read from `dist` maps none.
+ */
+function checkSourceCondition(file: string, pkg: LayerPackage, json: PackageJson): void {
+  if (typeof json.exports !== 'object' || json.exports === null) {
+    return;
+  }
+  const entries: ReadonlyArray<readonly [string, unknown]> = Object.entries(json.exports);
+  for (const [subpath, target] of entries) {
+    const conditions = typeof target === 'object' && target !== null ? Object.keys(target) : [];
+    if (pkg.source === 'dist') {
+      if (conditions.includes(SOURCE_CONDITION)) {
+        report(
+          file,
+          `exports["${subpath}"]: ${scoped(pkg.name)} is read from dist; drop "${SOURCE_CONDITION}".`,
+        );
+      }
+    } else if (subpath !== './package.json' && conditions[0] !== SOURCE_CONDITION) {
+      report(
+        file,
+        `exports["${subpath}"]: map it to its source under "${SOURCE_CONDITION}" first.`,
+      );
+    }
+  }
+}
+
 function isPackageJson(value: unknown): value is PackageJson {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -263,6 +292,7 @@ function checkPackageJson(dir: string, pkg: LayerPackage): void {
 
   checkReact(file, pkg, json);
   checkExports(file, json);
+  checkSourceCondition(file, pkg, json);
 }
 
 // ---------------------------------------------------------------------------
