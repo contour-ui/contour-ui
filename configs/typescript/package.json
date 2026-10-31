@@ -12,6 +12,7 @@
     "./base.json": "./base.json",
     "./library.json": "./library.json",
     "./library-dom.json": "./library-dom.json",
+    "./library-soundor.json": "./library-soundor.json",
     "./app.json": "./app.json",
     "./node.json": "./node.json"
   }

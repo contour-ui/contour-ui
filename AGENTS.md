@@ -16,6 +16,7 @@ point **down** the table only — never up, never sideways.
 | 1 logic      | `core`           | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`         | —                                                     |
 | 2 headless   | `headless-react` | unstyled React DOM components + hooks (Ark UI–like)                                                                                    | `core`                                                |
 | 3 styled     | `react`          | styled React DOM components in two sections: **Essentials** (the everyday components) and **Audio** (the controls of audio-plugin UIs) | `headless-react`, `tokens`, `icons`, `fonts`          |
+| 3 styled     | `soundor`        | styled components for Soundor plugin UIs, on `@soundor/react`, drawn with the token values of `@contour-ui/tokens/soundor`             | `tokens`, `icons`, `fonts`                            |
 | 4 docs       | `fumadocs`       | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui`                                            | `react`, `headless-react`, `tokens`, `icons`, `fonts` |
 
 Rules:
@@ -27,7 +28,8 @@ Rules:
   tests), `tsconfig.react-test.json` (browser tests) and `tsconfig.config.json` (`vite.config.ts`).
 - `core` also runs on Hermes (the Soundor runtime, built without `Intl`): no `Intl`, no
   locale-dependent methods (`toLocale*`, `localeCompare`), no `eval` / `new Function`, no
-  `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`.
+  `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`
+  and `packages/soundor/src/**`.
 - Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`,
   `collection/` and `positioning/`.
 - `headless-react` must not depend on `tokens`, `icons`, `fonts` or the styled package. Peers:
@@ -38,6 +40,12 @@ Rules:
 - Styled CSS is one file per component (`src/<component>/<component>.css`) with plain rules, added
   to `src/styles.css` as `@import './<component>/<component>.css' layer(contour.components);`.
   Unlayered app CSS overrides it.
+- `soundor` has no DOM: it builds on `@soundor/react` (`View`, `Text`, `Pressable`…), never
+  `react-dom` (lint and `boundaries` reject it), and type-checks with `lib: ["ES2023"]` and
+  `@soundor/environment` in `types` (preset `library-soundor.json`). Its styles are objects of the
+  values of `@contour-ui/tokens/soundor`, per theme from its `ThemeProvider`; components read
+  them with `useTokens()` (the default theme outside a provider). Peers: `react`,
+  `@soundor/react`.
 - `react` / `react-dom` are never regular `dependencies`; in `headless-react`, the styled package
   and `fumadocs` they are required peers. `fumadocs` also takes `fumadocs-core` as a peer
   (`@types/mdx` as an optional one).
@@ -58,8 +66,9 @@ only.
 `@contour-ui/[platform-][headless-]framework`. The web (React DOM) is the default platform:
 `@contour-ui/react` holds the styled components, `@contour-ui/headless-react` the unstyled ones.
 Another framework gets its pair (`vue`, `headless-vue`). The Soundor plugin UI runtime gets
-`@contour-ui/soundor` and `@contour-ui/soundor-headless` (**do not create yet**; no `-react` suffix
-while Soundor runs React only). Packages free of frameworks and platforms keep plain names
+`@contour-ui/soundor` and `@contour-ui/soundor-headless` (no `-react` suffix while Soundor runs
+React only; `soundor-headless` is not created yet: it comes with the first Soundor component that
+has behavior). Packages free of frameworks and platforms keep plain names
 (`tokens`, `icons`, `core`, whose machine hooks in `core/react` serve React DOM and Soundor alike),
 and an integration with another ecosystem is named after it: `@contour-ui/fumadocs` is the docs
 layout for sites on fumadocs-core.
@@ -91,7 +100,7 @@ Run checks **one task at a time** (`vp check`, then `vp test`, then `vp run -r b
 narrow with `vp -C <dir>` or `--filter` for focused changes. First time on a machine:
 `vp exec playwright install chromium` for browser-mode tests.
 
-**Screenshot tests.** Every state of the styled packages (`react`, `fumadocs`) is a screenshot test
+**Screenshot tests.** Every state of the styled packages (`react`, `soundor`, `fumadocs`) is a screenshot test
 in `src/<component>/<component>.visual.test.tsx`: `visualStates({ '<state>': { render } })` from the
 package's `src/test-utils/visual.ts(x)`, on `defineVisualStates()` of
 `@contour-ui/vite-config/visual`. Each state, named in lowercase words with dashes, is a test per
@@ -127,6 +136,16 @@ rules via `lint.overrides`). Package `vite.config.ts` files hold Vite, Vitest an
 `querySelector('#' + id)`, which throws for ids that start with a digit: write
 ``querySelector(`#${CSS.escape(id)}`)``. It also turns `getAttribute('data-x')` into `dataset.x`,
 which `noPropertyAccessFromIndexSignature` rejects: write `dataset['x']`.
+
+**Soundor tests** (`packages/soundor`) run in Node on Soundor's simulated runtime: the Vitest
+environment `soundor` with `soundor({ config: false })` from `@soundor/vitest`, and
+`@soundor/testing-library` (`render`, `screen`, `userEvent`, `advanceTime`). It simulates the node
+tree, input, focus and accessibility, not layout or pixels; find nodes by role and name (there are
+no test ids). The plugin reads `test.environment` at the top level of the package config, not
+inside `projects`, and writes `.soundor/generated/*.d.ts` on every run (git-ignored). Test files
+type-check with `@soundor/vitest` in `types` (`tsconfig.test.json`), which declares
+`toHaveFocus`. `@soundor/react` props take no explicit `undefined`: pass an optional prop only
+when it is set.
 
 Browser tests never fake `requestAnimationFrame`: overlay effects start on the next frame (fake
 `setTimeout` / `clearTimeout` only). Once a new dependency is reachable from tests, the first
@@ -475,8 +494,8 @@ loaded after every package stylesheet).
 - Commits follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/):
   `type(scope): subject`, imperative, starting lowercase, no trailing period, header within 72
   characters, body separated by a blank line. Types: `feat`, `fix`, `docs`, `test`, `refactor`,
-  `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`, `icons`, `core`,
-  `headless-react`, `react`, `fumadocs`) or `docs`, `playground`, `config`, `repo`; no
+  `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`, `icons`, `fonts`,
+  `core`, `headless-react`, `react`, `soundor`, `fumadocs`) or `docs`, `playground`, `config`, `repo`; no
   scope when a change spans several packages.
 - Hooks live in `.vite-hooks/` (installed by `vp config` on `vp install`): `pre-commit` runs
   `vp staged` (`vp check --fix` on staged files), `commit-msg` runs

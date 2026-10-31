@@ -10,6 +10,7 @@
       "@contour-ui/core",
       "@contour-ui/headless-react",
       "@contour-ui/react",
+      "@contour-ui/soundor",
       "@contour-ui/fumadocs"
     ]
   ],

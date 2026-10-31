@@ -23,7 +23,9 @@ export type ReactPolicy =
   /** `react` only as an optional peer; `react-dom` not at all. */
   | 'optional-peer'
   /** Both `react` and `react-dom` as required peers. */
-  | 'peer';
+  | 'peer'
+  /** `react` and `@soundor/react` as required peers; `react-dom` not at all (no DOM). */
+  | 'soundor-peer';
 
 export interface LayerPackage {
   /** Directory under `packages/` and the unscoped npm name. */
@@ -77,6 +79,13 @@ export const LAYERS: readonly LayerPackage[] = [
     purpose: 'styled React DOM components: Essentials and Audio',
     allowed: ['headless-react', 'tokens', 'icons', 'fonts'],
     react: 'peer',
+  },
+  {
+    name: 'soundor',
+    layer: 3,
+    purpose: 'styled components for Soundor plugin UIs, on @soundor/react',
+    allowed: ['tokens', 'icons', 'fonts'],
+    react: 'soundor-peer',
   },
   {
     name: 'fumadocs',
@@ -188,6 +197,11 @@ const reactPattern: RestrictedPattern = {
   message: `core is React-free; React code belongs in ${scoped('core')}/react (${CORE_REACT_DIR}/).`,
 };
 
+const reactDomPattern: RestrictedPattern = {
+  group: ['react-dom', 'react-dom/*'],
+  message: 'Soundor has no DOM: build on @soundor/react, never react-dom.',
+};
+
 const relativeDirPattern = (dirs: readonly string[], message: string): RestrictedPattern => ({
   regex: String.raw`^\.{1,2}/(.*/)?(${dirs.map((dir) => escapeRegex(dir)).join('|')})(/|$)`,
   message,
@@ -211,7 +225,8 @@ export function boundaryLintOverrides(): OxlintOverride[] {
     const root = `packages/${pkg.name}`;
 
     if (pkg.name !== 'core') {
-      overrides.push(restrict([`${root}/**`], base));
+      const dom = pkg.react === 'soundor-peer' ? [reactDomPattern] : [];
+      overrides.push(restrict([`${root}/**`], [...base, ...dom]));
       continue;
     }
 

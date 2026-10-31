@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "contour-ui Soundor library (no DOM)",
+  "extends": "./library.json",
+  "compilerOptions": {
+    // Soundor runs ES2023 with its own modules and a subset of the Web globals, without a DOM:
+    // the package lists `@soundor/environment` in `types`, so `window` or `document` fail to
+    // compile instead of failing in a plugin.
+    "lib": ["ES2023"],
+    "jsx": "react-jsx"
+  }
+}

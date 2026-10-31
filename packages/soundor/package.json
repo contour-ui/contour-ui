@@ -1,0 +1,59 @@
+{
+  "name": "@contour-ui/soundor",
+  "version": "0.0.0",
+  "description": "contour-ui styled components for Soundor plugin UIs, built on @soundor/react and the contour-ui tokens.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contour-ui/contour-ui.git",
+    "directory": "packages/soundor"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "@contour-ui/source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch"
+  },
+  "dependencies": {
+    "@contour-ui/tokens": "workspace:*"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@contour-ui/vite-config": "workspace:*",
+    "@soundor/environment": "catalog:",
+    "@soundor/react": "catalog:",
+    "@soundor/testing-library": "catalog:",
+    "@soundor/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "react": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest": "catalog:",
+    "vitest-environment-soundor": "catalog:"
+  },
+  "peerDependencies": {
+    "@soundor/react": "^0.14.0",
+    "react": "^19.3.0"
+  }
+}

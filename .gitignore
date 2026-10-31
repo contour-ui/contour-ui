@@ -7,6 +7,8 @@ build
 .react-router
 .source
 *.tsbuildinfo
+# Declarations @soundor/vitest writes on every test run
+.soundor/
 
 # Test output
 coverage

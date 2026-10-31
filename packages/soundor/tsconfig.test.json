@@ -1,0 +1,8 @@
+{
+  // Tests: @soundor/vitest declares the matchers the soundor environment adds (toHaveFocus).
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["@soundor/environment", "@soundor/vitest"]
+  },
+  "include": ["src/**/*.test.ts", "src/**/*.test.tsx"]
+}

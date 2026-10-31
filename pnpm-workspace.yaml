@@ -56,6 +56,16 @@ catalog:
   '@floating-ui/core': 1.8.0
   '@floating-ui/dom': 1.8.0
 
+  # Soundor, the plugin UI runtime of @contour-ui/soundor (one release group: keep them equal).
+  # @soundor/react is its renderer, a peer of the package; @soundor/environment declares the
+  # runtime's modules and Web globals, in place of the DOM; the rest runs its tests in Node on a
+  # simulated runtime.
+  '@soundor/react': 0.14.0
+  '@soundor/environment': 0.14.0
+  '@soundor/vitest': 0.14.0
+  '@soundor/testing-library': 0.14.0
+  vitest-environment-soundor: 0.14.0
+
   # Design tokens (packages/tokens build-time tooling)
   style-dictionary: 5.7.0
   culori: 4.0.2
@@ -105,6 +115,14 @@ minimumReleaseAgeExclude:
   - vite-plus@1.4.0
   - fumadocs-core@16.17.8
   - fumadocs-mdx@15.4.10
+  - '@soundor/config@0.14.0'
+  - '@soundor/core@0.14.0'
+  - '@soundor/environment@0.14.0'
+  - '@soundor/react@0.14.0'
+  - '@soundor/test-runtime@0.14.0'
+  - '@soundor/testing-library@0.14.0'
+  - '@soundor/vitest@0.14.0'
+  - vitest-environment-soundor@0.14.0
 
 # Dependency build scripts. esbuild's postinstall only verifies its binary; the
 # platform binary arrives via optionalDependencies, so the script is not needed.

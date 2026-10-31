@@ -5,7 +5,8 @@
  * - every `dependencies` / `peerDependencies` / `devDependencies` /
  *   `optionalDependencies` entry must respect the layer table, even when nothing
  *   imports it yet;
- * - `react` / `react-dom` must be declared with the right kind per package;
+ * - `react` / `react-dom` (and `@soundor/react` for Soundor packages) must be declared with the
+ *   right kind per package;
  * - CSS `@import` / `@plugin` / `@reference` must not reach forbidden packages;
  * - the dev `exports` map and `publishConfig.exports` must stay in sync;
  * - every package ships a copy of the root `LICENSE`.
@@ -147,6 +148,24 @@ function checkReact(file: string, pkg: LayerPackage, json: PackageJson): void {
       }
       if (peers['react-dom'] !== undefined) {
         report(file, 'react-dom must not be a peer: core has no DOM.');
+      }
+      break;
+    }
+    case 'soundor-peer': {
+      for (const dependency of ['react', '@soundor/react']) {
+        if (peers[dependency] === undefined) {
+          report(file, `${dependency} must be declared in peerDependencies.`);
+        } else if (optional(dependency)) {
+          report(file, `${dependency} must be a required (non-optional) peer.`);
+        }
+      }
+      for (const field of DEPENDENCY_FIELDS) {
+        if (json[field]?.['react-dom'] !== undefined) {
+          report(file, `react-dom must not be declared (found in ${field}): Soundor has no DOM.`);
+        }
+      }
+      if (json.dependencies?.['@soundor/react'] !== undefined) {
+        report(file, '@soundor/react must never be a regular dependency: the plugin brings it.');
       }
       break;
     }

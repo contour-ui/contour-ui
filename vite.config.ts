@@ -2,7 +2,7 @@ import { defineConfig } from 'vite-plus';
 
 import { boundaryLintOverrides } from './scripts/layers.ts';
 
-/** Globals core must not touch: Hermes (Soundor) does not provide them. */
+/** Globals core and the Soundor packages must not touch: Hermes (Soundor) does not provide them. */
 const HERMES_MISSING_GLOBALS = ['Intl', 'SharedArrayBuffer', 'Atomics', 'Float16Array'];
 
 /** Locale-dependent methods: their results depend on Intl, which Hermes lacks. */
@@ -56,6 +56,8 @@ export default defineConfig({
       '**/coverage/**',
       '**/.react-router/**',
       '**/.source/**',
+      // Declarations @soundor/vitest writes on every test run.
+      '**/.soundor/**',
     ],
     plugins: ['typescript', 'unicorn', 'import', 'oxc', 'promise'],
     jsPlugins: [{ name: 'vite-plus', specifier: 'vite-plus/oxlint-plugin' }],
@@ -116,14 +118,15 @@ export default defineConfig({
       // Layer boundaries, generated from scripts/layers.ts (shared with check-boundaries).
       ...boundaryLintOverrides(),
       {
-        // core also runs on Hermes (the Soundor plugin UI runtime), built without Intl.
-        files: ['packages/core/src/**'],
+        // core and the Soundor packages run on Hermes (the Soundor plugin UI runtime), built
+        // without Intl.
+        files: ['packages/core/src/**', 'packages/soundor/src/**'],
         rules: {
           'no-restricted-globals': [
             'error',
             ...HERMES_MISSING_GLOBALS.map((name) => ({
               name,
-              message: `${name} is not available on Hermes (Soundor), where core also runs.`,
+              message: `${name} is not available on Hermes, the JavaScript engine of Soundor.`,
             })),
           ],
           'no-restricted-properties': [
@@ -143,6 +146,7 @@ export default defineConfig({
           'packages/core/src/react/**',
           'packages/headless-react/**',
           'packages/react/**',
+          'packages/soundor/**',
           'apps/**',
           '**/*.tsx',
         ],
