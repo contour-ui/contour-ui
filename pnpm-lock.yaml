@@ -154,7 +154,7 @@ importers:
         version: 3.0.3
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:configs/typescript
+        version: link:tooling/typescript
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -224,10 +224,10 @@ importers:
         version: 4.14.0(playwright-core@1.64.1)
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       '@playwright/test':
         specifier: 'catalog:'
         version: 1.64.1
@@ -279,10 +279,10 @@ importers:
     devDependencies:
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -319,7 +319,7 @@ importers:
     devDependencies:
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@soundor/config':
         specifier: 'catalog:'
         version: 0.14.0
@@ -333,66 +333,6 @@ importers:
         specifier: 'catalog:'
         version: 0.14.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.14.0)(publint@0.3.25)(typescript@7.0.2)
 
-  configs/tokens-compiler:
-    dependencies:
-      culori:
-        specifier: 'catalog:'
-        version: 4.0.2
-      style-dictionary:
-        specifier: 'catalog:'
-        version: 5.7.0
-    devDependencies:
-      '@contour-ui/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript
-      '@types/culori':
-        specifier: 'catalog:'
-        version: 4.0.1
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.19.2
-      vite-plus:
-        specifier: 'catalog:'
-        version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
-
-  configs/typescript: {}
-
-  configs/vite:
-    devDependencies:
-      '@contour-ui/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.19.2
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.3.0(@types/react@19.3.0)
-      '@vitest/browser-playwright':
-        specifier: 'catalog:'
-        version: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(vitest@5.0.5)(yaml@2.9.1)
-      axe-core:
-        specifier: 'catalog:'
-        version: 4.14.0
-      playwright:
-        specifier: 'catalog:'
-        version: 1.64.1
-      react:
-        specifier: 'catalog:'
-        version: 19.3.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.3.1(react@19.3.1)
-      vite-plus:
-        specifier: 'catalog:'
-        version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
-      vitest-browser-react:
-        specifier: 'catalog:'
-        version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
-
   packages/core:
     dependencies:
       '@floating-ui/core':
@@ -401,10 +341,10 @@ importers:
     devDependencies:
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
@@ -428,10 +368,10 @@ importers:
     devDependencies:
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       vite-plus:
         specifier: 'catalog:'
         version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
@@ -456,10 +396,10 @@ importers:
         version: link:../fonts
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       '@types/mdx':
         specifier: 'catalog:'
         version: 2.0.14
@@ -502,10 +442,10 @@ importers:
     devDependencies:
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -535,10 +475,10 @@ importers:
     devDependencies:
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       lucide-static:
         specifier: 'catalog:'
         version: 1.61.0
@@ -569,10 +509,10 @@ importers:
         version: link:../fonts
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -609,10 +549,10 @@ importers:
     devDependencies:
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       '@soundor/environment':
         specifier: 'catalog:'
         version: 0.14.0
@@ -648,13 +588,13 @@ importers:
     devDependencies:
       '@contour-ui/tokens-compiler':
         specifier: workspace:*
-        version: link:../../configs/tokens-compiler
+        version: link:../../tooling/tokens-compiler
       '@contour-ui/typescript-config':
         specifier: workspace:*
-        version: link:../../configs/typescript
+        version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
-        version: link:../../configs/vite
+        version: link:../../tooling/vite
       '@types/culori':
         specifier: 'catalog:'
         version: 4.0.1
@@ -664,6 +604,66 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+
+  tooling/tokens-compiler:
+    dependencies:
+      culori:
+        specifier: 'catalog:'
+        version: 4.0.2
+      style-dictionary:
+        specifier: 'catalog:'
+        version: 5.7.0
+    devDependencies:
+      '@contour-ui/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript
+      '@types/culori':
+        specifier: 'catalog:'
+        version: 4.0.1
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.2
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+
+  tooling/typescript: {}
+
+  tooling/vite:
+    devDependencies:
+      '@contour-ui/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.2
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitest/browser-playwright':
+        specifier: 'catalog:'
+        version: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(vitest@5.0.5)(yaml@2.9.1)
+      axe-core:
+        specifier: 'catalog:'
+        version: 4.14.0
+      playwright:
+        specifier: 'catalog:'
+        version: 1.64.1
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+      vitest-browser-react:
+        specifier: 'catalog:'
+        version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
 
 packages:
 

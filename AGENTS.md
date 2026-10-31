@@ -84,7 +84,7 @@ has behavior). Packages free of frameworks and platforms keep plain names
 and an integration with another ecosystem is named after it: `@contour-ui/fumadocs` is the docs
 layout for sites on fumadocs-core.
 
-Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `configs/`
+Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `tooling/`
 (`@contour-ui/typescript-config`, `@contour-ui/vite-config`, `@contour-ui/tokens-compiler`).
 Neither is ever published.
 
@@ -193,7 +193,7 @@ Every published package maps its entry points to sources under the custom
   `exports` equal `publishConfig.exports`, and the workspace reads its `dist`, built first
   (`vp run @contour-ui/tokens#build`). `source: 'dist'` in `scripts/layers.ts` marks it, and
   `vp run boundaries` holds both rules.
-- TypeScript picks it up via `customConditions` (`configs/typescript/base.json`).
+- TypeScript picks it up via `customConditions` (`tooling/typescript/base.json`).
 - Vite (apps, tests) via the `contourSource()` plugin from `@contour-ui/vite-config`. So the
   playground, docs and tests consume **sources** with HMR, without building packages first.
 - pnpm swaps in `publishConfig.exports` on pack/publish, so published consumers never see the
@@ -212,7 +212,7 @@ Every published package maps its entry points to sources under the custom
 `packages/tokens` holds DTCG 2025.10 sources: `contour.resolver.json` (the themes and the files
 they read), `src/**/*.tokens.json`, and `contrast.json` (the contrast targets of the color roles).
 Everything it ships is written by `vp pack` alone, through the `designTokens` plugin of
-`@contour-ui/tokens-compiler` (`configs/tokens-compiler`, see its README) as
+`@contour-ui/tokens-compiler` (`tooling/tokens-compiler`, see its README) as
 `packages/tokens/vite.config.ts` configures it: `tokens.css` (`--ct-*` custom properties), the
 `index` entry (typed `var(--ct-…)` references to semantic tokens, the themes), `docs.json` (every
 custom property with its value and alias per theme; the docs site's Tokens page reads it) and the

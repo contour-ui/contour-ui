@@ -191,7 +191,7 @@ export default defineConfig({
     projects: [
       'packages/*/vite.config.ts',
       '!packages/tokens/vite.config.ts',
-      'configs/tokens-compiler/vite.config.ts',
+      'tooling/tokens-compiler/vite.config.ts',
     ],
   },
 

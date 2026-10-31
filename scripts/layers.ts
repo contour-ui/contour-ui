@@ -104,7 +104,7 @@ export const LAYERS: readonly LayerPackage[] = [
 ];
 
 /**
- * Private workspace tooling (under `configs/`). Any package may list these in
+ * Private workspace tooling (under `tooling/`). Any package may list these in
  * `devDependencies`, never in `dependencies` or `peerDependencies`.
  */
 export const TOOLING_PACKAGES: readonly string[] = [
@@ -130,7 +130,7 @@ export interface InternalRule {
 }
 
 /**
- * The layers of the tokens compiler (`configs/tokens-compiler`, D22 in the plan): the model is the
+ * The layers of the tokens compiler (`tooling/tokens-compiler`): the model is the
  * contract; only `resolve/` reads the sources, checks read the model alone, outputs write it
  * through a platform.
  */
@@ -140,7 +140,7 @@ const tokensCompilerRule = (
   message: string,
 ): InternalRule => ({
   pkg: 'tokens-compiler',
-  root: 'configs/tokens-compiler',
+  root: 'tooling/tokens-compiler',
   dir: `src/${dir}`,
   forbid,
   message: `tokens-compiler: ${message}`,
