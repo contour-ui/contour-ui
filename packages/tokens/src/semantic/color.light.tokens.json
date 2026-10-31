@@ -7,51 +7,51 @@
       "surface": { "$value": "{base.color.neutral.0}", "$description": "Panels and sections placed on the canvas." },
       "raised":  { "$value": "{base.color.neutral.0}", "$description": "Menus, popovers, tooltips." },
       "inset":   { "$value": "{base.color.neutral.100}", "$description": "Recessed wells: knob and slider tracks, meter backgrounds, displays." },
-      "hover":   { "$value": "{base.color.neutral.100}" }
+      "hover":   { "$value": "{base.color.neutral.100}", "$description": "Hover background for controls and rows." }
     },
     "fg": {
-      "default":  { "$value": "{base.color.neutral.950}" },
-      "muted":    { "$value": "{base.color.neutral.700}" },
-      "subtle":   { "$value": "{base.color.neutral.600}", "$description": "Units, tick labels, secondary metadata." },
-      "disabled": { "$value": "{base.color.neutral.300}" }
+      "default":  { "$value": "{base.color.neutral.950}", "$description": "Primary text and icons on any bg role." },
+      "muted":    { "$value": "{base.color.neutral.700}", "$description": "Secondary text: control labels, descriptions." },
+      "subtle":   { "$value": "{base.color.neutral.600}", "$description": "Units, tick labels, secondary metadata; not for body text." },
+      "disabled": { "$value": "{base.color.neutral.300}", "$description": "Disabled labels, exempt from contrast targets." }
     },
     "border": {
-      "subtle":  { "$value": "{base.color.neutral.100}" },
-      "default": { "$value": "{base.color.neutral.200}" },
-      "strong":  { "$value": "{base.color.neutral.500}" },
-      "focus":   { "$value": "{base.color.blue.600}" }
+      "subtle":  { "$value": "{base.color.neutral.100}", "$description": "Dividers between sections; decorative." },
+      "default": { "$value": "{base.color.neutral.200}", "$description": "Panel and card outlines." },
+      "strong":  { "$value": "{base.color.neutral.500}", "$description": "Control boundaries: inputs, selects." },
+      "focus":   { "$value": "{base.color.blue.600}", "$description": "The focus ring." }
     },
     "accent": {
-      "fill":       { "$value": "{base.color.blue.600}" },
-      "fill-hover": { "$value": "{base.color.blue.700}" },
+      "fill":       { "$value": "{base.color.blue.600}", "$description": "Solid accent background: primary buttons, active toggles, value arcs on inset tracks." },
+      "fill-hover": { "$value": "{base.color.blue.700}", "$description": "Hover state of accent.fill." },
       "on-fill":    { "$value": "{base.color.neutral.0}", "$description": "Text and icons placed on accent.fill." },
-      "fg":         { "$value": "{base.color.blue.700}" },
-      "bg":         { "$value": "{base.color.blue.50}" },
-      "border":     { "$value": "{base.color.blue.300}" }
+      "fg":         { "$value": "{base.color.blue.700}", "$description": "Accent text and icons, on bg.surface or on accent.bg." },
+      "bg":         { "$value": "{base.color.blue.50}", "$description": "Quiet accent tint behind accent.fg: selected items, banners." },
+      "border":     { "$value": "{base.color.blue.300}", "$description": "Outline paired with accent.bg." }
     },
     "danger": {
-      "fill":       { "$value": "{base.color.red.600}" },
-      "fill-hover": { "$value": "{base.color.red.700}" },
-      "on-fill":    { "$value": "{base.color.neutral.0}" },
-      "fg":         { "$value": "{base.color.red.700}" },
-      "bg":         { "$value": "{base.color.red.50}" },
-      "border":     { "$value": "{base.color.red.300}" }
+      "fill":       { "$value": "{base.color.red.600}", "$description": "Solid danger background." },
+      "fill-hover": { "$value": "{base.color.red.700}", "$description": "Hover state of danger.fill." },
+      "on-fill":    { "$value": "{base.color.neutral.0}", "$description": "Text and icons placed on danger.fill." },
+      "fg":         { "$value": "{base.color.red.700}", "$description": "Danger text and icons, on bg.surface or on danger.bg." },
+      "bg":         { "$value": "{base.color.red.50}", "$description": "Quiet danger tint behind danger.fg, as in an alert." },
+      "border":     { "$value": "{base.color.red.300}", "$description": "Outline paired with danger.bg." }
     },
     "success": {
-      "fill":       { "$value": "{base.color.green.600}" },
-      "fill-hover": { "$value": "{base.color.green.700}" },
-      "on-fill":    { "$value": "{base.color.neutral.0}" },
-      "fg":         { "$value": "{base.color.green.700}" },
-      "bg":         { "$value": "{base.color.green.50}" },
-      "border":     { "$value": "{base.color.green.300}" }
+      "fill":       { "$value": "{base.color.green.600}", "$description": "Solid success background." },
+      "fill-hover": { "$value": "{base.color.green.700}", "$description": "Hover state of success.fill." },
+      "on-fill":    { "$value": "{base.color.neutral.0}", "$description": "Text and icons placed on success.fill." },
+      "fg":         { "$value": "{base.color.green.700}", "$description": "Success text and icons, on bg.surface or on success.bg." },
+      "bg":         { "$value": "{base.color.green.50}", "$description": "Quiet success tint behind success.fg, as in an alert." },
+      "border":     { "$value": "{base.color.green.300}", "$description": "Outline paired with success.bg." }
     },
     "warning": {
-      "fill":       { "$value": "{base.color.yellow.600}" },
-      "fill-hover": { "$value": "{base.color.yellow.700}" },
-      "on-fill":    { "$value": "{base.color.neutral.0}" },
-      "fg":         { "$value": "{base.color.yellow.700}" },
-      "bg":         { "$value": "{base.color.yellow.50}" },
-      "border":     { "$value": "{base.color.yellow.300}" }
+      "fill":       { "$value": "{base.color.yellow.600}", "$description": "Solid warning background." },
+      "fill-hover": { "$value": "{base.color.yellow.700}", "$description": "Hover state of warning.fill." },
+      "on-fill":    { "$value": "{base.color.neutral.0}", "$description": "Text and icons placed on warning.fill." },
+      "fg":         { "$value": "{base.color.yellow.700}", "$description": "Warning text and icons, on bg.surface or on warning.bg." },
+      "bg":         { "$value": "{base.color.yellow.50}", "$description": "Quiet warning tint behind warning.fg, as in an alert." },
+      "border":     { "$value": "{base.color.yellow.300}", "$description": "Outline paired with warning.bg." }
     },
     "overlay": {
       "scrim": { "$value": { "colorSpace": "oklch", "components": [0.165, 0.008, 255], "alpha": 0.4 }, "$description": "Translucent backdrop behind dialogs and drawers." }

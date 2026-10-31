@@ -4,17 +4,17 @@
     "duration": {
       "$type": "duration",
       "$description": "Short durations: plugin UI is a tool, value feedback must feel instant.",
-      "0":   { "$value": { "value": 0,   "unit": "ms" } },
-      "80":  { "$value": { "value": 80,  "unit": "ms" } },
-      "100": { "$value": { "value": 100, "unit": "ms" } },
-      "150": { "$value": { "value": 150, "unit": "ms" } },
-      "250": { "$value": { "value": 250, "unit": "ms" } }
+      "0":   { "$value": { "value": 0,   "unit": "ms" }, "$description": "No transition." },
+      "80":  { "$value": { "value": 80,  "unit": "ms" }, "$description": "Hover, press and toggle feedback (motion.feedback)." },
+      "100": { "$value": { "value": 100, "unit": "ms" }, "$description": "Menus, popovers and dialogs closing (motion.exit)." },
+      "150": { "$value": { "value": 150, "unit": "ms" }, "$description": "Menus and popovers appearing (motion.enter)." },
+      "250": { "$value": { "value": 250, "unit": "ms" }, "$description": "Larger panel transitions." }
     },
     "easing": {
       "$type": "cubicBezier",
-      "standard": { "$value": [0.2, 0, 0, 1] },
-      "out":      { "$value": [0, 0, 0.2, 1] },
-      "in":       { "$value": [0.4, 0, 1, 1] }
+      "standard": { "$value": [0.2, 0, 0, 1], "$description": "The default curve, for enter transitions." },
+      "out":      { "$value": [0, 0, 0.2, 1], "$description": "Feedback: a fast start and a soft stop." },
+      "in":       { "$value": [0.4, 0, 1, 1], "$description": "Exits." }
     }
   }
 }

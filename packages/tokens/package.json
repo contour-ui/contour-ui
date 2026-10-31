@@ -45,7 +45,7 @@
     "access": "public"
   },
   "scripts": {
-    "design-system": "node scripts/to-design-system.ts"
+    "design-system": "node tools/design-system.ts"
   },
   "devDependencies": {
     "@contour-ui/tokens-compiler": "workspace:*",
