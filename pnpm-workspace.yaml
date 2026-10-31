@@ -65,6 +65,12 @@ catalog:
   '@soundor/vitest': 0.14.0
   '@soundor/testing-library': 0.14.0
   vitest-environment-soundor: 0.14.0
+  # The sandbox app (apps/soundor-sandbox): the CLI, the config schema and its two runtimes.
+  # The runtimes have their own versions; the CLI and the config follow the release group.
+  soundor: 0.14.0
+  '@soundor/config': 0.14.0
+  '@soundor/juce-runtime': 0.13.0
+  '@soundor/web-runtime': 0.10.0
 
   # Design tokens (packages/tokens build-time tooling)
   style-dictionary: 5.7.0
@@ -123,6 +129,14 @@ minimumReleaseAgeExclude:
   - '@soundor/testing-library@0.14.0'
   - '@soundor/vitest@0.14.0'
   - vitest-environment-soundor@0.14.0
+  - '@soundor/devtools-client@0.14.0'
+  - '@soundor/devtools-protocol@0.14.0'
+  - '@soundor/devtools-server@0.14.0'
+  - '@soundor/driver@0.14.0'
+  - '@soundor/engine@0.5.0'
+  - '@soundor/juce-runtime@0.13.0'
+  - '@soundor/web-runtime@0.10.0'
+  - soundor@0.14.0
 
 # Dependency build scripts. esbuild's postinstall only verifies its binary; the
 # platform binary arrives via optionalDependencies, so the script is not needed.

@@ -1,0 +1,6 @@
+{
+  // The plugin UI runs in Soundor's runtime, not a browser: ES2023 and the Web subset Soundor
+  // declares, no DOM. The config file is Node code, read by the Soundor CLI.
+  "files": [],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.config.json" }]
+}

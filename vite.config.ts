@@ -165,6 +165,7 @@ export default defineConfig({
         files: [
           '**/vite.config.ts',
           '**/playwright.config.ts',
+          '**/soundor.config.ts',
           'apps/docs/e2e/global-setup.ts',
           'apps/docs/react-router.config.ts',
           'apps/docs/app/root.tsx',

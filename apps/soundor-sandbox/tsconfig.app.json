@@ -1,0 +1,9 @@
+{
+  "extends": "@contour-ui/typescript-config/library-soundor.json",
+  "compilerOptions": {
+    "types": ["@soundor/environment"],
+    "isolatedDeclarations": false,
+    "declaration": false
+  },
+  "include": ["src"]
+}

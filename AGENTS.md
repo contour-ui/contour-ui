@@ -92,20 +92,21 @@ Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `confi
 Vite+ wraps everything; there is no Turborepo, ESLint or Prettier. `vp <cmd>` runs a
 built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` task.
 
-| Command                                  | What it does                                                                                                                                               |
-| ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vp install`                             | install (pnpm 12, pinned via `packageManager`)                                                                                                             |
-| `vp check` / `vp check --fix`            | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                                             |
-| `vp run boundaries`                      | layer boundary check for `package.json` / CSS                                                                                                              |
-| `vp test`                                | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages); screenshot tests only with `vp run visual` |
-| `vp -C packages/react test`              | one package's tests                                                                                                                                        |
-| `vp run -r build`                        | build everything (`vp pack` + publint + attw for packages, apps)                                                                                           |
-| `vp run visual` / `vp run visual:update` | screenshot tests (`*.visual.test.tsx`) with Chromium of the pinned Playwright Linux image, in Docker; `:update` rewrites every screenshot                  |
-| `vp -C apps/docs run dev` / `run build`  | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                                               |
-| `vp -C apps/docs run e2e`                | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                                             |
-| `vp -C apps/playground dev`              | Vite + React sandbox on http://localhost:5173                                                                                                              |
-| `vp run changeset`                       | record a changeset (all published packages are versioned together)                                                                                         |
-| `vp run ready`                           | everything CI's first three jobs run                                                                                                                       |
+| Command                                               | What it does                                                                                                                                                                                 |
+| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vp install`                                          | install (pnpm 12, pinned via `packageManager`)                                                                                                                                               |
+| `vp check` / `vp check --fix`                         | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                                                                               |
+| `vp run boundaries`                                   | layer boundary check for `package.json` / CSS                                                                                                                                                |
+| `vp test`                                             | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages); screenshot tests only with `vp run visual`                                   |
+| `vp -C packages/react test`                           | one package's tests                                                                                                                                                                          |
+| `vp run -r build`                                     | build everything (`vp pack` + publint + attw for packages, apps)                                                                                                                             |
+| `vp run visual` / `vp run visual:update`              | screenshot tests (`*.visual.test.tsx`) with Chromium of the pinned Playwright Linux image, in Docker; `:update` rewrites every screenshot                                                    |
+| `vp -C apps/docs run dev` / `run build`               | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                                                                                 |
+| `vp -C apps/docs run e2e`                             | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                                                                               |
+| `vp -C apps/playground dev`                           | Vite + React sandbox on http://localhost:5173                                                                                                                                                |
+| `vp -C apps/soundor-sandbox run dev:web` / `dev:juce` | the Soundor sandbox (`apps/soundor-sandbox`): the `@contour-ui/soundor` components in the web runtime or natively (JUCE Standalone); build the package first, the Soundor CLI bundles `dist` |
+| `vp run changeset`                                    | record a changeset (all published packages are versioned together)                                                                                                                           |
+| `vp run ready`                                        | everything CI's first three jobs run                                                                                                                                                         |
 
 Run checks **one task at a time** (`vp check`, then `vp test`, then `vp run -r build`);
 narrow with `vp -C <dir>` or `--filter` for focused changes. First time on a machine:
