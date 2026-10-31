@@ -1,7 +1,7 @@
 packages:
   - packages/*
   - apps/*
-  - configs/*
+  - tooling/*
 
 # Every external dependency version comes from the catalog below.
 catalogMode: strict

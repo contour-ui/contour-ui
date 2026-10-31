@@ -133,7 +133,7 @@ out, since the build derives what each platform needs.
 ## Build
 
 `vp pack` writes everything the package ships into `dist`, nothing else: the `designTokens` plugin
-of `@contour-ui/tokens-compiler` (private tooling, `configs/tokens-compiler`) turns the sources into
+of `@contour-ui/tokens-compiler` (private tooling, `tooling/tokens-compiler`) turns the sources into
 a model and the model into `tokens.css`, the `index` and `soundor` entries and `docs.json`, as
 `vite.config.ts` lists them. The workspace reads this `dist` like any consumer, so it is built
 before anything that reads it: after an install (`prepare`), a pull or a branch switch (the git
