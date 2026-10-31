@@ -1,6 +1,6 @@
 /**
- * DTCG 2025.10 helpers shared by the Style Dictionary build, the generators and
- * the design-system export: JSON navigation, value parsing and CSS formatting.
+ * DTCG 2025.10 helpers shared by the Style Dictionary build, the tests and the
+ * design-system export: JSON navigation, value parsing and CSS formatting.
  * Values are parsed from `unknown` and fail loudly on shapes we do not support.
  */
 import { readFileSync } from 'node:fs';
@@ -59,7 +59,6 @@ export interface ColorValue {
   readonly colorSpace: string;
   readonly components: readonly ColorComponent[];
   readonly alpha: number;
-  readonly hex: string | undefined;
 }
 
 export interface UnitValue {
@@ -72,7 +71,7 @@ const isComponent = (value: unknown): value is ColorComponent =>
 
 export function parseColor(value: unknown, what: string): ColorValue {
   const color = expectRecord(value, what);
-  const { colorSpace, components, alpha, hex } = color;
+  const { colorSpace, components, alpha } = color;
   if (typeof colorSpace !== 'string' || !Array.isArray(components)) {
     throw new TypeError(`${what}: expected a DTCG color object with colorSpace and components.`);
   }
@@ -84,7 +83,6 @@ export function parseColor(value: unknown, what: string): ColorValue {
     colorSpace,
     components: parsed,
     alpha: typeof alpha === 'number' ? alpha : 1,
-    hex: typeof hex === 'string' ? hex : undefined,
   };
 }
 

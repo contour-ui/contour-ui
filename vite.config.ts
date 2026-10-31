@@ -32,7 +32,7 @@ export default defineConfig({
       '**/CHANGELOG.md',
       '.changeset/*.md',
       'pnpm-lock.yaml',
-      // Token data keeps its authored (and generator-written) layout.
+      // Token data keeps its authored layout.
       'packages/tokens/contour.resolver.json',
       'packages/tokens/src/**/*.tokens.json',
       // Style Dictionary output, compared byte-for-byte by src/generated.test.ts.
@@ -178,7 +178,7 @@ export default defineConfig({
       },
       {
         // Repo scripts are CLIs: printing is their output.
-        files: ['scripts/**', 'apps/*/scripts/**', 'packages/*/scripts/**'],
+        files: ['scripts/**', 'apps/*/scripts/**', 'packages/*/scripts/**', 'packages/*/tools/**'],
         rules: {
           'no-console': 'off',
         },

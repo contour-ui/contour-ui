@@ -3,188 +3,69 @@
   "color": {
     "$type": "color",
     "bg": {
-      "canvas": {
-        "$value": "{base.color.neutral.50}",
-        "$description": "Plugin window background, the lowest layer."
-      },
-      "surface": {
-        "$value": "{base.color.neutral.0}",
-        "$description": "Panels and sections placed on the canvas."
-      },
-      "raised": {
-        "$value": "{base.color.neutral.0}",
-        "$description": "Menus, popovers, tooltips."
-      },
-      "inset": {
-        "$value": "{base.color.neutral.100}",
-        "$description": "Recessed wells: knob and slider tracks, meter backgrounds, displays."
-      },
-      "hover": {
-        "$value": "{base.color.neutral.100}"
-      }
+      "canvas":  { "$value": "{base.color.neutral.50}", "$description": "Plugin window background, the lowest layer." },
+      "surface": { "$value": "{base.color.neutral.0}", "$description": "Panels and sections placed on the canvas." },
+      "raised":  { "$value": "{base.color.neutral.0}", "$description": "Menus, popovers, tooltips." },
+      "inset":   { "$value": "{base.color.neutral.100}", "$description": "Recessed wells: knob and slider tracks, meter backgrounds, displays." },
+      "hover":   { "$value": "{base.color.neutral.100}" }
     },
     "fg": {
-      "default": {
-        "$value": "{base.color.neutral.950}"
-      },
-      "muted": {
-        "$value": "{base.color.neutral.700}"
-      },
-      "subtle": {
-        "$value": "{base.color.neutral.600}",
-        "$description": "Units, tick labels, secondary metadata."
-      },
-      "disabled": {
-        "$value": "{base.color.neutral.300}"
-      }
+      "default":  { "$value": "{base.color.neutral.950}" },
+      "muted":    { "$value": "{base.color.neutral.700}" },
+      "subtle":   { "$value": "{base.color.neutral.600}", "$description": "Units, tick labels, secondary metadata." },
+      "disabled": { "$value": "{base.color.neutral.300}" }
     },
     "border": {
-      "subtle": {
-        "$value": "{base.color.neutral.100}"
-      },
-      "default": {
-        "$value": "{base.color.neutral.200}"
-      },
-      "strong": {
-        "$value": "{base.color.neutral.500}"
-      },
-      "focus": {
-        "$value": "{base.color.blue.600}"
-      }
+      "subtle":  { "$value": "{base.color.neutral.100}" },
+      "default": { "$value": "{base.color.neutral.200}" },
+      "strong":  { "$value": "{base.color.neutral.500}" },
+      "focus":   { "$value": "{base.color.blue.600}" }
     },
     "accent": {
-      "fill": {
-        "$value": "{base.color.blue.600}"
-      },
-      "fill-hover": {
-        "$value": "{base.color.blue.700}"
-      },
-      "on-fill": {
-        "$value": "{base.color.neutral.0}",
-        "$description": "Text and icons placed on accent.fill."
-      },
-      "fg": {
-        "$value": "{base.color.blue.700}"
-      },
-      "bg": {
-        "$value": "{base.color.blue.50}"
-      },
-      "border": {
-        "$value": "{base.color.blue.300}"
-      }
+      "fill":       { "$value": "{base.color.blue.600}" },
+      "fill-hover": { "$value": "{base.color.blue.700}" },
+      "on-fill":    { "$value": "{base.color.neutral.0}", "$description": "Text and icons placed on accent.fill." },
+      "fg":         { "$value": "{base.color.blue.700}" },
+      "bg":         { "$value": "{base.color.blue.50}" },
+      "border":     { "$value": "{base.color.blue.300}" }
     },
     "danger": {
-      "fill": {
-        "$value": "{base.color.red.600}"
-      },
-      "fill-hover": {
-        "$value": "{base.color.red.700}"
-      },
-      "on-fill": {
-        "$value": "{base.color.neutral.0}"
-      },
-      "fg": {
-        "$value": "{base.color.red.700}"
-      },
-      "bg": {
-        "$value": "{base.color.red.50}"
-      },
-      "border": {
-        "$value": "{base.color.red.300}"
-      }
+      "fill":       { "$value": "{base.color.red.600}" },
+      "fill-hover": { "$value": "{base.color.red.700}" },
+      "on-fill":    { "$value": "{base.color.neutral.0}" },
+      "fg":         { "$value": "{base.color.red.700}" },
+      "bg":         { "$value": "{base.color.red.50}" },
+      "border":     { "$value": "{base.color.red.300}" }
     },
     "success": {
-      "fill": {
-        "$value": "{base.color.green.600}"
-      },
-      "fill-hover": {
-        "$value": "{base.color.green.700}"
-      },
-      "on-fill": {
-        "$value": "{base.color.neutral.0}"
-      },
-      "fg": {
-        "$value": "{base.color.green.700}"
-      },
-      "bg": {
-        "$value": "{base.color.green.50}"
-      },
-      "border": {
-        "$value": "{base.color.green.300}"
-      }
+      "fill":       { "$value": "{base.color.green.600}" },
+      "fill-hover": { "$value": "{base.color.green.700}" },
+      "on-fill":    { "$value": "{base.color.neutral.0}" },
+      "fg":         { "$value": "{base.color.green.700}" },
+      "bg":         { "$value": "{base.color.green.50}" },
+      "border":     { "$value": "{base.color.green.300}" }
     },
     "warning": {
-      "fill": {
-        "$value": "{base.color.yellow.600}"
-      },
-      "fill-hover": {
-        "$value": "{base.color.yellow.700}"
-      },
-      "on-fill": {
-        "$value": "{base.color.neutral.0}"
-      },
-      "fg": {
-        "$value": "{base.color.yellow.700}"
-      },
-      "bg": {
-        "$value": "{base.color.yellow.50}"
-      },
-      "border": {
-        "$value": "{base.color.yellow.300}"
-      }
+      "fill":       { "$value": "{base.color.yellow.600}" },
+      "fill-hover": { "$value": "{base.color.yellow.700}" },
+      "on-fill":    { "$value": "{base.color.neutral.0}" },
+      "fg":         { "$value": "{base.color.yellow.700}" },
+      "bg":         { "$value": "{base.color.yellow.50}" },
+      "border":     { "$value": "{base.color.yellow.300}" }
     },
     "overlay": {
-      "scrim": {
-        "$value": {
-          "colorSpace": "oklch",
-          "components": [
-            0.165,
-            0.008,
-            255
-          ],
-          "alpha": 0.4,
-          "hex": "#0c0f12"
-        },
-        "$description": "Translucent backdrop behind dialogs and drawers."
-      }
+      "scrim": { "$value": { "colorSpace": "oklch", "components": [0.165, 0.008, 255], "alpha": 0.4 }, "$description": "Translucent backdrop behind dialogs and drawers." }
     },
     "syntax": {
-      "constant": {
-        "$value": "{base.color.orange.700}",
-        "$description": "Numbers, language constants, constant and object names, CSS properties."
-      },
-      "string": {
-        "$value": "{base.color.yellow.700}",
-        "$description": "Unquoted strings: shell arguments, Markdown code."
-      },
-      "comment": {
-        "$value": "{base.color.neutral.700}",
-        "$description": "Comments."
-      },
-      "keyword": {
-        "$value": "{base.color.violet.700}",
-        "$description": "Keywords and storage modifiers, JSON keys."
-      },
-      "parameter": {
-        "$value": "{base.color.red.700}",
-        "$description": "Function parameters."
-      },
-      "function": {
-        "$value": "{base.color.blue.700}",
-        "$description": "Functions, types and classes, JSX and HTML attributes."
-      },
-      "string-expression": {
-        "$value": "{base.color.green.700}",
-        "$description": "Quoted and template strings, regular expressions, tag names."
-      },
-      "punctuation": {
-        "$value": "{base.color.neutral.800}",
-        "$description": "Separators and argument punctuation."
-      },
-      "link": {
-        "$value": "{base.color.cyan.700}",
-        "$description": "Links in Markdown."
-      }
+      "constant":          { "$value": "{base.color.orange.700}", "$description": "Numbers, language constants, constant and object names, CSS properties." },
+      "string":            { "$value": "{base.color.yellow.700}", "$description": "Unquoted strings: shell arguments, Markdown code." },
+      "comment":           { "$value": "{base.color.neutral.700}", "$description": "Comments." },
+      "keyword":           { "$value": "{base.color.violet.700}", "$description": "Keywords and storage modifiers, JSON keys." },
+      "parameter":         { "$value": "{base.color.red.700}", "$description": "Function parameters." },
+      "function":          { "$value": "{base.color.blue.700}", "$description": "Functions, types and classes, JSX and HTML attributes." },
+      "string-expression": { "$value": "{base.color.green.700}", "$description": "Quoted and template strings, regular expressions, tag names." },
+      "punctuation":       { "$value": "{base.color.neutral.800}", "$description": "Separators and argument punctuation." },
+      "link":              { "$value": "{base.color.cyan.700}", "$description": "Links in Markdown." }
     }
   }
 }

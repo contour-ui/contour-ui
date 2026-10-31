@@ -57,7 +57,6 @@
     "build": "vp pack",
     "dev": "node --watch-path=src/base --watch-path=src/semantic --watch-path=contour.resolver.json scripts/build.ts",
     "tokens": "node scripts/build.ts",
-    "generate": "node scripts/generate.ts && node scripts/build.ts",
     "design-system": "node scripts/to-design-system.ts"
   },
   "devDependencies": {

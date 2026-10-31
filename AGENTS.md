@@ -218,11 +218,15 @@ committed;
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
 - The tokens name the font families; the files are in `@contour-ui/fonts` (see "Fonts").
 - After editing token JSON: `vp run --filter @contour-ui/tokens tokens` (or `dev` to watch).
-- The palette and the color roles are generated: edit `scripts/palette.ts` /
-  `scripts/semantic-colors.ts`, then `vp run --filter @contour-ui/tokens generate`.
-- Color roles and shadows are per theme (`src/semantic/{color,shadow}.<theme>.tokens.json`); a
-  translucent role (`overlay.scrim`) copies its palette color with an alpha in
-  `scripts/semantic-colors.ts`.
+- Every `*.tokens.json` is a source, edited by hand; nothing generates them. A color is oklch, three
+  numbers (`hex` is left out: the build derives what a platform needs). The palette follows a
+  formula, every hue on one lightness curve and inside sRGB: for a change across it,
+  `node packages/tokens/tools/palette.ts` rewrites `src/base/color.tokens.json` from
+  `tools/palette.ts`; review that diff like any edit.
+- Color roles and shadows are per theme (`src/semantic/{color,shadow}.<theme>.tokens.json`): a role
+  is in both theme files, with the same description. DTCG aliases cannot change alpha, so a
+  translucent role (`overlay.scrim`) copies its palette color with an alpha: keep the copy equal to
+  the palette color.
 - Contrast targets for the color roles are tests (`packages/tokens/src/contrast.test.ts`); every
   `syntax.*` role is at least 4.5:1 on `bg.inset`, the code block background.
 - Sizes are per-size roles: `size.control-sm|md|lg` are control heights, and `lg` has its own
