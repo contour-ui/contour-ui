@@ -230,7 +230,12 @@ after a pull or a branch switch, `vp run ready` and CI before anything else.
   descriptions, names are kebab-case. Configured: the WCAG contrast pairs of `contrast.json` in
   every theme (a foreground `color.syntax.*` stands for every syntax role, each at least 4.5:1 on
   `bg.inset`, the code block background), a palette stop as light in every hue (`paletteSteps`),
-  every color inside sRGB (`gamut`). The package has no tests of its own.
+  every color inside sRGB (`gamut`), a `$description` on every semantic token (`described`). The
+  package has no tests of its own.
+- A description lives only in `$description`, in both theme files for a color role: the typed
+  entries carry it as JSDoc and `docs.json` as `description`. The export for the Design System
+  page (`vp run --filter @contour-ui/tokens design-system <out-dir>`, `tools/design-system.ts`)
+  reads it from the same model, and the contrast targets from `contrast.json`.
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
 - The tokens name the font families; the files are in `@contour-ui/fonts` (see "Fonts").
 - Every `*.tokens.json` is a source, edited by hand; nothing generates them. A color is oklch, three

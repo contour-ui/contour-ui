@@ -3,6 +3,7 @@
   "text": {
     "$type": "typography",
     "heading": {
+      "$description": "Panel and section titles.",
       "$value": {
         "fontFamily": "{base.font-family.ui}",
         "fontSize": "{base.font-size.14}",
@@ -12,6 +13,7 @@
       }
     },
     "body": {
+      "$description": "Descriptions, menu items, longer text.",
       "$value": {
         "fontFamily": "{base.font-family.ui}",
         "fontSize": "{base.font-size.13}",

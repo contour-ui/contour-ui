@@ -1,6 +1,7 @@
 import {
   contrast,
   css,
+  described,
   designTokens,
   docs,
   gamut,
@@ -38,7 +39,12 @@ export default defineConfig({
           values(soundor, { entry: 'soundor', name: 'soundorTokens' }),
         ],
         // Rules beyond the built-in ones; a violation fails the build.
-        checks: [contrast('./contrast.json'), paletteSteps('base.color'), gamut('srgb')],
+        checks: [
+          contrast('./contrast.json'),
+          paletteSteps('base.color'),
+          gamut('srgb'),
+          described(['semantic']),
+        ],
       }),
     ],
   }),

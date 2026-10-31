@@ -123,7 +123,7 @@ src/base/*.tokens.json         raw values: the palette and the scales
 src/semantic/*.tokens.json     roles: color and shadow files per theme, the rest theme-independent
 contrast.json                  the WCAG contrast targets of the color roles
 vite.config.ts                 what the package ships and the checks of its build
-scripts/to-design-system.ts    export for the Design System page
+tools/design-system.ts         export for the Design System page
 tools/palette.ts               the formula of the palette, run by hand for changes across it
 ```
 
@@ -150,7 +150,8 @@ The build is the test: it fails with every problem at once, each with its token 
 in: aliases point at tokens, every theme has the same tokens with the same types and descriptions,
 names are kebab-case. `vite.config.ts` adds the WCAG contrast pairs of `contrast.json` in both
 themes (a foreground `color.syntax.*` stands for every syntax role), a palette stop as light in
-every hue, and every color inside sRGB. The Soundor entry fails the build on a value Soundor
+every hue, every color inside sRGB, and a `$description` on every semantic token, which the typed
+entries carry as JSDoc and `docs.json` as `description`. The Soundor entry fails the build on a value Soundor
 cannot take: a length not in px, a curve without a named easing.
 
 The palette follows a formula: every hue shares one lightness curve, so a stop is equally light in
