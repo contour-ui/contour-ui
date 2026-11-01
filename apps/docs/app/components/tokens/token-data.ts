@@ -1,6 +1,7 @@
 /**
  * The data of the Tokens page: `@contour-ui/tokens/docs.json`, which the token build writes with
- * `tokens.css`, so the page lists what the stylesheet declares, with each theme's value.
+ * `tokens.css`, so the page lists what the stylesheet declares, with each theme's value, and the
+ * contrast of the color pairs as the build measures it.
  */
 import { defaultTheme, themes } from '@contour-ui/tokens';
 import type { Theme } from '@contour-ui/tokens';
@@ -12,6 +13,8 @@ export interface ThemeValue {
   readonly value: string;
   /** The custom property it refers to, `null` for literals and shorthands. */
   readonly alias: string | null;
+  /** The resolved value as DTCG data: numbers to read, where `value` is CSS to show. */
+  readonly dtcg: unknown;
 }
 
 /** One custom property of `tokens.css`, as `docs.json` describes it. */
@@ -27,7 +30,26 @@ export interface TokenDoc {
   readonly themes: Readonly<Record<Theme, ThemeValue>>;
 }
 
+/** A pair of colors with the contrast the token build measures for it in each theme. */
+export interface ContrastDoc {
+  /** The DTCG path of the foreground color, such as `color.fg.muted`. */
+  readonly foreground: string;
+  readonly background: string;
+  /** `text`, or `ui` for a part of the interface such as a border. */
+  readonly kind: string;
+  /** The least ratio the build holds the pair to, `null` for a pair WCAG exempts. */
+  readonly minimum: number | null;
+  /** The WCAG 2 ratio in each theme, cut to two decimals. */
+  readonly ratios: Readonly<Record<Theme, number>>;
+}
+
 const TOKENS: readonly TokenDoc[] = docs.tokens;
+const CONTRAST: readonly ContrastDoc[] = docs.contrast;
+
+/** The text pairs of a color role as the foreground, such as those of `color.fg.muted`. */
+export function textContrastOf(token: string): ContrastDoc[] {
+  return CONTRAST.filter((pair) => pair.foreground === token && pair.kind === 'text');
+}
 
 /** The whole tokens under a DTCG path prefix, such as `color.` or `size.`, in the order of the CSS. */
 export function tokensIn(prefix: string): TokenDoc[] {
