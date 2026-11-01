@@ -483,7 +483,7 @@ lockup, the mark alone below 30rem; its favicons are in `public/`), the parts of
 (`app/components/home/`: the hero, the sequencer of the parts of contour-ui, the docs index), the
 components of the Tokens page (`app/components/tokens/`: built from `@contour-ui/tokens/docs.json`
 as the page renders, each color group in a panel per theme with `data-theme`, the contrast of
-text roles computed from their `oklch()` values), and its own CSS (`app/app.css`, unlayered,
+text roles as the token build measures it, from the `contrast` list), and its own CSS (`app/app.css`, unlayered,
 loaded after every package stylesheet).
 
 - The home page is built from `@contour-ui/react` and the tokens only. A component that does not
