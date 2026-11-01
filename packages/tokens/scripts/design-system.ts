@@ -5,7 +5,7 @@
  *
  *   vp run --filter @contour-ui/tokens design-system <out-dir>
  */
-import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { buildTokens, formatProblems, webPlatform } from '@contour-ui/tokens-compiler';
@@ -18,7 +18,7 @@ if (outDir === undefined) {
 
 const web = webPlatform({ prefix: 'ct', themeAttribute: 'data-theme' });
 const build = await buildTokens(
-  { resolver: './contour.resolver.json', outputs: [] },
+  { resolver: './contour.resolver.json', contrast: './contrast.json', outputs: [] },
   path.resolve(import.meta.dirname, '..'),
 );
 if (build.model === undefined || build.problems.length > 0) {
@@ -72,49 +72,13 @@ function cssAmount(value: unknown, what: string): string {
   return `${String(value.value)}${String(value.unit)}`;
 }
 
-/** The contrast targets of `contrast.json`, by foreground token id. */
-const targets = new Map<string, Array<{ readonly background: string; readonly minimum: number }>>();
-const contrast: unknown = JSON.parse(
-  readFileSync(path.resolve(import.meta.dirname, '..', 'contrast.json'), 'utf8'),
-);
-interface Pair {
-  readonly foreground: string;
-  readonly background: string;
-  readonly minimum: number;
-}
-const isPair = (value: unknown): value is Pair =>
-  typeof value === 'object' &&
-  value !== null &&
-  'foreground' in value &&
-  typeof value.foreground === 'string' &&
-  'background' in value &&
-  typeof value.background === 'string' &&
-  'minimum' in value &&
-  typeof value.minimum === 'number';
-const pairs: readonly unknown[] =
-  typeof contrast === 'object' &&
-  contrast !== null &&
-  'pairs' in contrast &&
-  Array.isArray(contrast.pairs)
-    ? contrast.pairs
-    : [];
-for (const pair of pairs) {
-  if (!isPair(pair)) {
-    throw new TypeError(`contrast.json: ${JSON.stringify(pair)} is not a pair.`);
-  }
-  const { foreground, background, minimum } = pair;
-  const ids = foreground.endsWith('.*')
-    ? tokensOf(foreground.slice(0, -2)).map((token) => token.id)
-    : [foreground];
-  for (const id of ids) {
-    targets.set(id, [...(targets.get(id) ?? []), { background, minimum }]);
-  }
-}
-
 /** ` 4.5:1 on bg.surface and bg.raised.`: the contrast targets of a color role, from `contrast.json`. */
 function contrastNote(token: ModelToken): string {
   const byMinimum = new Map<number, string[]>();
-  for (const { background, minimum } of targets.get(token.id) ?? []) {
+  for (const { foreground, background, minimum } of model.contrast) {
+    if (foreground !== token.id || minimum === undefined) {
+      continue;
+    }
     byMinimum.set(minimum, [
       ...(byMinimum.get(minimum) ?? []),
       background.replace(/^color\./u, ''),

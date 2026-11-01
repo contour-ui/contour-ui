@@ -49,6 +49,18 @@ export interface ModelToken {
   readonly themes: Readonly<Record<string, ThemeValue>>;
 }
 
+/** Two colors components put on screen together, and the contrast they must reach. */
+export interface ContrastPair {
+  /** The foreground's token id. */
+  readonly foreground: string;
+  /** The background's token id. */
+  readonly background: string;
+  /** Text (WCAG 1.4.3 and 1.4.6) or a part of the interface, such as a border (1.4.11). */
+  readonly kind: 'text' | 'ui';
+  /** The least ratio, in every theme; `undefined` for a pair WCAG exempts, such as disabled text. */
+  readonly minimum: number | undefined;
+}
+
 export interface TokenModel {
   /** The DTCG resolver file the model comes from. */
   readonly resolver: string;
@@ -57,6 +69,8 @@ export interface TokenModel {
   readonly defaultTheme: string;
   /** In the order of the sources. */
   readonly tokens: readonly ModelToken[];
+  /** The contrast pairs, a foreground ending in `.*` expanded to every color of its group. */
+  readonly contrast: readonly ContrastPair[];
   token(id: string): ModelToken | undefined;
 }
 

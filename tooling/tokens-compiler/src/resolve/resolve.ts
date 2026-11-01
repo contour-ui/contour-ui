@@ -12,6 +12,7 @@ import { TOKEN_TYPES, createModel } from '../model/model.ts';
 import type { ModelToken, ThemeValue, Tier, TokenModel, TokenType } from '../model/model.ts';
 import { attemptBuild, messageOf } from '../model/problem.ts';
 import type { Report } from '../model/problem.ts';
+import { readContrastPairs } from './contrast.ts';
 import { loadResolver } from './resolver.ts';
 import type { ThemeResolver } from './resolver.ts';
 
@@ -116,6 +117,8 @@ export async function resolveModel(
   resolverFile: string,
   reader: SourceReader,
   report: Report,
+  /** The contrast pairs, if any (`contrast.ts`). */
+  contrastFile?: string,
 ): Promise<TokenModel | undefined> {
   const resolver = attemptBuild(report, SOURCE, () =>
     loadResolver(resolverFile, (file) => reader.readJson(file)),
@@ -216,10 +219,18 @@ export async function resolveModel(
     });
   }
 
+  const contrast =
+    contrastFile === undefined
+      ? []
+      : (attemptBuild(report, 'contrast', () =>
+          readContrastPairs(contrastFile, tokens, reader, report),
+        ) ?? []);
+
   return createModel({
     resolver: resolverFile,
     themes,
     defaultTheme: resolver.defaultContext,
     tokens,
+    contrast,
   });
 }

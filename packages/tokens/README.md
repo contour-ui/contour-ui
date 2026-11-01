@@ -75,8 +75,9 @@ text.label; // { fontFamily: 'IBM Plex Sans', fontSize: 11, fontWeight: 500, lin
 
 ## Token data
 
-`@contour-ui/tokens/docs.json` lists every custom property of `tokens.css` with its resolved value
-and alias in each theme, for token references such as the Tokens page of the docs site:
+`@contour-ui/tokens/docs.json` lists every custom property of `tokens.css` with its resolved value,
+alias and DTCG value in each theme, and the contrast of the color pairs as the build measures it,
+for token references such as the Tokens page of the docs site:
 
 ```ts
 import docs from '@contour-ui/tokens/docs.json' with { type: 'json' };
@@ -95,25 +96,50 @@ docs.tokens.find((doc) => doc.name === '--ct-color-bg-surface');
       "part": null,
       "description": "Panels and sections placed on the canvas.",
       "themes": {
-        "dark": { "value": "oklch(0.21 0.008 255)", "alias": "--ct-base-color-neutral-950" },
-        "light": { "value": "oklch(1 0 0)", "alias": "--ct-base-color-neutral-0" }
+        "dark": {
+          "value": "oklch(0.21 0.008 255)",
+          "alias": "--ct-base-color-neutral-950",
+          "dtcg": {
+            "colorSpace": "oklch",
+            "components": [0.21, 0.008, 255],
+            "alpha": 1,
+            "hex": "#16191c"
+          }
+        },
+        "light": {
+          "value": "oklch(1 0 0)",
+          "alias": "--ct-base-color-neutral-0",
+          "dtcg": { "colorSpace": "oklch", "components": [1, 0, 0], "alpha": 1, "hex": "#ffffff" }
+        }
       }
+    }
+  ],
+  "contrast": [
+    {
+      "foreground": "color.fg.muted",
+      "background": "color.bg.surface",
+      "kind": "text",
+      "minimum": 4.5,
+      "ratios": { "dark": 9.14, "light": 7.14 }
     }
   ]
 }
 ```
 
-| Field         | What it holds                                                                                                                            |
-| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `name`        | the custom property, `--ct-…`                                                                                                            |
-| `token`       | the DTCG path of the token it comes from, such as `color.bg.surface` or `text.label`                                                     |
-| `type`        | the DTCG type: `color`, `dimension`, `typography`, `shadow`, `transition`…                                                               |
-| `part`        | the sub-value of a composite token: `font` (the shorthand of a text style), `fontSize`, `letterSpacing`…; `null` for a whole token       |
-| `description` | the token's `$description`, or `null`                                                                                                    |
-| `themes`      | per theme (`dark`, `light`): `value`, fully resolved, and `alias`, the custom property it refers to (`null` for literals and shorthands) |
+| Field         | What it holds                                                                                                                                                                                                                                                                                          |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `name`        | the custom property, `--ct-…`                                                                                                                                                                                                                                                                          |
+| `token`       | the DTCG path of the token it comes from, such as `color.bg.surface` or `text.label`                                                                                                                                                                                                                   |
+| `type`        | the DTCG type: `color`, `dimension`, `typography`, `shadow`, `transition`…                                                                                                                                                                                                                             |
+| `part`        | the sub-value of a composite token: `font` (the shorthand of a text style), `fontSize`, `letterSpacing`…; `null` for a whole token                                                                                                                                                                     |
+| `description` | the token's `$description`, or `null`                                                                                                                                                                                                                                                                  |
+| `themes`      | per theme (`dark`, `light`): `value`, fully resolved CSS; `alias`, the custom property it refers to (`null` for literals and shorthands); `dtcg`, the resolved value as DTCG data (a color with its `alpha` and sRGB `hex`, a dimension `{ value, unit }`; the `font` part holds the whole text style) |
 
-Tokens come in the order of `tokens.css`, `--ct-base-*` included, since aliases point at them. The
-file is generated with the CSS, so it changes with it.
+Tokens come in the order of `tokens.css`, `--ct-base-*` included, since aliases point at them.
+`contrast` lists the pairs of `contrast.json`, `color.syntax.*` expanded: `kind` is `text` or `ui`
+(a part of the interface, such as a border or a fill), `minimum` the least ratio the build holds
+the pair to (`null` for disabled text, which WCAG exempts), `ratios` the WCAG 2 ratio in each
+theme, cut to two decimals. The file is generated with the CSS, so it changes with it.
 
 ## Sources
 

@@ -7,37 +7,44 @@ import { buildTokens } from '../build.ts';
 import type { FixtureEdits } from '../test-fixtures/fixture.ts';
 import { RESOLVER, removeFixtures, writeFixture } from '../test-fixtures/fixture.ts';
 import type { TokenCheck } from './check.ts';
-import { contrast } from './contrast.ts';
 import { described } from './described.ts';
 import { gamut } from './gamut.ts';
 import { paletteSteps } from './palette-steps.ts';
 
 afterAll(removeFixtures);
 
-async function problemsOf(check: TokenCheck, edits?: FixtureEdits, pairs?: unknown) {
+async function problemsOf(check?: TokenCheck, edits?: FixtureEdits, pairs?: unknown) {
   const directory = writeFixture(edits);
   if (pairs !== undefined) {
     writeFileSync(path.join(directory, 'contrast.json'), JSON.stringify({ pairs }));
   }
-  const build = await buildTokens({ resolver: RESOLVER, outputs: [], checks: [check] }, directory);
+  const build = await buildTokens(
+    {
+      resolver: RESOLVER,
+      ...(pairs === undefined ? {} : { contrast: 'contrast.json' }),
+      outputs: [],
+      checks: check === undefined ? [] : [check],
+    },
+    directory,
+  );
   return build.problems;
 }
 
-const pair = (foreground: string, background: string, minimum: number) => ({
+const pair = (foreground: string, background: string, minimum: number | null) => ({
   foreground,
   background,
   minimum,
 });
 
-describe('contrast', () => {
+describe('contrast, built in when the build has pairs', () => {
   it('passes the pairs that meet their ratio in every theme', async () => {
     const pairs = [pair('color.fg.default', 'color.bg.surface', 7)];
-    expect(await problemsOf(contrast('contrast.json'), {}, pairs)).toEqual([]);
+    expect(await problemsOf(undefined, {}, pairs)).toEqual([]);
   });
 
   it('reports a pair below its ratio, with the ratio it has', async () => {
     const pairs = [pair('color.fg.default', 'color.bg.surface', 12)];
-    expect(await problemsOf(contrast('contrast.json'), {}, pairs)).toEqual([
+    expect(await problemsOf(undefined, {}, pairs)).toEqual([
       {
         source: 'contrast',
         token: 'color.fg.default',
@@ -53,12 +60,17 @@ describe('contrast', () => {
     ]);
   });
 
+  it('only measures a pair without a minimum', async () => {
+    const pairs = [pair('color.fg.default', 'color.bg.surface', null)];
+    expect(await problemsOf(undefined, {}, pairs)).toEqual([]);
+  });
+
   it('measures every color of a group for a foreground ending in .*', async () => {
     const edits = {
       dark: { 'color.fg.muted': { $value: '{base.color.gray.900}' } },
       light: { 'color.fg.muted': { $value: '{base.color.gray.100}' } },
     };
-    const problems = await problemsOf(contrast('contrast.json'), edits, [
+    const problems = await problemsOf(undefined, edits, [
       pair('color.fg.*', 'color.bg.surface', 4.5),
     ]);
     expect(problems.map(({ token, theme }) => `${token} ${theme}`)).toEqual([
@@ -68,7 +80,7 @@ describe('contrast', () => {
   });
 
   it('composites a translucent foreground over its background', async () => {
-    const problems = await problemsOf(contrast('contrast.json'), {}, [
+    const problems = await problemsOf(undefined, {}, [
       pair('color.overlay.scrim', 'color.bg.surface', 1.1),
     ]);
     expect(problems.map(({ theme, message }) => `${theme}: ${message}`)).toEqual([
@@ -76,12 +88,14 @@ describe('contrast', () => {
     ]);
   });
 
-  it('reports a pair whose token does not exist', async () => {
-    expect(
-      await problemsOf(contrast('contrast.json'), {}, [
-        pair('color.fg.missing', 'color.bg.surface', 3),
-      ]),
-    ).toEqual([{ source: 'contrast', message: 'color.fg.missing: no such color token.' }]);
+  it('reports a pair whose token is no color', async () => {
+    expect(await problemsOf(undefined, {}, [pair('color.fg.missing', 'space.gap', 3)])).toEqual([
+      {
+        source: 'contrast',
+        message: 'contrast.json: pairs[0]: color.fg.missing is no color token.',
+      },
+      { source: 'contrast', message: 'contrast.json: pairs[0]: space.gap is no color token.' },
+    ]);
   });
 });
 

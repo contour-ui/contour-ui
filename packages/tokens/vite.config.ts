@@ -1,5 +1,4 @@
 import {
-  contrast,
   css,
   described,
   designTokens,
@@ -31,6 +30,8 @@ export default defineConfig({
       designTokens({
         // The DTCG resolver names the themes and the files they read.
         resolver: './contour.resolver.json',
+        // The contrast pairs: measured in every theme, held to their minimum, published in docs.json.
+        contrast: './contrast.json',
         // Everything the package ships.
         outputs: [
           css(web, { file: 'tokens.css' }),
@@ -39,12 +40,7 @@ export default defineConfig({
           values(soundor, { entry: 'soundor', name: 'soundorTokens' }),
         ],
         // Rules beyond the built-in ones; a violation fails the build.
-        checks: [
-          contrast('./contrast.json'),
-          paletteSteps('base.color'),
-          gamut('srgb'),
-          described(['semantic']),
-        ],
+        checks: [paletteSteps('base.color'), gamut('srgb'), described(['semantic'])],
       }),
     ],
   }),

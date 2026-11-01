@@ -14,13 +14,14 @@ export default defineConfig({
     plugins: [
       designTokens({
         resolver: './contour.resolver.json',
+        contrast: './contrast.json',
         outputs: [
           css(web, { file: 'tokens.css' }),
           vars(web, { entry: 'index' }),
           docs(web, { file: 'docs.json' }),
           values(soundor, { entry: 'soundor', name: 'soundorTokens' }),
         ],
-        checks: [contrast('./contrast.json'), paletteSteps('base.color'), gamut('srgb')],
+        checks: [paletteSteps('base.color'), gamut('srgb'), described(['semantic'])],
       }),
     ],
   }),
@@ -34,7 +35,8 @@ src/resolve/     the sources: a DTCG resolver and its files, one Style Dictionar
 src/model/       the model: every token with its tier, type, description and value per theme
 src/platforms/   how one platform writes a token: web (CSS custom properties), soundor (values)
 src/outputs/     the files of the package: css, vars, docs, values
-src/checks/      rules of the design over the model: contrast, paletteSteps, gamut, described
+src/checks/      rules of the design over the model: contrast (built in), paletteSteps, gamut,
+                 described
 src/build.ts     buildTokens: one build, every problem collected
 src/plugin.ts    designTokens: buildTokens inside vp pack
 ```
@@ -51,15 +53,18 @@ platforms and outputs read the model, checks read the model alone. Lint holds th
   sRGB, another unit, a curve without a named easing) is a problem of its token.
 - **Outputs.** `css` writes `tokens.css` (the default theme on `:root`, other themes redeclare
   what differs); `vars` the entry of typed `var(--…)` references, the themes and their attribute;
-  `docs` `docs.json` (every custom property with its value and alias per theme); `values` the
+  `docs` `docs.json` (every custom property with its CSS value, alias and DTCG value per theme,
+  and the contrast pairs with their ratios); `values` the
   entry of a platform's values per theme. `css` and `docs` take every tier, `vars` and `values`
   the semantic and component tokens (`tiers` changes it). Outputs import nothing from each other.
 - **Checks.** Built in: aliases point at tokens (the problem names the token and the theme), every
   theme has the same tokens with the same types and descriptions, names are kebab-case, no two
-  outputs write one file. Given: `contrast(file)` (WCAG 2 pairs from a JSON file, in every theme;
-  `group.*` stands for every color of a group; a translucent foreground is composited over its
-  background), `paletteSteps(group)` (a stop as light in every hue, within `tolerance`),
-  `gamut('srgb')` (every color, shadow colors included), `described(tiers)`.
+  outputs write one file, and the contrast pairs of the `contrast` option meet their minimum in
+  every theme (`resolve/contrast.ts` reads them: WCAG 2 pairs from a JSON file, the model holds
+  them; `group.*` stands for every color of a group; `kind` is `text` or `ui`; a pair without a
+  minimum is only measured; a translucent foreground is composited over its background). Given:
+  `paletteSteps(group)` (a stop as light in every hue, within `tolerance`), `gamut('srgb')` (every
+  color, shadow colors included), `described(tiers)`.
 
 A build collects every problem and fails with the list, each with its token and theme. In
 `vp pack`, entries are modules the plugin serves (`\0design-tokens:<entry>.ts`): tsdown bundles
