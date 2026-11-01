@@ -6,6 +6,7 @@ import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import type { CheckContext, TokenCheck } from './checks/check.ts';
+import { contrast } from './checks/contrast.ts';
 import type { TokenModel } from './model/model.ts';
 import { attemptBuild } from './model/problem.ts';
 import type { Problem, Report } from './model/problem.ts';
@@ -15,6 +16,11 @@ import { resolveModel } from './resolve/resolve.ts';
 export interface DesignTokensOptions {
   /** The DTCG resolver file, relative to the package. */
   readonly resolver: string;
+  /**
+   * The contrast pairs, relative to the package (`resolve/contrast.ts` has the format): checked in
+   * every theme, and published by `docs` with their ratios.
+   */
+  readonly contrast?: string;
   /** Everything the package ships. */
   readonly outputs: readonly TokenOutput[];
   /** Rules beyond the built-in ones. */
@@ -53,11 +59,16 @@ export async function buildTokens(
     },
   };
 
-  const model = await resolveModel(path.resolve(cwd, options.resolver), context, report);
+  const model = await resolveModel(
+    path.resolve(cwd, options.resolver),
+    context,
+    report,
+    options.contrast === undefined ? undefined : path.resolve(cwd, options.contrast),
+  );
   if (model === undefined || problems.length > 0) {
     return { model, artifacts: [], problems, files: [...files] };
   }
-  for (const check of options.checks ?? []) {
+  for (const check of [contrast(), ...(options.checks ?? [])]) {
     attemptBuild(report, check.name, () => {
       check.run(model, report, context);
     });

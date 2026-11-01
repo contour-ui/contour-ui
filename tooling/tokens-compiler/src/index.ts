@@ -6,12 +6,18 @@
  */
 export { buildTokens } from './build.ts';
 export type { DesignTokensOptions, TokenBuild } from './build.ts';
-export { contrast } from './checks/contrast.ts';
 export { described } from './checks/described.ts';
 export { gamut } from './checks/gamut.ts';
 export { paletteSteps } from './checks/palette-steps.ts';
 export type { CheckContext, TokenCheck } from './checks/check.ts';
-export type { ModelToken, ThemeValue, Tier, TokenModel, TokenType } from './model/model.ts';
+export type {
+  ContrastPair,
+  ModelToken,
+  ThemeValue,
+  Tier,
+  TokenModel,
+  TokenType,
+} from './model/model.ts';
 export { formatProblems } from './model/problem.ts';
 export type { Problem, Report } from './model/problem.ts';
 export { css } from './outputs/css.ts';

@@ -227,15 +227,19 @@ after a pull or a branch switch, `vp run ready` and CI before anything else.
   `tokens.css` in place.
 - The build is the test: it fails with every problem at once, each with its token and theme. Built
   in: aliases point at tokens, every theme has the same tokens with the same types and
-  descriptions, names are kebab-case. Configured: the WCAG contrast pairs of `contrast.json` in
-  every theme (a foreground `color.syntax.*` stands for every syntax role, each at least 4.5:1 on
-  `bg.inset`, the code block background), a palette stop as light in every hue (`paletteSteps`),
-  every color inside sRGB (`gamut`), a `$description` on every semantic token (`described`). The
-  package has no tests of its own.
+  descriptions, names are kebab-case, and the WCAG contrast pairs of `contrast.json` (the
+  `contrast` option) meet their minimum in every theme (a foreground `color.syntax.*` stands for
+  every syntax role, each at least 4.5:1 on `bg.inset`, the code block background; `kind` is
+  `text` or `ui`, and a pair with a `null` minimum, disabled text, is only measured). Configured: a
+  palette stop as light in every hue (`paletteSteps`), every color inside sRGB (`gamut`), a
+  `$description` on every semantic token (`described`). The package has no tests of its own.
+- `docs.json` gives, beside each CSS value, its DTCG value (`dtcg`: a color with its alpha and
+  `hex`, a dimension `{ value, unit }`, a transition with its curve) and lists the contrast pairs
+  with their ratio in each theme (`contrast`), so readers take numbers rather than parse CSS.
 - A description lives only in `$description`, in both theme files for a color role: the typed
   entries carry it as JSDoc and `docs.json` as `description`. The export for the Design System
   page (`vp run --filter @contour-ui/tokens design-system <out-dir>`, `scripts/design-system.ts`)
-  reads it from the same model, and the contrast targets from `contrast.json`.
+  reads it from the same model, the contrast targets too.
 - Dark theme is the default (`:root`); `data-theme="light"` on any element switches its subtree.
 - The tokens name the font families; the files are in `@contour-ui/fonts` (see "Fonts").
 - Every `*.tokens.json` is a source, edited by hand; nothing generates them. A color is oklch, three
@@ -479,7 +483,7 @@ lockup, the mark alone below 30rem; its favicons are in `public/`), the parts of
 (`app/components/home/`: the hero, the sequencer of the parts of contour-ui, the docs index), the
 components of the Tokens page (`app/components/tokens/`: built from `@contour-ui/tokens/docs.json`
 as the page renders, each color group in a panel per theme with `data-theme`, the contrast of
-text roles computed from their `oklch()` values), and its own CSS (`app/app.css`, unlayered,
+text roles as the token build measures it, from the `contrast` list), and its own CSS (`app/app.css`, unlayered,
 loaded after every package stylesheet).
 
 - The home page is built from `@contour-ui/react` and the tokens only. A component that does not

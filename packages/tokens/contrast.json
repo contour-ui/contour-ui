@@ -1,5 +1,5 @@
 {
-  "$description": "WCAG 2 contrast targets of the color pairs components put on screen, checked in every theme by the build: a foreground role, the background it sits on, the least ratio. A foreground ending in .* stands for every color of its group.",
+  "$description": "The WCAG 2 contrast of the color pairs components put on screen, measured in every theme by the build and published with their ratios in docs.json: a foreground role, the background it sits on, the least ratio. A foreground ending in .* stands for every color of its group. kind is text (the default) or ui, a part of the interface such as a border or a fill; a minimum of null marks a pair WCAG exempts, such as disabled text, which is measured but holds to no ratio.",
   "pairs": [
     { "foreground": "color.fg.default", "background": "color.bg.canvas", "minimum": 7 },
     { "foreground": "color.fg.default", "background": "color.bg.surface", "minimum": 7 },
@@ -8,26 +8,67 @@
     { "foreground": "color.fg.muted", "background": "color.bg.raised", "minimum": 4.5 },
     { "foreground": "color.fg.subtle", "background": "color.bg.surface", "minimum": 3 },
     { "foreground": "color.fg.subtle", "background": "color.bg.inset", "minimum": 3 },
-    { "foreground": "color.border.strong", "background": "color.bg.surface", "minimum": 3 },
-    { "foreground": "color.border.focus", "background": "color.bg.surface", "minimum": 3 },
-    { "foreground": "color.border.focus", "background": "color.bg.inset", "minimum": 3 },
+    { "foreground": "color.fg.disabled", "background": "color.bg.surface", "minimum": null },
+    {
+      "foreground": "color.border.strong",
+      "background": "color.bg.surface",
+      "kind": "ui",
+      "minimum": 3
+    },
+    {
+      "foreground": "color.border.focus",
+      "background": "color.bg.surface",
+      "kind": "ui",
+      "minimum": 3
+    },
+    {
+      "foreground": "color.border.focus",
+      "background": "color.bg.inset",
+      "kind": "ui",
+      "minimum": 3
+    },
     { "foreground": "color.accent.on-fill", "background": "color.accent.fill", "minimum": 4.5 },
     { "foreground": "color.accent.fg", "background": "color.accent.bg", "minimum": 4.5 },
     { "foreground": "color.accent.fg", "background": "color.bg.surface", "minimum": 4.5 },
-    { "foreground": "color.accent.fill", "background": "color.bg.inset", "minimum": 3 },
+    {
+      "foreground": "color.accent.fill",
+      "background": "color.bg.inset",
+      "kind": "ui",
+      "minimum": 3
+    },
     { "foreground": "color.danger.on-fill", "background": "color.danger.fill", "minimum": 4.5 },
     { "foreground": "color.danger.fg", "background": "color.danger.bg", "minimum": 4.5 },
     { "foreground": "color.danger.fg", "background": "color.bg.surface", "minimum": 4.5 },
-    { "foreground": "color.danger.fill", "background": "color.bg.inset", "minimum": 3 },
+    {
+      "foreground": "color.danger.fill",
+      "background": "color.bg.inset",
+      "kind": "ui",
+      "minimum": 3
+    },
     { "foreground": "color.success.on-fill", "background": "color.success.fill", "minimum": 4.5 },
     { "foreground": "color.success.fg", "background": "color.success.bg", "minimum": 4.5 },
     { "foreground": "color.success.fg", "background": "color.bg.surface", "minimum": 4.5 },
-    { "foreground": "color.success.fill", "background": "color.bg.inset", "minimum": 3 },
+    {
+      "foreground": "color.success.fill",
+      "background": "color.bg.inset",
+      "kind": "ui",
+      "minimum": 3
+    },
     { "foreground": "color.warning.on-fill", "background": "color.warning.fill", "minimum": 4.5 },
     { "foreground": "color.warning.fg", "background": "color.warning.bg", "minimum": 4.5 },
     { "foreground": "color.warning.fg", "background": "color.bg.surface", "minimum": 4.5 },
-    { "foreground": "color.warning.fill", "background": "color.bg.inset", "minimum": 3 },
-    { "foreground": "color.accent.fill", "background": "color.bg.surface", "minimum": 3 },
+    {
+      "foreground": "color.warning.fill",
+      "background": "color.bg.inset",
+      "kind": "ui",
+      "minimum": 3
+    },
+    {
+      "foreground": "color.accent.fill",
+      "background": "color.bg.surface",
+      "kind": "ui",
+      "minimum": 3
+    },
     { "foreground": "color.syntax.*", "background": "color.bg.inset", "minimum": 4.5 }
   ]
 }

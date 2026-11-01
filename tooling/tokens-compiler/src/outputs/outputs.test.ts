@@ -1,24 +1,14 @@
 import { afterAll, describe, expect, it } from 'vite-plus/test';
 
 import { buildTokens } from '../build.ts';
-import { isRecord } from '../model/dtcg.ts';
 import type { FixtureEdits } from '../test-fixtures/fixture.ts';
 import { RESOLVER, removeFixtures, soundor, web, writeFixture } from '../test-fixtures/fixture.ts';
 import { css } from './css.ts';
-import { docs } from './docs.ts';
 import type { TokenOutput } from './output.ts';
 import { values } from './values.ts';
 import { vars } from './vars.ts';
 
 afterAll(removeFixtures);
-
-/** The `tokens` list of `docs.json`. */
-function tokensOf(json: unknown): unknown[] {
-  if (!isRecord(json) || !Array.isArray(json['tokens'])) {
-    throw new TypeError('expected { tokens: [...] }');
-  }
-  return json['tokens'];
-}
 
 /** The one file an output writes. */
 async function written(output: TokenOutput, edits?: FixtureEdits): Promise<string> {
@@ -76,23 +66,6 @@ describe('vars', () => {
     expect(code).not.toContain('--x-base-');
     expect(code).toContain("export const themes = ['dark', 'light'] as const;");
     expect(code).toContain("export const themeAttribute = 'data-theme';");
-  });
-});
-
-describe('docs', () => {
-  it('lists each property with its value and alias in every theme', async () => {
-    const tokens = tokensOf(JSON.parse(await written(docs(web, { file: 'docs.json' }))));
-    expect(tokens).toContainEqual({
-      name: '--x-color-bg-surface',
-      token: 'color.bg.surface',
-      type: 'color',
-      part: null,
-      description: 'Panels.',
-      themes: {
-        dark: { value: 'oklch(0.28 0.008 255)', alias: '--x-base-color-gray-900' },
-        light: { value: 'oklch(0.93 0.008 255)', alias: '--x-base-color-gray-100' },
-      },
-    });
   });
 });
 

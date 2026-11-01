@@ -5,10 +5,18 @@ import { tokensIn } from './token-data.ts';
 import type { TokenDoc } from './token-data.ts';
 import { TokenTable, VALUE_COLUMN } from './token-parts.tsx';
 
-/** The curve of the `cubic-bezier()` in a transition, from its start (bottom left) to its end. */
-function EasingCurve({ value }: { readonly value: string }): ReactElement | null {
-  const points = /cubic-bezier\((?<points>[^)]*)\)/u.exec(value)?.groups?.['points'];
-  const [x1, y1, x2, y2] = points?.split(',').map(Number) ?? [];
+/** The control points of a transition's curve, from its DTCG value in `docs.json`. */
+function curveOf(transition: unknown): readonly number[] {
+  const curve: unknown =
+    typeof transition === 'object' && transition !== null && 'timingFunction' in transition
+      ? transition.timingFunction
+      : undefined;
+  return Array.isArray(curve) ? curve.filter((point) => typeof point === 'number') : [];
+}
+
+/** The curve of a transition, from its start (bottom left) to its end. */
+function EasingCurve({ transition }: { readonly transition: unknown }): ReactElement | null {
+  const [x1, y1, x2, y2] = curveOf(transition);
   if (x1 === undefined || y1 === undefined || x2 === undefined || y2 === undefined) {
     return null;
   }
@@ -26,7 +34,7 @@ function EasingCurve({ value }: { readonly value: string }): ReactElement | null
 function MotionDemo({ doc }: { readonly doc: TokenDoc }): ReactElement {
   return (
     <span className="docs-token-motion" aria-hidden="true">
-      <EasingCurve value={doc.themes[defaultTheme].value} />
+      <EasingCurve transition={doc.themes[defaultTheme].dtcg} />
       <span className="docs-token-motion__track">
         <span
           className="docs-token-motion__dot"

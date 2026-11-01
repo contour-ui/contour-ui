@@ -1,8 +1,8 @@
 import type { Theme } from '@contour-ui/tokens';
 import type { ReactElement } from 'react';
 
-import { contrastLevel, contrastRatio, formatRatio, textContrastOf } from './contrast.ts';
-import { capitalize, groupBy, tokenAt, tokensIn } from './token-data.ts';
+import { contrastLevel, formatRatio } from './contrast.ts';
+import { capitalize, groupBy, textContrastOf, tokenAt, tokensIn } from './token-data.ts';
 import type { TokenDoc } from './token-data.ts';
 import { ThemePanels, ThemeValue, TokenDescription, TokenName } from './token-parts.tsx';
 
@@ -24,8 +24,8 @@ function Swatch({ name }: { readonly name: string }): ReactElement {
 }
 
 /**
- * The contrast of a text role in `theme` on each background it is meant for, with the target the
- * token tests hold it to.
+ * The contrast of a text role in `theme` on each background it is meant for, as the token build
+ * measures it, with the target it holds the role to.
  */
 function Contrast({
   doc,
@@ -34,34 +34,31 @@ function Contrast({
   readonly doc: TokenDoc;
   readonly theme: Theme;
 }): ReactElement | null {
-  const contrast = textContrastOf(doc.token.slice('color.'.length));
-  if (contrast === undefined) {
-    return null;
-  }
-  const pairs = contrast.backgrounds.flatMap((path) => {
-    const background = tokenAt(`color.${path}`);
-    const ratio =
-      background === undefined
-        ? undefined
-        : contrastRatio(doc.themes[theme].value, background.themes[theme].value);
-    return background === undefined || ratio === undefined ? [] : [{ background, ratio }];
-  });
+  const pairs = textContrastOf(doc.token);
   if (pairs.length === 0) {
     return null;
   }
+  const targets = [...new Set(pairs.map(({ minimum }) => minimum))];
+  const [target] = targets;
   return (
     <div className="docs-token-contrast">
       <p className="docs-token-contrast__target">
-        {contrast.target === null
+        {target === null || target === undefined
           ? 'Contrast, no target: disabled text'
-          : `Contrast, target ${contrast.target}:1`}
+          : `Contrast, target ${targets.join(':1, ')}:1`}
       </p>
       <ul className="docs-token-contrast__pairs">
-        {pairs.map(({ background, ratio }) => (
-          <li key={background.name}>
-            <code>{formatRatio(ratio)}</code> on {roleName(background)} · {contrastLevel(ratio)}
-          </li>
-        ))}
+        {pairs.map((pair) => {
+          const background = tokenAt(pair.background);
+          const ratio = pair.ratios[theme];
+          return (
+            <li key={pair.background}>
+              <code>{formatRatio(ratio)}</code> on{' '}
+              {background === undefined ? pair.background : roleName(background)} ·{' '}
+              {contrastLevel(ratio)}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
