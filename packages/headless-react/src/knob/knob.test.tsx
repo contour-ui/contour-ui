@@ -676,10 +676,23 @@ describe('Knob pointer lock', () => {
 
   it('drags with the pointer capture when the browser refuses the lock', async () => {
     await render(<Gain pointerLock />);
+    const control = slider().element();
+    // Refused as Chromium refuses a frame it will not lock: `pointerlockerror` and a rejected
+    // promise. Faked, since whether a test frame gets the lock depends on the platform (Linux
+    // grants it, and then reports the moves of the test's mouse as one growing movement).
+    const request = vi.spyOn(control, 'requestPointerLock').mockImplementation(() => {
+      setTimeout(() => {
+        document.dispatchEvent(new Event('pointerlockerror'));
+      });
+      return Promise.reject(new DOMException('The frame may not lock.', 'WrongDocumentError'));
+    });
+    cleanups.push(() => {
+      request.mockRestore();
+    });
 
-    // A test frame may not lock the pointer: Chromium refuses.
     await dragBy(-100);
 
+    expect(request).toHaveBeenCalledOnce();
     await expect.poll(() => currentValue()).toBe(50);
   });
 });
