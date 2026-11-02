@@ -56,9 +56,10 @@ without a provider. Soundor has no color scheme of the system, and the choice is
 - **Presses:** `onPress` (Soundor's `Pressable`), where the web has `onClick`.
 - **Styles:** `style`, an object or a function of the state (`pressed`, `hovered`, `focused`,
   `focusVisible`), in place of `className` and `asChild`.
-- **Focus:** Soundor has no `outline` and no `:focus-visible`. The focus ring is a view outside
-  the border, as far out as the web's outline and its offset, so the layout stays; it shows when
-  the last input was a key, as `:focus-visible` does.
+- **Focus:** Soundor has no `:focus-visible` selector: the ring follows the state's
+  `focusVisible`, Soundor's own (a key gave the focus, or a key was pressed since a press did), as
+  `:focus-visible` does on the web. It is Soundor's outline (`outlineWidth`, `outlineColor`,
+  `outlineOffset`), as wide and as far out as the web's, outside the border and taking no room.
 - **Motion:** colors change at once: Soundor animates paint only through explicit keyframes.
 
 ## Development

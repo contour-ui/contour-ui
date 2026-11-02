@@ -1,15 +1,19 @@
 import type { SoundorTokens } from '@contour-ui/tokens/soundor';
-import { Pressable, Text, View } from '@soundor/react';
+import { Pressable, Text } from '@soundor/react';
 import type { PressableProps, PressableState, Style, StyleProp } from '@soundor/react';
 import { Children } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 
 import { useTokens } from '../theme-provider/use-theme.ts';
+import { focusRingStyle } from '../utils/focus-ring.ts';
 import { useInteractionState } from '../utils/interaction-state.ts';
 
-/** What the style function of a {@link Button} receives. */
+/** What the style function of a {@link Button} receives: Pressable's state, at rest while disabled. */
 export interface ButtonState extends PressableState {
-  /** Focused from the keyboard, as `:focus-visible`: the button shows its focus ring. */
+  /**
+   * The button shows its focus, as `:focus-visible` on the web: a key gave it the focus, or a key
+   * was pressed since a press did. It draws its focus ring then.
+   */
   readonly focusVisible: boolean;
 }
 
@@ -106,29 +110,6 @@ function labelStyle(tokens: SoundorTokens, variant: Variant, size: Size, disable
 }
 
 /**
- * The focus ring: Soundor has no `outline`, so a view outside the button's border, as far out as
- * the web's outline and its offset, which leaves the layout as it is.
- */
-function ringStyle(tokens: SoundorTokens): Style {
-  const width = tokens['border-width'].focus;
-  // An absolute view is placed in the padding box: past the border, then the offset and the ring.
-  const border = tokens['border-width'].default;
-  const reach = border + 2 * width;
-  return {
-    position: 'absolute',
-    top: -reach,
-    right: -reach,
-    bottom: -reach,
-    left: -reach,
-    borderWidth: width,
-    borderColor: tokens.color.border.focus,
-    // Round as the outline of the web: the button's corner grown by the offset and the ring.
-    borderRadius: tokens.radius.control + reach - border,
-    pointerEvents: 'none',
-  };
-}
-
-/**
  * A button in one of four variants and three sizes, on Soundor's `Pressable`: a click, Enter or
  * Space, or assistive technology's "activate" calls `onPress`. The same variants and sizes as the
  * `Button` of `@contour-ui/react`, drawn with the token values of the theme.
@@ -160,11 +141,12 @@ export function Button({
       {...pressable}
       style={[
         rootStyle(tokens, variant, size, disabled, state),
+        // As `:focus-visible` on the web: a key gave the focus, or was pressed since a press did.
+        state.focusVisible && focusRingStyle(tokens),
         typeof style === 'function' ? style(state) : style,
       ]}
     >
       {content}
-      {state.focusVisible ? <View style={ringStyle(tokens)} /> : null}
     </Pressable>
   );
 }

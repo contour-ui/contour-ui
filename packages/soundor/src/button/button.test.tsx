@@ -10,9 +10,12 @@ import type { ButtonState } from './button.tsx';
 
 const { dark, light } = soundorTokens;
 
-/** The focus ring: the one child of the button that is not its label. */
-const ringOf = (button: ReturnType<typeof screen.getByRole>) =>
-  button.children.find((child) => child.style['position'] === 'absolute');
+/** The focus ring: an outline outside the border, as far out as it is wide, as on the web. */
+const RING = {
+  outlineWidth: dark['border-width'].focus,
+  outlineColor: dark.color.border.focus,
+  outlineOffset: dark['border-width'].focus,
+};
 
 describe('Button', () => {
   it('is a button named by its label, and a click presses it', async () => {
@@ -117,17 +120,42 @@ describe('Button', () => {
 
   it('shows its focus ring when focused from the keyboard, not when pressed', async () => {
     const user = userEvent.setup();
-    await render(<Button>Save</Button>);
+    await render(
+      <>
+        <Button>Save</Button>
+        <Button>Other</Button>
+      </>,
+    );
     const button = screen.getByRole('button', { name: 'Save' });
     await user.tab();
-    expect(ringOf(button)?.style).toMatchObject({
-      borderColor: dark.color.border.focus,
-      borderWidth: dark['border-width'].focus,
-      pointerEvents: 'none',
-    });
+    expect(button.style).toMatchObject(RING);
+    // Its only child is the label: the ring takes no view and no room.
+    expect(button.children).toHaveLength(1);
+    await user.tab();
+    expect(button.style).not.toHaveProperty('outlineWidth');
     await user.click(button);
     expect(button).toHaveFocus();
-    expect(ringOf(button)).toBeUndefined();
+    expect(button.style).not.toHaveProperty('outlineWidth');
+  });
+
+  it('shows its focus ring once a key is pressed after a press focused it', async () => {
+    const user = userEvent.setup();
+    await render(<Button>Save</Button>);
+    const button = screen.getByRole('button', { name: 'Save' });
+    await user.click(button);
+    expect(button.style).not.toHaveProperty('outlineWidth');
+    await user.keyboard('{ArrowDown}');
+    expect(button.style).toMatchObject(RING);
+  });
+
+  it('draws no focus ring while disabled', async () => {
+    const user = userEvent.setup();
+    const { rerender } = await render(<Button>Save</Button>);
+    const button = screen.getByRole('button', { name: 'Save' });
+    await user.tab();
+    expect(button.style).toMatchObject(RING);
+    await rerender(<Button disabled>Save</Button>);
+    expect(button.style).not.toHaveProperty('outlineWidth');
   });
 
   it('passes its state to a style function, whose styles win over its own', async () => {

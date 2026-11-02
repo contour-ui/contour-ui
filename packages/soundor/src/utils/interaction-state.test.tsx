@@ -5,14 +5,18 @@ import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vite-plus/test';
 
 import { useInteractionState } from './interaction-state.ts';
-import type { InteractionState } from './interaction-state.ts';
 
-const RESTING: PressableState = { pressed: false, hovered: false, focused: false };
+const RESTING: PressableState = {
+  pressed: false,
+  hovered: false,
+  focused: false,
+  focusVisible: false,
+};
 
 /** Both states of the probe, as one render of its Pressable sees them. */
 interface Copies {
   /** The hook's copy, as the component that renders the Pressable has it. */
-  readonly hook: InteractionState;
+  readonly hook: PressableState;
   /** Pressable's own state, as it gives it to its `children` function. */
   readonly pressable: PressableState;
 }
@@ -40,15 +44,8 @@ function Probe({ onRender, ...props }: ProbeProps): ReactElement {
   );
 }
 
-/** The flags of Pressable's state, without the `focusVisible` the hook adds. */
-const flagsOf = ({ pressed, hovered, focused }: PressableState): PressableState => ({
-  pressed,
-  hovered,
-  focused,
-});
-
 /** The hook and Pressable in the same state: at rest, but for the flags given. */
-function both(flags: Partial<PressableState>): Record<keyof Copies, PressableState> {
+function both(flags: Partial<PressableState>): Copies {
   const state = { ...RESTING, ...flags };
   return { hook: state, pressable: state };
 }
@@ -65,13 +62,8 @@ async function setup() {
     probe: screen.getByRole('button', { name: 'Probe' }),
     elsewhere: screen.getByText('Elsewhere'),
     setDisabled: (disabled: boolean) => rerender(<Probe disabled={disabled} onRender={onRender} />),
-    /** The hook's state after the last step. */
-    hook: () => renders.at(-1)?.hook,
-    /** Both states after the last step, the hook's without its `focusVisible`. */
-    states: () => {
-      const last = renders.at(-1);
-      return last && { hook: flagsOf(last.hook), pressable: last.pressable };
-    },
+    /** Both states after the last step. */
+    states: () => renders.at(-1),
   };
 }
 
@@ -89,7 +81,7 @@ describe('useInteractionState', () => {
     await user.tab();
     expect(states()).toEqual(both({}));
     await user.tab({ shift: true });
-    expect(states()).toEqual(both({ focused: true }));
+    expect(states()).toEqual(both({ focused: true, focusVisible: true }));
   });
 
   it('follows Pressable when a held press moves away', async () => {
@@ -104,11 +96,33 @@ describe('useInteractionState', () => {
     expect(states()).toEqual(both({ hovered: true, focused: true }));
   });
 
+  it('shows the focus a key gives, and the focus a press gave once a key is pressed', async () => {
+    const { user, probe, states } = await setup();
+    await user.tab();
+    expect(states()).toEqual(both({ focused: true, focusVisible: true }));
+    await user.tab();
+    await user.click(probe);
+    expect(states()).toEqual(both({ hovered: true, focused: true }));
+    // A modifier on its own is not a move through the controls.
+    await user.keyboard('{Shift}');
+    expect(states()).toEqual(both({ hovered: true, focused: true }));
+    await user.keyboard('{ArrowDown}');
+    expect(states()).toEqual(both({ hovered: true, focused: true, focusVisible: true }));
+  });
+
+  it('keeps showing the focus when the control it shows on is pressed', async () => {
+    const { user, probe, states } = await setup();
+    await user.tab();
+    // The press gives no focus: the control has it, and shows it, as `:focus-visible` does.
+    await user.click(probe);
+    expect(states()).toEqual(both({ hovered: true, focused: true, focusVisible: true }));
+  });
+
   it('rests while disabled, as Pressable, which drops its state without calling a handler', async () => {
     const { user, probe, elsewhere, setDisabled, states } = await setup();
     await user.tab();
     await user.pointer({ target: probe });
-    expect(states()).toEqual(both({ hovered: true, focused: true }));
+    expect(states()).toEqual(both({ hovered: true, focused: true, focusVisible: true }));
     await setDisabled(true);
     expect(states()).toEqual(both({}));
     await setDisabled(false);
@@ -128,19 +142,6 @@ describe('useInteractionState', () => {
     expect(states()).toEqual(both({}));
   });
 
-  it('shows the focus when it comes from the keyboard, not from a press', async () => {
-    const { user, probe, hook, setDisabled } = await setup();
-    await user.tab();
-    expect(hook()).toMatchObject({ focused: true, focusVisible: true });
-    await user.click(probe);
-    expect(hook()).toMatchObject({ focused: true, focusVisible: false });
-    await user.tab({ shift: true });
-    await user.tab();
-    expect(hook()).toMatchObject({ focused: true, focusVisible: true });
-    await setDisabled(true);
-    expect(hook()).toMatchObject({ focused: false, focusVisible: false });
-  });
-
   it('still calls the handlers it is given', async () => {
     const handlers = {
       onHoverIn: vi.fn<() => void>(),
@@ -149,6 +150,7 @@ describe('useInteractionState', () => {
       onPressOut: vi.fn<() => void>(),
       onFocus: vi.fn<() => void>(),
       onBlur: vi.fn<() => void>(),
+      onFocusVisibleChange: vi.fn<() => void>(),
     };
     const user = userEvent.setup();
     await render(<Probe {...handlers} />);
@@ -156,9 +158,12 @@ describe('useInteractionState', () => {
     await user.pointer({ target: probe });
     await user.pointer({ target: probe, keys: '[MouseLeft]' });
     await user.pointer({ target: screen.getByText('Elsewhere') });
+    // Tab shows the focus the press gave, then takes it to the other control.
     await user.tab();
-    for (const handler of Object.values(handlers)) {
+    const { onFocusVisibleChange, ...once } = handlers;
+    for (const handler of Object.values(once)) {
       expect(handler).toHaveBeenCalledOnce();
     }
+    expect(onFocusVisibleChange).toHaveBeenCalledTimes(2);
   });
 });
