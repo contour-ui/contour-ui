@@ -5,7 +5,7 @@ import { Children } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 
 import { useTokens } from '../theme-provider/use-theme.ts';
-import { useFocusVisible } from '../utils/focus-visible.ts';
+import { useInteractionState } from '../utils/interaction-state.ts';
 
 /** What the style function of a {@link Button} receives. */
 export interface ButtonState extends PressableState {
@@ -54,27 +54,27 @@ function rootStyle(
   { hovered }: ButtonState,
 ): Style {
   const { color } = tokens;
-  const hover = hovered && !disabled;
   // Transparent unless a variant colors it; keeps every variant the same size.
   let borderColor = 'transparent';
   let backgroundColor = 'transparent';
+  // The state is at rest while disabled, so a disabled button is never hovered.
   switch (variant) {
     case 'solid': {
-      backgroundColor = hover ? color.accent['fill-hover'] : color.accent.fill;
+      backgroundColor = hovered ? color.accent['fill-hover'] : color.accent.fill;
       break;
     }
     case 'subtle': {
       backgroundColor = color.bg.hover;
       // `bg-hover` is already the subtle fill, so its edge shows instead.
-      borderColor = hover ? color.border.strong : 'transparent';
+      borderColor = hovered ? color.border.strong : 'transparent';
       break;
     }
     case 'outline': {
-      borderColor = hover ? color.border.strong : color.border.default;
+      borderColor = hovered ? color.border.strong : color.border.default;
       break;
     }
     case 'ghost': {
-      backgroundColor = hover ? color.bg.hover : 'transparent';
+      backgroundColor = hovered ? color.bg.hover : 'transparent';
       break;
     }
   }
@@ -146,11 +146,7 @@ export function Button({
   ...props
 }: ButtonProps): ReactElement {
   const tokens = useTokens();
-  const isFocusVisible = useFocusVisible();
-  const stateOf = (state: PressableState): ButtonState => ({
-    ...state,
-    focusVisible: !disabled && isFocusVisible(state.focused),
-  });
+  const { state, props: pressable } = useInteractionState({ ...props, disabled });
   const label = labelStyle(tokens, variant, size, disabled);
   const content = Children.map(children, (child) =>
     typeof child === 'string' || typeof child === 'number' ? (
@@ -161,22 +157,14 @@ export function Button({
   );
   return (
     <Pressable
-      {...props}
-      disabled={disabled}
-      style={(pressableState) => {
-        const state = stateOf(pressableState);
-        return [
-          rootStyle(tokens, variant, size, disabled, state),
-          typeof style === 'function' ? style(state) : style,
-        ];
-      }}
+      {...pressable}
+      style={[
+        rootStyle(tokens, variant, size, disabled, state),
+        typeof style === 'function' ? style(state) : style,
+      ]}
     >
-      {(pressableState) => (
-        <>
-          {content}
-          {stateOf(pressableState).focusVisible ? <View style={ringStyle(tokens)} /> : null}
-        </>
-      )}
+      {content}
+      {state.focusVisible ? <View style={ringStyle(tokens)} /> : null}
     </Pressable>
   );
 }

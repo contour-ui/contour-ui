@@ -33,7 +33,8 @@ function trackInput(): void {
 /**
  * Soundor's `focused` is the same for a press and for Tab. This tells them apart as
  * `:focus-visible` does: the returned function says whether a focused control shows its focus,
- * which it does when the last input was a key. Call it from the style function of a `Pressable`.
+ * which it does when the last input was a key. `useInteractionState` (`./interaction-state.ts`)
+ * calls it for the `focusVisible` of its state.
  */
 export function useFocusVisible(): (focused: boolean) => boolean {
   useEffect(trackInput, []);
