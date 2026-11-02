@@ -50,6 +50,35 @@ export type {
   UseDialogProps,
   UseDialogReturn,
 } from './dialog/use-dialog.ts';
+export * as Knob from './knob/index.ts';
+export { useKnobContext } from './knob/knob-context.ts';
+export { useKnob } from './knob/use-knob.ts';
+export type {
+  KnobArcAttributes,
+  KnobControlAttributes,
+  KnobHiddenInputAttributes,
+  KnobLabelAttributes,
+  KnobPartAttributes,
+  KnobRootAttributes,
+  KnobRootStyle,
+  KnobShapeAttributes,
+  KnobThumbAttributes,
+  UseKnobProps,
+  UseKnobReturn,
+} from './knob/use-knob.ts';
+// The readouts and scales of value controls come from core: re-exported for apps that use only
+// this package.
+export {
+  formatDecibels,
+  formatDuration,
+  formatFrequency,
+  formatNumber,
+  formatPercent,
+  linearScale,
+  logScale,
+  powerScale,
+} from '@contour-ui/core';
+export type { Scale, ScaleOption } from '@contour-ui/core';
 export * as Listbox from './listbox/index.ts';
 export { useListboxContext, useListboxItemContext } from './listbox/listbox-context.ts';
 export type { ListboxItemContextValue } from './listbox/listbox-context.ts';

@@ -1,13 +1,14 @@
 import { cloneElement, createElement, Fragment, isValidElement } from 'react';
-import type { HTMLAttributes, JSX, ReactElement, ReactNode, Ref } from 'react';
+import type { DOMAttributes, JSX, ReactElement, ReactNode, Ref } from 'react';
 
 import { useComposedRefs } from './compose-refs.ts';
 import { mergeProps } from './merge-props.ts';
 
 /**
  * Elements that {@link Primitive} renders: the ones contour-ui parts are made of
- * (roots and contents, triggers, links, titles, list items, table parts…). A
- * part that needs another element adds it here.
+ * (roots and contents, triggers, links, titles, list items, table parts, and the
+ * SVG shapes of a dial: `svg`, `path`, `line`). A part that needs another element
+ * adds it here.
  */
 export type PrimitiveElement =
   | 'a'
@@ -22,9 +23,12 @@ export type PrimitiveElement =
   | 'kbd'
   | 'label'
   | 'li'
+  | 'line'
   | 'nav'
   | 'p'
+  | 'path'
   | 'span'
+  | 'svg'
   | 'table'
   | 'tbody'
   | 'td'
@@ -58,9 +62,12 @@ type PrimitiveComponent<E extends PrimitiveElement> = (props: PrimitiveProps<E>)
 
 type PrimitiveComponents = { readonly [E in PrimitiveElement]: PrimitiveComponent<E> };
 
-/** The props of any primitive, as the shared implementation reads them. */
-interface AnyPrimitiveProps extends HTMLAttributes<HTMLElement>, AsChildProps {
-  ref?: Ref<HTMLElement> | undefined;
+/**
+ * The props of any primitive, HTML or SVG, as the shared implementation reads them: it only
+ * passes them on, besides `asChild`, `children` and `ref`.
+ */
+interface AnyPrimitiveProps extends DOMAttributes<Element>, AsChildProps {
+  ref?: Ref<Element> | undefined;
 }
 
 /** What `asChild` reads from the child's props besides passing them on: its ref. */
@@ -120,9 +127,12 @@ export const Primitive: PrimitiveComponents = {
   kbd: createPrimitive('kbd'),
   label: createPrimitive('label'),
   li: createPrimitive('li'),
+  line: createPrimitive('line'),
   nav: createPrimitive('nav'),
   p: createPrimitive('p'),
+  path: createPrimitive('path'),
   span: createPrimitive('span'),
+  svg: createPrimitive('svg'),
   table: createPrimitive('table'),
   tbody: createPrimitive('tbody'),
   td: createPrimitive('td'),

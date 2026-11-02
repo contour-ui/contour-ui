@@ -8,16 +8,17 @@ architecture. pnpm monorepo, single toolchain: **Vite+** (`vp`).
 All published packages live under `@contour-ui/` in `packages/`. Dependencies
 point **down** the table only — never up, never sideways.
 
-| Layer        | Package          | Purpose                                                                                                                                | May depend on (internal)                              |
-| ------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| 0 foundation | `tokens`         | DTCG design tokens → CSS vars / TS, compiled by `@contour-ui/tokens-compiler`                                                          | —                                                     |
-| 0 foundation | `icons`          | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                | —                                                     |
-| 0 foundation | `fonts`          | font files: WOFF2 faces + `fonts.css` for the web, static TTF for Soundor (Fontsource)                                                 | —                                                     |
-| 1 logic      | `core`           | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`         | —                                                     |
-| 2 headless   | `headless-react` | unstyled React DOM components + hooks (Ark UI–like)                                                                                    | `core`                                                |
-| 3 styled     | `react`          | styled React DOM components in two sections: **Essentials** (the everyday components) and **Audio** (the controls of audio-plugin UIs) | `headless-react`, `tokens`, `icons`, `fonts`          |
-| 3 styled     | `soundor`        | styled components for Soundor plugin UIs, on `@soundor/react`, drawn with the token values of `@contour-ui/tokens/soundor`             | `tokens`, `icons`, `fonts`                            |
-| 4 docs       | `fumadocs`       | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui`                                            | `react`, `headless-react`, `tokens`, `icons`, `fonts` |
+| Layer        | Package            | Purpose                                                                                                                                | May depend on (internal)                              |
+| ------------ | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| 0 foundation | `tokens`           | DTCG design tokens → CSS vars / TS, compiled by `@contour-ui/tokens-compiler`                                                          | —                                                     |
+| 0 foundation | `icons`            | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                | —                                                     |
+| 0 foundation | `fonts`            | font files: WOFF2 faces + `fonts.css` for the web, static TTF for Soundor (Fontsource)                                                 | —                                                     |
+| 1 logic      | `core`             | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`         | —                                                     |
+| 2 headless   | `headless-react`   | unstyled React DOM components + hooks (Ark UI–like)                                                                                    | `core`                                                |
+| 2 headless   | `soundor-headless` | unstyled components for Soundor plugin UIs, on `@soundor/react`: the machines of `core` with their input, focus and accessibility      | `core`                                                |
+| 3 styled     | `react`            | styled React DOM components in two sections: **Essentials** (the everyday components) and **Audio** (the controls of audio-plugin UIs) | `headless-react`, `tokens`, `icons`, `fonts`          |
+| 3 styled     | `soundor`          | styled components for Soundor plugin UIs, on `@soundor/react`, drawn with the token values of `@contour-ui/tokens/soundor`             | `soundor-headless`, `tokens`, `icons`, `fonts`        |
+| 4 docs       | `fumadocs`         | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui`                                            | `react`, `headless-react`, `tokens`, `icons`, `fonts` |
 
 Rules:
 
@@ -28,8 +29,8 @@ Rules:
   tests), `tsconfig.react-test.json` (browser tests) and `tsconfig.config.json` (`vite.config.ts`).
 - `core` also runs on Hermes (the Soundor runtime, built without `Intl`): no `Intl`, no
   locale-dependent methods (`toLocale*`, `localeCompare`), no `eval` / `new Function`, no
-  `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`
-  and `packages/soundor/src/**`.
+  `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`,
+  `packages/soundor-headless/src/**` and `packages/soundor/src/**`.
 - Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`,
   `collection/` and `positioning/`.
 - `headless-react` must not depend on `tokens`, `icons`, `fonts` or the styled package. Peers:
@@ -40,12 +41,15 @@ Rules:
 - Styled CSS is one file per component (`src/<component>/<component>.css`) with plain rules, added
   to `src/styles.css` as `@import './<component>/<component>.css' layer(contour.components);`.
   Unlayered app CSS overrides it.
-- `soundor` has no DOM: it builds on `@soundor/react` (`View`, `Text`, `Pressable`…), never
-  `react-dom` (lint and `boundaries` reject it), and type-checks with `lib: ["ES2023"]` and
-  `@soundor/environment` in `types` (preset `library-soundor.json`). Its styles are objects of the
-  values of `@contour-ui/tokens/soundor`, per theme from its `ThemeProvider`; components read
-  them with `useTokens()` (the default theme outside a provider). Peers: `react`,
-  `@soundor/react`.
+- `soundor-headless` and `soundor` have no DOM: they build on `@soundor/react` (`View`, `Text`,
+  `Pressable`, the vector shapes of `@soundor/react/svg`…), never `react-dom` (lint and
+  `boundaries` reject it), and type-check with `lib: ["ES2023"]` and `@soundor/environment` in
+  `types` (preset `library-soundor.json`). Peers: `react`, `@soundor/react`. `soundor-headless`
+  runs the machines of `core` with Soundor's input, focus and accessibility, unstyled, as
+  `headless-react` does on the DOM; it must not depend on `tokens`, `icons`, `fonts` or `soundor`.
+  The styles of `soundor` are objects of the values of `@contour-ui/tokens/soundor`, per theme
+  from its `ThemeProvider`; components read them with `useTokens()` (the default theme outside a
+  provider).
 - A Soundor component keeps the names, variants and sizes of its web counterpart; where the
   platforms differ it follows Soundor (`onPress`, a `style` object or function of the state in
   place of `className` and `asChild`). A component on `Pressable` reads its interaction state as
@@ -59,6 +63,19 @@ Rules:
   `border-width.focus`, `outlineColor` of `border.focus`), in the style while `focusVisible`:
   outside the border, following its corners, taking no room in the layout. Strings in a label
   are set in a `Text` of the component's text style; Soundor allows no text outside a `Text`.
+- `soundor-headless` parts render one `@soundor/react` node each and combine their props with
+  the user's as `mergeProps(own, props)` (`src/utils/merge-props.ts`: handlers chained, the
+  user's first; `style` as a list, the user's last; `undefined` skipped, so no explicit
+  `undefined` reaches a Soundor prop) and refs with `useComposedRefs`. Soundor has no data
+  attributes: styled parts read the state from the context (`useKnobContext()`) and pass it to
+  their `style` functions. A dial is an `Svg` of `@soundor/react/svg`: only its root is a node
+  (focus, input, `accessibilityRole="adjustable"`, `accessibilityValue`, actions); its shapes
+  take SVG presentation props, `stroke="currentColor"` with the styled `color`. A label names
+  its control by its text (`accessibilityLabel`, read from the `Text` node), and the label and
+  the readout are `accessible={false}`, since the control carries both. Soundor keeps the focus
+  of a node that turns unfocusable: a disabled control calls `blur()`. A double press is
+  `isDoublePress` on `event.timeStamp` and `pageX`/`pageY`; a press that moved more than 4 px is
+  a drag, not half of one. A machine's clock is the runtime's `setTimeout`.
 - `registerFonts()` (`packages/soundor/src/fonts/`) registers the TTF faces of `@contour-ui/fonts`
   with `registerFont`, one static import per file (a test keeps them equal to `fontFaces`). The
   imports stay imports in `dist`, as do `soundor:*` (`libraryPack({ external })`): the plugin's
@@ -84,8 +101,8 @@ only.
 `@contour-ui/react` holds the styled components, `@contour-ui/headless-react` the unstyled ones.
 Another framework gets its pair (`vue`, `headless-vue`). The Soundor plugin UI runtime gets
 `@contour-ui/soundor` and `@contour-ui/soundor-headless` (no `-react` suffix while Soundor runs
-React only; `soundor-headless` is not created yet: it comes with the first Soundor component that
-has behavior). Packages free of frameworks and platforms keep plain names
+React only; `soundor-headless` holds the Soundor parts of the components with behavior, Knob
+first). Packages free of frameworks and platforms keep plain names
 (`tokens`, `icons`, `core`, whose machine hooks in `core/react` serve React DOM and Soundor alike),
 and an integration with another ecosystem is named after it: `@contour-ui/fumadocs` is the docs
 layout for sites on fumadocs-core.
@@ -157,7 +174,7 @@ rules via `lint.overrides`). Package `vite.config.ts` files hold Vite, Vitest an
 ``querySelector(`#${CSS.escape(id)}`)``. It also turns `getAttribute('data-x')` into `dataset.x`,
 which `noPropertyAccessFromIndexSignature` rejects: write `dataset['x']`.
 
-**Soundor tests** (`packages/soundor`) run in Node on Soundor's simulated runtime: the Vitest
+**Soundor tests** (`packages/soundor`, `packages/soundor-headless`) run in Node on Soundor's simulated runtime: the Vitest
 environment `soundor` with `soundor({ config: false })` from `@soundor/vitest`, and
 `@soundor/testing-library` (`render`, `screen`, `userEvent`, `advanceTime`). It simulates the node
 tree, input, focus and accessibility, not layout or pixels; find nodes by role and name (there are
@@ -165,7 +182,16 @@ no test ids). The plugin reads `test.environment` at the top level of the packag
 inside `projects`, and writes `.soundor/generated/*.d.ts` on every run (git-ignored). Test files
 type-check with `@soundor/vitest` in `types` (`tsconfig.test.json`), which declares
 `toHaveFocus`. `@soundor/react` props take no explicit `undefined`: pass an optional prop only
-when it is set.
+when it is set. A press keeps the pointer in the simulation, as in the runtimes: its moves and
+its release reach the pressed node wherever they are fired, and `movementX`/`movementY` are 0
+unless given. `requestPointerLock()` locks at once (`pointerLockNode()` of `soundor:ui`) and
+rejects a touch. `event.timeStamp` is the simulated clock, which `advanceTime` moves: two presses
+with no time between them are a double press. `advanceTime` moves Node's timers only under
+`vi.useFakeTimers()`, which a `setTimeout` clock needs. With one focusable node, Tab stays on it:
+render a second control to move the focus away. A part that throws while rendering rejects
+`render()`, and React reports it through `reportError` (spy on it). `node.svgScene` is the scene
+of an `Svg` (numbers in single precision: compare with `Math.fround`); `svgSceneUpdates` counts
+its replacements.
 
 Browser tests never fake `requestAnimationFrame`: overlay effects start on the next frame (fake
 `setTimeout` / `clearTimeout` only). Once a new dependency is reachable from tests, the first
@@ -180,6 +206,17 @@ pointer off first (`userEvent.unhover(element)`). `toHaveStyle` with camelCase k
 that measures something as wide as its text loads `@contour-ui/fonts/fonts.css` and awaits
 `document.fonts.ready` first: the fallback fonts differ between machines, and CI's Linux draws
 text wider than macOS.
+
+Drag with real input: `userEvent.dragAndDrop(source, target, { sourcePosition, targetPosition,
+steps })` moves the mouse in `steps` moves, through the pointer capture outside the source, and
+`userEvent.keyboard('{Shift>}')` holds Shift for it; turn the wheel with
+`userEvent.wheel(element, { delta })`. Playwright waits for an `aria-disabled` element to turn
+enabled before it clicks it: pass `{ force: true }`. `expect.poll(fn)` calls `fn` with
+`{ signal }`: pass `() => read()`, not a bare reference to a function with optional arguments.
+`toHaveStyle` does not parse custom properties: read them with
+`getComputedStyle(element).getPropertyValue('--name')`. A test frame may not lock the pointer
+(Chromium refuses with `WrongDocumentError`): fake `requestPointerLock`, `exitPointerLock` and
+`document.pointerLockElement`.
 
 ## Source export condition
 
@@ -360,6 +397,28 @@ version of these rules.
   `describeClientBoundary()` (`@contour-ui/vite-config/client-boundary`) fails on missing and on
   needless directives, in each package's `<package>:node` Vitest project. `core` carries none:
   `core/react` holds hooks only, which run in client modules.
+- **SVG parts.** `Primitive` renders `svg`, `path` and `line` too, so the shapes of a dial
+  support `asChild` like every part (its shared props type is `DOMAttributes<Element>`).
+- **Range controls** (Knob). The machine works in positions from 0 to 1 by its `scale`; the
+  dial is the geometry of core (`knob.getGeometry`: SVG shapes in a `0 0 100 100` view box,
+  strokes that grow with the dial, the same on every platform), and styles only paint it: the
+  track, the range and the thumb stroke in `currentColor`, so the styled CSS sets `color`. The
+  root writes `--knob-position` (0 to 1) and `--knob-angle` (`<n>deg`, clockwise from the top)
+  in its `style`, for dials of one's own; the root of a disabled knob carries `aria-disabled`,
+  which axe inherits, so the label and the readout count as the text of an inactive control.
+  React's `onWheel` listens passively, so `preventDefault()` there cannot keep the page still:
+  the control adds a native `wheel` listener with `{ passive: false }` in its ref callback, and
+  prevents the default only while it can act (not disabled or read-only); it reads the wheel with
+  `getRangeWheelDelta` (macOS sends it sideways under Shift). A drag does not cancel
+  `pointerdown`: that also cancels the browser's focus of a mouse press, and a `focus()` from code
+  then matches `:focus-visible`, which rings every click. The control sets `touch-action: none`
+  and `user-select: none` in its own `style`, captures the pointer, and focuses itself only for
+  touch and pen. Chrome rings a focused `svg` after a click too (`outline: auto`, though
+  `:focus-visible` does not match): the styled CSS sets `outline: none` on it and draws the ring
+  from `data-focus-visible`. A double click resets only when neither of its presses travelled
+  past 4 px (`|dx| + |dy|`, the movement under the pointer lock): the release of a drag is a
+  click to the browser. Each change the user starts has `onValueChangeStart` and
+  `onValueChangeEnd` around it (a plugin's `beginGesture()` and `endGesture()`).
 - **Overlays.** Users compose `Portal` around the positioner, as in Ark (the styled package
   re-exports it). One `usePresence` in Root drives Positioner and Content, its ref on the animated
   Content; Backdrop has its own. The layer stack writes `--layer-index` inline on the content, the
@@ -492,7 +551,8 @@ as the page renders, each color group in a panel per theme with `data-theme`, th
 text roles as the token build measures it, from the `contrast` list), and its own CSS (`app/app.css`, unlayered,
 loaded after every package stylesheet).
 
-- The home page is built from `@contour-ui/react` and the tokens only. A component that does not
+- The home page is built from `@contour-ui/react` and the tokens only, and the clips of the
+  Headless track from `@contour-ui/headless-react`. A component that does not
   ship yet is the styled `Placeholder` in its clip of the sequencer; swap in the real one as it
   lands.
 
@@ -539,7 +599,7 @@ loaded after every package stylesheet).
   `type(scope): subject`, imperative, starting lowercase, no trailing period, header within 72
   characters, body separated by a blank line. Types: `feat`, `fix`, `docs`, `test`, `refactor`,
   `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`, `icons`, `fonts`,
-  `core`, `headless-react`, `react`, `soundor`, `fumadocs`) or `docs`, `playground`, `config`, `repo`; no
+  `core`, `headless-react`, `react`, `soundor-headless`, `soundor`, `fumadocs`) or `docs`, `playground`, `config`, `repo`; no
   scope when a change spans several packages.
 - Hooks live in `.vite-hooks/` (installed by `vp config` on `vp install`): `pre-commit` runs
   `vp staged` (`vp check --fix` on staged files), `commit-msg` runs

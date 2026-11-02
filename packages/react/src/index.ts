@@ -14,6 +14,19 @@ export { Icon } from './icon/index.ts';
 export type { IconProps } from './icon/index.ts';
 export { Kbd } from './kbd/index.ts';
 export type { KbdProps } from './kbd/index.ts';
+export * as Knob from './knob/index.ts';
+// The readouts and scales of value controls, so that apps need no other package to set up a Knob.
+export {
+  formatDecibels,
+  formatDuration,
+  formatFrequency,
+  formatNumber,
+  formatPercent,
+  linearScale,
+  logScale,
+  powerScale,
+} from '@contour-ui/headless-react';
+export type { Scale, ScaleOption } from '@contour-ui/headless-react';
 export { Link } from './link/index.ts';
 export type { LinkProps } from './link/index.ts';
 export * as Listbox from './listbox/index.ts';

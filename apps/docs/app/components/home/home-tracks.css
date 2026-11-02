@@ -199,6 +199,50 @@
   letter-spacing: var(--ct-text-value-letter-spacing);
 }
 
+/* The Knob clip: a row of small knobs, their labels above and readouts below. */
+.docs-clip__knobs {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ct-space-section-gap);
+}
+
+/* The headless Knob clip: the bare dial next to the ARIA it renders. */
+.docs-clip__headless-knob {
+  display: flex;
+  align-items: center;
+  gap: var(--ct-space-panel-inset);
+}
+
+/* Its shapes stroke in the text color; the track steps back. Chrome rings a clicked `svg`. */
+.docs-clip__dial {
+  flex-shrink: 0;
+  inline-size: var(--ct-size-knob-md);
+  block-size: var(--ct-size-knob-md);
+  border-radius: var(--ct-radius-round);
+  outline: none;
+  color: var(--ct-color-fg-default);
+  cursor: ns-resize;
+}
+
+.docs-clip__dial[data-focus-visible] {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
+
+.docs-clip__dial > [data-part='track'] {
+  color: var(--ct-color-border-strong);
+}
+
+.docs-clip__aria {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-value);
+  letter-spacing: var(--ct-text-value-letter-spacing);
+  overflow-wrap: anywhere;
+}
+
 /* A line over every lane, with a head at the top, from the start of the timeline. */
 .docs-tracks__playhead {
   position: absolute;

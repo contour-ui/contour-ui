@@ -1,0 +1,304 @@
+---
+title: Knob
+description: A rotary control on the slider pattern, turned by a vertical drag, the wheel and the keys, with the shapes of its dial and the angle of the value for a look of your own.
+---
+
+import { formatDecibels, formatPercent, Knob } from '@contour-ui/headless-react';
+
+<Preview>
+  {
+    <>
+      <Knob.Root
+        className="docs-knob"
+        min={-60}
+        max={12}
+        step={0.1}
+        defaultValue={-6}
+        formatValue={formatDecibels}
+      >
+        <Knob.Label>Gain</Knob.Label>
+        <Knob.Control className="docs-knob-control">
+          <Knob.Track className="docs-knob-track" />
+          <Knob.Range className="docs-knob-range" />
+          <Knob.Thumb />
+        </Knob.Control>
+        <Knob.ValueText className="docs-knob-value" />
+      </Knob.Root>
+      <Knob.Root
+        className="docs-knob"
+        min={0}
+        max={1}
+        defaultValue={0.3}
+        formatValue={formatPercent}
+      >
+        <Knob.Label>Drive</Knob.Label>
+        <Knob.Control className="docs-knob-control">
+          <circle className="docs-knob-cap" cx="50" cy="50" r="44" />
+          <line className="docs-knob-pointer" x1="50" y1="50" x2="50" y2="16" />
+        </Knob.Control>
+        <Knob.ValueText className="docs-knob-value" />
+      </Knob.Root>
+      <style>{`
+        .docs-knob { display: inline-grid; justify-items: center; gap: 4px; color: var(--ct-color-fg-default); font: var(--ct-text-label); }
+        .docs-knob-control { width: var(--ct-size-knob-lg); height: var(--ct-size-knob-lg); border-radius: 50%; outline: none; cursor: ns-resize; }
+        .docs-knob-control[data-focus-visible] { outline: 2px solid var(--ct-color-border-focus); outline-offset: 2px; }
+        .docs-knob-track { color: var(--ct-color-border-default); }
+        .docs-knob-range { color: var(--ct-color-accent-fill); }
+        .docs-knob-value { font: var(--ct-text-value); }
+        .docs-knob-cap { fill: var(--ct-color-bg-raised); stroke: var(--ct-color-border-strong); stroke-width: 2; }
+        .docs-knob-pointer { stroke: var(--ct-color-accent-fill); stroke-width: 8; stroke-linecap: round; transform: rotate(var(--knob-angle)); transform-origin: 50px 50px; }
+      `}</style>
+    </>
+  }
+</Preview>
+
+```tsx
+import { formatDecibels, Knob } from '@contour-ui/headless-react';
+
+<Knob.Root min={-60} max={12} step={0.1} defaultValue={-6} formatValue={formatDecibels}>
+  <Knob.Label>Gain</Knob.Label>
+  <Knob.Control>
+    <Knob.Track />
+    <Knob.Range />
+    <Knob.Thumb />
+  </Knob.Control>
+  <Knob.ValueText />
+</Knob.Root>;
+```
+
+A knob has the semantics of a slider: a value in a range, which the user turns. `Knob.Control` is
+the dial, an `svg` with the `slider` role, which takes focus and every input: a vertical drag
+(up raises the value), the wheel, the keys of a slider and a double click, which resets the value.
+`Knob.Track`, `Knob.Range` and `Knob.Thumb` draw the dial from the geometry of
+`@contour-ui/core`, in the `0 0 100 100` view box of the control, so they scale with it as icons
+do. The [styled Knob](/docs/components/knob) is this component with the contour-ui look.
+
+## The parts
+
+- `Knob.Root` runs the knob and gives the parts its state. It carries the position of the value as
+  `--knob-position` (from `0` at `min` to `1` at `max`, by the scale) and its angle as
+  `--knob-angle` (from `-135deg` at `min` to `135deg` at `max`, clockwise from the top).
+- `Knob.Label` names the control (`aria-labelledby`); without it, give the control an `aria-label`.
+- `Knob.Control` is the dial. Its `style` sets `touch-action: none`, so a touch drag turns the knob
+  instead of scrolling the page, and `user-select: none`, so a drag or a double click selects no
+  text.
+- `Knob.Track` is the arc of the whole travel, 270° open at the bottom; `Knob.Range` the arc from
+  the origin to the value, either way, with an empty `d` at the origin; `Knob.Thumb` a line that
+  points at the value. They stroke in `currentColor`, with round caps and no fill: set their
+  colors with `color` (or `stroke`).
+- `Knob.ValueText` shows the text of the value: `formatValue(value)`, or the number.
+- `Knob.HiddenInput` submits the value with a form, under the `name` of the root.
+
+## The value
+
+`min` and `max` set the range (0 to 100 by default); `step` makes the value stop at multiples of
+it from `min`. `defaultValue` in a knob that keeps its value, or `value` and `onValueChange` to keep
+it yourself; `defaultValue` is also the value of a reset. `origin` is where the range starts, the
+middle for a bipolar knob such as a pan; a knob starts there without `defaultValue`. `scale` is
+`'linear'`, `'log'` (a range above zero), `powerScale(exponent)` or a `Scale` of your own.
+`formatValue` writes the value for the readout and for screen readers: the formatters of the
+package (`formatDecibels`, `formatFrequency`, `formatDuration`, `formatPercent`, `formatNumber`)
+write it as plugins show it.
+
+Each change the user makes, a drag, a run of wheel events, a key or a reset, starts with
+`onValueChangeStart` and ends with `onValueChangeEnd`, so the changes in between can make one step
+of a host's automation. `disabled` and `readOnly` keep the value as it is; `useKnobContext()`
+gives parts of your own `setValue`, which changes it whatever they say.
+
+## Input
+
+- **Drag.** A press of the primary button on the control starts a drag, and focuses it. Each move
+  turns the knob by the pixels it moved upwards, over `dragDistance` (200 by default) for the whole
+  travel; Shift makes the drag ten times as far. The control captures the pointer, so the drag
+  goes on outside it until the release.
+- **Pointer lock.** With `pointerLock`, a drag locks the pointer to the control
+  (`requestPointerLock()`): the pointer hides and stops at no edge of the screen, and the drag reads
+  its movement. The release gives it back, and so does Escape, which ends the drag. Where the
+  browser refuses the lock, the drag goes on with the pointer capture.
+- **Wheel.** The control listens to `wheel` itself, not through React, whose wheel listener is
+  passive: the page does not scroll while the wheel turns the knob. A notch moves a twentieth of the
+  travel, a tenth of that with Shift. A disabled or read-only knob lets the page scroll.
+- **Keys** and **double click**: see [Keyboard](#keyboard). A double click resets the value.
+
+## A dial of your own
+
+The shapes inside `Knob.Control` are up to you: draw a cap of your own and turn a pointer with
+`--knob-angle`, which the root sets. The control takes the input as before.
+
+```tsx
+<Knob.Root className="drive" min={0} max={1} formatValue={formatPercent}>
+  <Knob.Label>Drive</Knob.Label>
+  <Knob.Control>
+    <circle className="cap" cx="50" cy="50" r="44" />
+    <line className="pointer" x1="50" y1="50" x2="50" y2="16" />
+  </Knob.Control>
+  <Knob.ValueText />
+</Knob.Root>
+```
+
+```css
+.drive .pointer {
+  stroke: currentColor;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transform: rotate(var(--knob-angle));
+  transform-origin: 50px 50px;
+}
+```
+
+`--knob-position` gives the same value from `0` to `1`, for a meter or a gradient. `useKnobContext()`
+gives parts of your own `angle`, `position` and `geometry`, the shapes of the dial.
+
+## Styling
+
+Style the parts by their data attributes, or by your own class names:
+
+```css
+[data-scope='knob'][data-part='control'] {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  outline: none;
+  cursor: ns-resize;
+}
+
+[data-scope='knob'][data-part='control'][data-focus-visible] {
+  outline: 2px solid;
+  outline-offset: 2px;
+}
+
+[data-scope='knob'][data-part='range'][data-dragging] {
+  color: royalblue;
+}
+```
+
+Draw the focus ring with `data-focus-visible`. Chrome rings a focused `svg` after a click too, by
+its own stylesheet: `outline: none` on the control keeps the ring for focus from the keyboard.
+
+## Anatomy
+
+| Part               | Element | Attributes                                                                                                                                                                                                                                                             |
+| ------------------ | ------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Knob.Root`        | `div`   | `data-scope="knob" data-part="root"`, `aria-disabled` while disabled; `--knob-position`, `--knob-angle` in `style`                                                                                                                                                     |
+| `Knob.Label`       | `span`  | `data-part="label"`, `id`                                                                                                                                                                                                                                              |
+| `Knob.Control`     | `svg`   | `data-part="control"`, `role="slider"`, `tabindex="0"` (none while disabled), `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, `aria-valuetext`, `aria-labelledby`, `aria-orientation="vertical"`, `aria-disabled`, `aria-readonly`, `data-focus-visible`, `viewBox` |
+| `Knob.Track`       | `path`  | `data-part="track"`, `d`, `stroke-width`, `stroke="currentColor"`, `stroke-linecap="round"`, `fill="none"`                                                                                                                                                             |
+| `Knob.Range`       | `path`  | `data-part="range"`, the same, with an empty `d` at the origin                                                                                                                                                                                                         |
+| `Knob.Thumb`       | `line`  | `data-part="thumb"`, `x1`, `y1`, `x2`, `y2`, `stroke-width`, `stroke`, `stroke-linecap`                                                                                                                                                                                |
+| `Knob.ValueText`   | `span`  | `data-part="value-text"`; the text of the value                                                                                                                                                                                                                        |
+| `Knob.HiddenInput` | `input` | `data-part="hidden-input"`, `type="hidden"`, `name`, `form`, `value`, `disabled`                                                                                                                                                                                       |
+
+Every part carries `data-scope="knob"`, `data-disabled`, `data-readonly` and `data-dragging`,
+present and empty while the state holds. Give the label an `id` of your own, and the control
+follows it.
+
+## Props
+
+`Knob.Root`:
+
+| Prop                 | Type                                                     | Default    |
+| -------------------- | -------------------------------------------------------- | ---------- |
+| `value`              | `number`                                                 | —          |
+| `defaultValue`       | `number`: the first value, and the value of a reset      | `origin`   |
+| `onValueChange`      | `(details: { value: number }) => void`                   | —          |
+| `onValueChangeStart` | `(details: { value: number }) => void`: a gesture starts | —          |
+| `onValueChangeEnd`   | `(details: { value: number }) => void`: it ends          | —          |
+| `min`                | `number`                                                 | `0`        |
+| `max`                | `number`                                                 | `100`      |
+| `step`               | `number`: none for a continuous value                    | —          |
+| `scale`              | `'linear'`, `'log'` or a `Scale`                         | `'linear'` |
+| `origin`             | `number`: where the range starts                         | `min`      |
+| `formatValue`        | `(value: number) => string`                              | the number |
+| `dragDistance`       | `number`: the pixels of a drag from `min` to `max`       | `200`      |
+| `pointerLock`        | `boolean`                                                | `false`    |
+| `disabled`           | `boolean`                                                | `false`    |
+| `readOnly`           | `boolean`                                                | `false`    |
+| `name`               | `string`: the name of the hidden input                   | —          |
+| `form`               | `string`: the id of its form                             | —          |
+
+Every part takes `asChild` and the props of its element, such as `className`, `style` and `ref`.
+`Knob.ValueText` shows its children in place of the text of the value.
+
+## Keyboard
+
+| Key                    | Action                                                       |
+| ---------------------- | ------------------------------------------------------------ |
+| `↑` `→`                | Raises the value by a hundredth of the travel, or one `step` |
+| `↓` `←`                | Lowers it the same way                                       |
+| `Shift` + arrow        | A thousandth of the travel, or one `step`                    |
+| `Page Up`, `Page Down` | A tenth of the travel                                        |
+| `Home`, `End`          | Goes to `min` or `max`                                       |
+
+The control prevents the default of these keys, so the page does not scroll; your `onKeyDown`
+runs first, and `event.preventDefault()` there keeps the knob as it is. Keys with Ctrl, Alt or
+Meta are the page's.
+
+## Accessibility
+
+- The control is a `slider` with `aria-orientation="vertical"`: screen readers announce the
+  name, the text of the value (`aria-valuetext`) and the range, and move it with the arrow keys.
+- `data-focus-visible` follows focus from the keyboard: Tab, or a key after a press.
+- A disabled knob has no `tabindex` and `aria-disabled="true"`, on its root too: checkers such as
+  axe then count the label and the readout as the text of an inactive control, which WCAG exempts
+  from contrast. A read-only knob stays focusable, with `aria-readonly="true"`.
+
+## How it works
+
+`Knob.Root` runs the knob machine of `@contour-ui/core`, `knob.machine`, with `useMachine`. Its
+platform is only the `setTimeout` clock: the control reads the input itself and sends the machine
+events.
+
+| State       | Event                                     | Next        | What happens                                                           |
+| ----------- | ----------------------------------------- | ----------- | ---------------------------------------------------------------------- |
+| `idle`      | `DRAG.START` (a press)                    | `dragging`  | `onValueChangeStart`                                                   |
+| `dragging`  | `DRAG.MOVE` (a move)                      | `dragging`  | the value moves by the pixels over `dragDistance`                      |
+| `dragging`  | `DRAG.END` (the release)                  | `idle`      | `onValueChangeEnd`                                                     |
+| `idle`      | `WHEEL`                                   | `scrolling` | `onValueChangeStart`, and the value moves                              |
+| `scrolling` | `WHEEL`                                   | `scrolling` | the value moves; the rest of 300 ms starts over                        |
+| `scrolling` | the wheel rests                           | `idle`      | `onValueChangeEnd`                                                     |
+| `idle`      | `VALUE.STEP`, `VALUE.EDGE`, `VALUE.RESET` | `idle`      | the value changes, between `onValueChangeStart` and `onValueChangeEnd` |
+| any         | `VALUE.SET`                               | the same    | `setValue`: the value changes, with no gesture                         |
+
+Keys and resets wait for the release of a drag; a press or a key ends a run of wheel events first.
+Turning the knob disabled or read-only ends the gesture in progress. `knob.connect` turns the
+running machine into the API, and `knob.getGeometry` the position of the value into the shapes of
+the dial: a renderer other than React DOM draws the same dial.
+
+## Hooks
+
+`useKnob` runs the machine without the parts. It takes the props of the root and returns the API
+(`value`, `valueText`, `position`, `angle`, `geometry`, `dragging`, `focusVisible`,
+`setValue()`…) and the props of each element: `getRootProps()`, `getLabelProps()`,
+`getControlProps()`, `getTrackProps()`, `getRangeProps()`, `getThumbProps()`,
+`getValueTextProps()` and `getHiddenInputProps()`. The label's props carry a `ref` that tells the
+control its id, and the control's a `ref` that listens to the wheel: compose them with yours.
+
+```tsx
+import { formatDecibels, useKnob } from '@contour-ui/headless-react';
+
+function Gain() {
+  const knob = useKnob({ min: -60, max: 12, defaultValue: 0, formatValue: formatDecibels });
+  return (
+    <div {...knob.getRootProps()}>
+      <span {...knob.getLabelProps()}>Gain</span>
+      <svg {...knob.getControlProps()}>
+        <path {...knob.getTrackProps()} />
+        <path {...knob.getRangeProps()} />
+        <line {...knob.getThumbProps()} />
+      </svg>
+      <span {...knob.getValueTextProps()}>{knob.valueText}</span>
+    </div>
+  );
+}
+```
+
+Inside `Knob.Root`, `useKnobContext()` returns the same API, for parts of your own:
+
+```tsx
+import { useKnobContext } from '@contour-ui/headless-react';
+
+function Ticks() {
+  const { min, max } = useKnobContext();
+  return <span>{`${min} to ${max}`}</span>;
+}
+```

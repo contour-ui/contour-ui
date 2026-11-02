@@ -1,0 +1,4 @@
+{
+  "extends": "@contour-ui/typescript-config/node.json",
+  "include": ["vite.config.ts"]
+}
