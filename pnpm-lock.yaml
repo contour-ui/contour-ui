@@ -31,26 +31,26 @@ catalogs:
       specifier: 8.5.0
       version: 8.5.0
     '@soundor/config':
-      specifier: 0.14.0
-      version: 0.14.0
+      specifier: 0.15.0
+      version: 0.15.0
     '@soundor/environment':
-      specifier: 0.14.0
-      version: 0.14.0
+      specifier: 0.15.0
+      version: 0.15.0
     '@soundor/juce-runtime':
-      specifier: 0.13.0
-      version: 0.13.0
+      specifier: 0.14.0
+      version: 0.14.0
     '@soundor/react':
-      specifier: 0.14.0
-      version: 0.14.0
+      specifier: 0.15.0
+      version: 0.15.0
     '@soundor/testing-library':
-      specifier: 0.14.0
-      version: 0.14.0
+      specifier: 0.15.0
+      version: 0.15.0
     '@soundor/vitest':
-      specifier: 0.14.0
-      version: 0.14.0
+      specifier: 0.15.0
+      version: 0.15.0
     '@soundor/web-runtime':
-      specifier: 0.10.0
-      version: 0.10.0
+      specifier: 0.11.0
+      version: 0.11.0
     '@types/culori':
       specifier: 4.0.1
       version: 4.0.1
@@ -112,8 +112,8 @@ catalogs:
       specifier: 16.35.0
       version: 16.35.0
     soundor:
-      specifier: 0.14.0
-      version: 0.14.0
+      specifier: 0.15.0
+      version: 0.15.0
     style-dictionary:
       specifier: 5.7.0
       version: 5.7.0
@@ -136,8 +136,8 @@ catalogs:
       specifier: 2.3.0
       version: 2.3.0
     vitest-environment-soundor:
-      specifier: 0.14.0
-      version: 0.14.0
+      specifier: 0.15.0
+      version: 0.15.0
 
 overrides:
   vite@*: npm:@voidzero-dev/vite-plus-core@1.4.0
@@ -306,13 +306,13 @@ importers:
         version: link:../../packages/soundor
       '@soundor/juce-runtime':
         specifier: 'catalog:'
-        version: 0.13.0(@soundor/config@0.14.0)
+        version: 0.14.0(@soundor/config@0.15.0)
       '@soundor/react':
         specifier: 'catalog:'
-        version: 0.14.0(react@19.3.1)
+        version: 0.15.0(react@19.3.1)
       '@soundor/web-runtime':
         specifier: 'catalog:'
-        version: 0.10.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.14.0)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+        version: 0.11.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.15.0)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
       react:
         specifier: 'catalog:'
         version: 19.3.1
@@ -322,16 +322,16 @@ importers:
         version: link:../../tooling/typescript
       '@soundor/config':
         specifier: 'catalog:'
-        version: 0.14.0
+        version: 0.15.0
       '@soundor/environment':
         specifier: 'catalog:'
-        version: 0.14.0
+        version: 0.15.0
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
       soundor:
         specifier: 'catalog:'
-        version: 0.14.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.14.0)(publint@0.3.25)(typescript@7.0.2)
+        version: 0.15.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.15.0)(publint@0.3.25)(typescript@7.0.2)
 
   packages/core:
     dependencies:
@@ -555,16 +555,16 @@ importers:
         version: link:../../tooling/vite
       '@soundor/environment':
         specifier: 'catalog:'
-        version: 0.14.0
+        version: 0.15.0
       '@soundor/react':
         specifier: 'catalog:'
-        version: 0.14.0(react@19.3.1)
+        version: 0.15.0(react@19.3.1)
       '@soundor/testing-library':
         specifier: 'catalog:'
-        version: 0.14.0(@soundor/react@0.14.0(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
+        version: 0.15.0(@soundor/react@0.15.0(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
       '@soundor/vitest':
         specifier: 'catalog:'
-        version: 0.14.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)
+        version: 0.15.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -582,7 +582,7 @@ importers:
         version: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
       vitest-environment-soundor:
         specifier: 'catalog:'
-        version: 0.14.0(vitest@5.0.5)
+        version: 0.15.0(vitest@5.0.5)
 
   packages/tokens:
     devDependencies:
@@ -1851,48 +1851,48 @@ packages:
   '@shikijs/vscode-textmate@10.1.0':
     resolution: {integrity: sha512-cVBuhDQjBZaNMTwBquYfPydrUP+E3hE6oYGasx8h6ZrODIM7/r+gxLDXdd66oszbrggZHEntdE6j+5gYIVyMWQ==}
 
-  '@soundor/config@0.14.0':
-    resolution: {integrity: sha512-OJTCWmOAk75g333DwYiqKcCcIbDX8K6g/BvL2mJ4dzop7I0IERJG3Hp1o1MFAsxwqrsfqCHQmrFZVHmEOFI9zA==}
+  '@soundor/config@0.15.0':
+    resolution: {integrity: sha512-iSFp/a9RLt0Oj6TrCjuwKeEf09M0MWtQ+JFQuNoGJWdzHMlb/xWI5ipOSn33R775SyzGpSBlepI0R7xhcHaqUQ==}
 
-  '@soundor/core@0.14.0':
-    resolution: {integrity: sha512-7V6hfyM93iKMG5cMbhgwLdPf8ZokiOpfWf1qpQE3UZ8S9G7rXkWMVmgEvLBLAnamI2V+9qWbU0YAdqYdsBjStA==}
+  '@soundor/core@0.15.0':
+    resolution: {integrity: sha512-w4EE/eyMcOXcsi5DzYhX6v/CgeOhsPdrac1UuSBsCbUpDpUTNhpSI6JM2w6Gy47wH6BLelS4TB/lOPhNxNR0jg==}
 
-  '@soundor/devtools-client@0.14.0':
-    resolution: {integrity: sha512-SxGgfLAF653ARELHYsu9k95uG2rmPsFUSVa4qfHTCDOhJLr8WOGm7d5Xamzek8wOEEvS/PdRwG/eiBjjUuFo8A==}
+  '@soundor/devtools-client@0.15.0':
+    resolution: {integrity: sha512-NeDjDAJ6BYt02hAfDZCKLKFCe53vt2ue+72zGPKO91rXbpibhtB+GeOtdwEjinonq9tEMkQ5OCFBgKrcFGgE+Q==}
 
-  '@soundor/devtools-protocol@0.14.0':
-    resolution: {integrity: sha512-dvrjg1dtOGN71xzl0mU1u4aIJa2Zhbtd1kR8uipbj3R87DM3ncbIZIsd1md0dK+t9KilZteaRgjwpJCjpFfkgQ==}
+  '@soundor/devtools-protocol@0.15.0':
+    resolution: {integrity: sha512-nkbdUO9czMc18O9Po5kY2m/6l/nIZCn5W2aa+lbW2OcFTKKVfZ1KT1Bat8JdF6ztHMR3LMZDcLTI87GybPVFnQ==}
 
-  '@soundor/devtools-server@0.14.0':
-    resolution: {integrity: sha512-L+y2+6Tntn8T4fZgtW1F7wIFQrYqqgP9YLHn+MEzW52EBeZK0y2OuUSjp3ECfNVroMzmx9WCtHDxc3iRGuwWbA==}
+  '@soundor/devtools-server@0.15.0':
+    resolution: {integrity: sha512-Unt4N4o3I1060Cs4WqSwefLPV6k5Z/uMMJhmg6nyhoXjTpmz1AYW03rn+rmO3m1XnzuhpFbZVaoYHumX3gIw6A==}
 
-  '@soundor/driver@0.14.0':
-    resolution: {integrity: sha512-p3kEBllfuUJCwuD1E6ryO13QCFkMi8rQPofGd5Dp6RM4FRkEoDmgOE3OHUtDABzJvnWehAuS7wN9gm7xAlre0Q==}
+  '@soundor/driver@0.15.0':
+    resolution: {integrity: sha512-z/bZu1qvZJdvmMr/eaK3frauV391wikZn3VsoSyY+era3B3+W1IsdtFZq+phGBuUexs93wfyL3zw4TGt2ys1dg==}
     engines: {node: ^22.18.0 || >=24.11.0}
 
-  '@soundor/engine@0.5.0':
-    resolution: {integrity: sha512-51oqE1gzUlGLnFg6G7+1EuOUq4aJMISHVx0NhCPSqMw1Uzz+ro8ObGVWojdob5ta6484tOzaXspo0Yv8agK5MQ==}
+  '@soundor/engine@0.6.0':
+    resolution: {integrity: sha512-y0b1BStVftliK2dCvWimZdNEfig11fFR/V6lmlOW/UhstQ5XgeEEdalWfQomoiAG0yGeTQW/GPGHLfxUSAASIg==}
 
-  '@soundor/environment@0.14.0':
-    resolution: {integrity: sha512-pgOgFpxqkt2bVOiErPKFPjy3N4fZc9z+zZgPo7TRl37s6ePcWTNPio3m1Eydlg/SXatmu36EVWFPjXlBdZQikw==}
+  '@soundor/environment@0.15.0':
+    resolution: {integrity: sha512-ZBw9a8BE37iksr9bx0L4Us2itTw9wa74JmxeNCp4jl/TGWICOgB4jiq71JFN41KxslnSEcLNL8hK3VrJjj/eHQ==}
 
-  '@soundor/juce-runtime@0.13.0':
-    resolution: {integrity: sha512-l2eXkzqr5QVUGzvaaDFqrUL30PABP9eB+bnNQRfw2ozYvJkgWUDrfqdcpb8fEMkyMCVNQwdyRAAOUVbxrXfSlA==}
+  '@soundor/juce-runtime@0.14.0':
+    resolution: {integrity: sha512-bykDCRsuBtbV4FzEwm/N8Iqd5ei3aYf0f0dH8PmEv9k5J5f+3Ea/KTIUFpH6pso8ttn00KTbw01olrGvscQVeQ==}
     peerDependencies:
       '@soundor/config': '>=0.0.0 <1.0.0'
 
-  '@soundor/react@0.14.0':
-    resolution: {integrity: sha512-MWS+x9BgezDH22LYy7lA3Tb0Ucrv4WQ235SzWOz6ZRcItp1q7HyEtWaJRyWRU6QC7RMT9lfWvanztVIiuZZ/cQ==}
+  '@soundor/react@0.15.0':
+    resolution: {integrity: sha512-FYFtgqh0msw6Mvg9P2O4HekUzWJAevrK9VwM/RB0WAif3GmaaQuJ2sTrXBcqb7xderiZaWiOjQ8uTqj/Ov5Btw==}
     peerDependencies:
       react: ^19.3.0
 
-  '@soundor/test-runtime@0.14.0':
-    resolution: {integrity: sha512-9v+yWgFy4/t+30zzYuSPTDQvQBEORqzvGxAb+UPVDlYp9FbPp9cAfVE7krUY3pAQNhrs1Tzvy4Ti5DwyU6OXdg==}
+  '@soundor/test-runtime@0.15.0':
+    resolution: {integrity: sha512-D1SNmJzmFAhtYBBGVBgmzEcXSqqHdP6O1T76SXVochhbvZrsNAeTOTbGJDMKK9mX9WTI289Z3FUj+DpCQ4jtog==}
 
-  '@soundor/testing-library@0.14.0':
-    resolution: {integrity: sha512-j6uXhn+A3atFZ5EOjFvl87z0NaAUipQI4DWJaiRGWydC78BQgo7ZZ9WIab+pWyK7Rv73pb8JqmDhovNqPtBcdw==}
+  '@soundor/testing-library@0.15.0':
+    resolution: {integrity: sha512-1KyFSxzjXoaPSigqW9XL0By6EVCXGIGWWn+dusp1xPkUb4XsX0cNAnOmCRPMLaP9A1yyEIXDmzMCa8g2WyDc8A==}
     peerDependencies:
-      '@soundor/react': ^0.14.0
+      '@soundor/react': ^0.15.0
       react: ^19.3.0
       vitest: ^5.0.3
     peerDependenciesMeta:
@@ -1901,14 +1901,14 @@ packages:
       react:
         optional: true
 
-  '@soundor/vitest@0.14.0':
-    resolution: {integrity: sha512-Do2jiz/kFjqENS6N1WNLVxVo51Wj3DkeLRtG3wqIGN9Dc1nWOA6SUwSSN4LCcI2vSnSl7VW8rTeBS46DC9LupQ==}
+  '@soundor/vitest@0.15.0':
+    resolution: {integrity: sha512-huFtBhLpsMNROqPpvXarZijUzC/gzR4KxNHijMSFkbdns+v+dYiSjWfpwRuKRuup6XQqQzxj3Djx4HCT9D05WA==}
     peerDependencies:
       vite: ^8.3.2
       vitest: ^5.0.3
 
-  '@soundor/web-runtime@0.10.0':
-    resolution: {integrity: sha512-xAs35yIOqvZgajKbQ9obli2P5Y0VS6CW1eE6sDaMpL9BzyUji8PDMnvn1ejLW+KoDXT+fp3HeDTyM7aX2C7bWg==}
+  '@soundor/web-runtime@0.11.0':
+    resolution: {integrity: sha512-lrZoEIz6MxNPJTV5SQYby2w4U3Ak4XUlCUckf+pJe7sAC/O36CXdgtAKd/iL5ab/aDOaKumIrR0ipRhYiXEo2w==}
     peerDependencies:
       '@soundor/config': '>=0.0.0 <1.0.0'
 
@@ -3794,8 +3794,8 @@ packages:
   sonic-boom@4.2.1:
     resolution: {integrity: sha512-w6AxtubXa2wTXAUsZMMWERrsIRAdrK0Sc+FUytWvYAhBJLyuI4llrMIC1DtlNSdI99EI86KZum2MMq3EAZlF9Q==}
 
-  soundor@0.14.0:
-    resolution: {integrity: sha512-ivoA9zLfPSDd0hFdonIQowHHVNAHGRaIg0oPMeNQ2eExiHqUuyJjWbyPZWjBdMK7u5Sk+loMqM/U4KrZH7am3A==}
+  soundor@0.15.0:
+    resolution: {integrity: sha512-xHdd331EEZGYWiJF/h+rEpuHzafu8pRz+YA7iPTkzblc0IDJsBqAqgA7sztLKPYQM/ta3FIOcrN3XwF0YtAL0g==}
     engines: {node: ^22.18.0 || >=24.11.0}
     hasBin: true
     peerDependencies:
@@ -4057,8 +4057,8 @@ packages:
       '@types/react-dom':
         optional: true
 
-  vitest-environment-soundor@0.14.0:
-    resolution: {integrity: sha512-w+9uP+5gCOjP+PS0xzLJ8VY8sGQz9VdeliLvxxT0HGIDo6+PMUEOZQGQ+wbwrP2UFHZDZafOr4D6karx0SMwig==}
+  vitest-environment-soundor@0.15.0:
+    resolution: {integrity: sha512-LsgkRwKUjsURyS975nplplClStFPTPjYZxEsYWxSYryXaGOckzsGLOUphZTp9zH2HqJ9afntvP/I/XVp8IhPGQ==}
     peerDependencies:
       vitest: ^5.0.3
 
@@ -5287,47 +5287,47 @@ snapshots:
 
   '@shikijs/vscode-textmate@10.1.0': {}
 
-  '@soundor/config@0.14.0':
+  '@soundor/config@0.15.0':
     dependencies:
-      '@soundor/core': 0.14.0
+      '@soundor/core': 0.15.0
       rolldown: 1.2.16
       zod: 4.6.7
 
-  '@soundor/core@0.14.0':
+  '@soundor/core@0.15.0':
     dependencies:
-      '@soundor/environment': 0.14.0
+      '@soundor/environment': 0.15.0
 
-  '@soundor/devtools-client@0.14.0':
+  '@soundor/devtools-client@0.15.0':
     dependencies:
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
 
-  '@soundor/devtools-protocol@0.14.0':
+  '@soundor/devtools-protocol@0.15.0':
     dependencies:
       zod: 4.6.7
 
-  '@soundor/devtools-server@0.14.0':
+  '@soundor/devtools-server@0.15.0':
     dependencies:
       '@fastify/cookie': 11.1.5
       '@fastify/static': 10.1.8
       '@fastify/websocket': 11.3.4
-      '@soundor/devtools-protocol': 0.14.0
+      '@soundor/devtools-protocol': 0.15.0
       fastify: 5.12.7
       ws: 8.22.0
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@soundor/driver@0.14.0':
+  '@soundor/driver@0.15.0':
     dependencies:
-      '@soundor/devtools-protocol': 0.14.0
+      '@soundor/devtools-protocol': 0.15.0
       ws: 8.22.0
       zod: 4.6.7
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
 
-  '@soundor/engine@0.5.0':
+  '@soundor/engine@0.6.0':
     dependencies:
       '@babel/core': 8.0.10
       '@babel/plugin-transform-async-generator-functions': 8.0.6(@babel/core@8.0.10)
@@ -5341,41 +5341,41 @@ snapshots:
       '@babel/plugin-transform-private-methods': 8.0.1(@babel/core@8.0.10)
       '@babel/plugin-transform-private-property-in-object': 8.0.5(@babel/core@8.0.10)
 
-  '@soundor/environment@0.14.0': {}
+  '@soundor/environment@0.15.0': {}
 
-  '@soundor/juce-runtime@0.13.0(@soundor/config@0.14.0)':
+  '@soundor/juce-runtime@0.14.0(@soundor/config@0.15.0)':
     dependencies:
-      '@soundor/config': 0.14.0
-      '@soundor/core': 0.14.0
-      '@soundor/engine': 0.5.0
+      '@soundor/config': 0.15.0
+      '@soundor/core': 0.15.0
+      '@soundor/engine': 0.6.0
 
-  '@soundor/react@0.14.0(react@19.3.1)':
+  '@soundor/react@0.15.0(react@19.3.1)':
     dependencies:
       react: 19.3.1
       react-reconciler: 0.34.0(react@19.3.1)
 
-  '@soundor/test-runtime@0.14.0': {}
+  '@soundor/test-runtime@0.15.0': {}
 
-  '@soundor/testing-library@0.14.0(@soundor/react@0.14.0(react@19.3.1))(react@19.3.1)(vitest@5.0.5)':
+  '@soundor/testing-library@0.15.0(@soundor/react@0.15.0(react@19.3.1))(react@19.3.1)(vitest@5.0.5)':
     dependencies:
-      '@soundor/test-runtime': 0.14.0
+      '@soundor/test-runtime': 0.15.0
       vitest: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
     optionalDependencies:
-      '@soundor/react': 0.14.0(react@19.3.1)
+      '@soundor/react': 0.15.0(react@19.3.1)
       react: 19.3.1
 
-  '@soundor/vitest@0.14.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)':
+  '@soundor/vitest@0.15.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)':
     dependencies:
-      '@soundor/config': 0.14.0
-      '@soundor/core': 0.14.0
-      '@soundor/test-runtime': 0.14.0
+      '@soundor/config': 0.15.0
+      '@soundor/core': 0.15.0
+      '@soundor/test-runtime': 0.15.0
       vite: '@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)'
       vitest: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
 
-  '@soundor/web-runtime@0.10.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.14.0)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)':
+  '@soundor/web-runtime@0.11.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.15.0)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)':
     dependencies:
-      '@soundor/config': 0.14.0
-      '@soundor/core': 0.14.0
+      '@soundor/config': 0.15.0
+      '@soundor/core': 0.15.0
       preact: 11.1.0
       vite: '@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)'
     transitivePeerDependencies:
@@ -7532,14 +7532,14 @@ snapshots:
     dependencies:
       atomic-sleep: 1.0.0
 
-  soundor@0.14.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.14.0)(publint@0.3.25)(typescript@7.0.2):
+  soundor@0.15.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.15.0)(publint@0.3.25)(typescript@7.0.2):
     dependencies:
       '@clack/prompts': 1.8.1
-      '@soundor/config': 0.14.0
-      '@soundor/core': 0.14.0
-      '@soundor/devtools-client': 0.14.0
-      '@soundor/devtools-server': 0.14.0
-      '@soundor/driver': 0.14.0
+      '@soundor/config': 0.15.0
+      '@soundor/core': 0.15.0
+      '@soundor/devtools-client': 0.15.0
+      '@soundor/devtools-server': 0.15.0
+      '@soundor/driver': 0.15.0
       citty: 0.2.2
       tsdown: 0.23.4(@arethetypeswrong/core@0.18.5)(publint@0.3.25)(typescript@7.0.2)
     transitivePeerDependencies:
@@ -7870,9 +7870,9 @@ snapshots:
       '@types/react': 19.3.0
       '@types/react-dom': 19.3.0(@types/react@19.3.0)
 
-  vitest-environment-soundor@0.14.0(vitest@5.0.5):
+  vitest-environment-soundor@0.15.0(vitest@5.0.5):
     dependencies:
-      '@soundor/test-runtime': 0.14.0
+      '@soundor/test-runtime': 0.15.0
       vitest: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
 
   vitest@5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1):

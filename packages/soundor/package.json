@@ -54,7 +54,7 @@
     "vitest-environment-soundor": "catalog:"
   },
   "peerDependencies": {
-    "@soundor/react": "^0.14.0",
+    "@soundor/react": "^0.15.0",
     "react": "^19.3.0"
   }
 }
