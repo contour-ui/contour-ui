@@ -1,0 +1,5 @@
+---
+'@contour-ui/core': minor
+---
+
+Add scales, readouts and the input of range controls, all without `Intl`. Scales spread a range over the travel of a control and back: `linearScale`, `logScale` (equal ratios take equal travel, for frequencies and times; the range must be above zero) and `powerScale(exponent)`, with `resolveScale` for the names `'linear'` and `'log'`. Readouts: `formatNumber` (fixed decimals, a minus sign, an optional plus sign, `inf`), `formatFrequency` (`440 Hz`, `1.25 kHz`), `formatDuration` (`12.5 ms`, `1.20 s`), `formatDecibels` (`−6.0 dB`, `−inf dB`), `formatPercent` and `decimalsOf(step)`. Interactions: `getRangeIntent` turns a key into a step, a page or an end of a range control, as the ARIA slider pattern has it; `getWheelDelta` gives a wheel event in pixels whatever its unit, and `getRangeWheelDelta` the distance it turns a range control (sideways under Shift, as macOS sends it); `isDoublePress` tells a double press on platforms without a `dblclick` event of their own.

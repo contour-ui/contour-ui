@@ -10,8 +10,8 @@
 | `interactions/` | pointer / keyboard logic; **never imports `states/`**      |
 | `collection/`   | item collections that list machines navigate (below)       |
 | `positioning/`  | where floating elements go, on Floating UI (below)         |
-| `scales/`       | value scales (linear, log, dB…)                            |
-| `format/`       | value formatting / parsing                                 |
+| `scales/`       | how a range control spreads its values (below)             |
+| `format/`       | value readouts without `Intl` (below)                      |
 | `react/`        | `@contour-ui/core/react` subpath: React hooks (see below)  |
 
 - **May depend on (internal):** nothing.
@@ -44,6 +44,17 @@ need, without a DOM) and its types (`Schema`, `Input`, `Api`…).
   action `writeText`, which answers with `COPY.DONE` or `COPY.FAILED`; once the write is done the
   machine stays `copied` for `timeout` ms (3000 by default). A `COPY` while copied writes again
   and keeps the state; its `COPY.DONE` starts the time over.
+- `knob` — `idle`, `dragging` and `scrolling`: a value from `min` to `max`, snapped to `step` or
+  continuous, spread over the travel by `scale`, with the range arc from `origin` (`min`, or the
+  middle for a bipolar knob). `DRAG.START` / `DRAG.MOVE` / `DRAG.END` drag it (up raises the
+  value, `dragDistance` pixels for the whole travel, a tenth of that pace with `fine`); `WHEEL`
+  moves a twentieth of the travel per 100 pixels and stays `scrolling` until the wheel has rested
+  for 300 ms; `VALUE.STEP`, `VALUE.EDGE`, `VALUE.RESET` (to `defaultValue`) and `VALUE.COMMIT`
+  change it in one go. Each change the user starts calls `onValueChangeStart` and, at its end,
+  `onValueChangeEnd`; disabled or read-only knobs ignore the user and end a change in progress.
+  `knob.connect` gives the value text (`formatValue`), the position and angle, and
+  `knob.getGeometry(position, originPosition)`: the dial as SVG shapes in a `0 0 100 100` view
+  box, the same on every platform.
 - `dialog` — `closed` and `open`. `OPEN`, `CLOSE` and `TOGGLE` come from the parts; `ESCAPE` and
   `INTERACT_OUTSIDE` from the platform effect `dismiss`, and close only when `closeOnEscape` and
   `closeOnInteractOutside` allow it. With `open` controlled, requests are only reported through
@@ -101,6 +112,41 @@ The adapter reads the intent of an event and sends its machine an event of its o
   than `timeout` ms apart (500 by default). Core has no clock: the adapter passes `now`, such as
   the time stamp of the key event, and keeps the state. Space counts only within a query, so that
   it can select otherwise.
+- `getRangeIntent(event)` — the key of a range control (a knob, a slider), as the ARIA slider
+  pattern has it: `increment` (↑ →), `decrement` (↓ ←), `increment-page` / `decrement-page`
+  (Page Up, Page Down), `min` (Home), `max` (End); `null` otherwise and with Ctrl, Alt or Meta.
+- `getWheelDelta(event)` — a wheel event in pixels, whether it counts pixels, lines or pages.
+- `getRangeWheelDelta(event)` — how far a wheel event turns a range control: the vertical
+  distance, or the horizontal one under Shift when there is no vertical one (macOS sends a
+  vertical wheel sideways under Shift).
+- `isDoublePress(previous, next, { interval, slop })` — whether two presses make a double press
+  (500 ms, 4 px by default), for platforms without a `dblclick` event of their own.
+
+## Scales (`scales/`)
+
+How a range control spreads its values over its travel: `toPosition(value, min, max)` gives 0 at
+`min` and 1 at `max`, `toValue(position, min, max)` goes back; both clamp.
+
+- `linearScale` — equal steps of value take equal travel (gain in dB, pan, mix).
+- `logScale` — equal ratios take equal travel (frequencies, times); the range must be above zero.
+- `powerScale(exponent)` — the linear position raised to `1 / exponent`: above 1 gives the low
+  end more travel.
+- `resolveScale(option)` — `'linear'`, `'log'` or a `Scale` of one's own, as props take it.
+
+## Readouts (`format/`)
+
+Value text without `Intl`, which Hermes lacks: fixed decimals with `toFixed`, a minus sign
+(U+2212), units after a space, and only characters of the Latin subset of the token fonts (`inf`
+in place of `∞`).
+
+- `formatNumber(value, { decimals, signed })` — `−3.5`, `+2`; a number that rounds to zero has no
+  sign.
+- `formatFrequency(hz)` — `440 Hz`, `1.25 kHz`, `12.5 kHz` (three significant digits by default).
+- `formatDuration(ms)` — `12.5 ms`, `1.20 s`.
+- `formatDecibels(db, { decimals, signed })` — `−6.0 dB`, `+3.0 dB`, `−inf dB`.
+- `formatPercent(fraction)` — `50%`.
+- `decimalsOf(step)` — the decimals of a step (`0.01` has 2), so readouts on it carry no binary
+  noise.
 
 ## Positioning (`positioning/`)
 

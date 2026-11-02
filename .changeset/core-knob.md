@@ -1,0 +1,5 @@
+---
+'@contour-ui/core': minor
+---
+
+Add the knob machine, exported as the `knob` namespace: `knob.machine`, `knob.connect` and its types, with the geometry of its dial (`knob.getGeometry`, `knob.getAngle`). A value from `min` to `max` (0 to 100 by default), snapped to `step` or continuous, spread over a 270° travel by `scale` (`'linear'`, `'log'` or a `Scale`), with the range arc from `origin` (`min`, or the middle for a bipolar knob). Dragging up raises it (`dragDistance` pixels for the whole travel, ten times as far with Shift), the wheel moves a twentieth of the travel per 100 pixels, keys step by a hundredth, a thousandth or a tenth of the travel and go to the ends, and a reset returns to `defaultValue`. Each change the user starts calls `onValueChangeStart` and, when it ends, `onValueChangeEnd` with the value it left, so a plugin can record it as one gesture; a run of wheel events ends after 300 ms of rest. `formatValue` writes the value text. Disabled or read-only knobs ignore the user and end a change in progress; `setValue` changes the value from code at any time.

@@ -42,13 +42,27 @@ export type {
   ListStepOptions,
 } from './collection/index.ts';
 
-export { getListIntent, initialTypeahead, nextTypeahead } from './interactions/index.ts';
+export {
+  getListIntent,
+  getRangeIntent,
+  getRangeWheelDelta,
+  getWheelDelta,
+  initialTypeahead,
+  isDoublePress,
+  nextTypeahead,
+} from './interactions/index.ts';
 export type {
+  DoublePressOptions,
   KeyLike,
   ListIntent,
   ListNavigationOptions,
+  PressLike,
+  RangeIntent,
+  RangeWheelLike,
   TypeaheadOptions,
   TypeaheadState,
+  WheelDelta,
+  WheelLike,
 } from './interactions/index.ts';
 
 export { computePosition, resolvePositioningOptions } from './positioning/index.ts';
@@ -67,9 +81,27 @@ export type {
   ResolvedPositioningOptions,
 } from './positioning/index.ts';
 
+export { clampPosition, linearScale, logScale, powerScale, resolveScale } from './scales/index.ts';
+export type { Scale, ScaleOption } from './scales/index.ts';
+
+export {
+  decimalsOf,
+  formatDecibels,
+  formatDuration,
+  formatFrequency,
+  formatNumber,
+  formatPercent,
+} from './format/index.ts';
+export type {
+  FormatDecibelsOptions,
+  FormatNumberOptions,
+  FormatSignificantOptions,
+} from './format/index.ts';
+
 export * as clipboard from './states/clipboard/index.ts';
 export * as collapsible from './states/collapsible/index.ts';
 export * as dialog from './states/dialog/index.ts';
+export * as knob from './states/knob/index.ts';
 export * as listbox from './states/listbox/index.ts';
 export * as popover from './states/popover/index.ts';
 export * as segmentGroup from './states/segment-group/index.ts';
