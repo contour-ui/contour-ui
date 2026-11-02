@@ -48,9 +48,13 @@ Rules:
   `@soundor/react`.
 - A Soundor component keeps the names, variants and sizes of its web counterpart; where the
   platforms differ it follows Soundor (`onPress`, a `style` object or function of the state in
-  place of `className` and `asChild`). Soundor has no `outline` and no `:focus-visible`: a
-  focus ring is a view outside the border (as far out as the web's outline and its offset, so the
-  layout stays), shown while `useFocusVisible()` (`src/utils/focus-visible.ts`, the last input
+  place of `className` and `asChild`). It reads its interaction state as a value from
+  `useInteractionState()` (`src/utils/interaction-state.ts`), not in the `style` and `children`
+  functions of `Pressable`: it spreads the props the hook returns on its `Pressable` and styles
+  its parts from the state, at rest while `disabled` as Pressable's own (a test holds the hook to
+  Pressable). Soundor has no `outline` and no `:focus-visible`: a focus ring is a view outside
+  the border (as far out as the web's outline and its offset, so the layout stays), shown while
+  the state's `focusVisible` (`useFocusVisible()`, `src/utils/focus-visible.ts`: the last input
   was a key) says so, and the state passes to `style` as `focusVisible`. Strings in a label are
   set in a `Text` of the component's text style; Soundor allows no text outside a `Text`.
 - `registerFonts()` (`packages/soundor/src/fonts/`) registers the TTF faces of `@contour-ui/fonts`
