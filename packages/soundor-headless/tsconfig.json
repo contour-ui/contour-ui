@@ -1,0 +1,16 @@
+{
+  // Solution-style: no files of its own. Editors and type-aware lint give each file to the
+  // first referenced project that includes it. The options below are shared through `extends`
+  // and are what tools reading only this file get (`vp pack`, Vite transforms).
+  "extends": "@contour-ui/typescript-config/library-soundor.json",
+  "compilerOptions": {
+    // Soundor's modules and Web globals, in place of the DOM.
+    "types": ["@soundor/environment"]
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.lib.json" },
+    { "path": "./tsconfig.test.json" },
+    { "path": "./tsconfig.config.json" }
+  ]
+}

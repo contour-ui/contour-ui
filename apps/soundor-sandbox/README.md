@@ -25,9 +25,14 @@ npx soundor driver key Tab
 npx soundor driver screenshot ./sandbox.png
 ```
 
-Every button has a `debugId` (`solid-md`, `outline-disabled`, `theme`…) to find it by.
+Every button and every knob control has a `debugId` to find it by: `solid-md`,
+`outline-disabled`, `theme`… for the buttons; `knob-sm`, `knob-md`, `knob-lg`, `knob-cutoff`,
+`knob-pan`, `knob-disabled` and `knob-gain` (the plugin's `gain` parameter, with its gestures and
+the pointer lock) for the knobs.
 
 - `runtimes/juce/` and `runtimes/web/` are the scaffolds of `soundor init juce` and
   `soundor init web`, kept as written but for lint fixes. The JUCE template applies a `gain`
   parameter, so the config declares one.
-- `.soundor/` (generated declarations, bundles, builds) is git-ignored.
+- `.soundor/` (generated declarations, bundles, builds) is git-ignored, and type-checking runs
+  without it: `src/parameters.d.ts` declares the parameters the UI reads (`soundor:parameters`),
+  as `soundor gen` does in `.soundor/generated/parameters.d.ts`. Keep it equal to the config.

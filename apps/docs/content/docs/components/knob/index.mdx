@@ -1,0 +1,286 @@
+---
+title: Knob
+description: A rotary control for the parameters of an audio plugin, turned by a vertical drag, the wheel or the keys, with its value in a readout below the dial.
+---
+
+import { formatDecibels, formatFrequency, formatNumber, Knob } from '@contour-ui/react';
+
+export function formatPan(value) {
+  if (value === 0) {
+    return 'C';
+  }
+  return `${value < 0 ? 'L' : 'R'} ${formatNumber(Math.abs(value))}`;
+}
+
+<Preview>
+  {
+    <Knob.Root min={-60} max={12} step={0.1} defaultValue={0} formatValue={formatDecibels}>
+      <Knob.Label>Gain</Knob.Label>
+      <Knob.Control />
+      <Knob.ValueText />
+    </Knob.Root>
+  }
+</Preview>
+
+```tsx
+import { formatDecibels, Knob } from '@contour-ui/react';
+
+<Knob.Root min={-60} max={12} step={0.1} defaultValue={0} formatValue={formatDecibels}>
+  <Knob.Label>Gain</Knob.Label>
+  <Knob.Control />
+  <Knob.ValueText />
+</Knob.Root>;
+```
+
+Knob is the rotary control of plugin interfaces: gain, cutoff, resonance, mix. It is the
+[Headless Knob](/docs/components/knob/headless) with the look of contour-ui: a dial whose travel
+is an arc of 270°, open at the bottom. The range, in the accent color, runs along the track from
+the origin to the value, and the thumb points at the value. The label sits above the dial and the
+readout below it, in the monospace `value` text style, so digits do not shift while the knob
+turns.
+
+Drag the dial up to raise the value and down to lower it, turn the wheel over it, or use the keys
+of a slider; a double click resets it. `Knob.Control` draws the track, the range and the thumb
+when it has no children.
+
+## The value
+
+`min` and `max` set the range, 0 to 100 by default. Without `step`, the value is continuous; with
+it, the value stops at multiples of `step` from `min`. `defaultValue` is the first value of a knob
+that keeps its own, and the value a double click resets to, a parameter's default; pass `value`
+and `onValueChange` to keep the value yourself. `onValueChange` receives `{ value }`.
+
+```tsx
+const [cutoff, setCutoff] = useState(1000);
+
+<Knob.Root value={cutoff} onValueChange={(details) => setCutoff(details.value)}>
+  …
+</Knob.Root>;
+```
+
+`formatValue` writes the readout and what screen readers say. The formatters of
+`@contour-ui/react` write values as plugins show them, without `Intl`, with a real minus sign:
+`formatDecibels` (`−6.0 dB`), `formatFrequency` (`440 Hz`, `1.25 kHz`), `formatDuration`
+(`12.5 ms`, `1.20 s`), `formatPercent` (`50%`) and `formatNumber`. Without `formatValue`, the
+readout is the number, with the decimals of `step`.
+
+## Gestures
+
+Each change the user makes is a gesture with a start and an end: a drag from the press to the
+release, a run of wheel events until the wheel rests for 300 ms, a key, a reset.
+`onValueChangeStart` receives the value before it and `onValueChangeEnd` the value it left, so a
+plugin can record the changes in between as one step of the host's automation and undo, with the
+`beginGesture()` and `endGesture()` of a parameter. `setValue()` changes the value from code
+without either.
+
+```tsx
+<Knob.Root
+  value={param.value}
+  onValueChangeStart={() => param.beginGesture()}
+  onValueChange={(details) => param.set(details.value)}
+  onValueChangeEnd={() => param.endGesture()}
+>
+  …
+</Knob.Root>
+```
+
+## Scales
+
+`scale` spreads the range over the travel. `'linear'` is the default. `'log'` gives equal ratios
+equal travel, as the ear hears pitch: 20 Hz to 200 Hz takes as much of it as 2 kHz to 20 kHz. Use
+it for frequencies and times, with a range above zero. `powerScale(exponent)` is a curve in
+between, for a range that starts at zero, and any `Scale` of your own works too.
+
+<Preview>
+  {
+    <Knob.Root min={20} max={20000} scale="log" defaultValue={1000} formatValue={formatFrequency}>
+      <Knob.Label>Cutoff</Knob.Label>
+      <Knob.Control />
+      <Knob.ValueText />
+    </Knob.Root>
+  }
+</Preview>
+
+```tsx
+import { formatFrequency, Knob } from '@contour-ui/react';
+
+<Knob.Root min={20} max={20000} scale="log" defaultValue={1000} formatValue={formatFrequency}>
+  <Knob.Label>Cutoff</Knob.Label>
+  <Knob.Control />
+  <Knob.ValueText />
+</Knob.Root>;
+```
+
+## Bipolar knobs
+
+`origin` is where the range starts: `min` by default. A pan, or a gain from −12 dB to +12 dB, sets
+it in the middle: the range then runs from the middle either way, and has no length at the
+origin. Without `defaultValue`, a knob starts at its origin and a double click goes back to it.
+
+<Preview>
+  {
+    <Knob.Root min={-100} max={100} step={1} origin={0} formatValue={formatPan}>
+      <Knob.Label>Pan</Knob.Label>
+      <Knob.Control />
+      <Knob.ValueText />
+    </Knob.Root>
+  }
+</Preview>
+
+```tsx
+import { formatNumber, Knob } from '@contour-ui/react';
+
+function formatPan(value: number): string {
+  return value === 0 ? 'C' : `${value < 0 ? 'L' : 'R'} ${formatNumber(Math.abs(value))}`;
+}
+
+<Knob.Root min={-100} max={100} step={1} origin={0} formatValue={formatPan}>
+  <Knob.Label>Pan</Knob.Label>
+  <Knob.Control />
+  <Knob.ValueText />
+</Knob.Root>;
+```
+
+## Sizes
+
+`size` is `sm`, `md` (the default) or `lg`: the diameter of the dial, the `--ct-size-knob-*`
+tokens. The strokes of the dial grow with it.
+
+<Preview>
+  {
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '1.5rem' }}>
+      {['sm', 'md', 'lg'].map((size) => (
+        <Knob.Root key={size} size={size} defaultValue={65}>
+          <Knob.Label>{size}</Knob.Label>
+          <Knob.Control />
+          <Knob.ValueText />
+        </Knob.Root>
+      ))}
+    </div>
+  }
+</Preview>
+
+## States and forms
+
+- `disabled` greys the knob out: it takes no focus and ignores the pointer, the wheel and the
+  keys, and the wheel scrolls the page over it.
+- `readOnly` shows the value, and the knob still takes focus, but the user cannot change it.
+  `setValue()` still does.
+- `Knob.HiddenInput` submits the value with a form, under `name`; `form` is the id of a form the
+  knob is outside of. A disabled knob's value is left out, as a disabled input's is.
+
+<Preview>
+  {
+    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '1.5rem' }}>
+      <Knob.Root disabled defaultValue={40}>
+        <Knob.Label>Disabled</Knob.Label>
+        <Knob.Control />
+        <Knob.ValueText />
+      </Knob.Root>
+      <Knob.Root readOnly defaultValue={70}>
+        <Knob.Label>Read-only</Knob.Label>
+        <Knob.Control />
+        <Knob.ValueText />
+      </Knob.Root>
+    </div>
+  }
+</Preview>
+
+## Pointer and wheel
+
+| Input         | Action                                                                                                                                                |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Drag up, down | Raises or lowers the value: 200 pixels from `min` to `max` (`dragDistance`). Only the vertical movement counts, and the drag goes on outside the dial |
+| `Shift` drag  | Ten times as far, for fine moves                                                                                                                      |
+| Wheel         | A notch of a mouse wheel moves a twentieth of the travel, a tenth of that with `Shift`. The page does not scroll                                      |
+| Double click  | Resets the value to `defaultValue`, or the origin                                                                                                     |
+
+`pointerLock` locks the pointer to the dial while it drags: the pointer hides and stops at no
+edge of the screen, and shows again where the drag started. The press releases it, and so does
+Escape, which ends the drag.
+
+## Keyboard
+
+| Key                    | Action                                                       |
+| ---------------------- | ------------------------------------------------------------ |
+| `Tab`                  | Moves focus to the dial, and out of it                       |
+| `↑` `→`                | Raises the value by a hundredth of the travel, or one `step` |
+| `↓` `←`                | Lowers it the same way                                       |
+| `Shift` + arrow        | A thousandth of the travel, or one `step`                    |
+| `Page Up`, `Page Down` | A tenth of the travel                                        |
+| `Home`, `End`          | Goes to `min` or `max`                                       |
+
+With a `step` larger than the share of the travel a key moves, the key moves one `step`.
+
+## Anatomy
+
+| Part               | Element | Class                        | Attributes                                                                                                                                                                                                                                                 |
+| ------------------ | ------- | ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Knob.Root`        | `div`   | `contour-knob`               | `data-scope="knob" data-part="root"`, `data-size`, `aria-disabled`, `data-disabled`, `data-readonly`, `data-dragging`; `--knob-position`, `--knob-angle`                                                                                                   |
+| `Knob.Label`       | `span`  | `contour-knob__label`        | `data-part="label"`, `id`                                                                                                                                                                                                                                  |
+| `Knob.Control`     | `svg`   | `contour-knob__control`      | `data-part="control"`, `role="slider"`, `tabindex`, `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, `aria-valuetext`, `aria-labelledby`, `aria-orientation="vertical"`, `aria-disabled`, `aria-readonly`, `data-focus-visible`, `viewBox="0 0 100 100"` |
+| `Knob.Track`       | `path`  | `contour-knob__track`        | `data-part="track"`, `d`                                                                                                                                                                                                                                   |
+| `Knob.Range`       | `path`  | `contour-knob__range`        | `data-part="range"`, `d`, empty at the origin                                                                                                                                                                                                              |
+| `Knob.Thumb`       | `line`  | `contour-knob__thumb`        | `data-part="thumb"`, `x1`, `y1`, `x2`, `y2`                                                                                                                                                                                                                |
+| `Knob.ValueText`   | `span`  | `contour-knob__value-text`   | `data-part="value-text"`; the text of the value                                                                                                                                                                                                            |
+| `Knob.HiddenInput` | `input` | `contour-knob__hidden-input` | `data-part="hidden-input"`, `type="hidden"`, `name`, `form`, `value`, `disabled`                                                                                                                                                                           |
+
+Every part carries `data-scope="knob"`, `data-disabled`, `data-readonly` and `data-dragging`,
+present and empty while the state holds. The track, the range and the thumb stroke in
+`currentColor` with round caps: set their colors with `color`.
+
+## Props
+
+`Knob.Root`:
+
+| Prop                 | Type                                                     | Default    |
+| -------------------- | -------------------------------------------------------- | ---------- |
+| `value`              | `number`                                                 | —          |
+| `defaultValue`       | `number`: the first value, and the value of a reset      | `origin`   |
+| `onValueChange`      | `(details: { value: number }) => void`                   | —          |
+| `onValueChangeStart` | `(details: { value: number }) => void`: a gesture starts | —          |
+| `onValueChangeEnd`   | `(details: { value: number }) => void`: it ends          | —          |
+| `min`                | `number`                                                 | `0`        |
+| `max`                | `number`                                                 | `100`      |
+| `step`               | `number`: none for a continuous value                    | —          |
+| `scale`              | `'linear'`, `'log'` or a `Scale`                         | `'linear'` |
+| `origin`             | `number`: where the range starts                         | `min`      |
+| `formatValue`        | `(value: number) => string`                              | the number |
+| `dragDistance`       | `number`: the pixels of a drag from `min` to `max`       | `200`      |
+| `pointerLock`        | `boolean`                                                | `false`    |
+| `disabled`           | `boolean`                                                | `false`    |
+| `readOnly`           | `boolean`                                                | `false`    |
+| `name`               | `string`: the name of the hidden input                   | —          |
+| `form`               | `string`: the id of its form                             | —          |
+| `size`               | `'sm'`, `'md'`, `'lg'`                                   | `'md'`     |
+
+Every part takes `asChild` and the props of its element; `className` is merged with the part's
+class. `Knob.ValueText` shows its children in place of the text of the value.
+
+## Accessibility
+
+- The dial is a vertical `slider`, named by `Knob.Label` or by `aria-label` on `Knob.Control`. It
+  gives screen readers the text of `formatValue` (`aria-valuetext`), so they say "Gain, −6.0 dB"
+  rather than a bare number, and the keys of a slider move it.
+- Focus from the keyboard shows a ring around the dial (`data-focus-visible`); a press focuses it
+  without one, as a click does a button, and the next key shows it.
+- A disabled knob leaves the tab order (`aria-disabled`, on the root too, so checkers such as axe
+  count its label and readout as the text of an inactive control); a read-only one stays in it
+  (`aria-readonly`).
+- The readout is text next to the dial: the slider carries the value for assistive technology.
+
+## Tokens
+
+| Token                                                         | Used for                                          |
+| ------------------------------------------------------------- | ------------------------------------------------- |
+| `--ct-size-knob-sm`, `--ct-size-knob-md`, `--ct-size-knob-lg` | the diameter of the dial                          |
+| `--ct-color-border-default`                                   | the track                                         |
+| `--ct-color-accent-fill`, `--ct-color-accent-fill-hover`      | the range, and the range while hovered or dragged |
+| `--ct-color-fg-default`                                       | the thumb and the readout                         |
+| `--ct-color-fg-muted`                                         | the label                                         |
+| `--ct-color-fg-disabled`, `--ct-color-border-subtle`          | a disabled knob, and its track                    |
+| `--ct-text-label`, `--ct-text-value`                          | the label and the readout                         |
+| `--ct-space-control-gap`                                      | between the label, the dial and the readout       |
+| `--ct-radius-round`                                           | the round dial, which its focus ring follows      |
+| `--ct-color-border-focus`, `--ct-border-width-focus`          | the focus ring                                    |
+| `--ct-motion-feedback`                                        | the color change of the range                     |

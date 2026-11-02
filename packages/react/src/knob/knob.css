@@ -1,0 +1,110 @@
+/*
+ * A knob: its label, its dial and its value readout in a centered column. The dial is an `svg`
+ * with the 100 × 100 view box of the geometry of core, as wide as `--ct-size-knob-*`, so its
+ * strokes grow with it. The track, the range and the thumb stroke in `currentColor`: their
+ * colors are `color` here. The control sets `touch-action: none` and `user-select: none` itself.
+ */
+.contour-knob {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ct-space-control-gap);
+  margin: 0;
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-knob[hidden] {
+  display: none;
+}
+
+.contour-knob__label {
+  color: var(--ct-color-fg-muted);
+  font: var(--ct-text-label);
+  letter-spacing: var(--ct-text-label-letter-spacing);
+  white-space: nowrap;
+}
+
+/*
+ * Round, so the focus ring is a circle around the dial. Chrome rings a focused `svg` after a
+ * click too: the ring here follows `data-focus-visible` alone.
+ */
+.contour-knob__control {
+  display: block;
+  flex-shrink: 0;
+  inline-size: var(--ct-size-knob-md);
+  block-size: var(--ct-size-knob-md);
+  border-radius: var(--ct-radius-round);
+  outline: none;
+  overflow: visible;
+  cursor: ns-resize;
+}
+
+.contour-knob[data-size='sm'] .contour-knob__control {
+  inline-size: var(--ct-size-knob-sm);
+  block-size: var(--ct-size-knob-sm);
+}
+
+.contour-knob[data-size='lg'] .contour-knob__control {
+  inline-size: var(--ct-size-knob-lg);
+  block-size: var(--ct-size-knob-lg);
+}
+
+/* `display` above overrides the browser's `[hidden]`. */
+.contour-knob__control[hidden] {
+  display: none;
+}
+
+/* As the button's ring: outside the dial, clear of the track. */
+.contour-knob__control[data-focus-visible] {
+  outline: var(--ct-border-width-focus) solid var(--ct-color-border-focus);
+  outline-offset: var(--ct-border-width-focus);
+}
+
+/* Nothing to turn: a disabled or a read-only knob takes the default pointer. */
+.contour-knob__control[data-disabled],
+.contour-knob__control[data-readonly] {
+  cursor: default;
+}
+
+.contour-knob__track {
+  color: var(--ct-color-border-default);
+}
+
+.contour-knob__range {
+  color: var(--ct-color-accent-fill);
+  transition: color var(--ct-motion-feedback);
+}
+
+/* Touch screens would keep the hover look after a tap. */
+@media (hover: hover) {
+  .contour-knob__control:not([data-disabled], [data-readonly]):hover > .contour-knob__range {
+    color: var(--ct-color-accent-fill-hover);
+  }
+}
+
+.contour-knob__range[data-dragging] {
+  color: var(--ct-color-accent-fill-hover);
+}
+
+.contour-knob__thumb {
+  color: var(--ct-color-fg-default);
+}
+
+.contour-knob__value-text {
+  color: var(--ct-color-fg-default);
+  font: var(--ct-text-value);
+  letter-spacing: var(--ct-text-value-letter-spacing);
+  white-space: nowrap;
+}
+
+.contour-knob__track[data-disabled] {
+  color: var(--ct-color-border-subtle);
+}
+
+.contour-knob__range[data-disabled],
+.contour-knob__thumb[data-disabled],
+.contour-knob__label[data-disabled],
+.contour-knob__value-text[data-disabled] {
+  color: var(--ct-color-fg-disabled);
+}

@@ -1,7 +1,7 @@
 /**
- * axe on the kinds of page (home, guide, component, one with tabs: code block tabs, install
- * commands and MDX tabs, and the Tokens page, which shows both themes side by side) and on the
- * overlays of the layout, in both themes: color contrast differs between them.
+ * axe on the kinds of page (home, guide, component, an audio control, one with tabs: code block
+ * tabs, install commands and MDX tabs, and the Tokens page, which shows both themes side by side)
+ * and on the overlays of the layout, in both themes: color contrast differs between them.
  */
 import { AxeBuilder } from '@axe-core/playwright';
 import type { Page } from '@playwright/test';
@@ -12,6 +12,7 @@ const PAGES = [
   '/',
   '/docs/guide',
   '/docs/components/button',
+  '/docs/components/knob',
   '/docs/fumadocs/mdx',
   '/docs/guide/tokens',
 ];

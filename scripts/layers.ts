@@ -81,6 +81,13 @@ export const LAYERS: readonly LayerPackage[] = [
     react: 'peer',
   },
   {
+    name: 'soundor-headless',
+    layer: 2,
+    purpose: 'unstyled components for Soundor plugin UIs, on @soundor/react',
+    allowed: ['core'],
+    react: 'soundor-peer',
+  },
+  {
     name: 'react',
     layer: 3,
     purpose: 'styled React DOM components: Essentials and Audio',
@@ -91,7 +98,7 @@ export const LAYERS: readonly LayerPackage[] = [
     name: 'soundor',
     layer: 3,
     purpose: 'styled components for Soundor plugin UIs, on @soundor/react',
-    allowed: ['tokens', 'icons', 'fonts'],
+    allowed: ['soundor-headless', 'tokens', 'icons', 'fonts'],
     react: 'soundor-peer',
   },
   {

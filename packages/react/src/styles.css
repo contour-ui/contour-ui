@@ -20,6 +20,7 @@
 @import './drawer/drawer.css' layer(contour.components);
 @import './icon/icon.css' layer(contour.components);
 @import './kbd/kbd.css' layer(contour.components);
+@import './knob/knob.css' layer(contour.components);
 @import './link/link.css' layer(contour.components);
 @import './listbox/listbox.css' layer(contour.components);
 @import './placeholder/placeholder.css' layer(contour.components);

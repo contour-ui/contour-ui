@@ -47,7 +47,7 @@ const INDEX: readonly IndexColumn[] = [
     title: 'Audio',
     subtitle: 'Controls and displays for sound',
     entries: [
-      { label: 'Knob' },
+      { label: 'Knob', href: '/docs/components/knob' },
       { label: 'Fader' },
       { label: 'NumberField' },
       { label: 'Meter' },

@@ -1,5 +1,17 @@
+import { Knob as HeadlessKnob, useKnobContext } from '@contour-ui/headless-react';
 import { chevronLeftIcon, chevronRightIcon } from '@contour-ui/icons';
-import { Button, Icon, IconButton, Link, Placeholder, Tabs } from '@contour-ui/react';
+import {
+  Button,
+  formatFrequency,
+  formatNumber,
+  formatPercent,
+  Icon,
+  IconButton,
+  Knob,
+  Link,
+  Placeholder,
+  Tabs,
+} from '@contour-ui/react';
 import type { CSSProperties, ReactElement, ReactNode } from 'react';
 import { Link as RouterLink } from 'react-router';
 
@@ -60,9 +72,86 @@ function TabsClip(): ReactElement {
   );
 }
 
+/** The resonance of the filter, with two decimals. */
+const formatQ = (value: number): string => formatNumber(value, { decimals: 2 });
+
+/** The Knob clip: the styled knobs of the filter and the output of the synth, as small as they come. */
+function KnobsClip(): ReactElement {
+  return (
+    <div className="docs-clip__knobs">
+      <Knob.Root
+        size="sm"
+        min={20}
+        max={20_000}
+        scale="log"
+        defaultValue={822}
+        formatValue={formatFrequency}
+      >
+        <Knob.Label>Cutoff</Knob.Label>
+        <Knob.Control />
+        <Knob.ValueText />
+      </Knob.Root>
+      <Knob.Root
+        size="sm"
+        min={0.1}
+        max={10}
+        scale="log"
+        step={0.01}
+        defaultValue={4.78}
+        formatValue={formatQ}
+      >
+        <Knob.Label>Q</Knob.Label>
+        <Knob.Control />
+        <Knob.ValueText />
+      </Knob.Root>
+      <Knob.Root size="sm" min={0} max={1} defaultValue={0.62} formatValue={formatPercent}>
+        <Knob.Label>Mix</Knob.Label>
+        <Knob.Control />
+        <Knob.ValueText />
+      </Knob.Root>
+    </div>
+  );
+}
+
+/** What the headless knob tells assistive technology, as it turns. */
+function KnobAria(): ReactElement {
+  const { valueText } = useKnobContext();
+  return (
+    <span className="docs-clip__aria" aria-hidden="true">
+      <span>{'role="slider"'}</span>
+      <span>{`aria-valuetext="${valueText}"`}</span>
+    </span>
+  );
+}
+
+/**
+ * The headless Knob clip: the bare parts of `@contour-ui/headless-react`, its shapes in the text
+ * color, next to the ARIA they render.
+ */
+function HeadlessKnobClip(): ReactElement {
+  return (
+    <HeadlessKnob.Root
+      className="docs-clip__headless-knob"
+      min={0}
+      max={1}
+      defaultValue={0.35}
+      formatValue={formatPercent}
+    >
+      <HeadlessKnob.Control className="docs-clip__dial" aria-label="LFO depth">
+        <HeadlessKnob.Track />
+        <HeadlessKnob.Range />
+        <HeadlessKnob.Thumb />
+      </HeadlessKnob.Control>
+      <KnobAria />
+    </HeadlessKnob.Root>
+  );
+}
+
 /** What a clip shows: a styled component, or a placeholder for one not shipped yet. */
 const CLIP_CONTENT: Readonly<Record<string, () => ReactElement>> = {
   button: ButtonsClip,
+  'headless-knob': HeadlessKnobClip,
+  knob: KnobsClip,
   tabs: TabsClip,
 };
 

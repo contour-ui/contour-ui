@@ -118,7 +118,11 @@ export default defineConfig({
       {
         // core and the Soundor packages run on Hermes (the Soundor plugin UI runtime), built
         // without Intl.
-        files: ['packages/core/src/**', 'packages/soundor/src/**'],
+        files: [
+          'packages/core/src/**',
+          'packages/soundor-headless/src/**',
+          'packages/soundor/src/**',
+        ],
         rules: {
           'no-restricted-globals': [
             'error',
@@ -144,6 +148,7 @@ export default defineConfig({
           'packages/core/src/react/**',
           'packages/headless-react/**',
           'packages/react/**',
+          'packages/soundor-headless/**',
           'packages/soundor/**',
           'apps/**',
           '**/*.tsx',

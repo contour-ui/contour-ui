@@ -46,6 +46,25 @@ describe('Primitive', () => {
     expect(ref.current).toBe(button.element());
   });
 
+  it('renders the SVG elements in the SVG namespace, with their props and ref', async () => {
+    const ref = createRef<SVGPathElement>();
+    const screen = await render(
+      <Primitive.svg viewBox="0 0 10 10" data-testid="dial">
+        <Primitive.path ref={ref} d="M 1 1 L 9 9" strokeWidth={2} />
+        <Primitive.line asChild className="part">
+          <line x1={0} y1={0} x2={5} y2={5} className="child" />
+        </Primitive.line>
+      </Primitive.svg>,
+    );
+    const svg = screen.getByTestId('dial').element();
+
+    expect(svg.namespaceURI).toBe('http://www.w3.org/2000/svg');
+    await expect.element(screen.getByTestId('dial')).toHaveAttribute('viewBox', '0 0 10 10');
+    expect(ref.current).toBeInstanceOf(SVGPathElement);
+    expect(ref.current).toHaveAttribute('stroke-width', '2');
+    expect(svg.querySelector('line')).toHaveAttribute('class', 'part child');
+  });
+
   describe('asChild', () => {
     it('renders the child in place of its element', async () => {
       const screen = await render(
