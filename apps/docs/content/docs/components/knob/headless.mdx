@@ -71,13 +71,16 @@ the dial, an `svg` with the `slider` role, which takes focus and every input: a 
 (up raises the value), the wheel, the keys of a slider and a double click, which resets the value.
 `Knob.Track`, `Knob.Range` and `Knob.Thumb` draw the dial from the geometry of
 `@contour-ui/core`, in the `0 0 100 100` view box of the control, so they scale with it as icons
-do. The [styled Knob](/docs/components/knob) is this component with the contour-ui look.
+do. The [styled Knob](/docs/components/knob) is this component with the contour-ui look. The same
+parts run in [Soundor plugin UIs](/docs/guide/installation#soundor-plugin-uis), where they render
+Soundor's nodes.
 
 ## The parts
 
-- `Knob.Root` runs the knob and gives the parts its state. It carries the position of the value as
-  `--knob-position` (from `0` at `min` to `1` at `max`, by the scale) and its angle as
-  `--knob-angle` (from `-135deg` at `min` to `135deg` at `max`, clockwise from the top).
+- `Knob.Root` runs the knob and gives the parts its state. On the web it carries the position of
+  the value as `--knob-position` (from `0` at `min` to `1` at `max`, by the scale) and its angle as
+  `--knob-angle` (from `-135deg` at `min` to `135deg` at `max`, clockwise from the top); in Soundor,
+  which has no CSS variables, `useKnobContext()` gives `position` and `angle`.
 - `Knob.Label` names the control (`aria-labelledby`); without it, give the control an `aria-label`.
 - `Knob.Control` is the dial. Its `style` sets `touch-action: none`, so a touch drag turns the knob
   instead of scrolling the page, and `user-select: none`, so a drag or a double click selects no
@@ -86,8 +89,10 @@ do. The [styled Knob](/docs/components/knob) is this component with the contour-
   the origin to the value, either way, with an empty `d` at the origin; `Knob.Thumb` a line that
   points at the value. They stroke in `currentColor`, with round caps and no fill: set their
   colors with `color` (or `stroke`).
-- `Knob.ValueText` shows the text of the value: `formatValue(value)`, or the number.
-- `Knob.HiddenInput` submits the value with a form, under the `name` of the root.
+- `Knob.ValueText` shows the text of the value: `formatValue(value)`, or the number. It is hidden
+  from assistive technology (`aria-hidden`): the control carries the value.
+- `Knob.HiddenInput` submits the value with a form, under the `name` of the root. It renders
+  nothing in Soundor, which has no forms.
 
 ## The value
 
@@ -118,7 +123,9 @@ gives parts of your own `setValue`, which changes it whatever they say.
 - **Wheel.** The control listens to `wheel` itself, not through React, whose wheel listener is
   passive: the page does not scroll while the wheel turns the knob. A notch moves a twentieth of the
   travel, a tenth of that with Shift. A disabled or read-only knob lets the page scroll.
-- **Keys** and **double click**: see [Keyboard](#keyboard). A double click resets the value.
+- **Keys** and **double click**: see [Keyboard](#keyboard). A double click resets the value at its
+  second press, which starts no drag: two gestures in all, the drag of the first press and the
+  reset.
 
 ## A dial of your own
 
@@ -185,7 +192,7 @@ its own stylesheet: `outline: none` on the control keeps the ring for focus from
 | `Knob.Track`       | `path`  | `data-part="track"`, `d`, `stroke-width`, `stroke="currentColor"`, `stroke-linecap="round"`, `fill="none"`                                                                                                                                                             |
 | `Knob.Range`       | `path`  | `data-part="range"`, the same, with an empty `d` at the origin                                                                                                                                                                                                         |
 | `Knob.Thumb`       | `line`  | `data-part="thumb"`, `x1`, `y1`, `x2`, `y2`, `stroke-width`, `stroke`, `stroke-linecap`                                                                                                                                                                                |
-| `Knob.ValueText`   | `span`  | `data-part="value-text"`; the text of the value                                                                                                                                                                                                                        |
+| `Knob.ValueText`   | `span`  | `data-part="value-text"`, `aria-hidden="true"`; the text of the value                                                                                                                                                                                                  |
 | `Knob.HiddenInput` | `input` | `data-part="hidden-input"`, `type="hidden"`, `name`, `form`, `value`, `disabled`                                                                                                                                                                                       |
 
 Every part carries `data-scope="knob"`, `data-disabled`, `data-readonly` and `data-dragging`,
@@ -237,6 +244,9 @@ Meta are the page's.
 
 - The control is a `slider` with `aria-orientation="vertical"`: screen readers announce the
   name, the text of the value (`aria-valuetext`) and the range, and move it with the arrow keys.
+  The readout is hidden from them, so they do not read the value twice. In Soundor the control is
+  `adjustable`, named by the text of the label, and offers the actions `increment`, `decrement`
+  and `setValue`.
 - `data-focus-visible` follows focus from the keyboard: Tab, or a key after a press.
 - A disabled knob has no `tabindex` and `aria-disabled="true"`, on its root too: checkers such as
   axe then count the label and the readout as the text of an inactive control, which WCAG exempts
@@ -245,8 +255,9 @@ Meta are the page's.
 ## How it works
 
 `Knob.Root` runs the knob machine of `@contour-ui/core`, `knob.machine`, with `useMachine`. Its
-platform is only the `setTimeout` clock: the control reads the input itself and sends the machine
-events.
+platform is only the `setTimeout` clock: the control reads the input through the services of
+`@contour-ui/primitive` (`useDrag`, `useWheel`, `useInteraction`, `useRangeActions`), which each
+platform implements, and sends the machine events.
 
 | State       | Event                                     | Next        | What happens                                                           |
 | ----------- | ----------------------------------------- | ----------- | ---------------------------------------------------------------------- |
@@ -271,7 +282,11 @@ the dial: a renderer other than React DOM draws the same dial.
 `setValue()`…) and the props of each element: `getRootProps()`, `getLabelProps()`,
 `getControlProps()`, `getTrackProps()`, `getRangeProps()`, `getThumbProps()`,
 `getValueTextProps()` and `getHiddenInputProps()`. The label's props carry a `ref` that tells the
-control its id, and the control's a `ref` that listens to the wheel: compose them with yours.
+control its id (a label with an id of your own tells it with `registerLabel(id)`), and the
+control's a `ref` that listens to the wheel: compose them with yours. `hovered` says whether a
+mouse or a pen is over the control (never while disabled or read-only); `interaction` is the store
+of its interaction state, for a part that follows one field with
+`useInteractionField(interaction, 'hovered')` and renders again only when it changes.
 
 ```tsx
 import { formatDecibels, useKnob } from '@contour-ui/headless-react';

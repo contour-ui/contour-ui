@@ -8,17 +8,18 @@ architecture. pnpm monorepo, single toolchain: **Vite+** (`vp`).
 All published packages live under `@contour-ui/` in `packages/`. Dependencies
 point **down** the table only — never up, never sideways.
 
-| Layer        | Package            | Purpose                                                                                                                                | May depend on (internal)                              |
-| ------------ | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| 0 foundation | `tokens`           | DTCG design tokens → CSS vars / TS, compiled by `@contour-ui/tokens-compiler`                                                          | —                                                     |
-| 0 foundation | `icons`            | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                | —                                                     |
-| 0 foundation | `fonts`            | font files: WOFF2 faces + `fonts.css` for the web, static TTF for Soundor (Fontsource)                                                 | —                                                     |
-| 1 logic      | `core`             | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`         | —                                                     |
-| 2 headless   | `headless-react`   | unstyled React DOM components + hooks (Ark UI–like)                                                                                    | `core`                                                |
-| 2 headless   | `soundor-headless` | unstyled components for Soundor plugin UIs, on `@soundor/react`: the machines of `core` with their input, focus and accessibility      | `core`                                                |
-| 3 styled     | `react`            | styled React DOM components in two sections: **Essentials** (the everyday components) and **Audio** (the controls of audio-plugin UIs) | `headless-react`, `tokens`, `icons`, `fonts`          |
-| 3 styled     | `soundor`          | styled components for Soundor plugin UIs, on `@soundor/react`, drawn with the token values of `@contour-ui/tokens/soundor`             | `soundor-headless`, `tokens`, `icons`, `fonts`        |
-| 4 docs       | `fumadocs`         | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui`                                            | `react`, `headless-react`, `tokens`, `icons`, `fonts` |
+| Layer        | Package            | Purpose                                                                                                                                                                       | May depend on (internal)                                           |
+| ------------ | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 0 foundation | `tokens`           | DTCG design tokens → CSS vars / TS, compiled by `@contour-ui/tokens-compiler`                                                                                                 | —                                                                  |
+| 0 foundation | `icons`            | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                                                       | —                                                                  |
+| 0 foundation | `fonts`            | font files: WOFF2 faces + `fonts.css` for the web, static TTF for Soundor (Fontsource)                                                                                        | —                                                                  |
+| 1 logic      | `core`             | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`                                                | —                                                                  |
+| 2 elements   | `primitive`        | the elements parts are made of, in web words (`Primitive.div`, `role`, `aria-*`), and the platform services of their input; a build per platform, picked by export conditions | `core`                                                             |
+| 3 headless   | `headless-react`   | unstyled React components + hooks (Ark UI–like), written once on `primitive` for every platform                                                                               | `core`, `primitive`                                                |
+| 3 headless   | `soundor-headless` | superseded by the Soundor build of `headless-react`, kept until it is removed: the Knob on `@soundor/react`                                                                   | `core`                                                             |
+| 4 styled     | `react`            | styled React components in two sections, **Essentials** and **Audio**, written once for every platform (Button and Knob run in Soundor plugin UIs so far)                     | `headless-react`, `primitive`, `tokens`, `icons`, `fonts`          |
+| 4 styled     | `soundor`          | superseded by the Soundor build of `react`, kept until it is removed: Button and Knob on `@soundor/react`                                                                     | `soundor-headless`, `tokens`, `icons`, `fonts`                     |
+| 5 docs       | `fumadocs`         | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui` (the web only)                                                                    | `react`, `headless-react`, `primitive`, `tokens`, `icons`, `fonts` |
 
 Rules:
 
@@ -27,117 +28,198 @@ Rules:
   run in Chromium and are the only core files type-checked with DOM types:
   `packages/core/tsconfig.json` is solution-style and references `tsconfig.lib.json` (sources, Node
   tests), `tsconfig.react-test.json` (browser tests) and `tsconfig.config.json` (`vite.config.ts`).
-- `core` also runs on Hermes (the Soundor runtime, built without `Intl`): no `Intl`, no
+- Code that runs on Hermes (the Soundor runtime, built without `Intl`) has no `Intl`, no
   locale-dependent methods (`toLocale*`, `localeCompare`), no `eval` / `new Function`, no
   `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`,
-  `packages/soundor-headless/src/**` and `packages/soundor/src/**`.
+  `packages/primitive/src/{shared,native,soundor}/**`, `packages/headless-react/src/**`,
+  `packages/react/src/**` and the Soundor packages.
 - Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`,
   `collection/` and `positioning/`.
-- `headless-react` must not depend on `tokens`, `icons`, `fonts` or the styled package. Peers:
-  `react`, `react-dom`.
-- The styled package (`react`) and `fumadocs` are styled with plain CSS + token CSS variables. **No
-  Tailwind in packages.** Use semantic roles only (`--ct-color-*`, `--ct-space-*`, `--ct-text-*`…),
-  never `--ct-base-*`.
+- **One source for every platform** (decision D30). `primitive` is the only package with code for
+  one platform or another: `src/shared` (the vocabulary, the compatibility table
+  `src/shared/compat.ts`, the contracts of the services, the interaction state, compiled into every
+  build), `src/web` (React DOM), `src/native` (the platform-free logic every native host shares:
+  the translation of the vocabulary, text runs, the id registry; React Native later) and
+  `src/soundor` (the Soundor host). Its `exports` give a build per platform under conditions:
+  `types` first, then `soundor`, then `default` (the web); the source condition nests the same
+  branches. Above it, packages are built once, and the app's bundler picks the build.
+- Renderer modules (`react-dom`, `@soundor/*`, `soundor:*`) are imported only by
+  `primitive/src/web` (React DOM), `primitive/src/soundor` (Soundor) and the tests of a platform
+  (`*.soundor.test.tsx` drive Soundor, other tests the web); until their platform code moves into
+  `primitive`, the web-only `Portal` and `Presence` of `headless-react` use `react-dom` too
+  (`RENDERER_IMPORTS` of `scripts/layers.ts`; lint rejects any other). A renderer module reachable
+  from a package built once breaks the builds of the other platforms, even unused.
+- Peers: `primitive` takes `react` and, optional, every renderer (`react-dom`, `@soundor/react`);
+  `headless-react` and `react` take `react`, and `react-dom` at most as an optional peer (policies
+  `renderers` and `cross-platform`). `react` / `react-dom` are never regular `dependencies`;
+  `fumadocs` (the web only) takes both as required peers, `fumadocs-core` too (`@types/mdx` as an
+  optional one).
+- **Cross-platform packages** (`headless-react`, `react`) have two entries: `src/index.ts` (the web:
+  every component) and `src/index.soundor.ts` (what runs on Soundor), picked by the `soundor`
+  condition. `x.ts(x)` is shared, compiled under both builds; `x.soundor.ts(x)` is Soundor-only
+  (left out of `tsconfig.web.json`, reachable only from `index.soundor.ts`); `x.web.test.tsx` and
+  `x.soundor.test.tsx` are tests of one platform. A component not shared yet stays web-only,
+  reachable from `index.ts` alone.
+- **Strictness is two type checks.** Each build types `Primitive.*` with the shared vocabulary and
+  its own platform's props: the web build with all React DOM takes (and `asChild`), the Soundor
+  build with the vocabulary (`id`, `role` of its element, `tabIndex`, the ARIA attributes of the
+  table, the shared events with Soundor's event types) and Soundor's own props. Shared code compiles
+  under both: `vp check` reads it as web code, `vp run typecheck:platforms` compiles each
+  `tsconfig.soundor.json` without the DOM, so `className` or `asChild` in shared code fails there.
+  TypeScript lets any `aria-*` through in JSX: `vp run boundaries` checks the shared folders
+  (`CROSS_PLATFORM_SOURCES` of `scripts/layers.ts`) against `ROLES` and `ARIA_ATTRIBUTES`.
+- `headless-react` must not depend on `tokens`, `icons`, `fonts` or the styled package.
+- The styled package (`react`) and `fumadocs` are styled with plain CSS + token CSS variables on the
+  web. **No Tailwind in packages.** Use semantic roles only (`--ct-color-*`, `--ct-space-*`,
+  `--ct-text-*`…), never `--ct-base-*`.
 - Styled CSS is one file per component (`src/<component>/<component>.css`) with plain rules, added
   to `src/styles.css` as `@import './<component>/<component>.css' layer(contour.components);`.
   Unlayered app CSS overrides it.
-- `soundor-headless` and `soundor` have no DOM: they build on `@soundor/react` (`View`, `Text`,
-  `Pressable`, the vector shapes of `@soundor/react/svg`…), never `react-dom` (lint and
-  `boundaries` reject it), and type-check with `lib: ["ES2023"]` and `@soundor/environment` in
-  `types` (preset `library-soundor.json`). Peers: `react`, `@soundor/react`. `soundor-headless`
-  runs the machines of `core` with Soundor's input, focus and accessibility, unstyled, as
-  `headless-react` does on the DOM; it must not depend on `tokens`, `icons`, `fonts` or `soundor`.
-  The styles of `soundor` are objects of the values of `@contour-ui/tokens/soundor`, per theme
-  from its `ThemeProvider`; components read them with `useTokens()` (the default theme outside a
-  provider).
-- A Soundor component keeps the names, variants and sizes of its web counterpart; where the
-  platforms differ it follows Soundor (`onPress`, a `style` object or function of the state in
-  place of `className` and `asChild`). A component on `Pressable` reads its interaction state as
-  a value from `useInteractionState()` (`src/utils/interaction-state.ts`), not in the `style` and
-  `children` functions of `Pressable`: it spreads the props the hook returns on its `Pressable`
-  and styles its parts from the state, at rest while `disabled` as Pressable's own (a test holds
-  the hook to Pressable, `focusVisible` included). `focusVisible` is Soundor's own, as
-  `:focus-visible` on the web: a key gave the focus, or a key was pressed since a press did
-  (`FocusEvent.focusVisible`, `onFocusVisibleChange`). The focus ring is Soundor's outline,
-  `focusRingStyle(tokens)` (`src/utils/focus-ring.ts`: `outlineWidth` and `outlineOffset` of
-  `border-width.focus`, `outlineColor` of `border.focus`), in the style while `focusVisible`:
-  outside the border, following its corners, taking no room in the layout. Strings in a label
-  are set in a `Text` of the component's text style; Soundor allows no text outside a `Text`.
-- `soundor-headless` parts render one `@soundor/react` node each and combine their props with
-  the user's as `mergeProps(own, props)` (`src/utils/merge-props.ts`: handlers chained, the
-  user's first; `style` as a list, the user's last; `undefined` skipped, so no explicit
-  `undefined` reaches a Soundor prop) and refs with `useComposedRefs`. Soundor has no data
-  attributes: styled parts read the state from the context (`useKnobContext()`) and pass it to
-  their `style` functions. A dial is an `Svg` of `@soundor/react/svg`: only its root is a node
-  (focus, input, `accessibilityRole="adjustable"`, `accessibilityValue`, actions); its shapes
-  take SVG presentation props, `stroke="currentColor"` with the styled `color`. A label names
-  its control by its text (`accessibilityLabel`, read from the `Text` node), and the label and
-  the readout are `accessible={false}`, since the control carries both. Soundor keeps the focus
-  of a node that turns unfocusable: a disabled control calls `blur()`. A double press is
-  `isDoublePress` on `event.timeStamp` and `pageX`/`pageY`; a press that moved more than 4 px is
-  a drag, not half of one. A machine's clock is the runtime's `setTimeout`.
-- `registerFonts()` (`packages/soundor/src/fonts/`) registers the TTF faces of `@contour-ui/fonts`
-  with `registerFont`, one static import per file (a test keeps them equal to `fontFaces`). The
-  imports stay imports in `dist`, as do `soundor:*` (`libraryPack({ external })`): the plugin's
-  bundler resolves them and ships the files.
-- `react` / `react-dom` are never regular `dependencies`; in `headless-react`, the styled package
-  and `fumadocs` they are required peers. `fumadocs` also takes `fumadocs-core` as a peer
-  (`@types/mdx` as an optional one).
+- **Looks** (the styled package, until one description of the styles serves every platform, D27). A
+  component's look is `src/<component>/<component>.look.ts`, a `Look` of `src/utils/look.ts`:
+  `web(options, state)` gives each part its class and data attributes, exactly what the stylesheet
+  reads; `native(tokens, options, state)` its styles from the token values (`style`, `textStyle`,
+  `color` of a shape; a key left out, never `undefined`). A look imports no renderer and no token
+  values, only types, so the web bundle never carries Soundor's values. Components read it with
+  `useStyles(look, options, state)` of `#platform/styles` (package `imports`: `src/platform/*.web.ts`
+  and `*.soundor.ts`, built as entries and kept as imports in `dist`, so the app's bundler picks the
+  build): on the web the web half, a pure function in a server module (a server `Button` stays
+  one); on Soundor the native half with `useTokens()` of the Soundor `ThemeProvider` (the default
+  theme outside one). A user's `style` is a `PartStyle<State>` of `primitive` (web: CSS
+  properties; Soundor: styles or a function of the state), resolved with `resolveStyle(style,
+  state)` after the look's. Public declarations never name `#platform/*`. The state comes from
+  `useStyleState({ disabled })` for parts without behavior (Button: at rest on the web, live on
+  Soundor), from the headless context for parts with behavior (Knob). The Soundor-only modules of
+  `react` are its `ThemeProvider`, `useTheme`, `useTokens` and `registerFonts()`
+  (`src/fonts/register-fonts.soundor.ts`, on `registerFont` of `primitive`, one static import per
+  TTF file, kept as imports in `dist`: the plugin's bundler ships the files).
+- **The element layer, web build.** On the web the props of `Primitive.*` pass to React DOM as they
+  are, with `asChild` on every element. `Primitive.text` is a `<span>`, `Primitive.formValue` an
+  `<input type="hidden">` (its `type` is forced). `Primitive.button` is `type="button"` unless
+  given a `type` or `asChild`, calls `onPress` after `onClick` (a click of a pointer, Enter or
+  Space, assistive technology), and with `asChild` turns `disabled` into `aria-disabled="true"`
+  with its clicks stopped in the capture phase. CSS custom properties a part writes for styles of
+  one's own go through `customProperties<P extends CSSProperties>(…)`: `{ style }` on the web,
+  nothing on native platforms, whose styles take none.
+- **The element layer, Soundor build** (`src/soundor`, its platform-free logic in `src/native`)
+  translates the web vocabulary: roles through `ROLES` (a role without a twin throws, naming the
+  element and the role), ARIA through `ARIA_ATTRIBUTES` (`aria-labelledby` / `aria-describedby`
+  through an id registry, `labelledby` winning over `aria-label` as in accname; the element pointed
+  at turns `accessible={false}` unless it has a role of its own), `tabIndex` → `focusable` given
+  every time (Soundor's host keeps a removed prop as it was), with the DOM's focus fixup (an element
+  that stops taking focus while it has it is blurred). Strings and numbers in `div`/`span`/`button`
+  become `Text` runs (adjacent ones joined, white space collapsed as CSS does in a flex box) in the
+  ambient `textStyle` (Soundor-only), which every `Primitive.text` below takes too; `data-*` are
+  dropped; `className`, `asChild` and an `aria-*` outside the table warn once per element and prop.
+  Write labels and readouts as `Primitive.text`: `aria-hidden` hides one node and the runs it wraps,
+  not the elements inside it. `mergeProps` there merges `style` and `textStyle` as lists, and a
+  style function of Pressable's state into a function of it. No explicit `undefined` reaches a
+  Soundor prop. Shapes take presentation props only; only the `svg` of a dial is a node.
+- **Services.** A part with behavior reads its input only through the services of `primitive`
+  (`useDrag`, `useWheel`, `useInteraction`, `useRangeActions`), spreads their `props` through
+  `mergeProps` before its own (the drag's first), composes their `ref`s, and follows the focus only
+  through `onFocusChange` of `useInteraction`:
+  - `useDrag` reports the moves of a press of the primary button: on the web with the pointer
+    capture and client deltas, or the movement under the pointer lock (refused, granted late, or
+    left with Escape → `onEnd('lost')`), a touch or a pen focusing the element from code with no
+    ring; on Soundor with `movementX`/`movementY`, its press keeping the pointer by itself. A
+    double press resets at its second press, which starts no drag; the first must have ended by its
+    release and travelled no more than 4 px (`|dx| + |dy|`). On the web a mouse press is decided at
+    `mousedown` (a `detail` of 2 or more is the second of a double press; a mouse drag starts
+    there, right after `pointerdown`); touch, pen and Soundor use `isDoublePress` at `pointerdown`.
+    A `pointerdown` the owner prevents keeps the element still. It returns the input `style` of the
+    web (`touch-action`, `user-select`).
+  - `useWheel` adds a native `{ passive: false }` listener on the web (React's `onWheel` is passive),
+    `onWheel` on Soundor; it skips turns another listener prevented and hands `onWheel` a plain
+    `{ deltaX, deltaY, deltaMode, shiftKey }`. A disabled or read-only control leaves the wheel to
+    what is around it.
+  - `useInteraction` keeps a store per element (`useInteractionField(store, field)` renders a
+    reader again only when its field changes): hover of a mouse or a pen, a press while the pointer
+    is over, the element's own focus and `focusVisible`. A press focus shows no ring; a key while
+    focused shows it, but not a modifier alone or a Ctrl/Alt/Meta shortcut (Chromium's
+    `:focus-visible` matches after Shift alone). While disabled it returns a resting store from that
+    render on; `onFocusChange` follows the store, so the owner hears the focus go as the element
+    turns disabled. Chromium's focus fixup takes the focus of an `svg` that lost its `tabindex` at
+    its next style update and fires no `blur` (an `svg` with focus listeners of its own stays
+    focusable): the web service checks `:focus` after every commit.
+  - `useRangeActions` gives an adjustable element Soundor's `accessibilityActions` (`increment`,
+    `decrement`, `setValue`); nothing on the web, where screen readers send the keys.
+  - `useStyleState` follows the state of a pressable on Soundor (Pressable's reporting handlers, at
+    rest while disabled, a test holding it to Pressable's own state); on the web it and
+    `useRangeActions` call no hook: server modules, so a server `Button` stays one.
+  - `registerFont` (Soundor only) passes `registerFont` of `soundor:ui` on.
+- Soundor nodes have no `id`: a part that points at another by id takes the id from its props, not
+  from the node (`Knob.Label` registers the id it renders with `registerLabel`; the id registry of
+  the Soundor build turns `aria-labelledby` into the name).
+- `soundor-headless` and `soundor` predate the element layer and stay until they are removed; add
+  nothing to them. They build on `@soundor/react` directly (never `react-dom`), type-check with
+  `lib: ["ES2023"]` and `@soundor/environment` (preset `library-soundor.json`), and take `react` and
+  `@soundor/react` as peers (policy `soundor-peer`).
 
 **Enforcement.** The table lives as data in [`scripts/layers.ts`](scripts/layers.ts) — edit it there
 only.
 
 - Lint: the root `vite.config.ts` generates oxlint `no-restricted-imports` overrides from it
-  (package imports, relative imports into sibling packages, React in core, `states/` ↔
-  `interactions/`, Tailwind).
+  (package imports, relative imports into sibling packages, React in core, renderer modules outside
+  their folders, `states/` ↔ `interactions/`, Tailwind).
 - `vp run boundaries` ([`scripts/check-boundaries.ts`](scripts/check-boundaries.ts)) checks what
-  lint cannot: declared dependencies in every `package.json` (even unused ones), React dependency
-  kinds, CSS `@import`s, `exports` ↔ `publishConfig.exports` sync, the Changesets `fixed` group, and
-  a copy of the root `LICENSE` (MIT) in every package, since npm packs each package's own file.
+  lint cannot: declared dependencies in every `package.json` (even unused ones), React and renderer
+  dependency kinds, CSS `@import`s, `exports` ↔ `publishConfig.exports` sync, the Changesets `fixed`
+  group, a copy of the root `LICENSE` (MIT) in every package, since npm packs each package's own
+  file, and the roles and ARIA attributes of the shared folders.
+- `vp run typecheck:platforms` ([`scripts/typecheck-platforms.ts`](scripts/typecheck-platforms.ts))
+  compiles the `tsconfig.soundor.json` of every cross-platform package (and the test harness), one
+  at a time.
+- `vp run exports` ([`scripts/check-exports.ts`](scripts/check-exports.ts)), after the build,
+  resolves every subpath of the published `exports` and every `#platform/*` module under the
+  conditions of each platform (attw and publint read one branch only), checks that the files and
+  their declarations exist and that the platform keys keep their order.
 
 ### Naming
 
-`@contour-ui/[platform-][headless-]framework`. The web (React DOM) is the default platform:
-`@contour-ui/react` holds the styled components, `@contour-ui/headless-react` the unstyled ones.
-Another framework gets its pair (`vue`, `headless-vue`). The Soundor plugin UI runtime gets
-`@contour-ui/soundor` and `@contour-ui/soundor-headless` (no `-react` suffix while Soundor runs
-React only; `soundor-headless` holds the Soundor parts of the components with behavior, Knob
-first). Packages free of frameworks and platforms keep plain names
-(`tokens`, `icons`, `core`, whose machine hooks in `core/react` serve React DOM and Soundor alike),
-and an integration with another ecosystem is named after it: `@contour-ui/fumadocs` is the docs
-layout for sites on fumadocs-core.
+Packages are named after their framework; platforms are export conditions, not package names.
+`@contour-ui/react` holds the styled components and `@contour-ui/headless-react` the unstyled ones,
+React on any renderer: React DOM on the web, `@soundor/react` in Soundor plugin UIs, React Native
+later. Another framework gets its pair (`vue`, `headless-vue`) and an element layer of its own.
+`@contour-ui/primitive` is named after what it holds: the elements and the platform services.
+Packages free of frameworks and platforms keep plain names (`tokens`, `icons`, `core`, whose
+machine hooks in `core/react` serve every renderer), and an integration with another ecosystem is
+named after it: `@contour-ui/fumadocs` is the docs layout for sites on fumadocs-core. The
+`soundor` and `soundor-headless` packages predate this rule.
 
 Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `tooling/`
-(`@contour-ui/typescript-config`, `@contour-ui/vite-config`, `@contour-ui/tokens-compiler`).
-Neither is ever published.
+(`@contour-ui/typescript-config`, `@contour-ui/vite-config`, `@contour-ui/tokens-compiler`,
+`@contour-ui/test-harness`). Neither is ever published.
 
 ## Commands
 
 Vite+ wraps everything; there is no Turborepo, ESLint or Prettier. `vp <cmd>` runs a
 built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` task.
 
-| Command                                               | What it does                                                                                                                                                                                 |
-| ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vp install`                                          | install (pnpm 12, pinned via `packageManager`)                                                                                                                                               |
-| `vp check` / `vp check --fix`                         | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                                                                               |
-| `vp run boundaries`                                   | layer boundary check for `package.json` / CSS                                                                                                                                                |
-| `vp run @contour-ui/tokens#build`                     | build `@contour-ui/tokens` (cached), which the workspace reads from `dist`; `vp -C packages/tokens pack --watch` rebuilds on every token edit                                                |
-| `vp test`                                             | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages); screenshot tests only with `vp run visual`                                   |
-| `vp -C packages/react test`                           | one package's tests                                                                                                                                                                          |
-| `vp run -r build`                                     | build everything (`vp pack` + publint + attw for packages, apps)                                                                                                                             |
-| `vp run visual` / `vp run visual:update`              | screenshot tests (`*.visual.test.tsx`) with Chromium of the pinned Playwright Linux image, in Docker; `:update` rewrites every screenshot                                                    |
-| `vp -C apps/docs run dev` / `run build`               | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                                                                                 |
-| `vp -C apps/docs run e2e`                             | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                                                                               |
-| `vp -C apps/playground dev`                           | Vite + React sandbox on http://localhost:5173                                                                                                                                                |
-| `vp -C apps/soundor-sandbox run dev:web` / `dev:juce` | the Soundor sandbox (`apps/soundor-sandbox`): the `@contour-ui/soundor` components in the web runtime or natively (JUCE Standalone); build the package first, the Soundor CLI bundles `dist` |
-| `vp run changeset`                                    | record a changeset (all published packages are versioned together)                                                                                                                           |
-| `vp run ready`                                        | everything CI's first three jobs run                                                                                                                                                         |
+| Command                                               | What it does                                                                                                                                                                              |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vp install`                                          | install (pnpm 12, pinned via `packageManager`)                                                                                                                                            |
+| `vp check` / `vp check --fix`                         | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                                                                            |
+| `vp run boundaries`                                   | layer boundary check for `package.json` / CSS, and the roles and ARIA attributes of shared code                                                                                           |
+| `vp run typecheck:platforms`                          | type-check the Soundor build of every cross-platform package (`tsconfig.soundor.json`, no DOM), one at a time                                                                             |
+| `vp run @contour-ui/tokens#build`                     | build `@contour-ui/tokens` (cached), which the workspace reads from `dist`; `vp -C packages/tokens pack --watch` rebuilds on every token edit                                             |
+| `vp test`                                             | all Vitest projects: node (core, tokens, icons, client boundaries), Chromium (core's React hooks, UI packages), Soundor (`<package>:soundor`); screenshot tests only with `vp run visual` |
+| `vp -C packages/react test`                           | one package's tests                                                                                                                                                                       |
+| `vp run -r build`                                     | build everything (`vp pack` + publint + attw for packages, apps)                                                                                                                          |
+| `vp run exports`                                      | after the build: every branch of the export conditions of every package resolves to built files, with their declarations                                                                  |
+| `vp run visual` / `vp run visual:update`              | screenshot tests (`*.visual.test.tsx`) with Chromium of the pinned Playwright Linux image, in Docker; `:update` rewrites every screenshot                                                 |
+| `vp -C apps/docs run dev` / `run build`               | docs site on http://localhost:5174 (static build → `apps/docs/build/client`)                                                                                                              |
+| `vp -C apps/docs run e2e`                             | end-to-end and axe tests of the docs (Playwright) against a fresh static build                                                                                                            |
+| `vp -C apps/playground dev`                           | Vite + React sandbox on http://localhost:5173                                                                                                                                             |
+| `vp -C apps/soundor-sandbox run dev:web` / `dev:juce` | the Soundor sandbox (`apps/soundor-sandbox`): `@contour-ui/react` in its Soundor build, in the web runtime or natively (JUCE Standalone); build first, the Soundor CLI bundles `dist`     |
+| `vp run changeset`                                    | record a changeset (all published packages are versioned together)                                                                                                                        |
+| `vp run ready`                                        | everything CI's first three jobs run, with the platform type checks and the export check                                                                                                  |
 
 Run checks **one task at a time** (`vp check`, then `vp test`, then `vp run -r build`);
 narrow with `vp -C <dir>` or `--filter` for focused changes. First time on a machine:
 `vp exec playwright install chromium` for browser-mode tests.
 
-**Screenshot tests.** Every state of the styled packages (`react`, `soundor`, `fumadocs`) is a screenshot test
+**Screenshot tests.** Every state of the styled packages on the web (`react`, `fumadocs`) is a screenshot test
 in `src/<component>/<component>.visual.test.tsx`: `visualStates({ '<state>': { render } })` from the
 package's `src/test-utils/visual.ts(x)`, on `defineVisualStates()` of
 `@contour-ui/vite-config/visual`. Each state, named in lowercase words with dashes, is a test per
@@ -174,13 +256,41 @@ rules via `lint.overrides`). Package `vite.config.ts` files hold Vite, Vitest an
 ``querySelector(`#${CSS.escape(id)}`)``. It also turns `getAttribute('data-x')` into `dataset.x`,
 which `noPropertyAccessFromIndexSignature` rejects: write `dataset['x']`.
 
-**Soundor tests** (`packages/soundor`, `packages/soundor-headless`) run in Node on Soundor's simulated runtime: the Vitest
-environment `soundor` with `soundor({ config: false })` from `@soundor/vitest`, and
-`@soundor/testing-library` (`render`, `screen`, `userEvent`, `advanceTime`). It simulates the node
-tree, input, focus and accessibility, not layout or pixels; find nodes by role and name (there are
-no test ids). The plugin reads `test.environment` at the top level of the package config, not
-inside `projects`, and writes `.soundor/generated/*.d.ts` on every run (git-ignored). Test files
-type-check with `@soundor/vitest` in `types` (`tsconfig.test.json`), which declares
+**Tests on every platform.** A component that runs on Soundor is tested by one shared file,
+`src/<component>/<component>.test.tsx`, which imports only `@contour-ui/test-harness`
+(`tooling/test-harness`: `render`, `getByRole`, `semantics`, `drawing`, `keyDown`, `user.*`), React
+and the code under test: no renderer, no `vite-plus/test/browser`, no `@soundor/*`. It runs in the
+package's Chromium project and in `<package>:soundor`, each with its half of the harness, which the
+`soundor` condition picks: list the component's folder in `CROSS_PLATFORM_TESTS` of the package's
+`vite.config.ts` and in the `include` of its `tsconfig.soundor.json`, so it is type-checked without
+the DOM too. What one platform alone has goes into `<component>.web.test.tsx` (the DOM: attributes,
+CSS custom properties, forms, `asChild`, axe) and `<component>.soundor.test.tsx` (Soundor's own
+vocabulary, events sent one at a time with `fireEvent`).
+
+- The harness speaks web: `getByRole('slider')` finds Soundor's `adjustable` by the harness's own
+  table of roles, never the backend's, so a wrong translation fails. `semantics(handle)` gives the
+  role, name, description, value and disabled state the same way on both platforms;
+  `drawing(handle)` the view box and the shapes of an `svg` (numbers in single precision: compare
+  with `Math.fround`); `keyDown(handle, key)` and `user.wheel(…)` whether a handler prevented the
+  default; `readsText(text)` whether assistive technology reads a text on its own. Tests pass
+  handles back to the harness and never read them.
+- `user.press`, `user.drag` and `user.doublePress` are gestures of their own: two of them never
+  make a double press (Playwright counts each click as one; the Soundor half presses each gesture
+  10 px away from the last). Make one with `user.doublePress`.
+- A web locator finds its element again by what it was asked: when a test changes the name of an
+  element, find it by its role alone. An `svg` without `width` and `height` has no width inside an
+  element sized to its content (`max-content`, as the harness's pad is): give it a size in tests.
+- `soundorProject('<package>', { include, exclude })` of `@contour-ui/vite-config` is the Soundor
+  project of a package config: the `soundor` environment with `soundor({ config: false })` in the
+  project itself, the source condition and `platformCondition('soundor')` (Vitest's Node
+  environments read the conditions of their environment, not `resolve.conditions`), extending
+  nothing.
+
+**Soundor tests** run in Node on Soundor's simulated runtime: the Vitest environment `soundor` of
+`@soundor/vitest`, and `@soundor/testing-library` (`render`, `screen`, `userEvent`, `advanceTime`).
+It simulates the node tree, input, focus and accessibility, not layout or pixels; find nodes by role
+and name (there are no test ids). The plugin writes `.soundor/generated/*.d.ts` on every run
+(git-ignored). Test files type-check with `@soundor/vitest` in `types`, which declares
 `toHaveFocus`. `@soundor/react` props take no explicit `undefined`: pass an optional prop only
 when it is set. A press keeps the pointer in the simulation, as in the runtimes: its moves and
 its release reach the pressed node wherever they are fired, and `movementX`/`movementY` are 0
@@ -216,7 +326,11 @@ enabled before it clicks it: pass `{ force: true }`. `expect.poll(fn)` calls `fn
 `toHaveStyle` does not parse custom properties: read them with
 `getComputedStyle(element).getPropertyValue('--name')`. A test frame may not lock the pointer
 (Chromium refuses with `WrongDocumentError`): fake `requestPointerLock`, `exitPointerLock` and
-`document.pointerLockElement`.
+`document.pointerLockElement`. A synthetic mouse press is `pointerdown` then `mousedown` with
+`detail` (the click count): `useDrag` starts a mouse drag at the `mousedown`. Playwright gives each
+`click()` a click count of 1, so two `click()` calls never make a double click; `dblClick` does.
+Chromium blurs a focused element that lost its `tabindex` lazily and fires no `blur`; a `focus` or
+`blur` listener on an `svg` keeps it focusable, so a probe must not add one.
 
 ## Source export condition
 
@@ -237,6 +351,25 @@ Every published package maps its entry points to sources under the custom
   (`vp run @contour-ui/tokens#build`). `source: 'dist'` in `scripts/layers.ts` marks it, and
   `vp run boundaries` holds both rules.
 - TypeScript picks it up via `customConditions` (`tooling/typescript/base.json`).
+- A package with a build per platform (`primitive`, `headless-react`, `react`) nests the platform
+  conditions, under the source condition and in the published map alike, `types` first:
+
+  ```json
+  ".": {
+    "@contour-ui/source": { "soundor": "./src/soundor/index.ts", "default": "./src/web/index.ts" },
+    "types": { "soundor": "./dist/soundor/index.d.ts", "default": "./dist/web/index.d.ts" },
+    "soundor": "./dist/soundor/index.js",
+    "default": "./dist/web/index.js"
+  }
+  ```
+
+  The order is from the most specific platform to `default` (`soundor`, then `browser` and
+  `react-native` when they come), since a bundler that sets several conditions takes the first
+  key that matches. `library-soundor.json` sets `customConditions: ["@contour-ui/source",
+  "soundor"]`, the Soundor tests `platformCondition('soundor')`, and the Soundor CLI 0.15 the
+  `soundor` condition through the workspace's patch (`patches/soundor@0.15.0.patch`: one option of
+  `bundleUi()`, until Soundor ships it).
+
 - Vite (apps, tests) via the `contourSource()` plugin from `@contour-ui/vite-config`. So the
   playground, docs and tests consume **sources** with HMR, without building packages first.
 - pnpm swaps in `publishConfig.exports` on pack/publish, so published consumers never see the
@@ -347,14 +480,21 @@ CSS with `--ct-size-icon-*`.
 The guide's "Anatomy of a component" (`apps/docs/content/docs/guide/index.mdx`) is the public
 version of these rules.
 
-- **Where a component lives.** Behavior lives in `core` (state machines) and `headless-react` (DOM
-  parts with ARIA and keyboard handling); styles live in the styled package, `react`. A component
-  without behavior (button, card, alert, kbd…) exists only there.
+- **Where a component lives.** Behavior lives in `core` (state machines) and `headless-react` (parts
+  with ARIA and keyboard handling, on the elements and services of `primitive`); styles live in the
+  styled package, `react`. A component without behavior (button, card, alert, kbd…) exists only
+  there. A component written once for every platform runs on the web and in Soundor from the same
+  sources (Button and Knob so far); the others are web-only until they are shared.
 - **Exports.** A single-element component is a plain component (`Button`, `Kbd`). A multi-part
   component is a namespace of parts: `export * as Card from './card/index.ts'` gives `Card.Root`,
   `Card.Title`.
-- **Parts.** Each part renders one element through `Primitive.<element>` from `headless-react`, so
-  it supports `asChild`, and passes its element's props through. A part combines its own props with
+- **Parts.** Each part renders one element through `Primitive.<element>` of `@contour-ui/primitive`
+  (`headless-react` re-exports `Primitive`, `mergeProps`, `composeRefs` and `useComposedRefs` for
+  parts of one's own), so it supports `asChild` on the web, and passes its element's props through.
+  A shared part uses the shared elements only: `div` and `span` (boxes), `text` (a text leaf),
+  `button` (the pressable, `onPress`), `svg`, `path`, `line` and `formValue` (a hidden input on
+  the web, nothing on native platforms); the other elements (`a`, `h2`, `li`, `table`…) exist in
+  the web build only. A part combines its own props with
   the user's as `mergeProps(ownProps, props)` and refs with `useComposedRefs`. Every part, in
   headless and styled, carries `data-scope` (component) and `data-part` (part; `root` for a
   single-element component), and its state as `data-state` and the like. `Icon` is the exception to
@@ -393,32 +533,41 @@ version of these rules.
   than a component (a hook, a function, an object) from a module that needs the browser, in its
   own package or another one. Everything else stays a server module: entry points, namespaces
   (`export * as Card`), `Primitive`, `mergeProps`, pure utils and parts that only render markup,
-  so a server component imports `@contour-ui/react` and renders `Card.Root`.
+  so a server component imports `@contour-ui/react` and renders `Card.Root`. `primitive` builds
+  the same way: its elements, `mergeProps`, `customProperties`, `PartStyle`/`resolveStyle`,
+  `useStyleState` and `useRangeActions` stay server modules in the web build (its
+  `client-boundary.test.ts` holds them there); services with hooks start with `'use client'`. The
+  check reads nested source conditions and `#platform/*` imports in their web build, and never
+  reaches a Soundor-only module.
   `describeClientBoundary()` (`@contour-ui/vite-config/client-boundary`) fails on missing and on
   needless directives, in each package's `<package>:node` Vitest project. `core` carries none:
   `core/react` holds hooks only, which run in client modules.
 - **SVG parts.** `Primitive` renders `svg`, `path` and `line` too, so the shapes of a dial
-  support `asChild` like every part (its shared props type is `DOMAttributes<Element>`).
+  support `asChild` on the web like every part. On native platforms only the `svg` is a node: its
+  shapes take presentation props, no ref, no events; input goes on the `svg`.
 - **Range controls** (Knob). The machine works in positions from 0 to 1 by its `scale`; the
   dial is the geometry of core (`knob.getGeometry`: SVG shapes in a `0 0 100 100` view box,
   strokes that grow with the dial, the same on every platform), and styles only paint it: the
-  track, the range and the thumb stroke in `currentColor`, so the styled CSS sets `color`. The
-  root writes `--knob-position` (0 to 1) and `--knob-angle` (`<n>deg`, clockwise from the top)
-  in its `style`, for dials of one's own; the root of a disabled knob carries `aria-disabled`,
-  which axe inherits, so the label and the readout count as the text of an inactive control.
-  React's `onWheel` listens passively, so `preventDefault()` there cannot keep the page still:
-  the control adds a native `wheel` listener with `{ passive: false }` in its ref callback, and
-  prevents the default only while it can act (not disabled or read-only); it reads the wheel with
-  `getRangeWheelDelta` (macOS sends it sideways under Shift). A drag does not cancel
-  `pointerdown`: that also cancels the browser's focus of a mouse press, and a `focus()` from code
-  then matches `:focus-visible`, which rings every click. The control sets `touch-action: none`
-  and `user-select: none` in its own `style`, captures the pointer, and focuses itself only for
-  touch and pen. Chrome rings a focused `svg` after a click too (`outline: auto`, though
-  `:focus-visible` does not match): the styled CSS sets `outline: none` on it and draws the ring
-  from `data-focus-visible`. A double click resets only when neither of its presses travelled
-  past 4 px (`|dx| + |dy|`, the movement under the pointer lock): the release of a drag is a
-  click to the browser. Each change the user starts has `onValueChangeStart` and
-  `onValueChangeEnd` around it (a plugin's `beginGesture()` and `endGesture()`).
+  track, the range and the thumb stroke in `currentColor`, so the styled CSS sets `color` (the
+  `color` prop of a shape on native platforms). On the web the root writes `--knob-position` (0 to
+  1. and `--knob-angle` (`<n>deg`, clockwise from the top) through `customProperties`, for dials of
+     one's own (`useKnobContext()` gives `position` and `angle` on every platform); the root of a
+     disabled knob carries `aria-disabled`, which axe inherits, so the label and the readout count as
+     the text of an inactive control. The wheel's native `{ passive: false }` listener and
+     `getRangeWheelDelta` (macOS sends the wheel sideways under Shift) belong to `useWheel`; a
+     disabled or read-only control leaves the wheel to what is around it. A drag does not cancel
+     `pointerdown`: that also cancels the browser's focus of a mouse press, and a `focus()` from code
+     then matches `:focus-visible`, which rings every click. The control sets `touch-action: none`
+     and `user-select: none` in its own `style`, captures the pointer, and focuses itself only for
+     touch and pen. Chrome rings a focused `svg` after a click too (`outline: auto`, though
+     `:focus-visible` does not match): the styled CSS sets `outline: none` on it and draws the ring
+     from `data-focus-visible`. A double press resets at its second press, which starts no drag (see
+     `useDrag` under "Layers"), so a double click is two changes on every platform; `dblclick` is not
+     read. Each change the user starts has `onValueChangeStart` and `onValueChangeEnd` around it (a
+     plugin's `beginGesture()` and `endGesture()`). `Knob.ValueText` is `aria-hidden`: the control
+     carries the value (`aria-valuetext`), so assistive technology does not read the readout again;
+     on Soundor the label is not read on its own either. `useKnobContext().hovered` is the same on
+     every platform: a mouse or a pen over the control, never while disabled or read-only.
 - **Overlays.** Users compose `Portal` around the positioner, as in Ark (the styled package
   re-exports it). One `usePresence` in Root drives Positioner and Content, its ref on the animated
   Content; Backdrop has its own. The layer stack writes `--layer-index` inline on the content, the
@@ -587,10 +736,14 @@ loaded after every package stylesheet).
    project (environment `node`, excluded from the browser project). A styled package gets
    screenshot tests: `src/test-utils/visual.ts` with `defineVisualStates()` (its themes, canvas and
    stylesheets), `VISUAL_TESTS` excluded from its browser project, and `...visualProjects('<name>')`
-   in its `test.projects`.
+   in its `test.projects`. A cross-platform package (React on any renderer) takes the policy
+   `cross-platform`, the entries `index.ts` and `index.soundor.ts` with nested conditions in
+   `exports`, solution-style `tsconfig.json` with `tsconfig.web.json`, `tsconfig.soundor.json` and
+   `tsconfig.config.json`, and a `soundorProject()` beside its Chromium project.
 4. New external dependencies go into the `catalog` in `pnpm-workspace.yaml` first (`catalogMode:
    strict`).
-5. `vp install && vp check && vp run boundaries && vp test && vp run -r build`.
+5. `vp install && vp check && vp run boundaries && vp run typecheck:platforms && vp test &&
+   vp run -r build && vp run exports`.
 
 ## Git
 
@@ -599,8 +752,8 @@ loaded after every package stylesheet).
   `type(scope): subject`, imperative, starting lowercase, no trailing period, header within 72
   characters, body separated by a blank line. Types: `feat`, `fix`, `docs`, `test`, `refactor`,
   `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`, `icons`, `fonts`,
-  `core`, `headless-react`, `react`, `soundor-headless`, `soundor`, `fumadocs`) or `docs`, `playground`, `config`, `repo`; no
-  scope when a change spans several packages.
+  `core`, `primitive`, `headless-react`, `react`, `soundor-headless`, `soundor`, `fumadocs`) or
+  `docs`, `playground`, `config`, `repo`; no scope when a change spans several packages.
 - Hooks live in `.vite-hooks/` (installed by `vp config` on `vp install`): `pre-commit` runs
   `vp staged` (`vp check --fix` on staged files), `commit-msg` runs
   [`scripts/check-commit-msg.ts`](scripts/check-commit-msg.ts).

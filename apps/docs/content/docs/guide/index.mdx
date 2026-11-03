@@ -39,10 +39,15 @@ From the foundation up:
   register fonts by file. The tokens stay free of font files.
 - **Core** (`@contour-ui/core`) is the logic of the components, with no React and no DOM: state
   machines, collections, positioning, scales and the formatting of values.
+- **Elements** (`@contour-ui/primitive`) are what every part renders: `Primitive.div`,
+  `Primitive.button`, `Primitive.svg` and the rest, written in web words (`role`, `aria-*`,
+  `tabIndex`, pointer and key events), with the services of their input (a drag, the wheel, hover,
+  press and focus). It is the only package with code for one platform or another: its web build
+  renders React DOM, its Soundor build renders the nodes of `@soundor/react`, and the bundler picks
+  one by an export condition.
 - **Headless** (`@contour-ui/headless-react`) runs that logic in React: it renders the structure
   and behavior of interactive components (popovers, dialogs, listboxes…), with no styles. It also
-  exports `Primitive`, the elements every part renders through, so you can build parts of your
-  own.
+  exports `Primitive`, so you can build parts of your own.
 - **The styled package** (`@contour-ui/react`) styles them: an interactive styled component is
   its Headless component plus class names and the CSS behind them, with the same props.
   Components without behavior, such as buttons, cards and alerts, exist only here. Its
@@ -53,6 +58,11 @@ From the foundation up:
   place of `fumadocs-ui`. This site runs on it, see [Fumadocs](/docs/fumadocs).
 
 All packages are released together under one version: keep their versions equal.
+
+The styled and headless packages are written once for every platform. On the web they render DOM
+elements; in a [Soundor](https://github.com/soundor/soundor) plugin UI the same components render Soundor's
+nodes, through the Soundor build of `@contour-ui/primitive` (`Button` and `Knob` so far, see
+[Soundor plugin UIs](/docs/guide/installation#soundor-plugin-uis)).
 
 ## Anatomy of a component
 

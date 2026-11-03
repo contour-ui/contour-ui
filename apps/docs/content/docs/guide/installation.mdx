@@ -5,9 +5,11 @@ description: Add a package, its peer dependencies, and its stylesheets.
 
 ## Requirements
 
-- React 19 and React DOM 19: peer dependencies of every package.
+- React 19: a peer dependency of every package; React DOM 19 on the web.
 - A bundler that imports CSS from packages: Vite, Next.js, Rsbuild, webpack with a CSS loader.
   The packages are ESM only.
+- In a Soundor plugin UI, `@soundor/react` 0.15 and the `soundor` condition: see
+  [Soundor plugin UIs](#soundor-plugin-uis).
 
 ## Install
 
@@ -133,3 +135,50 @@ if (root !== null) {
   createRoot(root).render(<Button>Hello, contour-ui</Button>);
 }
 ```
+
+## Soundor plugin UIs
+
+The same packages run in [Soundor](https://github.com/soundor/soundor) plugin UIs, from the same sources:
+`@contour-ui/primitive`, under every part, has a build that renders the nodes of `@soundor/react`
+(`View`, `Text`, `Pressable`, `Svg`) and turns `role` and `aria-*` into Soundor's accessibility. So
+far `Button` and `Knob` run there; the other components follow.
+
+```package-install
+@contour-ui/react @soundor/react
+```
+
+The bundler and TypeScript pick that build by the `soundor` export condition. Tell TypeScript in
+the plugin's `tsconfig.json`:
+
+```json title="tsconfig.json"
+{
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "customConditions": ["soundor"]
+  }
+}
+```
+
+Soundor 0.15 bundles the UI without that condition, so it takes the web build: until Soundor sets
+it, patch the CLI (`pnpm patch soundor`) to pass `inputOptions: { resolve: { conditionNames:
+['soundor'] } }` to the build of `bundleUi()`.
+
+Register the fonts before the first render, and wrap the UI in `ThemeProvider` to choose a theme
+(the dark one without it):
+
+```tsx title="main.tsx"
+import { Button, registerFonts, ThemeProvider } from '@contour-ui/react';
+import { render } from '@soundor/react';
+
+void registerFonts();
+
+render(
+  <ThemeProvider>
+    <Button onPress={save}>Save</Button>
+  </ThemeProvider>,
+);
+```
+
+There are no stylesheets in Soundor: the components draw with the token values of the theme. Their
+props are the web's, written for every platform: `onPress` for a press of any kind, `aria-label`
+for a name, `style` as Soundor takes it (styles, or a function of the state).
