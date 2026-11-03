@@ -124,7 +124,7 @@ export default defineConfig({
           'packages/primitive/src/shared/**',
           'packages/primitive/src/native/**',
           'packages/primitive/src/soundor/**',
-          'packages/headless-react/src/**',
+          'packages/headless/src/**',
           'packages/react/src/**',
         ],
         rules: {
@@ -151,7 +151,7 @@ export default defineConfig({
         files: [
           'packages/core/src/react/**',
           'packages/primitive/**',
-          'packages/headless-react/**',
+          'packages/headless/**',
           'packages/react/**',
           'apps/**',
           '**/*.tsx',

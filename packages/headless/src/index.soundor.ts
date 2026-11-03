@@ -1,5 +1,5 @@
 /*
- * The Soundor build of headless-react: the components that run in Soundor plugin UIs, from the
+ * The Soundor build of headless: the components that run in Soundor plugin UIs, from the
  * same sources as on the web. The web build (`index.ts`) exports every component.
  */
 

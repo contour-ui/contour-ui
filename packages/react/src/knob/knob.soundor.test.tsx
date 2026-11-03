@@ -1,4 +1,4 @@
-import type { UseKnobReturn } from '@contour-ui/headless-react';
+import type { UseKnobReturn } from '@contour-ui/headless';
 import { soundorTokens } from '@contour-ui/tokens/soundor';
 import type { Style } from '@soundor/react';
 import { Circle } from '@soundor/react/svg';

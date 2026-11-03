@@ -1,6 +1,6 @@
 /*
- * The Knob on every platform: one file, run by `headless-react` (Chromium, React DOM) and by
- * `headless-react:soundor` (Soundor's simulated runtime), with the parts and this file the same
+ * The Knob on every platform: one file, run by `headless` (Chromium, React DOM) and by
+ * `headless:soundor` (Soundor's simulated runtime), with the parts and this file the same
  * source. It speaks through the harness of `@contour-ui/test-harness`, whose half the export
  * condition of the project picks; what only one platform has is in `knob.web.test.tsx` and
  * `knob.soundor.test.tsx`.

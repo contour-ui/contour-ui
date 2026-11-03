@@ -79,7 +79,7 @@
   },
   "dependencies": {
     "@contour-ui/fonts": "workspace:*",
-    "@contour-ui/headless-react": "workspace:*",
+    "@contour-ui/headless": "workspace:*",
     "@contour-ui/icons": "workspace:*",
     "@contour-ui/primitive": "workspace:*",
     "@contour-ui/tokens": "workspace:*"

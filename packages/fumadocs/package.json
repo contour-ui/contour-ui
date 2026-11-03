@@ -53,7 +53,7 @@
     "dev": "vp pack --watch"
   },
   "dependencies": {
-    "@contour-ui/headless-react": "workspace:*",
+    "@contour-ui/headless": "workspace:*",
     "@contour-ui/icons": "workspace:*",
     "@contour-ui/react": "workspace:*",
     "@contour-ui/tokens": "workspace:*"

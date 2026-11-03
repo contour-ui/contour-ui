@@ -1,4 +1,4 @@
-import { Knob as HeadlessKnob, useKnobContext } from '@contour-ui/headless-react';
+import { Knob as HeadlessKnob, useKnobContext } from '@contour-ui/headless';
 import { chevronLeftIcon, chevronRightIcon } from '@contour-ui/icons';
 import {
   Button,
@@ -125,7 +125,7 @@ function KnobAria(): ReactElement {
 }
 
 /**
- * The headless Knob clip: the bare parts of `@contour-ui/headless-react`, its shapes in the text
+ * The headless Knob clip: the bare parts of `@contour-ui/headless`, its shapes in the text
  * color, next to the ARIA they render.
  */
 function HeadlessKnobClip(): ReactElement {

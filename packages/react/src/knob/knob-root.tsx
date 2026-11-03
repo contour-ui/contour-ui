@@ -1,7 +1,7 @@
 'use client';
 
 import { useStyles } from '#platform/styles';
-import { Knob as Headless } from '@contour-ui/headless-react';
+import { Knob as Headless } from '@contour-ui/headless';
 import { mergeProps } from '@contour-ui/primitive';
 import type { ReactElement } from 'react';
 
@@ -33,7 +33,7 @@ const ROOT_STATE: KnobLookState = Object.freeze({
 
 /**
  * Knob root: a rotary control for audio-plugin UIs, a column of its label, its dial and its value
- * readout. Runs the knob of `@contour-ui/headless-react`: drag up or down (Shift for fine
+ * readout. Runs the knob of `@contour-ui/headless`: drag up or down (Shift for fine
  * moves), turn the wheel, use the arrow keys, or double-press to reset. Name it with
  * `Knob.Label`, or `aria-label` on `Knob.Control`. On Soundor it draws with the token values of
  * the theme.

@@ -18,8 +18,8 @@ export {
   linearScale,
   logScale,
   powerScale,
-} from '@contour-ui/headless-react';
-export type { Scale, ScaleOption } from '@contour-ui/headless-react';
+} from '@contour-ui/headless';
+export type { Scale, ScaleOption } from '@contour-ui/headless';
 export { ThemeProvider } from './theme-provider/theme-provider.soundor.tsx';
 export type { ThemeProviderProps } from './theme-provider/theme-provider.soundor.tsx';
 export { useTheme } from './theme-provider/use-theme.soundor.ts';

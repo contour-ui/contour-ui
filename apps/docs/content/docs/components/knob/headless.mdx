@@ -3,7 +3,7 @@ title: Knob
 description: A rotary control on the slider pattern, turned by a vertical drag, the wheel and the keys, with the shapes of its dial and the angle of the value for a look of your own.
 ---
 
-import { formatDecibels, formatPercent, Knob } from '@contour-ui/headless-react';
+import { formatDecibels, formatPercent, Knob } from '@contour-ui/headless';
 
 <Preview>
   {
@@ -53,7 +53,7 @@ import { formatDecibels, formatPercent, Knob } from '@contour-ui/headless-react'
 </Preview>
 
 ```tsx
-import { formatDecibels, Knob } from '@contour-ui/headless-react';
+import { formatDecibels, Knob } from '@contour-ui/headless';
 
 <Knob.Root min={-60} max={12} step={0.1} defaultValue={-6} formatValue={formatDecibels}>
   <Knob.Label>Gain</Knob.Label>
@@ -289,7 +289,7 @@ of its interaction state, for a part that follows one field with
 `useInteractionField(interaction, 'hovered')` and renders again only when it changes.
 
 ```tsx
-import { formatDecibels, useKnob } from '@contour-ui/headless-react';
+import { formatDecibels, useKnob } from '@contour-ui/headless';
 
 function Gain() {
   const knob = useKnob({ min: -60, max: 12, defaultValue: 0, formatValue: formatDecibels });
@@ -310,7 +310,7 @@ function Gain() {
 Inside `Knob.Root`, `useKnobContext()` returns the same API, for parts of your own:
 
 ```tsx
-import { useKnobContext } from '@contour-ui/headless-react';
+import { useKnobContext } from '@contour-ui/headless';
 
 function Ticks() {
   const { min, max } = useKnobContext();

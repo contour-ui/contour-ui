@@ -449,7 +449,7 @@ Props that go from a server component to a client one must be serializable: data
 and components of client modules, never functions. `DocsSite` is: its `name` is a string or an
 element, and its icons are plain data.
 
-`@contour-ui/react` and `@contour-ui/headless-react` are built one file per module, and the
+`@contour-ui/react` and `@contour-ui/headless` are built one file per module, and the
 modules that need the browser start with `'use client'`. A server component, an MDX page included,
 imports `@contour-ui/react` directly: the parts that only render markup (`Button`, `Kbd`, `Card`,
 `Table`…) render on the server, the others are client components it renders by reference, and a

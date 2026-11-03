@@ -13,11 +13,11 @@ description: What ships, which package to pick, and how the packages fit togethe
 contour-ui ships three React packages. Pick by what you build and how much of the look you want to
 own:
 
-| Package                      | What you get                                                        | Use it when                                            |
-| ---------------------------- | ------------------------------------------------------------------- | ------------------------------------------------------ |
-| `@contour-ui/react`          | Styled components, everyday and for audio-plugin UIs                | you build an app or a plugin UI in the contour-ui look |
-| `@contour-ui/headless-react` | Unstyled components: structure and behavior                         | you want contour-ui behavior with your own look        |
-| `@contour-ui/fumadocs`       | A documentation layout for Fumadocs, built from `@contour-ui/react` | you build a docs site on Fumadocs                      |
+| Package                | What you get                                                        | Use it when                                            |
+| ---------------------- | ------------------------------------------------------------------- | ------------------------------------------------------ |
+| `@contour-ui/react`    | Styled components, everyday and for audio-plugin UIs                | you build an app or a plugin UI in the contour-ui look |
+| `@contour-ui/headless` | Unstyled components: structure and behavior                         | you want contour-ui behavior with your own look        |
+| `@contour-ui/fumadocs` | A documentation layout for Fumadocs, built from `@contour-ui/react` | you build a docs site on Fumadocs                      |
 
 `@contour-ui/react` holds both the everyday [components](/docs/components) and the controls of
 audio-plugin UIs, in [Audio](/docs/components/audio), so a plugin needs one package for its whole
@@ -45,7 +45,7 @@ From the foundation up:
   press and focus). It is the only package with code for one platform or another: its web build
   renders React DOM, its Soundor build renders the nodes of `@soundor/react`, and the bundler picks
   one by an export condition.
-- **Headless** (`@contour-ui/headless-react`) runs that logic in React: it renders the structure
+- **Headless** (`@contour-ui/headless`) runs that logic in React: it renders the structure
   and behavior of interactive components (popovers, dialogs, listboxes…), with no styles. It also
   exports `Primitive`, so you can build parts of your own.
 - **The styled package** (`@contour-ui/react`) styles them: an interactive styled component is

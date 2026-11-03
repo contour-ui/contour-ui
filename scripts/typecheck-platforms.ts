@@ -2,7 +2,7 @@
  * Type-check the cross-platform packages under the conditions of every platform but the web.
  *
  * `vp check` reads each file in the first TypeScript project that includes it, the web one, so
- * shared code (the parts of `headless-react`, the components of `react`, the shared folder of
+ * shared code (the parts of `headless`, the components of `react`, the shared folder of
  * `primitive`) compiles there under the default condition only. Each cross-platform package has a
  * `tsconfig.soundor.json` that compiles it again under `soundor`, without the DOM: a web-only prop
  * or API in shared code fails here. One project at a time.

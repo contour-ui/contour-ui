@@ -90,7 +90,7 @@ export const LAYERS: readonly LayerPackage[] = [
     react: 'renderers',
   },
   {
-    name: 'headless-react',
+    name: 'headless',
     layer: 3,
     purpose: 'unstyled React components + hooks, on @contour-ui/primitive',
     allowed: ['core', 'primitive'],
@@ -100,14 +100,14 @@ export const LAYERS: readonly LayerPackage[] = [
     name: 'react',
     layer: 4,
     purpose: 'styled React components: Essentials and Audio',
-    allowed: ['headless-react', 'primitive', 'tokens', 'icons', 'fonts'],
+    allowed: ['headless', 'primitive', 'tokens', 'icons', 'fonts'],
     react: 'cross-platform',
   },
   {
     name: 'fumadocs',
     layer: 5,
     purpose: 'documentation layout for fumadocs-core sites, built from @contour-ui/react',
-    allowed: ['react', 'headless-react', 'primitive', 'tokens', 'icons', 'fonts'],
+    allowed: ['react', 'headless', 'primitive', 'tokens', 'icons', 'fonts'],
     react: 'peer',
   },
 ];
@@ -157,12 +157,12 @@ export const RENDERER_IMPORTS: readonly RendererImports[] = [
   // The backends of the element layer.
   { files: ['packages/primitive/src/web/**'], renderers: ['web'] },
   { files: ['packages/primitive/src/soundor/**'], renderers: ['soundor'] },
-  // Modules of headless-react that run on the web only and still use React DOM themselves,
+  // Modules of headless that run on the web only and still use React DOM themselves,
   // until their platform code moves into the element layer.
   {
     files: [
-      'packages/headless-react/src/portal/portal.tsx',
-      'packages/headless-react/src/presence/use-presence.ts',
+      'packages/headless/src/portal/portal.tsx',
+      'packages/headless/src/presence/use-presence.ts',
     ],
     renderers: ['web'],
   },
@@ -189,7 +189,7 @@ const PACKAGE_RENDERERS: Readonly<Record<ReactPolicy, readonly Renderer[]>> = {
  */
 export const CROSS_PLATFORM_SOURCES: readonly string[] = [
   'packages/primitive/src/shared',
-  'packages/headless-react/src/knob',
+  'packages/headless/src/knob',
   'packages/react/src/button',
   'packages/react/src/knob',
 ];

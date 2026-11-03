@@ -29,19 +29,19 @@ export default defineConfig({
       {
         extends: true,
         test: {
-          name: 'headless-react',
+          name: 'headless',
           include: ['src/**/*.test.{ts,tsx}'],
           exclude: [...configDefaults.exclude, ...NODE_TESTS, ...SOUNDOR_TESTS],
           browser: chromium(),
         },
       },
-      soundorProject('headless-react', {
+      soundorProject('headless', {
         include: [...CROSS_PLATFORM_TESTS, ...SOUNDOR_TESTS],
         exclude: WEB_TESTS,
       }),
       {
         extends: true,
-        test: { name: 'headless-react:node', environment: 'node', include: NODE_TESTS },
+        test: { name: 'headless:node', environment: 'node', include: NODE_TESTS },
       },
     ],
   },

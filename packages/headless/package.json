@@ -1,12 +1,12 @@
 {
-  "name": "@contour-ui/headless-react",
+  "name": "@contour-ui/headless",
   "version": "0.0.0",
   "description": "contour-ui headless for React: unstyled components and hooks, on the web (React DOM) and in Soundor plugin UIs (@soundor/react).",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/contour-ui/contour-ui.git",
-    "directory": "packages/headless-react"
+    "directory": "packages/headless"
   },
   "files": [
     "dist"

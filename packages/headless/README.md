@@ -1,4 +1,4 @@
-# @contour-ui/headless-react
+# @contour-ui/headless
 
 **Layer 3 — headless.** Unstyled React components and hooks (Ark UI–like
 anatomy: `Component.Part`, `data-scope` / `data-part` attributes), written once on the elements of
@@ -16,9 +16,9 @@ nodes and exports the components that run there, the Knob first.
 with `'use client'`: the hooks of components, their contexts and the parts that read them,
 `Portal`, `Presence`. The entry point, the namespaces (`Dialog`, `Popover`…), `Primitive`,
 `mergeProps` and `composeRefs` stay server modules: a server component imports
-`@contour-ui/headless-react` and renders `Dialog.Root` or `Primitive.div` (with `asChild` too). Hooks
+`@contour-ui/headless` and renders `Dialog.Root` or `Primitive.div` (with `asChild` too). Hooks
 run in client modules only. `src/client-boundary.test.ts` checks the directives (Vitest project
-`headless-react:node`).
+`headless:node`).
 
 ## Building parts
 

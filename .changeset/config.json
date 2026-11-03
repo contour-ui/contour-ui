@@ -9,7 +9,7 @@
       "@contour-ui/fonts",
       "@contour-ui/core",
       "@contour-ui/primitive",
-      "@contour-ui/headless-react",
+      "@contour-ui/headless",
       "@contour-ui/react",
       "@contour-ui/fumadocs"
     ]

@@ -389,20 +389,20 @@ describe('Clipboard label, control and value text', () => {
   it('shows its children in place of the value, or renders its child with asChild', async () => {
     acceptingClipboard();
     const screen = await render(
-      <Clipboard.Root value="pnpm add @contour-ui/headless-react">
+      <Clipboard.Root value="pnpm add @contour-ui/headless">
         <Clipboard.ValueText>
-          pnpm add <b>@contour-ui/headless-react</b>
+          pnpm add <b>@contour-ui/headless</b>
         </Clipboard.ValueText>
         <Clipboard.ValueText asChild>
-          <code>pnpm add @contour-ui/headless-react</code>
+          <code>pnpm add @contour-ui/headless</code>
         </Clipboard.ValueText>
       </Clipboard.Root>,
     );
     const [marked, code] = screen.container.querySelectorAll('[data-part="value-text"]');
 
-    expect(marked?.querySelector('b')).toHaveTextContent('@contour-ui/headless-react');
+    expect(marked?.querySelector('b')).toHaveTextContent('@contour-ui/headless');
     expect(code?.tagName).toBe('CODE');
-    expect(code?.textContent).toBe('pnpm add @contour-ui/headless-react');
+    expect(code?.textContent).toBe('pnpm add @contour-ui/headless');
   });
 
   it('gives the label, the control and the value text the copied state', async () => {
@@ -450,10 +450,10 @@ function CheckGlyph(): ReactElement {
 }
 
 const commands = new Map([
-  ['npm', 'npm install @contour-ui/headless-react'],
-  ['pnpm', 'pnpm add @contour-ui/headless-react'],
-  ['yarn', 'yarn add @contour-ui/headless-react'],
-  ['bun', 'bun add @contour-ui/headless-react'],
+  ['npm', 'npm install @contour-ui/headless'],
+  ['pnpm', 'pnpm add @contour-ui/headless'],
+  ['yarn', 'yarn add @contour-ui/headless'],
+  ['bun', 'bun add @contour-ui/headless'],
 ]);
 
 /** The owner keeps the command in its state and passes it as `value`. */
@@ -484,7 +484,7 @@ describe('Clipboard accessibility', () => {
   it('has no axe violations: Default', async () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
     acceptingClipboard();
-    const value = 'pnpm add @contour-ui/headless-react';
+    const value = 'pnpm add @contour-ui/headless';
     const screen = await render(
       <Clipboard.Root value={value} timeout={1000}>
         <code>{value}</code> <Clipboard.Trigger>Copy</Clipboard.Trigger>{' '}
@@ -505,7 +505,7 @@ describe('Clipboard accessibility', () => {
   it('has no axe violations: Anatomy', async () => {
     acceptingClipboard();
     const screen = await render(
-      <Clipboard.Root value="pnpm add @contour-ui/headless-react">
+      <Clipboard.Root value="pnpm add @contour-ui/headless">
         <Clipboard.Label>Install command</Clipboard.Label>
         <Clipboard.Control style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Clipboard.ValueText style={{ fontFamily: 'monospace' }} />
@@ -525,7 +525,7 @@ describe('Clipboard accessibility', () => {
 
   it('has no axe violations: WithIcons', async () => {
     acceptingClipboard();
-    const value = 'npm install @contour-ui/headless-react';
+    const value = 'npm install @contour-ui/headless';
     const screen = await render(
       <Clipboard.Root value={value}>
         <code>{value}</code>{' '}
@@ -553,7 +553,7 @@ describe('Clipboard accessibility', () => {
       'pnpm',
     );
     await userEvent.click(screen.getByRole('button', { name: 'Copy to clipboard' }));
-    expect(writeText.mock.calls).toStrictEqual([['pnpm add @contour-ui/headless-react']]);
+    expect(writeText.mock.calls).toStrictEqual([['pnpm add @contour-ui/headless']]);
     await expect
       .element(screen.getByRole('button', { name: 'Copy to clipboard' }))
       .toHaveAttribute('data-copied');

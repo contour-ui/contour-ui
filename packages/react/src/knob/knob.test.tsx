@@ -4,7 +4,7 @@
  * the headless Knob they style; how they look is a test of each platform (`knob.web.test.tsx`,
  * `knob.soundor.test.tsx`), and the behavior itself is tested with the headless parts.
  */
-import { formatDecibels } from '@contour-ui/headless-react';
+import { formatDecibels } from '@contour-ui/headless';
 import { harness } from '@contour-ui/test-harness';
 import type { ReactElement } from 'react';
 import { describe, expect, it } from 'vite-plus/test';

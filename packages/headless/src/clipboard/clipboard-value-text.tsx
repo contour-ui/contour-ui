@@ -16,7 +16,7 @@ export type ClipboardValueTextProps = PrimitiveProps<'span'>;
  * @example
  * <Clipboard.ValueText />
  * <Clipboard.ValueText asChild>
- *   <code>pnpm add @contour-ui/headless-react</code>
+ *   <code>pnpm add @contour-ui/headless</code>
  * </Clipboard.ValueText>
  */
 export function ClipboardValueText({ children, ...props }: ClipboardValueTextProps): ReactElement {
