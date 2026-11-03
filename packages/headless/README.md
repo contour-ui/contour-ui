@@ -1,0 +1,33 @@
+# @contour-ui/headless
+
+**Layer 3 — headless.** Unstyled React components and hooks (Ark UI–like
+anatomy: `Component.Part`, `data-scope` / `data-part` attributes), written once on the elements of
+`@contour-ui/primitive` for every platform: the web build (the default) renders React DOM and
+exports every component; the Soundor build (the `soundor` export condition) renders Soundor's
+nodes and exports the components that run there, the Knob first.
+
+- **May depend on (internal):** `@contour-ui/core`, `@contour-ui/primitive`.
+- **Must not depend on:** `tokens`, `icons`, `react` (the styled package), `fumadocs`.
+- **Peers:** `react`; `react-dom`, optional (the web).
+
+## React Server Components
+
+`vp pack` builds the package one file per module, and the modules that need the browser start
+with `'use client'`: the hooks of components, their contexts and the parts that read them,
+`Portal`, `Presence`. The entry point, the namespaces (`Dialog`, `Popover`…), `Primitive`,
+`mergeProps` and `composeRefs` stay server modules: a server component imports
+`@contour-ui/headless` and renders `Dialog.Root` or `Primitive.div` (with `asChild` too). Hooks
+run in client modules only. `src/client-boundary.test.ts` checks the directives (Vitest project
+`headless:node`).
+
+## Building parts
+
+Parts render through `Primitive.<element>` (`Primitive.div`, `Primitive.button`, …). With
+`asChild`, a part renders its only child instead, for example a router link in place of `<a>`,
+and merges its props into the child's. The same helpers are exported for your own parts:
+
+- `mergeProps(...sources)` combines prop objects: event handlers all run (the last source's
+  first), class names are joined, styles are merged, and for anything else the last value wins.
+- `composeRefs(...refs)` makes one callback ref that feeds several refs, with React 19 ref
+  cleanups; `useComposedRefs(first, second)` does the same inside a component and keeps the
+  result stable between renders.

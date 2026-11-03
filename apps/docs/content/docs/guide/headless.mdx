@@ -12,7 +12,7 @@ cards, exist only in the styled package.
 ## Setup
 
 ```bash
-pnpm add @contour-ui/headless-react
+pnpm add @contour-ui/headless
 ```
 
 There is no stylesheet to load. React 19 and React DOM 19 are peer dependencies.
@@ -20,7 +20,7 @@ There is no stylesheet to load. React 19 and React DOM 19 are peer dependencies.
 ## Usage
 
 ```tsx
-import { Placeholder } from '@contour-ui/headless-react';
+import { Placeholder } from '@contour-ui/headless';
 
 export function Note() {
   return <Placeholder.Root className="note">Unstyled</Placeholder.Root>;
@@ -50,7 +50,7 @@ other elements parts are made of. A primitive takes its element's props and `ref
 which renders the only child instead and merges the props into it:
 
 ```tsx
-import { Primitive } from '@contour-ui/headless-react';
+import { Primitive } from '@contour-ui/headless';
 import { Link } from 'react-router';
 
 <Primitive.a asChild className="nav-link">

@@ -1,4 +1,4 @@
-import { registerFonts } from '@contour-ui/soundor';
+import { registerFonts } from '@contour-ui/react';
 import { render } from '@soundor/react';
 
 import { App } from './app.tsx';

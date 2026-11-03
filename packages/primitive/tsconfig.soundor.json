@@ -1,0 +1,9 @@
+{
+  // The Soundor build: the shared code again, the code of every native host, and the Soundor
+  // backend, without the DOM: Soundor's modules and Web globals, under the `soundor` condition.
+  "extends": "@contour-ui/typescript-config/library-soundor.json",
+  "compilerOptions": {
+    "types": ["@soundor/environment", "@soundor/vitest"]
+  },
+  "include": ["src/shared", "src/native", "src/soundor"]
+}

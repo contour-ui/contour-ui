@@ -1,0 +1,33 @@
+{
+  "name": "@contour-ui/test-harness",
+  "version": "0.0.0",
+  "private": true,
+  "description": "One test file, every platform: render, find and drive a UI through the same calls on the web (Chromium) and in Soundor's simulated runtime. Never published.",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "soundor": "./src/soundor.ts",
+      "default": "./src/web.ts"
+    }
+  },
+  "dependencies": {
+    "@soundor/testing-library": "catalog:",
+    "vitest-browser-react": "catalog:"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@soundor/environment": "catalog:",
+    "@soundor/react": "catalog:",
+    "@soundor/vitest": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest": "catalog:"
+  },
+  "peerDependencies": {
+    "react": "^19.3.0"
+  }
+}

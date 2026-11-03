@@ -7,6 +7,9 @@
     // the package lists `@soundor/environment` in `types`, so `window` or `document` fail to
     // compile instead of failing in a plugin.
     "lib": ["ES2023"],
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    // The Soundor build of every workspace package that has one (`@contour-ui/primitive` and the
+    // packages above it): an app's bundler picks it by the same condition.
+    "customConditions": ["@contour-ui/source", "soundor"]
   }
 }

@@ -142,6 +142,9 @@ catalogs:
 overrides:
   vite@*: npm:@voidzero-dev/vite-plus-core@1.4.0
 
+patchedDependencies:
+  soundor@0.15.0: 55a5d3b6a380ce0e29f37546f416ef54bb4e764cf89bd1061a90f033485175b9
+
 importers:
 
   .:
@@ -185,9 +188,9 @@ importers:
       '@contour-ui/fumadocs':
         specifier: workspace:*
         version: link:../../packages/fumadocs
-      '@contour-ui/headless-react':
+      '@contour-ui/headless':
         specifier: workspace:*
-        version: link:../../packages/headless-react
+        version: link:../../packages/headless
       '@contour-ui/icons':
         specifier: workspace:*
         version: link:../../packages/icons
@@ -261,9 +264,9 @@ importers:
       '@contour-ui/fonts':
         specifier: workspace:*
         version: link:../../packages/fonts
-      '@contour-ui/headless-react':
+      '@contour-ui/headless':
         specifier: workspace:*
-        version: link:../../packages/headless-react
+        version: link:../../packages/headless
       '@contour-ui/react':
         specifier: workspace:*
         version: link:../../packages/react
@@ -301,9 +304,9 @@ importers:
 
   apps/soundor-sandbox:
     dependencies:
-      '@contour-ui/soundor':
+      '@contour-ui/react':
         specifier: workspace:*
-        version: link:../../packages/soundor
+        version: link:../../packages/react
       '@soundor/juce-runtime':
         specifier: 'catalog:'
         version: 0.14.0(@soundor/config@0.15.0)
@@ -331,7 +334,7 @@ importers:
         version: 19.3.0
       soundor:
         specifier: 'catalog:'
-        version: 0.15.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.15.0)(publint@0.3.25)(typescript@7.0.2)
+        version: 0.15.0(patch_hash=55a5d3b6a380ce0e29f37546f416ef54bb4e764cf89bd1061a90f033485175b9)(@arethetypeswrong/core@0.18.5)(@soundor/config@0.15.0)(publint@0.3.25)(typescript@7.0.2)
 
   packages/core:
     dependencies:
@@ -378,9 +381,9 @@ importers:
 
   packages/fumadocs:
     dependencies:
-      '@contour-ui/headless-react':
+      '@contour-ui/headless':
         specifier: workspace:*
-        version: link:../headless-react
+        version: link:../headless
       '@contour-ui/icons':
         specifier: workspace:*
         version: link:../icons
@@ -431,21 +434,39 @@ importers:
         specifier: 'catalog:'
         version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
 
-  packages/headless-react:
+  packages/headless:
     dependencies:
       '@contour-ui/core':
         specifier: workspace:*
         version: link:../core
+      '@contour-ui/primitive':
+        specifier: workspace:*
+        version: link:../primitive
       '@floating-ui/dom':
         specifier: 'catalog:'
         version: 1.8.0
     devDependencies:
+      '@contour-ui/test-harness':
+        specifier: workspace:*
+        version: link:../../tooling/test-harness
       '@contour-ui/typescript-config':
         specifier: workspace:*
         version: link:../../tooling/typescript
       '@contour-ui/vite-config':
         specifier: workspace:*
         version: link:../../tooling/vite
+      '@soundor/environment':
+        specifier: 'catalog:'
+        version: 0.15.0
+      '@soundor/react':
+        specifier: 'catalog:'
+        version: 0.15.0(react@19.3.1)
+      '@soundor/testing-library':
+        specifier: 'catalog:'
+        version: 0.15.0(@soundor/react@0.15.0(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
+      '@soundor/vitest':
+        specifier: 'catalog:'
+        version: 0.15.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -467,9 +488,15 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
       vitest-browser-react:
         specifier: 'catalog:'
         version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
+      vitest-environment-soundor:
+        specifier: 'catalog:'
+        version: 0.15.0(vitest@5.0.5)
 
   packages/icons:
     devDependencies:
@@ -492,102 +519,7 @@ importers:
         specifier: 'catalog:'
         version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
 
-  packages/react:
-    dependencies:
-      '@contour-ui/headless-react':
-        specifier: workspace:*
-        version: link:../headless-react
-      '@contour-ui/icons':
-        specifier: workspace:*
-        version: link:../icons
-      '@contour-ui/tokens':
-        specifier: workspace:*
-        version: link:../tokens
-    devDependencies:
-      '@contour-ui/fonts':
-        specifier: workspace:*
-        version: link:../fonts
-      '@contour-ui/typescript-config':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      '@contour-ui/vite-config':
-        specifier: workspace:*
-        version: link:../../tooling/vite
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.19.2
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.3.0
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.3.0(@types/react@19.3.0)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 6.1.2(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))
-      react:
-        specifier: 'catalog:'
-        version: 19.3.1
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.3.1(react@19.3.1)
-      vite-plus:
-        specifier: 'catalog:'
-        version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
-      vitest-browser-react:
-        specifier: 'catalog:'
-        version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
-
-  packages/soundor:
-    dependencies:
-      '@contour-ui/fonts':
-        specifier: workspace:*
-        version: link:../fonts
-      '@contour-ui/soundor-headless':
-        specifier: workspace:*
-        version: link:../soundor-headless
-      '@contour-ui/tokens':
-        specifier: workspace:*
-        version: link:../tokens
-    devDependencies:
-      '@contour-ui/typescript-config':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      '@contour-ui/vite-config':
-        specifier: workspace:*
-        version: link:../../tooling/vite
-      '@soundor/environment':
-        specifier: 'catalog:'
-        version: 0.15.0
-      '@soundor/react':
-        specifier: 'catalog:'
-        version: 0.15.0(react@19.3.1)
-      '@soundor/testing-library':
-        specifier: 'catalog:'
-        version: 0.15.0(@soundor/react@0.15.0(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
-      '@soundor/vitest':
-        specifier: 'catalog:'
-        version: 0.15.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)
-      '@types/node':
-        specifier: 'catalog:'
-        version: 24.19.2
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.3.0
-      react:
-        specifier: 'catalog:'
-        version: 19.3.1
-      vite-plus:
-        specifier: 'catalog:'
-        version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
-      vitest:
-        specifier: 'catalog:'
-        version: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
-      vitest-environment-soundor:
-        specifier: 'catalog:'
-        version: 0.15.0(vitest@5.0.5)
-
-  packages/soundor-headless:
+  packages/primitive:
     dependencies:
       '@contour-ui/core':
         specifier: workspace:*
@@ -617,15 +549,97 @@ importers:
       '@types/react':
         specifier: 'catalog:'
         version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.1.2(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))
       react:
         specifier: 'catalog:'
         version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
       vite-plus:
         specifier: 'catalog:'
         version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
       vitest:
         specifier: 'catalog:'
         version: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+      vitest-browser-react:
+        specifier: 'catalog:'
+        version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
+      vitest-environment-soundor:
+        specifier: 'catalog:'
+        version: 0.15.0(vitest@5.0.5)
+
+  packages/react:
+    dependencies:
+      '@contour-ui/fonts':
+        specifier: workspace:*
+        version: link:../fonts
+      '@contour-ui/headless':
+        specifier: workspace:*
+        version: link:../headless
+      '@contour-ui/icons':
+        specifier: workspace:*
+        version: link:../icons
+      '@contour-ui/primitive':
+        specifier: workspace:*
+        version: link:../primitive
+      '@contour-ui/tokens':
+        specifier: workspace:*
+        version: link:../tokens
+    devDependencies:
+      '@contour-ui/test-harness':
+        specifier: workspace:*
+        version: link:../../tooling/test-harness
+      '@contour-ui/typescript-config':
+        specifier: workspace:*
+        version: link:../../tooling/typescript
+      '@contour-ui/vite-config':
+        specifier: workspace:*
+        version: link:../../tooling/vite
+      '@soundor/environment':
+        specifier: 'catalog:'
+        version: 0.15.0
+      '@soundor/react':
+        specifier: 'catalog:'
+        version: 0.15.0(react@19.3.1)
+      '@soundor/testing-library':
+        specifier: 'catalog:'
+        version: 0.15.0(@soundor/react@0.15.0(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
+      '@soundor/vitest':
+        specifier: 'catalog:'
+        version: 0.15.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.2
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 6.1.2(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+      vitest-browser-react:
+        specifier: 'catalog:'
+        version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
       vitest-environment-soundor:
         specifier: 'catalog:'
         version: 0.15.0(vitest@5.0.5)
@@ -650,6 +664,46 @@ importers:
       vite-plus:
         specifier: 'catalog:'
         version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+
+  tooling/test-harness:
+    dependencies:
+      '@soundor/testing-library':
+        specifier: 'catalog:'
+        version: 0.15.0(@soundor/react@0.15.0(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
+      vitest-browser-react:
+        specifier: 'catalog:'
+        version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
+    devDependencies:
+      '@contour-ui/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript
+      '@soundor/environment':
+        specifier: 'catalog:'
+        version: 0.15.0
+      '@soundor/react':
+        specifier: 'catalog:'
+        version: 0.15.0(react@19.3.1)
+      '@soundor/vitest':
+        specifier: 'catalog:'
+        version: 0.15.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.3.0
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.3.0(@types/react@19.3.0)
+      react:
+        specifier: 'catalog:'
+        version: 19.3.1
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.3.1(react@19.3.1)
+      vite-plus:
+        specifier: 'catalog:'
+        version: 1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/ui@5.0.5)(esbuild@0.28.2)(jiti@2.7.0)(playwright@1.64.1)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.5(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(@vitest/browser-playwright@5.0.5)(@vitest/browser-preview@5.0.5)(@vitest/ui@5.0.5)(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1)
 
   tooling/tokens-compiler:
     dependencies:
@@ -680,6 +734,9 @@ importers:
       '@contour-ui/typescript-config':
         specifier: workspace:*
         version: link:../typescript
+      '@soundor/vitest':
+        specifier: 'catalog:'
+        version: 0.15.0(@voidzero-dev/vite-plus-core@1.4.0(@arethetypeswrong/core@0.18.5)(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(publint@0.3.25)(typescript@7.0.2)(yaml@2.9.1))(vitest@5.0.5)
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.2
@@ -710,6 +767,9 @@ importers:
       vitest-browser-react:
         specifier: 'catalog:'
         version: 2.3.0(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(vitest@5.0.5)
+      vitest-environment-soundor:
+        specifier: 'catalog:'
+        version: 0.15.0(vitest@5.0.5)
 
 packages:
 
@@ -7578,7 +7638,7 @@ snapshots:
     dependencies:
       atomic-sleep: 1.0.0
 
-  soundor@0.15.0(@arethetypeswrong/core@0.18.5)(@soundor/config@0.15.0)(publint@0.3.25)(typescript@7.0.2):
+  soundor@0.15.0(patch_hash=55a5d3b6a380ce0e29f37546f416ef54bb4e764cf89bd1061a90f033485175b9)(@arethetypeswrong/core@0.18.5)(@soundor/config@0.15.0)(publint@0.3.25)(typescript@7.0.2):
     dependencies:
       '@clack/prompts': 1.8.1
       '@soundor/config': 0.15.0

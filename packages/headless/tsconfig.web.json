@@ -1,0 +1,15 @@
+{
+  // The web build: every module and test but the Soundor ones (`*.soundor.ts(x)`,
+  // `*.soundor.test.ts(x)`), with the DOM.
+  "extends": "@contour-ui/typescript-config/library-dom.json",
+  "compilerOptions": {
+    "types": ["node", "vite-plus/client"]
+  },
+  "include": ["src"],
+  "exclude": [
+    "src/**/*.soundor.ts",
+    "src/**/*.soundor.tsx",
+    "src/**/*.soundor.test.ts",
+    "src/**/*.soundor.test.tsx"
+  ]
+}

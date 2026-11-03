@@ -67,7 +67,8 @@ readout is the number, with the decimals of `step`.
 ## Gestures
 
 Each change the user makes is a gesture with a start and an end: a drag from the press to the
-release, a run of wheel events until the wheel rests for 300 ms, a key, a reset.
+release, a run of wheel events until the wheel rests for 300 ms, a key, a reset. A double click is
+two: the drag of its first press, and the reset at its second press, which drags nothing.
 `onValueChangeStart` receives the value before it and `onValueChangeEnd` the value it left, so a
 plugin can record the changes in between as one step of the host's automation and undo, with the
 `beginGesture()` and `endGesture()` of a parameter. `setValue()` changes the value from code
@@ -193,7 +194,7 @@ tokens. The strokes of the dial grow with it.
 | Drag up, down | Raises or lowers the value: 200 pixels from `min` to `max` (`dragDistance`). Only the vertical movement counts, and the drag goes on outside the dial |
 | `Shift` drag  | Ten times as far, for fine moves                                                                                                                      |
 | Wheel         | A notch of a mouse wheel moves a twentieth of the travel, a tenth of that with `Shift`. The page does not scroll                                      |
-| Double click  | Resets the value to `defaultValue`, or the origin                                                                                                     |
+| Double click  | Resets the value to `defaultValue`, or the origin, at the second press, which starts no drag                                                          |
 
 `pointerLock` locks the pointer to the dial while it drags: the pointer hides and stops at no
 edge of the screen, and shows again where the drag started. The press releases it, and so does
@@ -222,7 +223,7 @@ With a `step` larger than the share of the travel a key moves, the key moves one
 | `Knob.Track`       | `path`  | `contour-knob__track`        | `data-part="track"`, `d`                                                                                                                                                                                                                                   |
 | `Knob.Range`       | `path`  | `contour-knob__range`        | `data-part="range"`, `d`, empty at the origin                                                                                                                                                                                                              |
 | `Knob.Thumb`       | `line`  | `contour-knob__thumb`        | `data-part="thumb"`, `x1`, `y1`, `x2`, `y2`                                                                                                                                                                                                                |
-| `Knob.ValueText`   | `span`  | `contour-knob__value-text`   | `data-part="value-text"`; the text of the value                                                                                                                                                                                                            |
+| `Knob.ValueText`   | `span`  | `contour-knob__value-text`   | `data-part="value-text"`, `aria-hidden="true"`; the text of the value                                                                                                                                                                                      |
 | `Knob.HiddenInput` | `input` | `contour-knob__hidden-input` | `data-part="hidden-input"`, `type="hidden"`, `name`, `form`, `value`, `disabled`                                                                                                                                                                           |
 
 Every part carries `data-scope="knob"`, `data-disabled`, `data-readonly` and `data-dragging`,
@@ -267,7 +268,8 @@ class. `Knob.ValueText` shows its children in place of the text of the value.
 - A disabled knob leaves the tab order (`aria-disabled`, on the root too, so checkers such as axe
   count its label and readout as the text of an inactive control); a read-only one stays in it
   (`aria-readonly`).
-- The readout is text next to the dial: the slider carries the value for assistive technology.
+- The readout is text next to the dial, hidden from assistive technology (`aria-hidden`): the
+  slider carries the value, so screen readers do not read it twice.
 
 ## Tokens
 

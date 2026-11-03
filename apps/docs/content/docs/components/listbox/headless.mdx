@@ -3,7 +3,7 @@ title: Listbox
 description: A list of options to highlight and select with the keyboard or the pointer, with groups, typeahead, and an input that drives it from outside.
 ---
 
-import { createListCollection, Listbox } from '@contour-ui/headless-react';
+import { createListCollection, Listbox } from '@contour-ui/headless';
 
 export const waveforms = createListCollection({
   items: [
@@ -42,7 +42,7 @@ export const waveforms = createListCollection({
 </Preview>
 
 ```tsx
-import { createListCollection, Listbox } from '@contour-ui/headless-react';
+import { createListCollection, Listbox } from '@contour-ui/headless';
 
 const collection = createListCollection({
   items: [
@@ -262,7 +262,7 @@ props of each element: `getLabelProps()`, `getInputProps()`, `getContentProps()`
 `getItemProps({ item })`, `getItemGroupProps({ labelId })` and the rest.
 
 ```tsx
-import { useListbox } from '@contour-ui/headless-react';
+import { useListbox } from '@contour-ui/headless';
 
 function Waveforms({ collection }) {
   const listbox = useListbox({ collection });
@@ -282,7 +282,7 @@ Inside `Listbox.Root`, `useListboxContext()` returns the same API, and inside `L
 `useListboxItemContext()` returns `{ item, state }`, for parts of your own:
 
 ```tsx
-import { useListboxContext } from '@contour-ui/headless-react';
+import { useListboxContext } from '@contour-ui/headless';
 
 function SelectionCount() {
   const { value } = useListboxContext();

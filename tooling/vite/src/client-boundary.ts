@@ -24,7 +24,9 @@
  * a runtime import and an `import type` line never is: the lint keeps them apart
  * (`typescript/consistent-type-imports` with `separate-type-imports`, and
  * `import/consistent-type-specifier-style: prefer-top-level`). Workspace packages resolve through
- * the `@contour-ui/source` condition of their `exports`, to their sources.
+ * the `@contour-ui/source` condition of their `exports`, to their sources, and a package's subpath
+ * imports (`#platform/…`) through its `imports`; under a nested condition, to the web build, the
+ * only one a server runs. Modules of other platforms (`*.soundor.ts`) are never reached.
  */
 import { existsSync, readFileSync, realpathSync } from 'node:fs';
 import path from 'node:path';
@@ -36,6 +38,12 @@ import { SOURCE_CONDITION } from './index.ts';
 export interface ClientBoundaryOptions {
   /** The directory of the package: its `package.json` and `src/`. */
   readonly packageDir: string;
+  /**
+   * The main entry point, relative to `src/`: the web build of `.`, which a server imports.
+   *
+   * @defaultValue 'index.ts'
+   */
+  readonly main?: string;
   /**
    * Modules an app calls on a server besides the entry points, relative to `src/`, such as a
    * function that returns a `<script>` for a root layout.
@@ -188,24 +196,83 @@ interface PackageJson {
   readonly name: string | undefined;
   /** The sources the `exports` map points at under the source condition, by subpath. */
   readonly sources: ReadonlyMap<string, string>;
+  /**
+   * The sources the `imports` map points at under the source condition (the web branch), by
+   * specifier: `#platform/*` → `<dir>/src/platform/*.web.ts`, a star at most.
+   */
+  readonly imports: ReadonlyMap<string, string>;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+/**
+ * The conditions a React Server Components bundler matches, in the order this check prefers them
+ * inside a nested source condition (`{ soundor, 'react-native', default }`): only the web build
+ * ever runs on a server.
+ */
+const SERVER_CONDITIONS = ['react-server', 'default'];
+
+/** The source file under the source condition: a path, or the web branch of nested conditions. */
+function sourceOf(target: unknown): unknown {
+  const source = isRecord(target) ? target[SOURCE_CONDITION] : undefined;
+  if (!isRecord(source)) {
+    return source;
+  }
+  const condition = SERVER_CONDITIONS.find((name) => name in source);
+  return condition === undefined ? undefined : source[condition];
+}
+
+/** The TypeScript sources a map of `exports` or `imports` points at, by key. */
+function sourcesOf(dir: string, map: unknown): Map<string, string> {
+  const sources = new Map<string, string>();
+  for (const [key, target] of Object.entries(isRecord(map) ? map : {})) {
+    const source = sourceOf(target);
+    if (typeof source === 'string' && /\.tsx?$/u.test(source)) {
+      sources.set(key, path.join(dir, source));
+    }
+  }
+  return sources;
+}
+
 function readPackageJson(dir: string): PackageJson {
   const json: unknown = JSON.parse(readFileSync(path.join(dir, 'package.json'), 'utf8'));
   const name = isRecord(json) && typeof json['name'] === 'string' ? json['name'] : undefined;
-  const sources = new Map<string, string>();
-  const exports = isRecord(json) && isRecord(json['exports']) ? json['exports'] : {};
-  for (const [subpath, target] of Object.entries(exports)) {
-    const source = isRecord(target) ? target[SOURCE_CONDITION] : undefined;
-    if (typeof source === 'string' && /\.tsx?$/u.test(source)) {
-      sources.set(subpath, path.join(dir, source));
+  return {
+    name,
+    sources: sourcesOf(dir, isRecord(json) ? json['exports'] : undefined),
+    imports: sourcesOf(dir, isRecord(json) ? json['imports'] : undefined),
+  };
+}
+
+/**
+ * The source of a subpath import of the package of `file` (`#platform/styles`, its `imports` map),
+ * under the source condition, in its web build: the one a server runs.
+ */
+function resolveSubpathImport(file: string, from: string): string | undefined {
+  for (const [key, source] of readPackageJson(packageDirOf(file)).imports) {
+    const star = key.indexOf('*');
+    if (star === -1) {
+      if (key === from) {
+        return source;
+      }
+      continue;
+    }
+    const [before, after] = [key.slice(0, star), key.slice(star + 1)];
+    if (from.startsWith(before) && from.endsWith(after) && from.length >= key.length - 1) {
+      return source.replace('*', from.slice(before.length, from.length - after.length));
     }
   }
-  return { name, sources };
+  return undefined;
+}
+
+/** Where an import of `file` leads: a module of its package, or a workspace package's source. */
+function resolveImport(file: string, from: string): string | undefined {
+  if (from.startsWith('.')) {
+    return path.resolve(path.dirname(file), from);
+  }
+  return from.startsWith('#') ? resolveSubpathImport(file, from) : resolveWorkspace(file, from);
 }
 
 /** The source of a workspace package's entry point that `from` names, as seen from `file`. */
@@ -252,9 +319,7 @@ export function clientBoundary({
       ([, kind, clause = '', from = '']): Statement => ({
         kind: kind === 'export' ? 'export' : 'import',
         from,
-        target: from.startsWith('.')
-          ? path.resolve(path.dirname(file), from)
-          : resolveWorkspace(file, from),
+        target: resolveImport(file, from),
         specifiers: specifiersOf(clause.trim()),
       }),
     );
@@ -444,7 +509,10 @@ export function clientBoundary({
     path.relative(srcDir, file),
   );
 
-  /** The modules of the package, reached from the entry points through relative imports. */
+  /**
+   * The modules of the package, reached from the entry points through relative imports and its
+   * subpath imports (`#platform/…`, in their web build).
+   */
   const own = new Map<string, Module>();
   function collect(file: string): void {
     const key = path.relative(srcDir, file);
@@ -454,7 +522,7 @@ export function clientBoundary({
     const module = load(file);
     own.set(key, module);
     for (const { from, target } of module.statements) {
-      if (from.startsWith('.') && target !== undefined) {
+      if ((from.startsWith('.') || from.startsWith('#')) && target !== undefined) {
         collect(target);
       }
     }
@@ -528,7 +596,7 @@ export function describeClientBoundary(options: ClientBoundaryOptions): ClientBo
   const boundary = clientBoundary(options);
   describe('the client boundary (React Server Components)', () => {
     it('reaches the entry points and the modules an app calls on a server', () => {
-      expect(boundary.entries).toContain('index.ts');
+      expect(boundary.entries).toContain(options.main ?? 'index.ts');
       expect((options.serverModules ?? []).filter((file) => !boundary.modules.has(file))).toEqual(
         [],
       );

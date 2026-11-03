@@ -1,0 +1,83 @@
+{
+  "name": "@contour-ui/primitive",
+  "version": "0.0.0",
+  "description": "contour-ui element layer: the elements parts are made of, in web words, rendered by React DOM on the web and by @soundor/react in Soundor plugin UIs, with the platform services of their input.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/contour-ui/contour-ui.git",
+    "directory": "packages/primitive"
+  },
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "@contour-ui/source": {
+        "soundor": "./src/soundor/index.ts",
+        "default": "./src/web/index.ts"
+      },
+      "types": {
+        "soundor": "./dist/soundor/index.d.ts",
+        "default": "./dist/web/index.d.ts"
+      },
+      "soundor": "./dist/soundor/index.js",
+      "default": "./dist/web/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "publishConfig": {
+    "exports": {
+      ".": {
+        "types": {
+          "soundor": "./dist/soundor/index.d.ts",
+          "default": "./dist/web/index.d.ts"
+        },
+        "soundor": "./dist/soundor/index.js",
+        "default": "./dist/web/index.js"
+      },
+      "./package.json": "./package.json"
+    },
+    "access": "public"
+  },
+  "scripts": {
+    "build": "vp pack",
+    "dev": "vp pack --watch"
+  },
+  "dependencies": {
+    "@contour-ui/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@contour-ui/typescript-config": "workspace:*",
+    "@contour-ui/vite-config": "workspace:*",
+    "@soundor/environment": "catalog:",
+    "@soundor/react": "catalog:",
+    "@soundor/testing-library": "catalog:",
+    "@soundor/vitest": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@vitejs/plugin-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest": "catalog:",
+    "vitest-browser-react": "catalog:",
+    "vitest-environment-soundor": "catalog:"
+  },
+  "peerDependencies": {
+    "@soundor/react": "^0.15.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@soundor/react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  }
+}

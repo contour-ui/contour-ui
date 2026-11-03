@@ -56,7 +56,8 @@ catalog:
   '@floating-ui/core': 1.8.0
   '@floating-ui/dom': 1.8.0
 
-  # Soundor, the plugin UI runtime of @contour-ui/soundor (one release group: keep them equal).
+  # Soundor, the plugin UI runtime of the Soundor builds of @contour-ui/primitive and the packages
+  # above it (one release group: keep them equal).
   # @soundor/react is its renderer, a peer of the package; @soundor/environment declares the
   # runtime's modules and Web globals, in place of the DOM; the rest runs its tests in Node on a
   # simulated runtime.
@@ -142,3 +143,8 @@ minimumReleaseAgeExclude:
 # platform binary arrives via optionalDependencies, so the script is not needed.
 allowBuilds:
   esbuild: false
+# The Soundor CLI 0.15 bundles a plugin UI without export conditions of its own, so it picks the web
+# build of a package that ships one: the patch adds the `soundor` condition to `bundleUi()`, until
+# Soundor ships it (one option: `inputOptions.resolve.conditionNames`).
+patchedDependencies:
+  soundor@0.15.0: patches/soundor@0.15.0.patch

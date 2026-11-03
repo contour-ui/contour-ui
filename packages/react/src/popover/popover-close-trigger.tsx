@@ -1,6 +1,6 @@
 'use client';
 
-import { Popover as Headless } from '@contour-ui/headless-react';
+import { Popover as Headless } from '@contour-ui/headless';
 import type { ReactElement } from 'react';
 
 import { CloseButton } from '../button/index.ts';

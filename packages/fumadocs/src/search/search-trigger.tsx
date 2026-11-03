@@ -1,6 +1,6 @@
 'use client';
 
-import { mergeProps } from '@contour-ui/headless-react';
+import { mergeProps } from '@contour-ui/headless';
 import { searchIcon } from '@contour-ui/icons';
 import { Button, Icon, IconButton, Kbd } from '@contour-ui/react';
 import { use } from 'react';

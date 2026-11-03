@@ -34,6 +34,7 @@ jobs:
         run: test "$(pnpm --version)" = "$PNPM_VERSION"
       - run: vp check --deny-warnings
       - run: vp run boundaries
+      - run: vp run typecheck:platforms
 
   test:
     name: Test (node + Chromium browser mode)
@@ -87,6 +88,7 @@ jobs:
           node-version-file: .nvmrc
           cache: true
       - run: vp run -r build
+      - run: vp run exports
 
   sites:
     name: Build the docs

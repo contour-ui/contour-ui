@@ -1,7 +1,7 @@
 # contour-ui
 
 Design system for audio-plugin UIs and general web UI, built in layers: tokens, icons and fonts →
-core (framework-agnostic logic) → `@contour-ui/headless-react` (unstyled) → `@contour-ui/react`
+core (framework-agnostic logic) → `@contour-ui/headless` (unstyled) → `@contour-ui/react`
 (styled: Essentials and Audio) → `@contour-ui/fumadocs` (a docs layout for fumadocs-core sites).
 
 ```bash

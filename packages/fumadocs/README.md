@@ -6,7 +6,7 @@ top of it. The sidebar, the search, the table of contents, the page parts and th
 come from contour-ui; `fumadocs-core` gives the data (page tree, search index, table of contents),
 and the app's framework adapter (`fumadocs-core/framework`) the links and the navigation.
 
-- **May depend on (internal):** `@contour-ui/react`, `@contour-ui/headless-react`, `@contour-ui/tokens`,
+- **May depend on (internal):** `@contour-ui/react`, `@contour-ui/headless`, `@contour-ui/tokens`,
   `@contour-ui/icons`.
 - **Peers:** `react`, `react-dom`, `fumadocs-core`; `@types/mdx` (optional, for TypeScript).
 - **Entry points:** `@contour-ui/fumadocs` (provider and layouts), `@contour-ui/fumadocs/mdx` (MDX
@@ -140,7 +140,7 @@ export const { staticGET: GET } = createFromSource(source);
 
 - Props go from server components to client components: pass data, React nodes and components,
   never functions.
-- `@contour-ui/react` and `@contour-ui/headless-react` carry `'use client'` per module too: a
+- `@contour-ui/react` and `@contour-ui/headless` carry `'use client'` per module too: a
   server component, MDX included, imports `@contour-ui/react` directly and renders `Card.Root` or
   `Button`. Its `themeScript` also comes without React from `@contour-ui/react/theme-script`.
 - A server component cannot read inside an export of a client module of your own (an object

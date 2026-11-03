@@ -1,4 +1,4 @@
-import { Listbox as Headless } from '@contour-ui/headless-react';
+import { Listbox as Headless } from '@contour-ui/headless';
 import type { ReactElement } from 'react';
 
 import { cx } from '../utils/cx.ts';

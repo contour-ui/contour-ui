@@ -1,0 +1,16 @@
+{
+  // Solution-style: no files of its own. Editors and type-aware lint give each file to the first
+  // referenced project that includes it, so `vp check` reads the shared code as web code; the
+  // Soundor project checks it again under the `soundor` condition (`vp run typecheck:platforms`).
+  // The options below are what tools reading only this file get (`vp pack`, Vite transforms).
+  "extends": "@contour-ui/typescript-config/library-dom.json",
+  "compilerOptions": {
+    "types": ["node", "vite-plus/client"]
+  },
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.web.json" },
+    { "path": "./tsconfig.soundor.json" },
+    { "path": "./tsconfig.config.json" }
+  ]
+}

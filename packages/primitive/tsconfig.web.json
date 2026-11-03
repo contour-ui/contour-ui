@@ -1,0 +1,8 @@
+{
+  // The web build: the shared code and the web backend, with the DOM, under the default condition.
+  "extends": "@contour-ui/typescript-config/library-dom.json",
+  "compilerOptions": {
+    "types": ["node", "vite-plus/client"]
+  },
+  "include": ["src/shared", "src/web"]
+}

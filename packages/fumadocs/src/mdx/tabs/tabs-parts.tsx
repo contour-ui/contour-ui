@@ -1,6 +1,6 @@
 'use client';
 
-import { useComposedRefs } from '@contour-ui/headless-react';
+import { useComposedRefs } from '@contour-ui/headless';
 import { Tabs as StyledTabs } from '@contour-ui/react';
 import type { ComponentProps, ReactElement } from 'react';
 
