@@ -8,18 +8,16 @@ architecture. pnpm monorepo, single toolchain: **Vite+** (`vp`).
 All published packages live under `@contour-ui/` in `packages/`. Dependencies
 point **down** the table only — never up, never sideways.
 
-| Layer        | Package            | Purpose                                                                                                                                                                       | May depend on (internal)                                           |
-| ------------ | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| 0 foundation | `tokens`           | DTCG design tokens → CSS vars / TS, compiled by `@contour-ui/tokens-compiler`                                                                                                 | —                                                                  |
-| 0 foundation | `icons`            | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                                                       | —                                                                  |
-| 0 foundation | `fonts`            | font files: WOFF2 faces + `fonts.css` for the web, static TTF for Soundor (Fontsource)                                                                                        | —                                                                  |
-| 1 logic      | `core`             | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`                                                | —                                                                  |
-| 2 elements   | `primitive`        | the elements parts are made of, in web words (`Primitive.div`, `role`, `aria-*`), and the platform services of their input; a build per platform, picked by export conditions | `core`                                                             |
-| 3 headless   | `headless-react`   | unstyled React components + hooks (Ark UI–like), written once on `primitive` for every platform                                                                               | `core`, `primitive`                                                |
-| 3 headless   | `soundor-headless` | superseded by the Soundor build of `headless-react`, kept until it is removed: the Knob on `@soundor/react`                                                                   | `core`                                                             |
-| 4 styled     | `react`            | styled React components in two sections, **Essentials** and **Audio**, written once for every platform (Button and Knob run in Soundor plugin UIs so far)                     | `headless-react`, `primitive`, `tokens`, `icons`, `fonts`          |
-| 4 styled     | `soundor`          | superseded by the Soundor build of `react`, kept until it is removed: Button and Knob on `@soundor/react`                                                                     | `soundor-headless`, `tokens`, `icons`, `fonts`                     |
-| 5 docs       | `fumadocs`         | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui` (the web only)                                                                    | `react`, `headless-react`, `primitive`, `tokens`, `icons`, `fonts` |
+| Layer        | Package          | Purpose                                                                                                                                                                       | May depend on (internal)                                           |
+| ------------ | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| 0 foundation | `tokens`         | DTCG design tokens → CSS vars / TS, compiled by `@contour-ui/tokens-compiler`                                                                                                 | —                                                                  |
+| 0 foundation | `icons`          | SVG icons → path data + canvas drawing (Lucide, Simple Icons; no React)                                                                                                       | —                                                                  |
+| 0 foundation | `fonts`          | font files: WOFF2 faces + `fonts.css` for the web, static TTF for Soundor (Fontsource)                                                                                        | —                                                                  |
+| 1 logic      | `core`           | framework/renderer-agnostic logic: `machine/`, `states/`, `interactions/`, `collection/`, `positioning/`, `scales/`, `format/`                                                | —                                                                  |
+| 2 elements   | `primitive`      | the elements parts are made of, in web words (`Primitive.div`, `role`, `aria-*`), and the platform services of their input; a build per platform, picked by export conditions | `core`                                                             |
+| 3 headless   | `headless-react` | unstyled React components + hooks (Ark UI–like), written once on `primitive` for every platform                                                                               | `core`, `primitive`                                                |
+| 4 styled     | `react`          | styled React components in two sections, **Essentials** and **Audio**, written once for every platform (Button and Knob run in Soundor plugin UIs so far)                     | `headless-react`, `primitive`, `tokens`, `icons`, `fonts`          |
+| 5 docs       | `fumadocs`       | documentation layout for fumadocs-core sites, built from `react`, in place of `fumadocs-ui` (the web only)                                                                    | `react`, `headless-react`, `primitive`, `tokens`, `icons`, `fonts` |
 
 Rules:
 
@@ -31,8 +29,8 @@ Rules:
 - Code that runs on Hermes (the Soundor runtime, built without `Intl`) has no `Intl`, no
   locale-dependent methods (`toLocale*`, `localeCompare`), no `eval` / `new Function`, no
   `SharedArrayBuffer`, `Atomics`, `Float16Array`. Lint enforces this for `packages/core/src/**`,
-  `packages/primitive/src/{shared,native,soundor}/**`, `packages/headless-react/src/**`,
-  `packages/react/src/**` and the Soundor packages.
+  `packages/primitive/src/{shared,native,soundor}/**`, `packages/headless-react/src/**` and
+  `packages/react/src/**`.
 - Inside `core`, `states/` and `interactions/` never import each other; both may import `machine/`,
   `collection/` and `positioning/`.
 - **One source for every platform** (decision D30). `primitive` is the only package with code for
@@ -151,10 +149,6 @@ Rules:
 - Soundor nodes have no `id`: a part that points at another by id takes the id from its props, not
   from the node (`Knob.Label` registers the id it renders with `registerLabel`; the id registry of
   the Soundor build turns `aria-labelledby` into the name).
-- `soundor-headless` and `soundor` predate the element layer and stay until they are removed; add
-  nothing to them. They build on `@soundor/react` directly (never `react-dom`), type-check with
-  `lib: ["ES2023"]` and `@soundor/environment` (preset `library-soundor.json`), and take `react` and
-  `@soundor/react` as peers (policy `soundor-peer`).
 
 **Enforcement.** The table lives as data in [`scripts/layers.ts`](scripts/layers.ts) — edit it there
 only.
@@ -184,8 +178,7 @@ later. Another framework gets its pair (`vue`, `headless-vue`) and an element la
 `@contour-ui/primitive` is named after what it holds: the elements and the platform services.
 Packages free of frameworks and platforms keep plain names (`tokens`, `icons`, `core`, whose
 machine hooks in `core/react` serve every renderer), and an integration with another ecosystem is
-named after it: `@contour-ui/fumadocs` is the docs layout for sites on fumadocs-core. The
-`soundor` and `soundor-headless` packages predate this rule.
+named after it: `@contour-ui/fumadocs` is the docs layout for sites on fumadocs-core.
 
 Private workspaces: apps are `@contour-ui/app-*` (`apps/`), tooling is in `tooling/`
 (`@contour-ui/typescript-config`, `@contour-ui/vite-config`, `@contour-ui/tokens-compiler`,
@@ -752,7 +745,7 @@ loaded after every package stylesheet).
   `type(scope): subject`, imperative, starting lowercase, no trailing period, header within 72
   characters, body separated by a blank line. Types: `feat`, `fix`, `docs`, `test`, `refactor`,
   `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`, `icons`, `fonts`,
-  `core`, `primitive`, `headless-react`, `react`, `soundor-headless`, `soundor`, `fumadocs`) or
+  `core`, `primitive`, `headless-react`, `react`, `fumadocs`) or
   `docs`, `playground`, `config`, `repo`; no scope when a change spans several packages.
 - Hooks live in `.vite-hooks/` (installed by `vp config` on `vp install`): `pre-commit` runs
   `vp staged` (`vp check --fix` on staged files), `commit-msg` runs

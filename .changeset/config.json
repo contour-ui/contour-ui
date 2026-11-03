@@ -11,8 +11,6 @@
       "@contour-ui/primitive",
       "@contour-ui/headless-react",
       "@contour-ui/react",
-      "@contour-ui/soundor-headless",
-      "@contour-ui/soundor",
       "@contour-ui/fumadocs"
     ]
   ],

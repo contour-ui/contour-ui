@@ -24,8 +24,6 @@ export type ReactPolicy =
   | 'optional-peer'
   /** Both `react` and `react-dom` as required peers. */
   | 'peer'
-  /** `react` and `@soundor/react` as required peers; `react-dom` not at all (no DOM). */
-  | 'soundor-peer'
   /**
    * The element layer: `react` as a required peer, every renderer (`react-dom`, `@soundor/react`)
    * as an optional one, since an app brings the renderer of its platform.
@@ -99,25 +97,11 @@ export const LAYERS: readonly LayerPackage[] = [
     react: 'cross-platform',
   },
   {
-    name: 'soundor-headless',
-    layer: 3,
-    purpose: 'unstyled components for Soundor plugin UIs, on @soundor/react',
-    allowed: ['core'],
-    react: 'soundor-peer',
-  },
-  {
     name: 'react',
     layer: 4,
     purpose: 'styled React components: Essentials and Audio',
     allowed: ['headless-react', 'primitive', 'tokens', 'icons', 'fonts'],
     react: 'cross-platform',
-  },
-  {
-    name: 'soundor',
-    layer: 4,
-    purpose: 'styled components for Soundor plugin UIs, on @soundor/react',
-    allowed: ['soundor-headless', 'tokens', 'icons', 'fonts'],
-    react: 'soundor-peer',
   },
   {
     name: 'fumadocs',
@@ -140,10 +124,9 @@ export const TOOLING_PACKAGES: readonly string[] = [
 ];
 
 /**
- * The modules of each renderer. Only the platform folders of `primitive` import them (and the
- * Soundor packages of the `soundor-peer` policy, until they go): a module of one renderer
- * reachable from a package that is built once breaks the builds of the other platforms, even
- * unused.
+ * The modules of each renderer. Only the platform folders of `primitive` import them: a module of
+ * one renderer reachable from a package that is built once breaks the builds of the other
+ * platforms, even unused.
  */
 export const RENDERER_MODULES = {
   web: ['react-dom', 'react-dom/*'],
@@ -187,13 +170,12 @@ export const RENDERER_IMPORTS: readonly RendererImports[] = [
 
 /**
  * The renderers a package may import anywhere, by its React policy: the docs layout runs on the
- * web only, the Soundor packages on Soundor only; every other package imports none.
+ * web only; every other package imports none.
  */
 const PACKAGE_RENDERERS: Readonly<Record<ReactPolicy, readonly Renderer[]>> = {
   none: [],
   'optional-peer': [],
   peer: ['web'],
-  'soundor-peer': ['soundor'],
   renderers: [],
   'cross-platform': [],
 };
@@ -351,11 +333,6 @@ const reactPattern: RestrictedPattern = {
   message: `core is React-free; React code belongs in ${scoped('core')}/react (${CORE_REACT_DIR}/).`,
 };
 
-const reactDomPattern: RestrictedPattern = {
-  group: ['react-dom', 'react-dom/*'],
-  message: 'Soundor has no DOM: build on @soundor/react, never react-dom.',
-};
-
 const relativeDirPattern = (dirs: readonly string[], message: string): RestrictedPattern => ({
   regex: String.raw`^\.{1,2}/(.*/)?(${dirs.map((dir) => escapeRegex(dir)).join('|')})(/|$)`,
   message,
@@ -401,9 +378,6 @@ function packagePatterns(
   if (pkg.name === 'core') {
     // core forbids React DOM with React itself; the other renderers as everyone does.
     return [...patterns, reactPattern, ...rendererPattern(forbidden.filter((r) => r !== 'web'))];
-  }
-  if (pkg.react === 'soundor-peer') {
-    return [...patterns, reactDomPattern, ...rendererPattern(forbidden.filter((r) => r !== 'web'))];
   }
   return [...patterns, ...rendererPattern(forbidden)];
 }

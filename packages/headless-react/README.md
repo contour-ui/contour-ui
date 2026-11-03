@@ -1,11 +1,14 @@
 # @contour-ui/headless-react
 
-**Layer 2 — headless.** Unstyled React DOM components and hooks (Ark UI–like
-anatomy: `Component.Part`, `data-scope` / `data-part` attributes).
+**Layer 3 — headless.** Unstyled React components and hooks (Ark UI–like
+anatomy: `Component.Part`, `data-scope` / `data-part` attributes), written once on the elements of
+`@contour-ui/primitive` for every platform: the web build (the default) renders React DOM and
+exports every component; the Soundor build (the `soundor` export condition) renders Soundor's
+nodes and exports the components that run there, the Knob first.
 
-- **May depend on (internal):** `@contour-ui/core`.
+- **May depend on (internal):** `@contour-ui/core`, `@contour-ui/primitive`.
 - **Must not depend on:** `tokens`, `icons`, `react` (the styled package), `fumadocs`.
-- **Peers:** `react`, `react-dom`.
+- **Peers:** `react`; `react-dom`, optional (the web).
 
 ## React Server Components
 

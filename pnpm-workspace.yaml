@@ -56,7 +56,8 @@ catalog:
   '@floating-ui/core': 1.8.0
   '@floating-ui/dom': 1.8.0
 
-  # Soundor, the plugin UI runtime of @contour-ui/soundor (one release group: keep them equal).
+  # Soundor, the plugin UI runtime of the Soundor builds of @contour-ui/primitive and the packages
+  # above it (one release group: keep them equal).
   # @soundor/react is its renderer, a peer of the package; @soundor/environment declares the
   # runtime's modules and Web globals, in place of the DOM; the rest runs its tests in Node on a
   # simulated runtime.

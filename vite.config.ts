@@ -116,9 +116,9 @@ export default defineConfig({
       // Layer boundaries, generated from scripts/layers.ts (shared with check-boundaries).
       ...boundaryLintOverrides(),
       {
-        // core, the element layer, the packages above it and the Soundor packages run on Hermes
-        // (the Soundor plugin UI runtime), built without Intl. The web backend of the element
-        // layer runs in browsers only.
+        // core, the element layer and the packages above it run on Hermes (the Soundor plugin UI
+        // runtime), built without Intl. The web backend of the element layer runs in browsers
+        // only.
         files: [
           'packages/core/src/**',
           'packages/primitive/src/shared/**',
@@ -126,8 +126,6 @@ export default defineConfig({
           'packages/primitive/src/soundor/**',
           'packages/headless-react/src/**',
           'packages/react/src/**',
-          'packages/soundor-headless/src/**',
-          'packages/soundor/src/**',
         ],
         rules: {
           'no-restricted-globals': [
@@ -155,8 +153,6 @@ export default defineConfig({
           'packages/primitive/**',
           'packages/headless-react/**',
           'packages/react/**',
-          'packages/soundor-headless/**',
-          'packages/soundor/**',
           'apps/**',
           '**/*.tsx',
         ],

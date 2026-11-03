@@ -1,12 +1,14 @@
 # @contour-ui/react
 
-**Layer 3 — styled.** Styled React DOM components in two sections: **Essentials**, the everyday
+**Layer 4 — styled.** Styled React components in two sections: **Essentials**, the everyday
 parts of any interface (Button, Dialog, Tabs…), and **Audio**, the controls of audio-plugin UIs
 (knobs, faders, meters; coming next). Built on `@contour-ui/headless-react` and styled with plain
-CSS + token CSS variables. No Tailwind.
+CSS + token CSS variables on the web. No Tailwind. `Button` and `Knob` also run in Soundor plugin
+UIs from the same sources (the `soundor` export condition), drawn with the token values of the
+theme of its `ThemeProvider`; `registerFonts()` registers the TTF faces of `@contour-ui/fonts`.
 
-- **May depend on (internal):** `@contour-ui/headless-react`, `@contour-ui/tokens`, `@contour-ui/icons`.
-- **Peers:** `react`, `react-dom`.
+- **May depend on (internal):** `@contour-ui/headless-react`, `@contour-ui/primitive`, `@contour-ui/tokens`, `@contour-ui/icons`, `@contour-ui/fonts`.
+- **Peers:** `react`; `react-dom`, optional (the web).
 - **Entry points:** `@contour-ui/react` (components), `@contour-ui/react/styles.css` (load after `@contour-ui/tokens/tokens.css`), `@contour-ui/react/theme-script` (`themeScript()` without React, for code that runs before it, such as a root layout on the server).
 - **Styles:** one file per component (`src/<component>/<component>.css`), imported by `src/styles.css` into the `contour.components` cascade layer; `vp pack` bundles them into one `dist/styles.css`.
 - **Screenshot tests:** each state of every component in both themes, checked with axe
