@@ -1,15 +1,17 @@
 # @contour-ui/app-soundor-sandbox
 
-A Soundor plugin that shows the components of `@contour-ui/soundor`: every variant and size, in
-both themes. Private, never published. It runs natively (the JUCE runtime, a Standalone app: the
+A Soundor plugin that shows the components of `@contour-ui/react` in its Soundor build (the
+`soundor` export condition): every variant and size, in both themes. Private, never published. It runs natively (the JUCE runtime, a Standalone app: the
 UI on Hermes, drawn by Skia) and in the browser (the web runtime, which draws Soundor nodes with
 DOM elements).
 
 The Soundor CLI bundles the UI itself, from the built packages (`dist`), not from their sources:
-build them first.
+build them first. It picks the Soundor build of the packages that ship one by the `soundor`
+condition, which the CLI 0.15 sets through the workspace's patch (`patches/soundor@0.15.0.patch`);
+TypeScript reads the same build through `customConditions` of `library-soundor.json`.
 
 ```sh
-vp run --filter @contour-ui/soundor... build   # the package and the packages it uses
+vp run --filter @contour-ui/react... build     # the package and the packages it uses
 vp -C apps/soundor-sandbox run dev:web          # http://localhost:5173
 vp -C apps/soundor-sandbox run dev:juce         # needs JUCE 8 or 9 (~/JUCE, or JUCE_DIR)
 vp -C apps/soundor-sandbox run doctor           # checks the toolchain of both runtimes

@@ -1,17 +1,18 @@
 'use client';
 
+import { mergeProps, Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import type { ReactElement } from 'react';
 
-import { mergeProps, Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
 import { useKnobContext } from './knob-context.ts';
 
-export type KnobHiddenInputProps = PrimitiveProps<'input'>;
+export type KnobHiddenInputProps = PrimitiveProps<'formValue'>;
 
 /**
- * Knob hidden input: an `input type="hidden"` with the value, under the `name` of the root, so
- * a form submits it (`form` names a form the knob is outside of). A disabled knob's value is left
- * out, as a disabled input's is.
+ * Knob hidden input: on the web, an `input type="hidden"` with the value, under the `name` of
+ * the root, so a form submits it (`form` names a form the knob is outside of); a disabled knob's
+ * value is left out, as a disabled input's is. Native platforms have no forms: it renders
+ * nothing there.
  *
  * @example
  * <Knob.Root name="gain">
@@ -20,5 +21,5 @@ export type KnobHiddenInputProps = PrimitiveProps<'input'>;
  */
 export function KnobHiddenInput(props: KnobHiddenInputProps): ReactElement {
   const api = useKnobContext();
-  return <Primitive.input {...mergeProps(api.getHiddenInputProps(), props)} />;
+  return <Primitive.formValue {...mergeProps(api.getHiddenInputProps(), props)} />;
 }

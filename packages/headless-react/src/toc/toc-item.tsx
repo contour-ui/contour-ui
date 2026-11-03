@@ -3,8 +3,8 @@
 import type { toc } from '@contour-ui/core';
 import type { ReactElement } from 'react';
 
-import { mergeProps, Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { TocItemContext, useTocContext } from './toc-context.ts';
 
 export interface TocItemProps extends PrimitiveProps<'li'> {

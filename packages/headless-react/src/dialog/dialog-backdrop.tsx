@@ -3,8 +3,8 @@
 import type { ReactElement } from 'react';
 
 import { usePresence } from '../presence/index.ts';
-import { mergeProps, Primitive, useComposedRefs } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive, useComposedRefs } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { useDialogContext } from './dialog-context.ts';
 
 export type DialogBackdropProps = PrimitiveProps<'div'>;

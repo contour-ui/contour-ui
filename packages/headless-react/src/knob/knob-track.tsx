@@ -1,9 +1,9 @@
 'use client';
 
+import { mergeProps, Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import type { ReactElement } from 'react';
 
-import { mergeProps, Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
 import { useKnobContext } from './knob-context.ts';
 
 export type KnobTrackProps = PrimitiveProps<'path'>;

@@ -5,8 +5,8 @@ import {
   Knob,
   ThemeProvider,
   useTheme,
-} from '@contour-ui/soundor';
-import type { ButtonProps } from '@contour-ui/soundor';
+} from '@contour-ui/react';
+import type { ButtonProps } from '@contour-ui/react';
 import { ScrollView, Text, useParameter, View } from '@soundor/react';
 import type { ReactElement, ReactNode } from 'react';
 import { parameters } from 'soundor:parameters';

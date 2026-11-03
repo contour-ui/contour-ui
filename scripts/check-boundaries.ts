@@ -11,14 +11,18 @@
  * - the dev `exports` map and `publishConfig.exports` must stay in sync;
  * - every entry maps to its source under the source condition, except in a package the workspace
  *   reads from `dist` (`source: 'dist'`), which maps none;
- * - every package ships a copy of the root `LICENSE`.
+ * - every package ships a copy of the root `LICENSE`;
+ * - code written once for every platform (`CROSS_PLATFORM_SOURCES`) writes only the roles and ARIA
+ *   attributes of the compatibility table of `@contour-ui/primitive`.
  *
  * Run: `vp run boundaries` (or `node scripts/check-boundaries.ts`).
  */
 import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 
+import { ARIA_ATTRIBUTES, ROLES } from '../packages/primitive/src/shared/compat.ts';
 import {
+  CROSS_PLATFORM_SOURCES,
   FORBIDDEN_EXTERNALS,
   LAYERS,
   SCOPE,
@@ -168,6 +172,46 @@ function checkReact(file: string, pkg: LayerPackage, json: PackageJson): void {
       }
       if (json.dependencies?.['@soundor/react'] !== undefined) {
         report(file, '@soundor/react must never be a regular dependency: the plugin brings it.');
+      }
+      break;
+    }
+    case 'renderers': {
+      if (peers['react'] === undefined) {
+        report(file, 'react must be declared in peerDependencies.');
+      } else if (optional('react')) {
+        report(file, 'react must be a required (non-optional) peer.');
+      }
+      // An app brings the renderer of its platform: every one is an optional peer.
+      for (const dependency of ['react-dom', '@soundor/react']) {
+        if (peers[dependency] === undefined || !optional(dependency)) {
+          report(file, `${dependency} must be an optional peer (peerDependenciesMeta.optional).`);
+        }
+      }
+      if (json.dependencies?.['@soundor/react'] !== undefined) {
+        report(file, '@soundor/react must never be a regular dependency: the plugin brings it.');
+      }
+      break;
+    }
+    case 'cross-platform': {
+      if (peers['react'] === undefined) {
+        report(file, 'react must be declared in peerDependencies.');
+      } else if (optional('react')) {
+        report(file, 'react must be a required (non-optional) peer.');
+      }
+      if (peers['react-dom'] !== undefined && !optional('react-dom')) {
+        report(
+          file,
+          'react-dom must be an optional peer: the package runs on renderers other than React DOM.',
+        );
+      }
+      // Other renderers reach the package through @contour-ui/primitive alone.
+      for (const field of ['dependencies', 'peerDependencies', 'optionalDependencies'] as const) {
+        if (json[field]?.['@soundor/react'] !== undefined) {
+          report(
+            file,
+            `@soundor/react must not be in ${field}: ${scoped('primitive')} carries the renderers.`,
+          );
+        }
       }
       break;
     }
@@ -370,9 +414,59 @@ function checkLicense(dir: string): void {
   }
 }
 
+/** `aria-label=`, `'aria-valuenow':`: an ARIA attribute written in JSX or as a key of props. */
+const ARIA_WRITTEN = /['"]?\b(aria-[a-z]+)['"]?\s*[:=]/gu;
+
+/** `role="slider"`, `role: 'slider'`: a role written as a literal. */
+const ROLE_WRITTEN = /\brole\s*[:=]\s*\{?\s*['"]([a-z-]+)['"]/gu;
+
+function sharedSourceFiles(dir: string): string[] {
+  if (!existsSync(dir)) {
+    return [];
+  }
+  // Screenshots live in folders named after their test files (`__visual__/x.visual.test.tsx/`).
+  return readdirSync(dir, { recursive: true, withFileTypes: true })
+    .filter((entry) => entry.isFile() && /\.tsx?$/u.test(entry.name))
+    .filter((entry) => !/\.(web|soundor)\./u.test(entry.name))
+    .map((entry) => path.join(entry.parentPath, entry.name));
+}
+
+/**
+ * Code written once for every platform writes only the roles and ARIA attributes the native
+ * backends translate: a role Soundor does not know throws there, and an attribute without a twin
+ * would be lost silently. TypeScript lets any `aria-*` through in JSX, so this reads the sources.
+ */
+function checkSharedLine(at: string, line: string): void {
+  for (const [, attribute = ''] of line.matchAll(ARIA_WRITTEN)) {
+    if (!(attribute in ARIA_ATTRIBUTES)) {
+      report(at, `${attribute} is not in the compatibility table of primitive (shared code).`);
+    }
+  }
+  for (const [, role = ''] of line.matchAll(ROLE_WRITTEN)) {
+    if (!(role in ROLES)) {
+      report(
+        at,
+        `role "${role}" has no native twin (ROLES of primitive): shared code cannot use it.`,
+      );
+    }
+  }
+}
+
+function checkSharedVocabulary(): void {
+  for (const folder of CROSS_PLATFORM_SOURCES) {
+    for (const file of sharedSourceFiles(path.join(ROOT, folder))) {
+      const lines = readFileSync(file, 'utf8').split('\n');
+      for (const [index, line] of lines.entries()) {
+        checkSharedLine(`${path.relative(ROOT, file)}:${index + 1}`, line);
+      }
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------
 
 checkChangesets();
+checkSharedVocabulary();
 
 const packageDirs = readdirSync(PACKAGES_DIR, { withFileTypes: true })
   .filter((entry) => entry.isDirectory())

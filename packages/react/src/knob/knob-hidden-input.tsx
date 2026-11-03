@@ -1,13 +1,21 @@
-import { Knob as Headless } from '@contour-ui/headless-react';
+'use client';
+
+import { useStyles } from '#platform/styles';
+import { Knob as Headless, useKnobContext } from '@contour-ui/headless-react';
+import { mergeProps } from '@contour-ui/primitive';
+import { use } from 'react';
 import type { ReactElement } from 'react';
 
-import { cx } from '../utils/cx.ts';
+import { KnobSizeContext } from './knob-size.ts';
+import { knobLook } from './knob.look.ts';
 
 export type KnobHiddenInputProps = Headless.HiddenInputProps;
 
-/** Knob hidden input: the value of the knob for its form, under the `name` of the root. */
-export function KnobHiddenInput({ className, ...props }: KnobHiddenInputProps): ReactElement {
-  return (
-    <Headless.HiddenInput className={cx('contour-knob__hidden-input', className)} {...props} />
-  );
+/**
+ * Knob hidden input: the value of the knob for its form, under the `name` of the root. Native
+ * platforms have no forms: there it renders nothing.
+ */
+export function KnobHiddenInput(props: KnobHiddenInputProps): ReactElement {
+  const { hiddenInput } = useStyles(knobLook, { size: use(KnobSizeContext) }, useKnobContext());
+  return <Headless.HiddenInput {...mergeProps(hiddenInput, props)} />;
 }

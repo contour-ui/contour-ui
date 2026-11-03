@@ -2,8 +2,8 @@
 
 import type { ReactElement } from 'react';
 
-import { mergeProps, Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { SegmentGroupContext } from './segment-group-context.ts';
 import { useSegmentGroup } from './use-segment-group.ts';
 import type { UseSegmentGroupProps } from './use-segment-group.ts';

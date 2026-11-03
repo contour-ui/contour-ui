@@ -1,0 +1,9 @@
+{
+  "extends": "@contour-ui/typescript-config/library-soundor.json",
+  "compilerOptions": {
+    "declaration": false,
+    "isolatedDeclarations": false,
+    "types": ["@soundor/environment", "@soundor/vitest"]
+  },
+  "include": ["src/harness.ts", "src/soundor.ts"]
+}

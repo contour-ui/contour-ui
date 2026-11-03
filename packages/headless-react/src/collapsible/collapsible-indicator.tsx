@@ -2,8 +2,8 @@
 
 import type { ReactElement } from 'react';
 
-import { mergeProps, Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { useCollapsibleContext } from './collapsible-context.ts';
 
 export type CollapsibleIndicatorProps = PrimitiveProps<'span'>;

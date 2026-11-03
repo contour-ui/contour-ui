@@ -142,3 +142,8 @@ minimumReleaseAgeExclude:
 # platform binary arrives via optionalDependencies, so the script is not needed.
 allowBuilds:
   esbuild: false
+# The Soundor CLI 0.15 bundles a plugin UI without export conditions of its own, so it picks the web
+# build of a package that ships one: the patch adds the `soundor` condition to `bundleUi()`, until
+# Soundor ships it (one option: `inputOptions.resolve.conditionNames`).
+patchedDependencies:
+  soundor@0.15.0: patches/soundor@0.15.0.patch

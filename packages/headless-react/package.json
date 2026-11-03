@@ -1,7 +1,7 @@
 {
   "name": "@contour-ui/headless-react",
   "version": "0.0.0",
-  "description": "contour-ui headless for React: unstyled React DOM components and hooks.",
+  "description": "contour-ui headless for React: unstyled components and hooks, on the web (React DOM) and in Soundor plugin UIs (@soundor/react).",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -15,8 +15,15 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "@contour-ui/source": "./src/index.ts",
-      "types": "./dist/index.d.ts",
+      "@contour-ui/source": {
+        "soundor": "./src/index.soundor.ts",
+        "default": "./src/index.ts"
+      },
+      "types": {
+        "soundor": "./dist/index.soundor.d.ts",
+        "default": "./dist/index.d.ts"
+      },
+      "soundor": "./dist/index.soundor.js",
       "default": "./dist/index.js"
     },
     "./package.json": "./package.json"
@@ -24,7 +31,11 @@
   "publishConfig": {
     "exports": {
       ".": {
-        "types": "./dist/index.d.ts",
+        "types": {
+          "soundor": "./dist/index.soundor.d.ts",
+          "default": "./dist/index.d.ts"
+        },
+        "soundor": "./dist/index.soundor.js",
         "default": "./dist/index.js"
       },
       "./package.json": "./package.json"
@@ -37,11 +48,17 @@
   },
   "dependencies": {
     "@contour-ui/core": "workspace:*",
+    "@contour-ui/primitive": "workspace:*",
     "@floating-ui/dom": "catalog:"
   },
   "devDependencies": {
+    "@contour-ui/test-harness": "workspace:*",
     "@contour-ui/typescript-config": "workspace:*",
     "@contour-ui/vite-config": "workspace:*",
+    "@soundor/environment": "catalog:",
+    "@soundor/react": "catalog:",
+    "@soundor/testing-library": "catalog:",
+    "@soundor/vitest": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
@@ -49,10 +66,17 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "vite-plus": "catalog:",
-    "vitest-browser-react": "catalog:"
+    "vitest": "catalog:",
+    "vitest-browser-react": "catalog:",
+    "vitest-environment-soundor": "catalog:"
   },
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react-dom": {
+      "optional": true
+    }
   }
 }

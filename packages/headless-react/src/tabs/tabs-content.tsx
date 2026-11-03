@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 
-import { mergeProps, Primitive, useComposedRefs } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive, useComposedRefs } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { useTabsContext } from './tabs-context.ts';
 
 export interface TabsContentProps extends PrimitiveProps<'div'> {

@@ -8,6 +8,7 @@
       "@contour-ui/icons",
       "@contour-ui/fonts",
       "@contour-ui/core",
+      "@contour-ui/primitive",
       "@contour-ui/headless-react",
       "@contour-ui/react",
       "@contour-ui/soundor-headless",

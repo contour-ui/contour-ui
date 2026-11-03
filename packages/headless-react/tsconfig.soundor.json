@@ -1,0 +1,20 @@
+{
+  // The Soundor build: what its entry reaches, the Soundor modules and the tests that run on
+  // Soundor, without the DOM, under the `soundor` condition. The shared files are checked under
+  // the web too (`tsconfig.web.json`).
+  "extends": "@contour-ui/typescript-config/library-soundor.json",
+  "compilerOptions": {
+    "types": ["@soundor/environment", "@soundor/vitest"]
+  },
+  "files": ["src/index.soundor.ts"],
+  "include": [
+    "src/**/*.soundor.ts",
+    "src/**/*.soundor.tsx",
+    "src/**/*.soundor.test.ts",
+    "src/**/*.soundor.test.tsx",
+    // The shared tests of the components that run on Soundor: one line per folder (their
+    // `*.web.test.tsx` stay out, see `exclude`).
+    "src/knob/**/*.test.tsx"
+  ],
+  "exclude": ["src/**/*.web.test.ts", "src/**/*.web.test.tsx", "src/**/*.visual.test.tsx"]
+}

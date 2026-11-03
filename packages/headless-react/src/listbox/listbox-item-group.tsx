@@ -3,8 +3,8 @@
 import { useCallback, useId, useMemo, useState } from 'react';
 import type { ReactElement, RefCallback } from 'react';
 
-import { mergeProps, Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { ListboxItemGroupContext, useListboxContext } from './listbox-context.ts';
 import type { ListboxItemGroupContextValue } from './listbox-context.ts';
 

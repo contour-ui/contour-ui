@@ -25,12 +25,23 @@ export type ReactPolicy =
   /** Both `react` and `react-dom` as required peers. */
   | 'peer'
   /** `react` and `@soundor/react` as required peers; `react-dom` not at all (no DOM). */
-  | 'soundor-peer';
+  | 'soundor-peer'
+  /**
+   * The element layer: `react` as a required peer, every renderer (`react-dom`, `@soundor/react`)
+   * as an optional one, since an app brings the renderer of its platform.
+   */
+  | 'renderers'
+  /**
+   * React on any renderer: `react` as a required peer, `react-dom` at most as an optional one (for
+   * the modules that run on the web only), no other renderer: those reach the package through
+   * `@contour-ui/primitive`.
+   */
+  | 'cross-platform';
 
 export interface LayerPackage {
   /** Directory under `packages/` and the unscoped npm name. */
   readonly name: string;
-  readonly layer: 0 | 1 | 2 | 3 | 4;
+  readonly layer: 0 | 1 | 2 | 3 | 4 | 5;
   readonly purpose: string;
   /** Internal packages (unscoped names) this package may depend on. */
   readonly allowed: readonly string[];
@@ -74,38 +85,45 @@ export const LAYERS: readonly LayerPackage[] = [
     react: 'optional-peer',
   },
   {
-    name: 'headless-react',
+    name: 'primitive',
     layer: 2,
-    purpose: 'unstyled React DOM components + hooks',
+    purpose: 'the element layer: elements in web words and platform services, a build per platform',
     allowed: ['core'],
-    react: 'peer',
+    react: 'renderers',
+  },
+  {
+    name: 'headless-react',
+    layer: 3,
+    purpose: 'unstyled React components + hooks, on @contour-ui/primitive',
+    allowed: ['core', 'primitive'],
+    react: 'cross-platform',
   },
   {
     name: 'soundor-headless',
-    layer: 2,
+    layer: 3,
     purpose: 'unstyled components for Soundor plugin UIs, on @soundor/react',
     allowed: ['core'],
     react: 'soundor-peer',
   },
   {
     name: 'react',
-    layer: 3,
-    purpose: 'styled React DOM components: Essentials and Audio',
-    allowed: ['headless-react', 'tokens', 'icons', 'fonts'],
-    react: 'peer',
+    layer: 4,
+    purpose: 'styled React components: Essentials and Audio',
+    allowed: ['headless-react', 'primitive', 'tokens', 'icons', 'fonts'],
+    react: 'cross-platform',
   },
   {
     name: 'soundor',
-    layer: 3,
+    layer: 4,
     purpose: 'styled components for Soundor plugin UIs, on @soundor/react',
     allowed: ['soundor-headless', 'tokens', 'icons', 'fonts'],
     react: 'soundor-peer',
   },
   {
     name: 'fumadocs',
-    layer: 4,
+    layer: 5,
     purpose: 'documentation layout for fumadocs-core sites, built from @contour-ui/react',
-    allowed: ['react', 'headless-react', 'tokens', 'icons', 'fonts'],
+    allowed: ['react', 'headless-react', 'primitive', 'tokens', 'icons', 'fonts'],
     react: 'peer',
   },
 ];
@@ -118,6 +136,80 @@ export const TOOLING_PACKAGES: readonly string[] = [
   'typescript-config',
   'vite-config',
   'tokens-compiler',
+  'test-harness',
+];
+
+/**
+ * The modules of each renderer. Only the platform folders of `primitive` import them (and the
+ * Soundor packages of the `soundor-peer` policy, until they go): a module of one renderer
+ * reachable from a package that is built once breaks the builds of the other platforms, even
+ * unused.
+ */
+export const RENDERER_MODULES = {
+  web: ['react-dom', 'react-dom/*'],
+  soundor: ['@soundor/*', 'soundor:*'],
+  'react-native': ['react-native', 'react-native/*', 'react-native-svg'],
+} as const;
+
+export type Renderer = keyof typeof RENDERER_MODULES;
+
+/** Files that may import the modules of some renderers. */
+export interface RendererImports {
+  /** Globs from the repository root. */
+  readonly files: readonly string[];
+  readonly renderers: readonly Renderer[];
+}
+
+/**
+ * Where renderer modules may be imported. Later entries win where globs overlap: a Soundor test
+ * of a cross-platform package drives Soundor, its other tests the web.
+ */
+export const RENDERER_IMPORTS: readonly RendererImports[] = [
+  // Tests drive the renderer of their platform: the web, unless their name says Soundor.
+  { files: ['packages/*/src/**/*.test.ts', 'packages/*/src/**/*.test.tsx'], renderers: ['web'] },
+  {
+    files: ['packages/*/src/**/*.soundor.test.ts', 'packages/*/src/**/*.soundor.test.tsx'],
+    renderers: ['soundor'],
+  },
+  // The backends of the element layer.
+  { files: ['packages/primitive/src/web/**'], renderers: ['web'] },
+  { files: ['packages/primitive/src/soundor/**'], renderers: ['soundor'] },
+  // Modules of headless-react that run on the web only and still use React DOM themselves,
+  // until their platform code moves into the element layer.
+  {
+    files: [
+      'packages/headless-react/src/portal/portal.tsx',
+      'packages/headless-react/src/presence/use-presence.ts',
+    ],
+    renderers: ['web'],
+  },
+];
+
+/**
+ * The renderers a package may import anywhere, by its React policy: the docs layout runs on the
+ * web only, the Soundor packages on Soundor only; every other package imports none.
+ */
+const PACKAGE_RENDERERS: Readonly<Record<ReactPolicy, readonly Renderer[]>> = {
+  none: [],
+  'optional-peer': [],
+  peer: ['web'],
+  'soundor-peer': ['soundor'],
+  renderers: [],
+  'cross-platform': [],
+};
+
+/**
+ * The folders of code written once for every platform, above the element layer: the components
+ * that run on Soundor too. Their files (other than `*.web.*` and `*.soundor.*`) may write only the
+ * roles and ARIA attributes of the compatibility table of `primitive`
+ * (`packages/primitive/src/shared/compat.ts`): TypeScript checks no attribute with a dash in JSX,
+ * so `vp run boundaries` does.
+ */
+export const CROSS_PLATFORM_SOURCES: readonly string[] = [
+  'packages/primitive/src/shared',
+  'packages/headless-react/src/knob',
+  'packages/react/src/button',
+  'packages/react/src/knob',
 ];
 
 /** External packages no published package may depend on or import. */
@@ -279,38 +371,97 @@ const restrict = (files: string[], patterns: RestrictedPattern[]): OxlintOverrid
  * options of an earlier one, so directory-level entries repeat the package-level
  * patterns and come after them.
  */
+const RENDERERS: readonly Renderer[] = ['web', 'soundor', 'react-native'];
+
+function rendererPattern(forbidden: readonly Renderer[]): RestrictedPattern[] {
+  if (forbidden.length === 0) {
+    return [];
+  }
+  return [
+    {
+      group: forbidden.flatMap((renderer) => [...RENDERER_MODULES[renderer]]),
+      message: `Renderer modules belong in the platform folders of ${scoped('primitive')} (src/web, src/soundor): code above it is built once for every platform. See AGENTS.md.`,
+    },
+  ];
+}
+
+/** The renderers a package forbids, given the ones its files may also import. */
+function forbiddenRenderers(pkg: LayerPackage, allowed: readonly Renderer[] = []): Renderer[] {
+  const own = PACKAGE_RENDERERS[pkg.react];
+  return RENDERERS.filter((renderer) => !own.includes(renderer) && !allowed.includes(renderer));
+}
+
+/** Every pattern a package's files obey, with the renderers some of them may import. */
+function packagePatterns(
+  pkg: LayerPackage,
+  renderers: readonly Renderer[] = [],
+): RestrictedPattern[] {
+  const forbidden = forbiddenRenderers(pkg, renderers);
+  const patterns = [...internalPatterns(pkg.name), tailwindPattern];
+  if (pkg.name === 'core') {
+    // core forbids React DOM with React itself; the other renderers as everyone does.
+    return [...patterns, reactPattern, ...rendererPattern(forbidden.filter((r) => r !== 'web'))];
+  }
+  if (pkg.react === 'soundor-peer') {
+    return [...patterns, reactDomPattern, ...rendererPattern(forbidden.filter((r) => r !== 'web'))];
+  }
+  return [...patterns, ...rendererPattern(forbidden)];
+}
+
+/** The globs of `entry` that apply to the files of `pkg`, rooted in its directory. */
+function globsIn(pkg: LayerPackage, entry: RendererImports): string[] {
+  const root = `packages/${pkg.name}/`;
+  return entry.files.flatMap((glob) => {
+    if (glob.startsWith('packages/*/')) {
+      return [root + glob.slice('packages/*/'.length)];
+    }
+    return glob.startsWith(root) ? [glob] : [];
+  });
+}
+
 export function boundaryLintOverrides(): OxlintOverride[] {
   const overrides: OxlintOverride[] = [];
 
   for (const pkg of LAYERS) {
-    const base = [...internalPatterns(pkg.name), tailwindPattern];
     const root = `packages/${pkg.name}`;
 
-    if (pkg.name !== 'core') {
-      const dom = pkg.react === 'soundor-peer' ? [reactDomPattern] : [];
-      overrides.push(restrict([`${root}/**`], [...base, ...dom]));
-      continue;
+    if (pkg.name === 'core') {
+      const reactSubpath = relativeDirPattern(
+        ['react'],
+        `core: only ${scoped('core')}/react may use React; do not import ${CORE_REACT_DIR}/ from React-free code.`,
+      );
+      const base = [...internalPatterns(pkg.name), tailwindPattern];
+      overrides.push(
+        restrict([`${root}/**`], [...packagePatterns(pkg), reactSubpath]),
+        restrict(
+          [`${root}/${CORE_REACT_DIR}/**`],
+          [...base, ...rendererPattern(forbiddenRenderers(pkg, ['web']))],
+        ),
+      );
+    } else {
+      overrides.push(restrict([`${root}/**`], packagePatterns(pkg)));
     }
 
-    const reactSubpath = relativeDirPattern(
-      ['react'],
-      `core: only ${scoped('core')}/react may use React; do not import ${CORE_REACT_DIR}/ from React-free code.`,
-    );
-    overrides.push(
-      restrict([`${root}/**`], [...base, reactPattern, reactSubpath]),
-      restrict([`${root}/${CORE_REACT_DIR}/**`], base),
-    );
+    // Where some files of a package above the renderers may import one (in order: a later entry
+    // wins where they overlap).
+    if (pkg.react === 'renderers' || pkg.react === 'cross-platform') {
+      for (const entry of RENDERER_IMPORTS) {
+        const files = globsIn(pkg, entry);
+        if (files.length > 0) {
+          overrides.push(restrict(files, packagePatterns(pkg, entry.renderers)));
+        }
+      }
+    }
   }
 
   for (const rule of INTERNAL_RULES) {
     // Tooling has no layer: its directory rules stand alone.
-    const base =
-      getLayer(rule.pkg) === undefined ? [] : [...internalPatterns(rule.pkg), tailwindPattern];
-    const extra = rule.pkg === 'core' ? [reactPattern] : [];
+    const pkg = getLayer(rule.pkg);
+    const base = pkg === undefined ? [] : packagePatterns(pkg);
     overrides.push(
       restrict(
         [`${rule.root ?? `packages/${rule.pkg}`}/${rule.dir}/**`],
-        [...base, ...extra, relativeDirPattern(rule.forbid, rule.message)],
+        [...base, relativeDirPattern(rule.forbid, rule.message)],
       ),
     );
   }

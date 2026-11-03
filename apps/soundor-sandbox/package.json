@@ -2,7 +2,7 @@
   "name": "@contour-ui/app-soundor-sandbox",
   "version": "0.0.0",
   "private": true,
-  "description": "A Soundor plugin that shows the components of @contour-ui/soundor, natively (JUCE) and in the browser.",
+  "description": "A Soundor plugin that shows the components of @contour-ui/react in its Soundor build, natively (JUCE) and in the browser.",
   "type": "module",
   "scripts": {
     "dev:web": "soundor dev web",
@@ -10,7 +10,7 @@
     "doctor": "soundor doctor"
   },
   "dependencies": {
-    "@contour-ui/soundor": "workspace:*",
+    "@contour-ui/react": "workspace:*",
     "@soundor/juce-runtime": "catalog:",
     "@soundor/react": "catalog:",
     "@soundor/web-runtime": "catalog:",

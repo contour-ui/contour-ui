@@ -2,8 +2,8 @@
 
 import type { ReactElement } from 'react';
 
-import { mergeProps, Primitive, useComposedRefs } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive, useComposedRefs } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { usePopoverContext } from './popover-context.ts';
 
 export type PopoverTitleProps = PrimitiveProps<'div'>;

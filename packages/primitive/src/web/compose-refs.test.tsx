@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { describe, expect, it, vi } from 'vite-plus/test';
 import { render, renderHook } from 'vitest-browser-react';
 
-import { composeRefs, useComposedRefs } from './compose-refs.ts';
+import { composeRefs, useComposedRefs } from '../shared/compose-refs.ts';
 
 describe('composeRefs', () => {
   it('lets React attach and detach every ref', async () => {

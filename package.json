@@ -11,7 +11,7 @@
   "type": "module",
   "scripts": {
     "prepare": "vp config && vp run @contour-ui/tokens#build",
-    "ready": "vp run @contour-ui/tokens#build && vp check && vp run boundaries && vp test && vp run -r build",
+    "ready": "vp run @contour-ui/tokens#build && vp check && vp run boundaries && vp run typecheck:platforms && vp test && vp run -r build && vp run exports",
     "changeset": "changeset",
     "version-packages": "changeset version && vp fmt",
     "release": "vp run -r --filter './packages/*' build && changeset publish",

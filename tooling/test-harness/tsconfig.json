@@ -1,0 +1,6 @@
+{
+  // Solution-style: the web half with the DOM, the Soundor half with Soundor's modules.
+  "extends": "@contour-ui/typescript-config/app.json",
+  "files": [],
+  "references": [{ "path": "./tsconfig.web.json" }, { "path": "./tsconfig.soundor.json" }]
+}

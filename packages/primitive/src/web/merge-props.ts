@@ -7,7 +7,7 @@ type UnionToIntersection<U> = (U extends unknown ? (value: U) => void : never) e
   : never;
 
 /** The props of every source of {@link mergeProps} combined into one type. */
-type MergedProps<T extends readonly object[]> = UnionToIntersection<T[number]>;
+export type MergedProps<T extends readonly object[]> = UnionToIntersection<T[number]>;
 
 /** `onClick`, `onKeyDown`…: `on` followed by an uppercase letter. */
 const HANDLER_KEY = /^on[A-Z]/u;

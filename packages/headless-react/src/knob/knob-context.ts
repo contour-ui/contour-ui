@@ -10,8 +10,8 @@ export const KnobContext: Context<UseKnobReturn | null> = createContext<UseKnobR
 
 /**
  * The API of the nearest `Knob.Root`: the value and its text, the position and angle of the
- * value, the shapes of the dial, `setValue()` and the props of its elements. For parts of your
- * own inside the root; throws outside of one.
+ * value, the shapes of the dial, whether the knob is dragged, focused or hovered, `setValue()`
+ * and the props of its elements. For parts of your own inside the root; throws outside of one.
  *
  * @example
  * function Pointer(): ReactElement {

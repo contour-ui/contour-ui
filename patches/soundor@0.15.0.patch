@@ -1,0 +1,13 @@
+diff --git a/dist/index.mjs b/dist/index.mjs
+index 70b91d1c2e97632522f2d8de7a677ebeb740e522..0b9893241101e75f7b5663219a814ed8c4cc94a1 100755
+--- a/dist/index.mjs
++++ b/dist/index.mjs
+@@ -136,6 +136,8 @@ async function bundleUi(options) {
+ 			"import.meta.env.PROD": JSON.stringify(production)
+ 		},
+ 		outputOptions: { codeSplitting: false },
++		// contour-ui: pick the Soundor build of packages that ship one (export condition `soundor`).
++		inputOptions: { resolve: { conditionNames: ["soundor"] } },
+ 		plugins: [assetPlugin(options.root, assets)]
+ 	});
+ 	const code = await readFile(join(outDir, "bundle.mjs"), "utf8");

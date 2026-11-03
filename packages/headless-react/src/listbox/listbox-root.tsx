@@ -2,8 +2,8 @@
 
 import type { ReactElement } from 'react';
 
-import { mergeProps, Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { ListboxContext } from './listbox-context.ts';
 import { useListbox } from './use-listbox.ts';
 import type { UseListboxProps, UseListboxReturn } from './use-listbox.ts';

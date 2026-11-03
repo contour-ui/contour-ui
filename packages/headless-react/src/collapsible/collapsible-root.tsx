@@ -4,8 +4,8 @@ import { useState } from 'react';
 import type { ReactElement } from 'react';
 
 import { usePresence } from '../presence/index.ts';
-import { mergeProps, Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { mergeProps, Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 import { CollapsibleContext } from './collapsible-context.ts';
 import { useCollapsible } from './use-collapsible.ts';
 import type { UseCollapsibleProps } from './use-collapsible.ts';

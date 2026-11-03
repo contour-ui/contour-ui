@@ -1,5 +1,7 @@
-export { composeRefs, mergeProps, Primitive, useComposedRefs } from './primitive/index.ts';
-export type { PrimitiveElement, PrimitiveProps } from './primitive/index.ts';
+// The elements parts are made of, for parts of one's own: from the element layer, re-exported
+// so that apps that build parts need no other package.
+export { composeRefs, mergeProps, Primitive, useComposedRefs } from '@contour-ui/primitive';
+export type { PrimitiveElement, PrimitiveProps } from '@contour-ui/primitive';
 export { Portal } from './portal/index.ts';
 export type { PortalContainer, PortalProps } from './portal/index.ts';
 export { Presence, usePresence } from './presence/index.ts';
@@ -63,6 +65,7 @@ export type {
   KnobRootStyle,
   KnobShapeAttributes,
   KnobThumbAttributes,
+  KnobValueTextAttributes,
   UseKnobProps,
   UseKnobReturn,
 } from './knob/use-knob.ts';

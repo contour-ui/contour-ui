@@ -7,7 +7,7 @@ import { useCallback, useId, useInsertionEffect, useMemo, useState } from 'react
 import type { CSSProperties, MouseEvent, RefCallback } from 'react';
 
 import { getPositionerStyle } from '../platform/position.ts';
-import { composeRefs } from '../primitive/index.ts';
+import { composeRefs } from '@contour-ui/primitive';
 import { createDomPlatform } from './popover-platform.ts';
 
 /**

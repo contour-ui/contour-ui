@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 
-import { Primitive } from '../primitive/index.ts';
-import type { PrimitiveProps } from '../primitive/index.ts';
+import { Primitive } from '@contour-ui/primitive';
+import type { PrimitiveProps } from '@contour-ui/primitive';
 
 export type PlaceholderRootProps = PrimitiveProps<'div'>;
 

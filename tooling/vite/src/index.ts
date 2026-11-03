@@ -1,6 +1,7 @@
+import { soundor } from '@soundor/vitest';
 import type { Plugin, TestProjectInlineConfiguration, UserConfig } from 'vite-plus';
 import type { TsdownPluginOption } from 'vite-plus/pack';
-import { defaultClientConditions, defaultServerConditions } from 'vite-plus';
+import { configDefaults, defaultClientConditions, defaultServerConditions } from 'vite-plus';
 import { playwright } from 'vite-plus/test/browser-playwright';
 
 /** Custom export condition every published package maps to its `src/` entry. */
@@ -24,6 +25,60 @@ export function contourSource(): Plugin {
         return undefined;
       }
       return { resolve: { conditions: [SOURCE_CONDITION, ...current] } };
+    },
+  };
+}
+
+/**
+ * Pick the platform build of the workspace packages by its export condition, in every
+ * environment of a project, as `contourSource()` adds the source condition: `soundor` for tests
+ * on Soundor's simulated runtime. Vitest's Node environments (Soundor's declares itself `ssr`)
+ * read the conditions of their environment, not the top-level `resolve.conditions`, so a plain
+ * `resolve.conditions` would load the web build there, silently.
+ */
+export function platformCondition(condition: string): Plugin {
+  return {
+    name: `contour-ui:platform-condition:${condition}`,
+    enforce: 'pre',
+    configEnvironment(_name, config) {
+      const defaults =
+        config.consumer === 'server' ? defaultServerConditions : defaultClientConditions;
+      const current = config.resolve?.conditions ?? defaults;
+      if (current.includes(condition)) {
+        return undefined;
+      }
+      return { resolve: { conditions: [condition, ...current] } };
+    },
+  };
+}
+
+/** The files of a test project. */
+export interface TestFiles {
+  readonly include: readonly string[];
+  readonly exclude?: readonly string[] | undefined;
+}
+
+/**
+ * The tests of a cross-platform package on Soundor's simulated runtime (`<package>:soundor`): the
+ * `soundor` environment of `@soundor/vitest` with an empty plugin (`config: false`: a library has
+ * no `soundor.config.ts`), the package sources, and the Soundor build of every workspace package
+ * (`platformCondition('soundor')`). The Soundor plugin goes in the project itself, where it reads
+ * the project's `test.environment`; the project extends nothing, so the web plugins of the
+ * package (React's) stay out of it.
+ */
+export function soundorProject(
+  name: string,
+  { include, exclude = [] }: TestFiles,
+): TestProjectInlineConfiguration {
+  return {
+    // Since Vitest 5 an inline project extends its config file unless told otherwise.
+    extends: false,
+    plugins: [contourSource(), platformCondition('soundor'), soundor({ config: false })],
+    test: {
+      name: `${name}:soundor`,
+      environment: 'soundor',
+      include: [...include],
+      exclude: [...configDefaults.exclude, ...exclude],
     },
   };
 }
