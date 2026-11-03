@@ -48,13 +48,14 @@ test.describe('an install command', () => {
   }) => {
     await openPage(page, '/docs/guide/installation');
     const blocks = installBlocks(page);
-    await expect(blocks).toHaveCount(3);
+    // The styled components, headless, Fumadocs and Soundor plugin UIs.
+    await expect(blocks).toHaveCount(4);
 
     await blocks.nth(2).getByRole('tab', { name: 'yarn', exact: true }).click();
     // Every block selects yarn.
     await expect(
       blocks.getByRole('tab', { name: 'yarn', exact: true, selected: true }),
-    ).toHaveCount(3);
+    ).toHaveCount(4);
     await expect(page.getByRole('main').getByText('yarn add @contour-ui/headless')).toBeVisible();
 
     // Remembered across visits, and on another page of the site.
