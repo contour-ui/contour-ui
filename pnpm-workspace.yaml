@@ -10,9 +10,11 @@ catalogMode: strict
 # package.json `engines.pnpm: ">=12"`.
 engineStrict: true
 
-# Vite+ manages the pnpm and Node.js versions (`packageManager` / `.nvmrc`).
-# `ignore` stops pnpm from silently downloading the pinned pnpm itself, so an
-# older pnpm reaches the `engines.pnpm` check and fails fast instead.
+# pnpm and Node.js come from the developer's version manager (mise, nvm, or
+# `vp env` of the global Vite+ CLI, which reads `packageManager` / `.nvmrc`);
+# the project-local `vp` uses whatever is on PATH. `ignore` stops pnpm from
+# silently downloading the pinned pnpm itself, so an older pnpm reaches the
+# `engines.pnpm` check and fails fast instead.
 # https://viteplus.dev/guide/env (Using pnpm with Vite+ runtime management)
 pmOnFail: ignore
 runtimeOnFail: ignore

@@ -116,9 +116,15 @@ Neither is ever published.
 Vite+ wraps everything; there is no Turborepo, ESLint or Prettier. `vp <cmd>` runs a
 built-in; `vp run <name>` runs a `package.json` script or a `vite.config.ts` task.
 
+`vp` is the project-local CLI: the root devDependency `vite-plus`, in `node_modules/.bin` after
+`pnpm install`. Vite+ needs no global install: in a shell, write `pnpm vp <cmd>` for every
+`vp <cmd>` here (pnpm runs the binary of that name, from a package directory too, and passes
+`-C` on to it). Package scripts and the Git hooks find `vp` on their own. A global Vite+ CLI,
+where one is installed, runs the same local version.
+
 | Command                                               | What it does                                                                                                                                                                                 |
 | ----------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `vp install`                                          | install (pnpm 12, pinned via `packageManager`)                                                                                                                                               |
+| `pnpm install`                                        | install (pnpm 12, pinned via `packageManager`), `vp` included                                                                                                                                |
 | `vp check` / `vp check --fix`                         | format (Oxfmt) + lint (Oxlint, type-aware) + type-check (tsgo)                                                                                                                               |
 | `vp run boundaries`                                   | layer boundary check for `package.json` / CSS                                                                                                                                                |
 | `vp run @contour-ui/tokens#build`                     | build `@contour-ui/tokens` (cached), which the workspace reads from `dist`; `vp -C packages/tokens pack --watch` rebuilds on every token edit                                                |
@@ -590,7 +596,7 @@ loaded after every package stylesheet).
    in its `test.projects`.
 4. New external dependencies go into the `catalog` in `pnpm-workspace.yaml` first (`catalogMode:
    strict`).
-5. `vp install && vp check && vp run boundaries && vp test && vp run -r build`.
+5. `pnpm install && vp check && vp run boundaries && vp test && vp run -r build`.
 
 ## Git
 
@@ -601,14 +607,21 @@ loaded after every package stylesheet).
   `perf`, `style`, `build`, `ci`, `chore`, `revert`. Scopes: a package (`tokens`, `icons`, `fonts`,
   `core`, `headless-react`, `react`, `soundor-headless`, `soundor`, `fumadocs`) or `docs`, `playground`, `config`, `repo`; no
   scope when a change spans several packages.
-- Hooks live in `.vite-hooks/` (installed by `vp config` on `vp install`): `pre-commit` runs
-  `vp staged` (`vp check --fix` on staged files), `commit-msg` runs
-  [`scripts/check-commit-msg.ts`](scripts/check-commit-msg.ts).
+- Hooks live in `.vite-hooks/` (installed by `vp config`, which the `prepare` script runs on
+  every install): `pre-commit` runs `vp staged` (`vp check --fix` on staged files), `commit-msg`
+  runs [`scripts/check-commit-msg.ts`](scripts/check-commit-msg.ts). The dispatcher
+  (`.vite-hooks/_/h`) puts `node_modules/.bin` first on `PATH`, so the hooks run the local `vp`;
+  Node has to be on the `PATH` the Git client starts them with (a GUI client can get it from
+  `~/.config/vite-plus/hooks-init.sh`, which the dispatcher sources).
 - A change to a published package carries its changeset (`vp run changeset`) in the same commit.
 
 ## Versions
 
 Node 24 LTS (`.nvmrc`), pnpm 12 (`packageManager`; older pnpm fails on `engines.pnpm`),
-Vite+ 1.4 (bundles Vite 8, Vitest 5, Oxlint, Oxfmt, tsdown). `vite` in the catalog is aliased
-to `@voidzero-dev/vite-plus-core` so React Router and Vite plugins use the same Vite as `vp`.
-Run `vp toolchain` for the exact tool graph and `vp env doctor` when the environment looks wrong.
+Vite+ 1.4 (the `vite-plus` devDependency; bundles Vite 8, Vitest 5, Oxlint, Oxfmt, tsdown).
+The project pins Node and pnpm but does not install them: your version manager does (mise, nvm,
+or `vp env` of the global Vite+ CLI). pnpm runs as installed, without switching to the version
+of `packageManager` (`pmOnFail: ignore`); CI checks that one exactly. `vite` in the catalog is
+aliased to `@voidzero-dev/vite-plus-core` so React Router and Vite plugins use the same Vite as
+`vp`. Run `vp toolchain` for the exact tool graph (`vp env doctor`, for an environment that
+looks wrong, comes with the global CLI only).
